@@ -36,6 +36,10 @@ public class ServiceTopology extends AbstractServiceDescriptionEntity {
         return this;
     }
 
+    public Set<EntityRelationship> getRelationships() {
+        return relationships;
+    }
+
     @Override
     public AbstractServiceDescriptionEntity provides(Capability... capabilities) {
         return super.provides(capabilities);
@@ -87,5 +91,13 @@ public class ServiceTopology extends AbstractServiceDescriptionEntity {
                 "serviceNodes=" + serviceNodes +
                 ", relationships=" + relationships +
                 "} " + super.toString();
+    }
+
+    public Set<ServiceNode> getServiceNodes() {
+        return serviceNodes;
+    }
+
+    public boolean hasRelationships() {
+        return !relationships.isEmpty();
     }
 }

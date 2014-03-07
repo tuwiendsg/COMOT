@@ -1,6 +1,14 @@
 package at.ac.tuwien.dsg.comot;
 
+import at.ac.tuwien.dsg.comot.api.ToscaDescriptionBuilderImpl;
 import at.ac.tuwien.dsg.comot.model.*;
+import org.junit.Test;
+import org.oasis.tosca.TDefinitions;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+
+import java.io.StringWriter;
 
 import static at.ac.tuwien.dsg.comot.model.CloudApplication.CloudApplication;
 import static at.ac.tuwien.dsg.comot.model.Constraint.Constraint;
@@ -14,7 +22,8 @@ import static at.ac.tuwien.dsg.comot.model.ServiceTopology.ServiceTopology;
  */
 public class ModelTest {
 
-    public void buildCloudService() {
+    @Test
+    public void buildCloudService() throws Exception {
 
         ServiceNode dataEndServiceNode = ServiceNode("DataEndServiceTopologyService")
                 .ofType("DataEndServiceTopology")
@@ -62,9 +71,16 @@ public class ModelTest {
                 );
 
 
-        CloudApplication("DaasApp")
+        CloudApplication application = CloudApplication("DaasApp")
                 .consistsOfServices(demoApp);
 
-
+        TDefinitions tDefinitions = new ToscaDescriptionBuilderImpl().buildToscaDefinitions(application);
+        JAXBContext jaxbContext = JAXBContext.newInstance(TDefinitions.class);
+        Marshaller marshaller = jaxbContext.createMarshaller();
+        StringWriter writer = new StringWriter();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+        marshaller.marshal(tDefinitions, writer);
+        System.out.println(writer.toString());
     }
 }

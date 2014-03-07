@@ -1,13 +1,15 @@
 package at.ac.tuwien.dsg.comot.model;
 
 /**
- * Created by omoser on 3/1/14.
+ * @author omoser
  */
-public class Constraint extends AbstractCloudEntity {
+public class Constraint extends AbstractCloudEntity implements Renderable {
 
     private Metric metric;
 
     private Operator operator;
+
+    private Type constraintType = Type.SYBL;
 
     private String value;
 
@@ -34,6 +36,11 @@ public class Constraint extends AbstractCloudEntity {
         return this;
     }
 
+    public Constraint ofConstraintType(final Type constraintType) {
+        this.constraintType = constraintType;
+        return this;
+    }
+
     public Metric getMetric() {
         return metric;
     }
@@ -46,6 +53,10 @@ public class Constraint extends AbstractCloudEntity {
         return value;
     }
 
+    public Type getConstraintType() {
+        return constraintType;
+    }
+
     public enum Metric {
 
         Latency("latency", "ms"),
@@ -54,41 +65,61 @@ public class Constraint extends AbstractCloudEntity {
         Cost("cost", "$"),
         Throughput("throughgput", "");
 
-        private final String metric;
+        private final String name;
 
         private final String unit;
 
         Metric(String metric, String unit) {
-            this.metric = metric;
+            this.name = metric;
             this.unit = unit;
         }
 
-        public final String getMetric() {
-            return metric;
+        public final String getName() {
+            return name;
         }
 
         public final String getUnit() {
             return unit;
         }
+
+
     }
 
     public enum Operator {
 
-        LessThan("&lt;"),
-        GreaterThan("&gt;"),
-        Equals("eq"),
+        LessThan("<"),
+        GreaterThan(">"),
+        Equals("=="),
         And("AND"),
         Or("OR"),
         UNDEF("__UNDEF__");
 
-        private final String value;
+        private final String operator;
 
         Operator(String value) {
-            this.value = value;
+            this.operator = value;
         }
 
-        public String getValue() {
-            return value;
+
+        @Override
+        public String toString() {
+            return operator;
+        }
+    }
+
+    public enum Type {
+        SYBL("SYBLConstraint");
+
+        private final String type;
+
+        Type(String type) {
+            this.type = type;
+        }
+
+
+        @Override
+        public String toString() {
+            return type;
         }
     }
 
@@ -114,12 +145,16 @@ public class Constraint extends AbstractCloudEntity {
         return result;
     }
 
+    public String render() {
+        return String.format("%s: CONSTRAINT %s %s %s %s", id, metric.name, operator.operator, value, metric.unit);
+    }
+
     @Override
     public String toString() {
         return "Constraint{" +
-                "metric=" + metric +
+                "name=" + metric +
                 ", operator=" + operator +
-                ", value='" + value + '\'' +
+                ", operator='" + value + '\'' +
                 "} " + super.toString();
     }
 }

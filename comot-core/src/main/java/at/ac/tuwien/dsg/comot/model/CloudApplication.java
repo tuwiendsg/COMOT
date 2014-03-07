@@ -24,6 +24,10 @@ public class CloudApplication extends AbstractServiceDescriptionEntity {
         return this;
     }
 
+    public Set<ServiceTemplate> getServiceTemplates() {
+        return serviceTemplates;
+    }
+
     @Override
     public CloudApplication provides(Capability... capabilities) {
         return (CloudApplication) super.provides(capabilities);

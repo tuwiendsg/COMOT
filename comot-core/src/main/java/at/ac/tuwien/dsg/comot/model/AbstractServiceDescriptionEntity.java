@@ -21,6 +21,22 @@ public abstract class AbstractServiceDescriptionEntity extends AbstractCloudEnti
         super(id);
     }
 
+    public boolean hasConstraints() {
+        return !constraints.isEmpty();
+    }
+
+    public boolean hasRequirements() {
+        return !requirements.isEmpty();
+    }
+
+    public boolean hasCapabilities() {
+        return !capabilities.isEmpty();
+    }
+
+    public boolean hasStrategies() {
+        return !capabilities.isEmpty();
+    }
+
     @Override
     public Set<Strategy> getStrategies() {
         return strategies;

@@ -1,13 +1,19 @@
 package at.ac.tuwien.dsg.comot.model;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
+
+import static java.lang.String.format;
 
 /**
  * Created by omoser on 3/1/14.
  * todo atm only AND or OR constraints are supported
  */
-public class Strategy extends AbstractCloudEntity {
+public class Strategy extends AbstractCloudEntity implements Renderable {
 
     private Action action;
 
@@ -95,4 +101,21 @@ public class Strategy extends AbstractCloudEntity {
         }
     }
 
+    @Override
+    public String render() {
+        StringBuilder builder = new StringBuilder(format("%s: STRATEGY CASE ", id));
+        List<String> constraintsToRender = new ArrayList<>();
+        for (Constraint constraint : this.constraints) {
+            Constraint.Metric metric = constraint.getMetric();
+            Constraint.Operator operator = constraint.getOperator();
+            constraintsToRender.add(
+                    format("%s %s %s %s", metric.getName(), operator, constraint.getValue(), metric.getUnit())
+            );
+        }
+
+        return builder.append(StringUtils.join(constraintsToRender, " AND "))
+                .append(" : ")
+                .append(action)
+                .toString();
+    }
 }
