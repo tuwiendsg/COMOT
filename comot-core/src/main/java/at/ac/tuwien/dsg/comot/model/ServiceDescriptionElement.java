@@ -1,5 +1,6 @@
 package at.ac.tuwien.dsg.comot.model;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -7,8 +8,15 @@ import java.util.Set;
  */
 public interface ServiceDescriptionElement extends CloudEntity {
 
-    Set<ServiceStrategy> getStrategies();
+    Set<Strategy> getStrategies();
 
-    Set<ServiceConstraint> getConstraints();
+    Set<Constraint> getConstraints();
+
+    Set<Requirement> getRequirements();
+
+    Set<Capability> getCapabilities();
+
+    Map<String, Object> getProperties();
+
 
 }

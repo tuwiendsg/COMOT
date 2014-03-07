@@ -3,7 +3,7 @@ package at.ac.tuwien.dsg.comot.model;
 /**
  * Created by omoser on 3/1/14.
  */
-public class ServiceConstraint extends AbstractCloudEntity {
+public class Constraint extends AbstractCloudEntity {
 
     private Metric metric;
 
@@ -11,17 +11,25 @@ public class ServiceConstraint extends AbstractCloudEntity {
 
     private String value;
 
-    public ServiceConstraint withValue(final String value) {
+    public Constraint(String id) {
+        super(id);
+    }
+
+    public static Constraint Constraint(String id) {
+        return new Constraint(id);
+    }
+
+    public Constraint value(final String value) {
         this.value = value;
         return this;
     }
 
-    public ServiceConstraint withOperator(final Operator operator) {
+    public Constraint should(final Operator operator) {
         this.operator = operator;
         return this;
     }
 
-    public ServiceConstraint withMetric(final Metric metric) {
+    public Constraint forMetric(final Metric metric) {
         this.metric = metric;
         return this;
     }
@@ -43,6 +51,7 @@ public class ServiceConstraint extends AbstractCloudEntity {
         Latency("latency", "ms"),
         CpuUsage("cpuUsage", "%"),
         ResponseTime("responseTime", "ms"),
+        Cost("cost", "$"),
         Throughput("throughgput", "");
 
         private final String metric;
@@ -86,9 +95,9 @@ public class ServiceConstraint extends AbstractCloudEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ServiceConstraint)) return false;
+        if (!(o instanceof Constraint)) return false;
 
-        ServiceConstraint that = (ServiceConstraint) o;
+        Constraint that = (Constraint) o;
 
         if (metric != that.metric) return false;
         if (operator != that.operator) return false;
@@ -107,7 +116,7 @@ public class ServiceConstraint extends AbstractCloudEntity {
 
     @Override
     public String toString() {
-        return "ServiceConstraint{" +
+        return "Constraint{" +
                 "metric=" + metric +
                 ", operator=" + operator +
                 ", value='" + value + '\'' +

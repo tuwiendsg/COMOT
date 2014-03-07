@@ -7,5 +7,9 @@ public interface CloudEntity {
 
     String getId();
 
+    String getName();
+
+    String getType();
+
     String getDescription();
 }
