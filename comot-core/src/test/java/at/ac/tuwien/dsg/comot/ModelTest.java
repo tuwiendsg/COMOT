@@ -71,6 +71,7 @@ public class ModelTest {
                 );
 
 
+
         CloudApplication application = CloudApplication("DaasApp")
                 .consistsOfServices(demoApp);
 

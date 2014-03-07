@@ -13,8 +13,9 @@ public class ServiceTopology extends AbstractServiceDescriptionEntity {
 
     private Set<EntityRelationship> relationships = new HashSet<>();
 
-    public ServiceTopology(String id) {
+    ServiceTopology(String id) {
         super(id);
+        context.put(id, this);
     }
 
     public static ServiceTopology ServiceTopology(String id) {

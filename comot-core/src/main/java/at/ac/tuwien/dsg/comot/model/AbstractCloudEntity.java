@@ -1,5 +1,10 @@
 package at.ac.tuwien.dsg.comot.model;
 
+import com.google.common.collect.ImmutableMap;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author omoser
  */
@@ -12,6 +17,8 @@ public abstract class AbstractCloudEntity implements CloudEntity {
     String type;
 
     String name;
+
+    Map<String, CloudEntity> context = new HashMap<>();
 
     @Override
     public String getType() {
@@ -33,7 +40,7 @@ public abstract class AbstractCloudEntity implements CloudEntity {
         return description;
     }
 
-    public AbstractCloudEntity(String id) {
+    AbstractCloudEntity(String id) {
         this.id = id;
     }
 
@@ -59,6 +66,10 @@ public abstract class AbstractCloudEntity implements CloudEntity {
 
     public AbstractCloudEntity ofType(final String type) {
         return withType(type);
+    }
+
+    public Map<String, CloudEntity> getContext() {
+        return ImmutableMap.copyOf(context);
     }
 
     @Override

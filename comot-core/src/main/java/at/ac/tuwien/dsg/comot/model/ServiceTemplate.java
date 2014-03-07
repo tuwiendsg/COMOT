@@ -9,8 +9,9 @@ public class ServiceTemplate extends AbstractServiceDescriptionEntity {
 
     private EntityRelationship relationship;
 
-    public ServiceTemplate(String id) {
+    ServiceTemplate(String id) {
         super(id);
+        context.put(id, this);
     }
 
     public static ServiceTemplate ServiceTemplate(String id) {

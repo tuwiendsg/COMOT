@@ -1,6 +1,6 @@
 package at.ac.tuwien.dsg.comot.model;
 
-import org.apache.commons.lang3.StringUtils;
+import com.google.common.base.Joiner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,8 +21,13 @@ public class Strategy extends AbstractCloudEntity implements Renderable {
 
     private Set<Constraint> constraints;
 
-    public Strategy(String id) {
+    Strategy(String id) {
         super(id);
+        context.put(id, this);
+    }
+
+    public static Strategy Strategy(String id) {
+        return new Strategy(id);
     }
 
 
@@ -113,7 +118,7 @@ public class Strategy extends AbstractCloudEntity implements Renderable {
             );
         }
 
-        return builder.append(StringUtils.join(constraintsToRender, " AND "))
+        return builder.append(Joiner.on(" AND ").join(constraintsToRender))
                 .append(" : ")
                 .append(action)
                 .toString();

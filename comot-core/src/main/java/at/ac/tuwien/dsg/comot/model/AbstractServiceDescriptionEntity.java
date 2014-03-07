@@ -17,7 +17,7 @@ public abstract class AbstractServiceDescriptionEntity extends AbstractCloudEnti
 
     Map<String, Object> properties = new HashMap<>();
 
-    public AbstractServiceDescriptionEntity(String id) {
+    AbstractServiceDescriptionEntity(String id) {
         super(id);
     }
 

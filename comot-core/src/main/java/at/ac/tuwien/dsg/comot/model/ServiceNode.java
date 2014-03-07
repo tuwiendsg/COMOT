@@ -9,8 +9,9 @@ public class ServiceNode extends AbstractServiceDescriptionEntity {
 
     private int maxInstances;
 
-    public ServiceNode(String id) {
+    ServiceNode(String id) {
         super(id);
+        context.put(id, this);
     }
 
     public static ServiceNode ServiceNode(String id) {

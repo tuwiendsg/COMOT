@@ -22,12 +22,13 @@ public class EntityRelationship extends AbstractCloudEntity {
         }
     }
 
-    private CloudEntity source;
+    private CloudEntity from;
 
-    private CloudEntity target;
+    private CloudEntity to;
 
-    public EntityRelationship(String id) {
+    EntityRelationship(String id) {
         super(id);
+        context.put(id, this);
     }
 
     public static EntityRelationship EntityRelationship(String id) {
@@ -36,12 +37,12 @@ public class EntityRelationship extends AbstractCloudEntity {
 
 
     public EntityRelationship to(final CloudEntity target) {
-        this.target = target;
+        this.to = target;
         return this;
     }
 
     public EntityRelationship from(final CloudEntity source) {
-        this.source = source;
+        this.from = source;
         return this;
     }
 
@@ -50,12 +51,20 @@ public class EntityRelationship extends AbstractCloudEntity {
         return this;
     }
 
+    public CloudEntity getFrom() {
+        return from;
+    }
+
+    public CloudEntity getTo() {
+        return to;
+    }
+
     @Override
     public String toString() {
         return "EntityRelationship{" +
                 "type='" + type + '\'' +
-                ", source=" + source +
-                ", target=" + target +
+                ", from=" + from +
+                ", to=" + to +
                 "} " + super.toString();
     }
 }

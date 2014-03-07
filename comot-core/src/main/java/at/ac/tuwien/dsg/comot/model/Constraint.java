@@ -13,8 +13,9 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
 
     private String value;
 
-    public Constraint(String id) {
+    Constraint(String id) {
         super(id);
+        context.put(id, this);
     }
 
     public static Constraint Constraint(String id) {
