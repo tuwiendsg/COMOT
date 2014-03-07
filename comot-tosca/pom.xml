@@ -16,23 +16,28 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
+                <!--<groupId>org.codehaus.mojo</groupId>
                 <artifactId>jaxb2-maven-plugin</artifactId>
-                <version>1.5</version>
+                <version>1.5</version>-->
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>0.8.3</version>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>xjc</goal>
+                            <goal>generate</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
                     <verbose>true</verbose>
                     <schemaDirectory>${basedir}/src/main/resources</schemaDirectory>
-                    <packageName>org.oasis.tosca</packageName>
+                    <generatePackage>org.oasis.tosca</generatePackage>
                     <outputDirectory>${basedir}/src/main/java</outputDirectory>
                     <extension>true</extension>
-                    <arguments>-Xfluent-api</arguments>
+                    <args>
+                        <arg>-Xfluent-api</arg>
+                    </args>
                 </configuration>
                 <dependencies>
                     <dependency>
