@@ -55,6 +55,18 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
         return this;
     }
 
+    public Constraint lessThan(String value) {
+        this.operator = Operator.LessThan;
+        this.value = value;
+        return this;
+    }
+
+    public Constraint greaterThan(String value) {
+        this.operator = Operator.GreaterThan;
+        this.value = value;
+        return this;
+    }
+
     @Override
     public Constraint withId(String id) {
         return (Constraint) super.withId(id);

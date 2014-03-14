@@ -50,7 +50,7 @@ public class ModelTest {
                 )
 
                 .constrainedBy(
-                        LatencyConstraint("Co1").should(LessThan).value("0.5")
+                        LatencyConstraint("Co1").lessThan("0.5")
                 );
 
         //
@@ -73,13 +73,13 @@ public class ModelTest {
                         )
 
                         .constrainedBy(
-                                CpuUsageConstraint("Co3").should(LessThan).value("50")
+                                CpuUsageConstraint("Co3").lessThan("50")
                         )
 
                         .controlledBy(
                                 Strategy("St2")
-                                        .when(ResponseTimeConstraint("St2Co1").should(LessThan).value("300"))
-                                        .and(ThroughputConstraint("St2Co2").should(LessThan).value("400"))
+                                        .when(ResponseTimeConstraint("St2Co1").lessThan("300"))
+                                        .and(ThroughputConstraint("St2Co2").lessThan("400"))
                                         .then(Action.ScaleIn)
                         );
 
