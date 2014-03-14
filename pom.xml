@@ -24,6 +24,12 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>at.ac.tuwien.dsg.cloud.salsa</groupId>
+            <artifactId>salsa-common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
         <!-- Spring Framework dependencies -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -48,12 +54,7 @@
             <version>1.0.13</version>
         </dependency>
 
-<!--        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.1</version>
-        </dependency>-->
-
+        <!-- Guava -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>

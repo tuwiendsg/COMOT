@@ -20,6 +20,10 @@ public class ArtifactReference extends AbstractCloudEntity {
         return this;
     }
 
+    public String getUri() {
+        return uri;
+    }
+
     public ArtifactReference locatedAt(String uri) {
         return withUri(uri);
     }

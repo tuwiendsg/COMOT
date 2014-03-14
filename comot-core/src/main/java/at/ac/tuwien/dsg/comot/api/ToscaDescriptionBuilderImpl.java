@@ -1,6 +1,8 @@
 package at.ac.tuwien.dsg.comot.api;
 
+import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties;
 import at.ac.tuwien.dsg.comot.model.*;
+import com.google.common.base.Joiner;
 import org.oasis.tosca.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,11 +35,9 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
 
             TBoundaryDefinitions boundaryDefinitions = new TBoundaryDefinitions();
             tServiceTemplate.setBoundaryDefinitions(boundaryDefinitions);
-            List<TPolicy> tPolicies = new ArrayList<>();
+
             if (serviceTemplate.hasConstraints() || serviceTemplate.hasStrategies()) {
-                tPolicies.addAll(getConstraintPolicies(serviceTemplate));
-                tPolicies.addAll(getStrategyPolicies(serviceTemplate));
-                boundaryDefinitions.setPolicies(new TBoundaryDefinitions.Policies().withPolicy(tPolicies));
+                addPolicies(serviceTemplate, boundaryDefinitions);
             }
 
             if (serviceTemplate.hasRequirements()) {
@@ -47,7 +47,6 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
             if (serviceTemplate.hasCapabilities()) {
                 boundaryDefinitions.setCapabilities(getCapabilities(serviceTemplate));
             }
-
 
             tServiceTemplates.add(tServiceTemplate);
 
@@ -72,6 +71,7 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
                         .withPolicies(getPolicies(node))
                         .withProperties(getProperties(node));
 
+                handleDeploymentArtifacts(node, tNodeTemplate, definitions);
                 context.put(tNodeTemplate.getId(), tNodeTemplate);
                 tNodeTemplates.add(tNodeTemplate);
             }
@@ -82,6 +82,9 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
             tTopologyTemplate.withNodeTemplateOrRelationshipTemplate(entityTemplates);
             tServiceTemplate.setTopologyTemplate(tTopologyTemplate);
         }
+
+        // add deployment artifacts
+
 
 
         // resolve unresolved relationships, throw exception if there are still unresolved entities
@@ -97,6 +100,46 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
 
         return definitions;
 
+    }
+
+    private void handleDeploymentArtifacts(ServiceNode node, TNodeTemplate tNodeTemplate, Definitions definitions) {
+        TDeploymentArtifacts tDeploymentArtifacts = new TDeploymentArtifacts();
+        for (ArtifactTemplate artifact : node.getDeploymentArtifacts()) {
+
+            TArtifactTemplate tArtifactTemplate = new TArtifactTemplate()
+                    .withId(artifact.getId())
+                    .withType(new QName(artifact.getType()));
+
+
+
+            definitions.getServiceTemplateOrNodeTypeOrNodeTypeImplementation().add(tArtifactTemplate);
+
+            TDeploymentArtifact tDeploymentArtifact = new TDeploymentArtifact()
+                    .withName(artifact.getId())
+                    .withArtifactType(new QName(artifact.getType()))
+                    .withArtifactRef(new QName(tArtifactTemplate.getId()));
+
+            TDeploymentArtifacts deploymentArtifacts = new TDeploymentArtifacts();
+            tNodeTemplate.setDeploymentArtifacts(deploymentArtifacts);
+            deploymentArtifacts.getDeploymentArtifact().add(tDeploymentArtifact);
+
+            List<TArtifactReference> tArtifactReferences = new ArrayList<>();
+            for (ArtifactReference reference : artifact.getArtifactReferences()) {
+                tArtifactReferences.add(new TArtifactReference().withReference(reference.getUri()));
+            }
+
+            tArtifactTemplate.setArtifactReferences(new TArtifactTemplate.ArtifactReferences()
+                    .withArtifactReference(tArtifactReferences)
+            );
+
+        }
+    }
+
+    private void addPolicies(ServiceTemplate serviceTemplate, TBoundaryDefinitions boundaryDefinitions) {
+        List<TPolicy> tPolicies = new ArrayList<>();
+        tPolicies.addAll(getConstraintPolicies(serviceTemplate));
+        tPolicies.addAll(getStrategyPolicies(serviceTemplate));
+        boundaryDefinitions.setPolicies(new TBoundaryDefinitions.Policies().withPolicy(tPolicies));
     }
 
     // todo implement getCapabilities(ServiceTemplate)
@@ -130,8 +173,9 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
 
             if (throwOnMissingRelationship) {
                 throw new IllegalStateException("Cannot resolve source or target element for relationship");
+            } else {
+                return null;
             }
-            return null; // todo might be better to throw exception
         }
     }
 
@@ -161,11 +205,28 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
 
     // todo implement
     private TEntityTemplate.Properties getProperties(ServiceNode node) {
+        TEntityTemplate.Properties properties = new TEntityTemplate.Properties();
+        if (node instanceof OperatingSystemNode) {
+            OperatingSystemNode osNode = (OperatingSystemNode) node;
+            OperatingSystemSpecification specification = osNode.getSpecification();
+            SalsaMappingProperties salsaMappingProperties = new SalsaMappingProperties();
+            Map<String,String> osProperties = new HashMap();
+            osProperties.put("instanceType", specification.getInstanceType());
+            osProperties.put("provider", specification.getProvider());
+            osProperties.put("baseImage", specification.getBaseImage());
+            osProperties.put("packages", joinOsSpecificationPackages(specification));
+            salsaMappingProperties.put("os", osProperties);
+            properties.withAny(salsaMappingProperties);
+        }
 
-        return new TEntityTemplate.Properties();
+        return properties;
     }
 
-    // todo implement
+    private String joinOsSpecificationPackages(OperatingSystemSpecification specification) {
+        return Joiner.on(",").join(specification.getPackages());
+    }
+
+
     private TNodeTemplate.Policies getPolicies(ServiceNode node) {
         List<TPolicy> tPolicies = new ArrayList<>();
         addConstraintsToNodeTemplate(node, tPolicies);
@@ -178,6 +239,8 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
             TPolicy tPolicy = new TPolicy()
                     .withPolicyType(new QName(strategy.getStrategyConstraintType().toString()))
                     .withName(strategy.render());
+
+            // todo no ID to put strategy into context map
             tPolicies.add(tPolicy);
         }
     }
@@ -187,11 +250,12 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
             TPolicy tPolicy = new TPolicy()
                     .withPolicyType(new QName(constraint.getType()))
                     .withName(constraint.render());
+
+            // todo no ID to put constraint into context map
             tPolicies.add(tPolicy);
         }
     }
 
-    // todo implement
     private TNodeTemplate.Requirements getRequirements(ServiceNode node) {
         Collection<TRequirement> requirements = new ArrayList<>();
         for (Requirement requirement : node.getRequirements()) {
@@ -230,7 +294,7 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
                     .withName(constraint.render())
                     .withPolicyType(new QName(constraint.getType()));
 
-
+            // todo there is no ID that we can use to put the constraint into the context map
             policies.add(tPolicy);
         }
 
@@ -245,8 +309,8 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
                     .withName(strategy.render())
                     .withPolicyType(new QName(strategy.getType()));
 
+            // todo there is no ID that we can use to put the strategy into the context map
             policies.add(tPolicy);
-
         }
 
         return policies;

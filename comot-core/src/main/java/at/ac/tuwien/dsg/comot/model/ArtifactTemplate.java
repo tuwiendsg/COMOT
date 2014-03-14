@@ -49,6 +49,11 @@ public class ArtifactTemplate extends AbstractCloudEntity {
         return this;
     }
 
+
+    public Set<ArtifactReference> getArtifactReferences() {
+        return artifactReferences;
+    }
+
     @Override
     public ArtifactTemplate withDescription(String description) {
         return (ArtifactTemplate) super.withDescription(description);

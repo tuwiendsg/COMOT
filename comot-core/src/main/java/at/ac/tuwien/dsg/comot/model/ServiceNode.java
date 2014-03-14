@@ -17,8 +17,7 @@ public class ServiceNode extends AbstractServiceDescriptionEntity {
 
     public enum NodeType {
 
-        OperatingSystem("os"),
-        Software("software");
+        OperatingSystem("os"), Software("software");
 
         final String type;
 
@@ -53,8 +52,8 @@ public class ServiceNode extends AbstractServiceDescriptionEntity {
         return new ServiceNode(id).ofType(NodeType.Software).withMinInstances(1).withMaxInstances(Integer.MAX_VALUE);
     }
 
-    public static ServiceNode OperatingSystemNode(String id) {
-        return new ServiceNode(id).ofType(NodeType.OperatingSystem);
+    public Set<ArtifactTemplate> getDeploymentArtifacts() {
+        return deploymentArtifacts;
     }
 
     public int getMinInstances() {
