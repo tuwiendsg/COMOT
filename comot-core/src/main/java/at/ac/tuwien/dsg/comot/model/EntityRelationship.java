@@ -28,11 +28,18 @@ public class EntityRelationship extends AbstractCloudEntity {
 
     EntityRelationship(String id) {
         super(id);
-        context.put(id, this);
     }
 
     public static EntityRelationship EntityRelationship(String id) {
         return new EntityRelationship(id);
+    }
+
+    public static EntityRelationship ConnectToRelation(String id) {
+        return new EntityRelationship(id).ofType(RelationshipType.ConnectedTo);
+    }
+
+    public static EntityRelationship HostedOnRelation(String id) {
+        return new EntityRelationship(id).ofType(RelationshipType.HostedOn);
     }
 
 

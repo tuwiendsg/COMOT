@@ -2,10 +2,7 @@ package at.ac.tuwien.dsg.comot.model;
 
 import com.google.common.base.Joiner;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static java.lang.String.format;
 
@@ -19,17 +16,17 @@ public class Strategy extends AbstractCloudEntity implements Renderable {
 
     private Constraint.Operator operator = Constraint.Operator.UNDEF;
 
-    private Set<Constraint> constraints;
+    private Constraint.ConstraintType strategyConstraintType = Constraint.ConstraintType.SYBL;
+
+    private Set<Constraint> constraints = new HashSet<>();
 
     Strategy(String id) {
         super(id);
-        context.put(id, this);
     }
 
     public static Strategy Strategy(String id) {
         return new Strategy(id);
     }
-
 
     public enum Action {
         ScaleIn("scalein", "enacts a scale-in operation on the platform"),
@@ -46,10 +43,7 @@ public class Strategy extends AbstractCloudEntity implements Renderable {
 
         @Override
         public String toString() {
-            return "Action{" +
-                    "description='" + description + '\'' +
-                    ", name='" + name + '\'' +
-                    "} " + super.toString();
+           return name;
         }
     }
 
@@ -57,6 +51,11 @@ public class Strategy extends AbstractCloudEntity implements Renderable {
     //
     // public API
     //
+
+    public Strategy withStrategyType(final Constraint.ConstraintType strategyConstraintType) {
+        this.strategyConstraintType = strategyConstraintType;
+        return this;
+    }
 
     public Strategy withAction(Action action) {
         this.action = action;
@@ -99,8 +98,24 @@ public class Strategy extends AbstractCloudEntity implements Renderable {
         return this;
     }
 
+    public Action getAction() {
+        return action;
+    }
+
+    public Constraint.Operator getOperator() {
+        return operator;
+    }
+
+    public Constraint.ConstraintType getStrategyConstraintType() {
+        return strategyConstraintType;
+    }
+
+    public Set<Constraint> getConstraints() {
+        return constraints;
+    }
+
     private void checkOperatorState(Constraint.Operator operator) {
-        if (this.operator != operator && operator != Constraint.Operator.UNDEF) {
+        if (this.operator != operator && this.operator != Constraint.Operator.UNDEF) {
             throw new IllegalStateException("Cannot add '" + operator + "' constraint since another operator was used " +
                     "previously: " + this.operator);
         }

@@ -15,7 +15,6 @@ public class ServiceTopology extends AbstractServiceDescriptionEntity {
 
     ServiceTopology(String id) {
         super(id);
-        context.put(id, this);
     }
 
     public static ServiceTopology ServiceTopology(String id) {

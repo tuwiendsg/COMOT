@@ -5,12 +5,59 @@ package at.ac.tuwien.dsg.comot.model;
  */
 public class Requirement extends AbstractCloudEntity {
 
+    public enum RequirementType {
+
+        Variable("variable");
+
+        private final String type;
+
+        RequirementType(String type) {
+            this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return type;
+        }
+    }
+
     Requirement(String id) {
         super(id);
-        context.put(id, this);
     }
 
     public static Requirement Requirement(String id) {
         return new Requirement(id);
+    }
+
+    public static Requirement Variable(String id) {
+        return new Requirement(id).ofType(RequirementType.Variable);
+    }
+
+    @Override
+    public Requirement withDescription(String description) {
+        return (Requirement) super.withDescription(description);
+    }
+
+    @Override
+    public Requirement withName(String name) {
+        return (Requirement) super.withName(name);
+    }
+
+    @Override
+    public Requirement withType(String type) {
+        return (Requirement) super.withType(type);
+    }
+
+    @Override
+    public Requirement ofType(String type) {
+        return (Requirement) super.ofType(type);
+    }
+
+    public Requirement withType(RequirementType type) {
+        return (Requirement) super.withType(type.toString());
+    }
+
+    public Requirement ofType(RequirementType type) {
+        return withType(type);
     }
 }

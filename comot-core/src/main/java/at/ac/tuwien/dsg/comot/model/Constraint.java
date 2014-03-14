@@ -9,8 +9,6 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
 
     private Operator operator;
 
-    private Type constraintType = Type.SYBL;
-
     private String value;
 
     Constraint(String id) {
@@ -20,6 +18,26 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
 
     public static Constraint Constraint(String id) {
         return new Constraint(id);
+    }
+
+    public static Constraint LatencyConstraint(String id) {
+        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.Latency);
+    }
+
+    public static Constraint ResponseTimeConstraint(String id) {
+        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.ResponseTime);
+    }
+
+    public static Constraint ThroughputConstraint(String id) {
+        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.Throughput);
+    }
+
+    public static Constraint CostConstraint(String id) {
+        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.Cost);
+    }
+
+    public static Constraint CpuUsageConstraint(String id) {
+        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.CpuUsage);
     }
 
     public Constraint value(final String value) {
@@ -37,9 +55,37 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
         return this;
     }
 
-    public Constraint ofConstraintType(final Type constraintType) {
-        this.constraintType = constraintType;
-        return this;
+    @Override
+    public Constraint withId(String id) {
+        return (Constraint) super.withId(id);
+    }
+
+    @Override
+    public Constraint withDescription(String description) {
+        return (Constraint) super.withDescription(description);
+    }
+
+    @Override
+    public Constraint withName(String name) {
+        return (Constraint) super.withName(name);
+    }
+
+    @Override
+    public Constraint withType(String type) {
+        return (Constraint) super.withType(type);
+    }
+
+    @Override
+    public Constraint ofType(String type) {
+        return (Constraint) super.ofType(type);
+    }
+
+    public Constraint withType(ConstraintType type) {
+        return ofType(type);
+    }
+
+    public Constraint ofType(ConstraintType type) {
+        return (Constraint) super.ofType(type.toString());
     }
 
     public Metric getMetric() {
@@ -54,9 +100,6 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
         return value;
     }
 
-    public Type getConstraintType() {
-        return constraintType;
-    }
 
     public enum Metric {
 
@@ -108,12 +151,12 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
         }
     }
 
-    public enum Type {
+    public enum ConstraintType {
         SYBL("SYBLConstraint");
 
         private final String type;
 
-        Type(String type) {
+        ConstraintType(String type) {
             this.type = type;
         }
 

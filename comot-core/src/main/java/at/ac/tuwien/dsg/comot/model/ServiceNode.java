@@ -1,5 +1,9 @@
 package at.ac.tuwien.dsg.comot.model;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @author omoser
  */
@@ -9,13 +13,48 @@ public class ServiceNode extends AbstractServiceDescriptionEntity {
 
     private int maxInstances;
 
+    private Set<ArtifactTemplate> deploymentArtifacts = new HashSet<>();
+
+    public enum NodeType {
+
+        OperatingSystem("os"),
+        Software("software");
+
+        final String type;
+
+        NodeType(String type) {
+            this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return type;
+        }
+    }
+
+
     ServiceNode(String id) {
         super(id);
-        context.put(id, this);
     }
 
     public static ServiceNode ServiceNode(String id) {
         return new ServiceNode(id);
+    }
+
+    public static ServiceNode SoftwareNode(String id) {
+        return new ServiceNode(id).ofType(NodeType.Software);
+    }
+
+    public static ServiceNode SingleSoftwareNode(String id) {
+        return new ServiceNode(id).ofType(NodeType.Software).withMinInstances(1).withMaxInstances(1);
+    }
+
+    public static ServiceNode UnboundedSoftwareNode(String id) {
+        return new ServiceNode(id).ofType(NodeType.Software).withMinInstances(1).withMaxInstances(Integer.MAX_VALUE);
+    }
+
+    public static ServiceNode OperatingSystemNode(String id) {
+        return new ServiceNode(id).ofType(NodeType.OperatingSystem);
     }
 
     public int getMinInstances() {
@@ -44,6 +83,12 @@ public class ServiceNode extends AbstractServiceDescriptionEntity {
         return withMinInstances(minInstances);
     }
 
+    public ServiceNode deployedBy(ArtifactTemplate... deploymentArtifacts) {
+        this.deploymentArtifacts.addAll(Arrays.asList(deploymentArtifacts));
+        return this;
+    }
+
+
     @Override
     public ServiceNode withId(String id) {
         return (ServiceNode) super.withId(id);
@@ -67,6 +112,10 @@ public class ServiceNode extends AbstractServiceDescriptionEntity {
     @Override
     public ServiceNode ofType(String type) {
         return (ServiceNode) super.ofType(type);
+    }
+
+    public ServiceNode ofType(NodeType nodeType) {
+        return (ServiceNode) super.ofType(nodeType.toString());
     }
 
     @Override

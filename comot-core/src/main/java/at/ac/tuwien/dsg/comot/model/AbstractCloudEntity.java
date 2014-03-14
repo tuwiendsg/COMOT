@@ -2,8 +2,8 @@ package at.ac.tuwien.dsg.comot.model;
 
 import com.google.common.collect.ImmutableMap;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author omoser
@@ -18,7 +18,7 @@ public abstract class AbstractCloudEntity implements CloudEntity {
 
     String name;
 
-    Map<String, CloudEntity> context = new HashMap<>();
+    static Map<String, CloudEntity> context = new ConcurrentHashMap<>();
 
     @Override
     public String getType() {
@@ -42,6 +42,7 @@ public abstract class AbstractCloudEntity implements CloudEntity {
 
     AbstractCloudEntity(String id) {
         this.id = id;
+        context.put(id, this);
     }
 
     public AbstractCloudEntity withId(final String id) {

@@ -11,7 +11,6 @@ public class ServiceTemplate extends AbstractServiceDescriptionEntity {
 
     ServiceTemplate(String id) {
         super(id);
-        context.put(id, this);
     }
 
     public static ServiceTemplate ServiceTemplate(String id) {

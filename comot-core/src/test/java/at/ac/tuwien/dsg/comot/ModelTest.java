@@ -7,15 +7,18 @@ import org.oasis.tosca.TDefinitions;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
-
 import java.io.StringWriter;
 
+import static at.ac.tuwien.dsg.comot.model.ArtifactTemplate.SingleScriptArtifactTemplate;
 import static at.ac.tuwien.dsg.comot.model.CloudApplication.CloudApplication;
-import static at.ac.tuwien.dsg.comot.model.Constraint.Constraint;
-import static at.ac.tuwien.dsg.comot.model.EntityRelationship.EntityRelationship;
-import static at.ac.tuwien.dsg.comot.model.ServiceNode.ServiceNode;
+import static at.ac.tuwien.dsg.comot.model.Constraint.*;
+import static at.ac.tuwien.dsg.comot.model.Constraint.Operator.LessThan;
+import static at.ac.tuwien.dsg.comot.model.EntityRelationship.ConnectToRelation;
+import static at.ac.tuwien.dsg.comot.model.ServiceNode.*;
 import static at.ac.tuwien.dsg.comot.model.ServiceTemplate.ServiceTemplate;
 import static at.ac.tuwien.dsg.comot.model.ServiceTopology.ServiceTopology;
+import static at.ac.tuwien.dsg.comot.model.Strategy.Action;
+import static at.ac.tuwien.dsg.comot.model.Strategy.Strategy;
 
 /**
  * @author omoser
@@ -25,55 +28,96 @@ public class ModelTest {
     @Test
     public void buildCloudService() throws Exception {
 
-        ServiceNode dataEndServiceNode = ServiceNode("DataEndServiceTopologyService")
-                .ofType("DataEndServiceTopology")
+
+/*
+                                Constraint("Co2")
+                                        .forMetric(Constraint.Metric.CpuUsage)
+                                        .should(Constraint.Operator.LessThan)
+                                        .value("83")
+*/
+
+
+        //
+        // Cassandra Head Node
+        //
+        ServiceNode cassandraHeadNode = SingleSoftwareNode("CassandraHead")
+                .withName("Cassandra head node (single instance)")
+
+                .provides(
+                        Capability.Variable("CassandraHeadIP_capa").withName("Data controller IP")
+                )
+
+                .deployedBy(
+                        SingleScriptArtifactTemplate(
+                                "deployCassandraHead",
+                                "http://134.158.75.65/salsa/upload/files/daas/deployCassandraHead.sh"
+                        )
+                )
+
                 .constrainedBy(
-                        Constraint("Co1")
-                                .forMetric(Constraint.Metric.Latency)
-                                .should(Constraint.Operator.LessThan)
-                                .value("0.5"),
-                        Constraint("Co2")
-                                .forMetric(Constraint.Metric.CpuUsage)
-                                .should(Constraint.Operator.LessThan)
-                                .value("83")
+                        LatencyConstraint("Co1").should(LessThan).value("0.5")
                 );
 
-        ServiceNode eventProcessingServiceNode = ServiceNode("EventProcessingServiceTopologyService")
-                .ofType("EventProcessingServiceTopology")
+        //
+        // Cassandra Data Node
+        //
+        ServiceNode cassandraDataNode = UnboundedSoftwareNode("CassandraNode")
+                .withName("Cassandra data node (multiple instances)")
+
+                .deployedBy(
+                        SingleScriptArtifactTemplate(
+                                "deployCassandraNode",
+                                "http://134.158.75.65/salsa/upload/files/daas/deployCassandraNode.sh"
+                        )
+                )
+
+                .requires(
+                        Requirement.Variable("CassandraHeadIP_req").withName("Connect to data controller")
+
+                )
+
                 .constrainedBy(
-                        Constraint("Co3")
-                                .forMetric(Constraint.Metric.ResponseTime)
-                                .should(Constraint.Operator.LessThan)
-                                .value("350")
+                        CpuUsageConstraint("Co3").should(LessThan).value("50")
+                )
+
+                .controlledBy(
+                        Strategy("St2")
+                                .when(ResponseTimeConstraint("St2Co1").should(LessThan).value("300"))
+                                .and(ThroughputConstraint("St2Co2").should(LessThan).value("400"))
+                                .then(Action.ScaleIn)
                 );
 
+        //
+        // OS Head Node
+        //
+        ServiceNode cassandraHeadOsNode = OperatingSystemNode("OS_Headnode");
 
-        ServiceTemplate demoApp = ServiceTemplate("DemoApp")
+
+        ServiceTemplate daaSService = ServiceTemplate("DaasService")
                 .constrainedBy(
-                        Constraint("costConstraint")
-                                .forMetric(Constraint.Metric.Cost)
-                                .should(Constraint.Operator.LessThan)
-                                .value("1000")
+                        CostConstraint("CG0").should(LessThan).value("1000")
                 )
 
                 .definedBy(
-                        ServiceTopology("DemoTopology")
-                                .consistsOfNodes(
-                                        dataEndServiceNode,
-                                        eventProcessingServiceNode
-                                )
-                                .andRelationships(
-                                        EntityRelationship("directedRelation")
-                                                .from(eventProcessingServiceNode)
-                                                .to(dataEndServiceNode)
-                                                .ofType(EntityRelationship.RelationshipType.ConnectedTo))
+                        ServiceTopology("DaasTopology")
 
+                                .consistsOfNodes(
+                                        cassandraHeadNode,
+                                        cassandraDataNode
+                                )
+
+                               .andRelationships(
+                                       ConnectToRelation("head2datanode")
+                                               .from(cassandraHeadNode.getContext().get("CassandraHeadIP_capa"))
+                                               .to(cassandraDataNode.getContext().get("CassandraHeadIP_req"))
+                                               .ofType(EntityRelationship.RelationshipType.ConnectedTo)
+                               )
                 );
 
 
+        CloudApplication application = CloudApplication("DaaSApp")
+                .consistsOfServices(daaSService);
 
-        CloudApplication application = CloudApplication("DaasApp")
-                .consistsOfServices(demoApp);
 
         TDefinitions tDefinitions = new ToscaDescriptionBuilderImpl().buildToscaDefinitions(application);
         JAXBContext jaxbContext = JAXBContext.newInstance(TDefinitions.class);

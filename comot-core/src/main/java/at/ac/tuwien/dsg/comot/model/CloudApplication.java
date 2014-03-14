@@ -1,6 +1,8 @@
 package at.ac.tuwien.dsg.comot.model;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author omoser
@@ -11,7 +13,6 @@ public class CloudApplication extends AbstractServiceDescriptionEntity {
 
     CloudApplication(String id) {
         super(id);
-        context.put(id, this);
     }
 
     public static CloudApplication CloudApplication(String id) {

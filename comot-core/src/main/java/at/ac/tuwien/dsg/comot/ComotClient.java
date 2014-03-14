@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
- * Created by omoser on 2/28/14.
+ * @author omoser
  */
 public class ComotClient {
 

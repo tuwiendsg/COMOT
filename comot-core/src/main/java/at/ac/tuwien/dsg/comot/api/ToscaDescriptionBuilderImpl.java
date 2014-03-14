@@ -31,21 +31,23 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
             TServiceTemplate tServiceTemplate = getTServiceTemplate(serviceTemplate.getId());
             context.put(tServiceTemplate.getId(), tServiceTemplate);
 
-            if (serviceTemplate.hasConstraints()) {
-                tServiceTemplate.setBoundaryDefinitions(new TBoundaryDefinitions().withPolicies(getPolicies(serviceTemplate)));
+            TBoundaryDefinitions boundaryDefinitions = new TBoundaryDefinitions();
+            tServiceTemplate.setBoundaryDefinitions(boundaryDefinitions);
+            List<TPolicy> tPolicies = new ArrayList<>();
+            if (serviceTemplate.hasConstraints() || serviceTemplate.hasStrategies()) {
+                tPolicies.addAll(getConstraintPolicies(serviceTemplate));
+                tPolicies.addAll(getStrategyPolicies(serviceTemplate));
+                boundaryDefinitions.setPolicies(new TBoundaryDefinitions.Policies().withPolicy(tPolicies));
             }
 
             if (serviceTemplate.hasRequirements()) {
-                // todo add requirements
+                boundaryDefinitions.setRequirements(getRequirements(serviceTemplate));
             }
 
             if (serviceTemplate.hasCapabilities()) {
-                // todo add capabilities
+                boundaryDefinitions.setCapabilities(getCapabilities(serviceTemplate));
             }
 
-            if (serviceTemplate.hasStrategies()) {
-                // todo add strategies
-            }
 
             tServiceTemplates.add(tServiceTemplate);
 
@@ -60,15 +62,15 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
             List<TNodeTemplate> tNodeTemplates = new ArrayList<>();
             for (ServiceNode node : topology.getServiceNodes()) {
                 TNodeTemplate tNodeTemplate = new TNodeTemplate()
-                                        .withId(node.getId())
-                                        .withName(node.getName())
-                                        .withType(new QName(node.getType()))
-                                        .withMinInstances(node.getMinInstances())
-                                        .withMaxInstances(String.valueOf(node.getMinInstances()))
-                                        .withCapabilities(getCapabilities(node))
-                                        .withRequirements(getRequirements(node))
-                                        .withPolicies(getPolicies(node))
-                                        .withProperties(getProperties(node));
+                        .withId(node.getId())
+                        .withName(node.getName())
+                        .withType(new QName(node.getType()))
+                        .withMinInstances(node.getMinInstances())
+                        .withMaxInstances(String.valueOf(node.getMinInstances()))
+                        .withCapabilities(getCapabilities(node))
+                        .withRequirements(getRequirements(node))
+                        .withPolicies(getPolicies(node))
+                        .withProperties(getProperties(node));
 
                 context.put(tNodeTemplate.getId(), tNodeTemplate);
                 tNodeTemplates.add(tNodeTemplate);
@@ -82,12 +84,12 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
         }
 
 
-        // resolve unresolved relationships
+        // resolve unresolved relationships, throw exception if there are still unresolved entities
         if (!unresolvedRelationships.isEmpty()) {
             for (Map.Entry<EntityRelationship, TTopologyTemplate> unresolvedRelationship : unresolvedRelationships.entrySet()) {
                 EntityRelationship entityRelationship = unresolvedRelationship.getKey();
                 TTopologyTemplate tTopologyTemplate = unresolvedRelationship.getValue();
-                TRelationshipTemplate tRelationshipTemplate = buildTRelationshipTemplate(entityRelationship);
+                TRelationshipTemplate tRelationshipTemplate = buildTRelationshipTemplate(entityRelationship, true);
                 tTopologyTemplate.getNodeTemplateOrRelationshipTemplate().add(tRelationshipTemplate);
             }
 
@@ -97,8 +99,18 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
 
     }
 
+    // todo implement getCapabilities(ServiceTemplate)
+    private TBoundaryDefinitions.Capabilities getCapabilities(ServiceTemplate serviceTemplate) {
+        return new TBoundaryDefinitions.Capabilities();
+    }
 
-    private TRelationshipTemplate buildTRelationshipTemplate(EntityRelationship relationship) {
+    // todo implement getRequirements(ServiceTemplate)
+    private TBoundaryDefinitions.Requirements getRequirements(ServiceTemplate serviceTemplate) {
+        return new TBoundaryDefinitions.Requirements();
+    }
+
+
+    private TRelationshipTemplate buildTRelationshipTemplate(EntityRelationship relationship, boolean throwOnMissingRelationship) {
         CloudEntity from = relationship.getFrom();
         CloudEntity to = relationship.getTo();
 
@@ -116,6 +128,9 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
             log.warn("Either source or target of EntiyRelationship {} is not available: source: {} target: {}",
                     relationship, source, target);
 
+            if (throwOnMissingRelationship) {
+                throw new IllegalStateException("Cannot resolve source or target element for relationship");
+            }
             return null; // todo might be better to throw exception
         }
     }
@@ -123,7 +138,7 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
     private List<TRelationshipTemplate> extractRelationships(ServiceTopology topology, TTopologyTemplate tTopologyTemplate) {
         List<TRelationshipTemplate> relationshipTemplates = new ArrayList<>();
         for (EntityRelationship relationship : topology.getRelationships()) {
-            TRelationshipTemplate template = buildTRelationshipTemplate(relationship);
+            TRelationshipTemplate template = buildTRelationshipTemplate(relationship, false);
             if (template != null) {
                 relationshipTemplates.add(template);
             } else {
@@ -146,45 +161,97 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
 
     // todo implement
     private TEntityTemplate.Properties getProperties(ServiceNode node) {
+
         return new TEntityTemplate.Properties();
     }
 
     // todo implement
     private TNodeTemplate.Policies getPolicies(ServiceNode node) {
-        return new TNodeTemplate.Policies();
+        List<TPolicy> tPolicies = new ArrayList<>();
+        addConstraintsToNodeTemplate(node, tPolicies);
+        addStrategiesToNodeTemplate(node, tPolicies);
+        return new TNodeTemplate.Policies().withPolicy(tPolicies);
+    }
+
+    private void addStrategiesToNodeTemplate(ServiceNode node, List<TPolicy> tPolicies) {
+        for (Strategy strategy : node.getStrategies()) {
+            TPolicy tPolicy = new TPolicy()
+                    .withPolicyType(new QName(strategy.getStrategyConstraintType().toString()))
+                    .withName(strategy.render());
+            tPolicies.add(tPolicy);
+        }
+    }
+
+    private void addConstraintsToNodeTemplate(ServiceNode node, List<TPolicy> tPolicies) {
+        for (Constraint constraint : node.getConstraints()) {
+            TPolicy tPolicy = new TPolicy()
+                    .withPolicyType(new QName(constraint.getType()))
+                    .withName(constraint.render());
+            tPolicies.add(tPolicy);
+        }
     }
 
     // todo implement
     private TNodeTemplate.Requirements getRequirements(ServiceNode node) {
-        return new TNodeTemplate.Requirements();
+        Collection<TRequirement> requirements = new ArrayList<>();
+        for (Requirement requirement : node.getRequirements()) {
+            TRequirement tRequirement = new TRequirement()
+                    .withId(requirement.getId())
+                    .withName(requirement.getName())
+                    .withType(new QName(requirement.getType()));
+
+            context.put(tRequirement.getId(), tRequirement);
+            requirements.add(tRequirement);
+        }
+
+        return new TNodeTemplate.Requirements().withRequirement(requirements);
     }
 
     private TNodeTemplate.Capabilities getCapabilities(ServiceNode node) {
         Collection<TCapability> capabilities = new ArrayList<>();
         for (Capability capability : node.getCapabilities()) {
-            capabilities.add(new TCapability()
+            TCapability tCapability = new TCapability()
                     .withName(capability.getName())
                     .withId(capability.getId())
-                    .withType(new QName(capability.getType()))
-            );
+                    .withType(new QName(capability.getType()));
+
+            context.put(tCapability.getId(), tCapability);
+            capabilities.add(tCapability);
         }
 
         return new TNodeTemplate.Capabilities().withCapability(capabilities);
     }
 
 
-
-    private TBoundaryDefinitions.Policies getPolicies(ServiceTemplate serviceTemplate) {
+    private List<TPolicy> getConstraintPolicies(ServiceTemplate serviceTemplate) {
         List<TPolicy> policies = new ArrayList<>();
         for (Constraint constraint : serviceTemplate.getConstraints()) {
-            policies.add(new TPolicy()
+            TPolicy tPolicy = new TPolicy()
                     .withName(constraint.render())
-                    .withPolicyType(new QName(constraint.getConstraintType().toString()))
-            );
+                    .withPolicyType(new QName(constraint.getType()));
+
+
+            policies.add(tPolicy);
         }
 
-        return new TBoundaryDefinitions.Policies().withPolicy(policies);
+        return policies;
     }
+
+
+    private List<TPolicy> getStrategyPolicies(ServiceTemplate serviceTemplate) {
+        List<TPolicy> policies = new ArrayList<>();
+        for (Strategy strategy : serviceTemplate.getStrategies()) {
+            TPolicy tPolicy = new TPolicy()
+                    .withName(strategy.render())
+                    .withPolicyType(new QName(strategy.getType()));
+
+            policies.add(tPolicy);
+
+        }
+
+        return policies;
+    }
+
 
     private Definitions buildTDefinitions(CloudApplication application) {
         Definitions definitions = new Definitions();
