@@ -69,7 +69,7 @@ ServiceNode cassandraHeadNode = SingleSoftwareNode("CassandraHead")
     .withName("Cassandra head node (single instance)")
     .provides(Capability.Variable("CassandraHeadIP_capa").withName("Data controller IP"))
     .deployedBy(SingleScriptArtifactTemplate("deployCassandraHead","http://void.org/salsa/deploy.sh"))
-    .constrainedBy(LatencyConstraint("Co1").should(LessThan).value("0.5")
+    .constrainedBy(LatencyConstraint("Co1").lessThan("0.5")
 );
     
 OperatingSystemNode cassandraHeadOsNode = OperatingSystemNode("OS_Headnode")
@@ -79,7 +79,7 @@ OperatingSystemNode cassandraHeadOsNode = OperatingSystemNode("OS_Headnode")
 );    
     
 ServiceTemplate daaSService = ServiceTemplate("DaasService")
-    .constrainedBy(CostConstraint("CG0").should(LessThan).value("1000"))
+    .constrainedBy(CostConstraint("CG0").lessThan("1000"))
     .definedBy(ServiceTopology("DaasTopology")
         .consistsOfNodes(cassandraHeadNode,cassandraHeadOsNode)
         .andRelationships(HostedOnRelation("data2os").from(cassandraHeadNode).to(cassandraHeadOsNode)
