@@ -88,6 +88,12 @@ ServiceTemplate daaSService = ServiceTemplate("DaasService")
     
 ```
 
+## Build Server and Code Metrics
+We are using Jenkins and Sonar for automatic builds and code metrics.
+
+Our Jenkins installation is available [here](http://jenkins.infosys.tuwien.ac.at/)
+For our Sonar installation, click [here](http://sonar.infosys.tuwien.ac.at/)
+
 
 ## More information
 
