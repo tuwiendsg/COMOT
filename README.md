@@ -73,7 +73,7 @@ ServiceNode cassandraHeadNode = SingleSoftwareNode("CassandraHead")
 );
     
 OperatingSystemNode cassandraHeadOsNode = OperatingSystemNode("OS_Headnode")
-    .specifiedBy(OpenstackSmall("OS_Headnode_Small")
+    .providedBy(OpenstackSmall("OS_Headnode_Small")
         .withProvider("dsg@openstack")
         .addSoftwarePackage("openjdk-7-jre")  
 );    
