@@ -97,4 +97,4 @@ For our Sonar installation, click [here](http://sonar.infosys.tuwien.ac.at/)
 
 ## More information
 
-Coming soon.
+Coming soon. In the mean while check the [Wiki](https://github.com/tuwiendsg/COMOT) for more information.
