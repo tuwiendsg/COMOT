@@ -65,11 +65,6 @@ public class CloudApplication extends AbstractServiceDescriptionEntity {
     }
 
     @Override
-    public CloudApplication withType(String type) {
-        return (CloudApplication) super.withType(type);
-    }
-
-    @Override
     public CloudApplication ofType(String type) {
         return (CloudApplication) super.ofType(type);
     }

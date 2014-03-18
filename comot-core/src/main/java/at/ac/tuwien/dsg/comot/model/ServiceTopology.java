@@ -76,11 +76,6 @@ public class ServiceTopology extends AbstractServiceDescriptionEntity {
     }
 
     @Override
-    public AbstractCloudEntity withType(String type) {
-        return super.withType(type);
-    }
-
-    @Override
     public AbstractCloudEntity ofType(String type) {
         return super.ofType(type);
     }

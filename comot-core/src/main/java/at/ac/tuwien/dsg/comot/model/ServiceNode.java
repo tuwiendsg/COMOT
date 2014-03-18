@@ -9,9 +9,11 @@ import java.util.Set;
  */
 public class ServiceNode extends AbstractServiceDescriptionEntity {
 
-    private int minInstances;
+    public static final int DEFAULT_INSTANCES = 1;
 
-    private int maxInstances;
+    private int minInstances = DEFAULT_INSTANCES;
+
+    private int maxInstances = DEFAULT_INSTANCES;
 
     private Set<ArtifactTemplate> deploymentArtifacts = new HashSet<>();
 
@@ -101,11 +103,6 @@ public class ServiceNode extends AbstractServiceDescriptionEntity {
     @Override
     public ServiceNode withName(String name) {
         return (ServiceNode) super.withName(name);
-    }
-
-    @Override
-    public ServiceNode withType(String type) {
-        return (ServiceNode) super.withType(type);
     }
 
     @Override

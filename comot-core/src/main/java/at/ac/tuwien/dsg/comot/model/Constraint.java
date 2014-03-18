@@ -67,6 +67,12 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
         return this;
     }
 
+    public Constraint equalsTo(String value) {
+        this.operator = Operator.Equals;
+        this.value = value;
+        return this;
+    }
+
     @Override
     public Constraint withId(String id) {
         return (Constraint) super.withId(id);
@@ -82,19 +88,12 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
         return (Constraint) super.withName(name);
     }
 
-    @Override
-    public Constraint withType(String type) {
-        return (Constraint) super.withType(type);
-    }
 
     @Override
     public Constraint ofType(String type) {
         return (Constraint) super.ofType(type);
     }
 
-    public Constraint withType(ConstraintType type) {
-        return ofType(type);
-    }
 
     public Constraint ofType(ConstraintType type) {
         return (Constraint) super.ofType(type.toString());

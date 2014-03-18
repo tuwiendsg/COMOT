@@ -67,11 +67,6 @@ public class ServiceTemplate extends AbstractServiceDescriptionEntity {
     }
 
     @Override
-    public ServiceTemplate withType(String type) {
-        return (ServiceTemplate) super.withType(type);
-    }
-
-    @Override
     public ServiceTemplate ofType(String type) {
         return (ServiceTemplate) super.ofType(type);
     }

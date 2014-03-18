@@ -65,15 +65,6 @@ public class ArtifactTemplate extends AbstractCloudEntity {
     }
 
     @Override
-    public ArtifactTemplate withType(String type) {
-        return (ArtifactTemplate) super.withType(type);
-    }
-
-    public ArtifactTemplate withType(ArtifactType type) {
-        return (ArtifactTemplate) super.withType(type.toString());
-    }
-
-    @Override
     public ArtifactTemplate ofType(String type) {
         return (ArtifactTemplate) super.ofType(type);
     }

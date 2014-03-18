@@ -49,11 +49,11 @@ public class Capability extends AbstractCloudEntity {
         return this;
     }
 
-    @Override
+    /*@Override
     public Capability withType(final String type) {
         this.type = type;
         return this;
-    }
+    }*/
 
     @Override
     public Capability withDescription(final String description) {

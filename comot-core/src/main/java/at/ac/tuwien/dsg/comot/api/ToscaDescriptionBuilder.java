@@ -10,5 +10,7 @@ public interface ToscaDescriptionBuilder {
 
     TDefinitions buildToscaDefinitions(CloudApplication application) throws Exception;
 
+    String toXml(CloudApplication application) throws Exception;
+
 
 }

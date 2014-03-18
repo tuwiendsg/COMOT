@@ -39,11 +39,6 @@ public class ArtifactReference extends AbstractCloudEntity {
     }
 
     @Override
-    public ArtifactReference withType(String type) {
-        return (ArtifactReference) super.withType(type);
-    }
-
-    @Override
     public ArtifactReference ofType(String type) {
         return (ArtifactReference) super.ofType(type);
     }

@@ -44,20 +44,11 @@ public class Requirement extends AbstractCloudEntity {
     }
 
     @Override
-    public Requirement withType(String type) {
-        return (Requirement) super.withType(type);
-    }
-
-    @Override
     public Requirement ofType(String type) {
         return (Requirement) super.ofType(type);
     }
 
-    public Requirement withType(RequirementType type) {
-        return (Requirement) super.withType(type.toString());
-    }
-
     public Requirement ofType(RequirementType type) {
-        return withType(type);
+        return ofType(type.toString());
     }
 }

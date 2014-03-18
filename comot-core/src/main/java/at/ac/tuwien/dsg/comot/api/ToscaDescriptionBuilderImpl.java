@@ -6,13 +6,18 @@ import com.google.common.base.Joiner;
 import org.oasis.tosca.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
+import java.io.StringWriter;
 import java.util.*;
 
 /**
  * @author omoser
  */
+@Component
 public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(ToscaDescriptionBuilderImpl.class);
@@ -65,7 +70,7 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
                         .withName(node.getName())
                         .withType(new QName(node.getType()))
                         .withMinInstances(node.getMinInstances())
-                        .withMaxInstances(String.valueOf(node.getMinInstances()))
+                        .withMaxInstances(String.valueOf(node.getMaxInstances()))
                         .withCapabilities(getCapabilities(node))
                         .withRequirements(getRequirements(node))
                         .withPolicies(getPolicies(node))
@@ -86,7 +91,6 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
         // add deployment artifacts
 
 
-
         // resolve unresolved relationships, throw exception if there are still unresolved entities
         if (!unresolvedRelationships.isEmpty()) {
             for (Map.Entry<EntityRelationship, TTopologyTemplate> unresolvedRelationship : unresolvedRelationships.entrySet()) {
@@ -102,6 +106,18 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
 
     }
 
+    @Override
+    public String toXml(CloudApplication application) throws Exception {
+        TDefinitions tDefinitions = new ToscaDescriptionBuilderImpl().buildToscaDefinitions(application);
+        JAXBContext jaxbContext = JAXBContext.newInstance(TDefinitions.class, SalsaMappingProperties.class);
+        Marshaller marshaller = jaxbContext.createMarshaller();
+        StringWriter writer = new StringWriter();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+        marshaller.marshal(tDefinitions, writer);
+        return writer.toString();
+    }
+
     private void handleDeploymentArtifacts(ServiceNode node, TNodeTemplate tNodeTemplate, Definitions definitions) {
         TDeploymentArtifacts tDeploymentArtifacts = new TDeploymentArtifacts();
         for (ArtifactTemplate artifact : node.getDeploymentArtifacts()) {
@@ -109,7 +125,6 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
             TArtifactTemplate tArtifactTemplate = new TArtifactTemplate()
                     .withId(artifact.getId())
                     .withType(new QName(artifact.getType()));
-
 
 
             definitions.getServiceTemplateOrNodeTypeOrNodeTypeImplementation().add(tArtifactTemplate);
@@ -129,7 +144,7 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
             }
 
             tArtifactTemplate.setArtifactReferences(new TArtifactTemplate.ArtifactReferences()
-                    .withArtifactReference(tArtifactReferences)
+                            .withArtifactReference(tArtifactReferences)
             );
 
         }
@@ -210,7 +225,7 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
             OperatingSystemNode osNode = (OperatingSystemNode) node;
             OperatingSystemSpecification specification = osNode.getSpecification();
             SalsaMappingProperties salsaMappingProperties = new SalsaMappingProperties();
-            Map<String,String> osProperties = new HashMap();
+            Map<String, String> osProperties = new HashMap();
             osProperties.put("instanceType", specification.getInstanceType());
             osProperties.put("provider", specification.getProvider());
             osProperties.put("baseImage", specification.getBaseImage());

@@ -15,7 +15,7 @@ public class OperatingSystemNode extends ServiceNode {
         return new OperatingSystemNode(id).ofType(NodeType.OperatingSystem);
     }
 
-    public OperatingSystemNode specifiedBy(OperatingSystemSpecification specification) {
+    public OperatingSystemNode providedBy(OperatingSystemSpecification specification) {
         this.specification = specification;
         return this;
     }
@@ -64,10 +64,6 @@ public class OperatingSystemNode extends ServiceNode {
         return (OperatingSystemNode) super.withName(name);
     }
 
-    @Override
-    public OperatingSystemNode withType(String type) {
-        return (OperatingSystemNode) super.withType(type);
-    }
 
     @Override
     public OperatingSystemNode ofType(String type) {

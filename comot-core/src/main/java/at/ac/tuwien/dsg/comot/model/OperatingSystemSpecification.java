@@ -71,11 +71,6 @@ public class OperatingSystemSpecification extends AbstractCloudEntity {
         return (OperatingSystemSpecification) super.ofType(type);
     }
 
-    @Override
-    public OperatingSystemSpecification withType(String type) {
-        return (OperatingSystemSpecification) super.ofType(type);
-    }
-
     public OperatingSystemSpecification ofType(ServiceNode.NodeType type) {
         return (OperatingSystemSpecification) super.ofType(type.toString());
     }
