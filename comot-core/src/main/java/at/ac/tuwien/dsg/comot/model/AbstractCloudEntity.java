@@ -60,11 +60,6 @@ public abstract class AbstractCloudEntity implements CloudEntity {
         return this;
     }
 
-    /*public AbstractCloudEntity withType(final String type) {
-        this.type = type;
-        return this;
-    }*/
-
     public AbstractCloudEntity ofType(final String type) {
         this.type = type;
         return this;
