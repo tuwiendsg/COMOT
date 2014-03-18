@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.List;
+
 import static at.ac.tuwien.dsg.comot.model.ArtifactTemplate.SingleScriptArtifactTemplate;
 import static at.ac.tuwien.dsg.comot.model.CloudApplication.CloudApplication;
 import static at.ac.tuwien.dsg.comot.model.CommonOperatingSystemSpecification.OpenstackSmall;
@@ -18,12 +20,14 @@ import static at.ac.tuwien.dsg.comot.model.Constraint.*;
 import static at.ac.tuwien.dsg.comot.model.Constraint.Operator.LessThan;
 import static at.ac.tuwien.dsg.comot.model.EntityRelationship.ConnectToRelation;
 import static at.ac.tuwien.dsg.comot.model.EntityRelationship.HostedOnRelation;
+import static at.ac.tuwien.dsg.comot.model.EntityRelationship.RelationshipType.ConnectedTo;
+import static at.ac.tuwien.dsg.comot.model.EntityRelationship.RelationshipType.HostedOn;
 import static at.ac.tuwien.dsg.comot.model.OperatingSystemNode.*;
 import static at.ac.tuwien.dsg.comot.model.ServiceTemplate.ServiceTemplate;
 import static at.ac.tuwien.dsg.comot.model.ServiceTopology.ServiceTopology;
 import static at.ac.tuwien.dsg.comot.model.Strategy.Action;
 import static at.ac.tuwien.dsg.comot.model.Strategy.Strategy;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * @author omoser
@@ -35,16 +39,12 @@ public class ModelTest {
     @Autowired
     ToscaDescriptionBuilder builder;
 
-    static volatile String cloudApplicationXmlModel;
+    static String cloudApplicationXmlModel;
 
     @Before
     public void setupModel() throws Exception {
         if (cloudApplicationXmlModel == null) {
-            synchronized (this) {
-                if (cloudApplicationXmlModel == null) {
-                    cloudApplicationXmlModel = builder.toXml(buildCloudApplication());
-                }
-            }
+            cloudApplicationXmlModel = builder.toXml(buildCloudApplication());
         }
     }
 
@@ -91,6 +91,83 @@ public class ModelTest {
         Node nodeCapability = nodeCapabilities.get("Capability");
         assertEquals("CassandraHeadIP_capa", nodeCapability.getAttribute("id"));
         assertEquals(CapabilityType.Variable.toString(), nodeCapability.getAttribute("type"));
+    }
+
+    @Test
+    public void checkOsHeadNode() {
+        checkOsNode("OS_Headnode", "1", "1");
+    }
+
+    @Test
+    public void checkOsDataNode() {
+        checkOsNode("OS_Datanode", "1", "1");
+    }
+
+    @Test
+    public void checkHead2DataNodeRelationshipTemplate() {
+        checkRelationshipTemplate("head2datanode", ConnectedTo.toString(), "CassandraHeadIP_capa", "CassandraHeadIP_req");
+    }
+
+    @Test
+    public void checkData2OsNodeRelationshipTemplate() {
+        checkRelationshipTemplate("data2os", HostedOn.toString(), "CassandraHead", "OS_Headnode");
+    }
+
+    @Test
+    public void checkController2OsNodeRelationshipTemplate() {
+        checkRelationshipTemplate("controller2os", HostedOn.toString(), "CassandraNode", "OS_Datanode");
+    }
+
+    private void checkRelationshipTemplate(String templateId, String type, String source, String target) {
+        XmlPath xmlPath = XmlPath.from(cloudApplicationXmlModel);
+        String nodeRoot = "Definitions.ServiceTemplate.TopologyTemplate.RelationshipTemplate.findAll{ it.@id == '" + templateId + "'}";
+        Node relationshipTemplate = xmlPath.get(nodeRoot);
+        assertNotNull(relationshipTemplate);
+        assertEquals(templateId, relationshipTemplate.getAttribute("id"));
+        assertEquals(type, relationshipTemplate.getAttribute("type"));
+
+        Node sourceElement = relationshipTemplate.getNode("SourceElement");
+        assertEquals(source, sourceElement.getAttribute("ref"));
+
+        Node targetElement = relationshipTemplate.getNode("TargetElement");
+        assertEquals(target, targetElement.getAttribute("ref"));
+    }
+
+
+    private void checkOsNode(String nodeId, String minInstances, String maxInstances) {
+        XmlPath xmlPath = XmlPath.from(cloudApplicationXmlModel);
+        String nodeRoot = "Definitions.ServiceTemplate.TopologyTemplate.NodeTemplate.findAll{ it.@id == '" + nodeId + "'}";
+        Node nodeTemplate = xmlPath.get(nodeRoot);
+        assertEquals(NodeType.OperatingSystem.toString(), nodeTemplate.getAttribute("type"));
+        assertEquals(nodeId, nodeTemplate.getAttribute("id"));
+        assertEquals(minInstances, nodeTemplate.getAttribute("minInstances"));
+        assertEquals(maxInstances, nodeTemplate.getAttribute("maxInstances"));
+
+        Node nodeProperties = xmlPath.setRoot(nodeRoot).get("Properties[0]");
+        Node mappingProperties = nodeProperties.get("MappingProperties");
+        Node mappingProperty = mappingProperties.get("MappingProperty");
+        assertNotNull(mappingProperty);
+        assertEquals("os", mappingProperty.getAttribute("type"));
+        List<Node> properties = mappingProperty.getNodes("property");
+        for (Node property : properties) {
+            String name = property.getAttribute("name");
+            switch (name) {
+                case "instanceType":
+                    assertEquals("m1.small", property.value());
+                    break;
+                case "provider":
+                    assertEquals("dsg@openstack", property.value());
+                    break;
+                case "baseImage":
+                    assertEquals("ami-00000163", property.value());
+                    break;
+                case "packages":
+                    assertEquals("openjdk-7-jre", property.value());
+                    break;
+                default:
+                    fail("Unexpected name: " + name);
+            }
+        }
     }
 
 
