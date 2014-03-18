@@ -1,8 +1,8 @@
 # What is COMOT?
 
-COMOT provides an easy to use integration layer for managing various aspects of Cloud applications. In particular, COMOT relies on [SALSA](https://github.com/tuwiendsg/SALSA) for Cloud application deployment, [MELA](https://github.com/tuwiendsg/MELA) for Cloud application monitoring as well as [rSYBL](https://github.com/tuwiendsg/SALSA) for analyzing Cloud application behaviour and adaptation.
+COMOT provides an easy to use integration layer for managing various aspects of Cloud applications. In particular, COMOT relies on [SALSA](https://github.com/tuwiendsg/SALSA) for bootstrapping Cloud applications, [MELA](https://github.com/tuwiendsg/MELA) for Cloud application monitoring as well as [rSYBL](https://github.com/tuwiendsg/SALSA) for analyzing Cloud application behaviour and adaptation.
 
-SALSA, MELA and rSYBL use [TOSCA](https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=tosca) - an OASIS approved standard for describing the topology and orchestation of Cloud applications - for defining Cloud application. As an example, consider the folling TOSCA definition fragment:
+SALSA, MELA and rSYBL use [TOSCA](https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=tosca) - an OASIS approved standard for describing the topology and orchestration of Cloud applications - for defining Cloud application. As an example, consider the folling TOSCA definition fragment:
 
 ```xml
 <tosca:ServiceTemplate id="DaaSService">
