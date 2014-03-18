@@ -73,7 +73,7 @@ ServiceNode cassandraHeadNode = SingleSoftwareNode("CassandraHead")
 );
     
 OperatingSystemNode cassandraHeadOsNode = OperatingSystemNode("OS_Headnode")
-    .specifiedBy(OpenstackSmall("OS_Headnode_Small")
+    .providedBy(OpenstackSmall("OS_Headnode_Small")
         .withProvider("dsg@openstack")
         .addSoftwarePackage("openjdk-7-jre")  
 );    
@@ -87,6 +87,12 @@ ServiceTemplate daaSService = ServiceTemplate("DaasService")
 );
     
 ```
+
+## Build Server and Code Metrics
+We are using Jenkins and Sonar for automatic builds and code metrics.
+
+Our Jenkins installation is available [here](http://jenkins.infosys.tuwien.ac.at/)
+For our Sonar installation, click [here](http://sonar.infosys.tuwien.ac.at/)
 
 
 ## More information
