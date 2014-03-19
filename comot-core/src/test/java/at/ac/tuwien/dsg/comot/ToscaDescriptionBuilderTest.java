@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  */
 @ContextConfiguration(classes = {ComotContext.class})
 @RunWith(SpringJUnit4ClassRunner.class)
-public class ModelTest {
+public class ToscaDescriptionBuilderTest {
 
     @Autowired
     ToscaDescriptionBuilder builder;
