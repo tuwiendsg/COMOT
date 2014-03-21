@@ -1,0 +1,57 @@
+package at.ac.tuwien.dsg.comot.client;
+
+/**
+ * @author omoser
+ */
+public class SalsaResponse {
+
+    private int code;
+
+    private String message;
+
+    private int expectedCode;
+
+    public SalsaResponse() {
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public int getExpectedCode() {
+        return expectedCode;
+    }
+
+    public SalsaResponse(int code, String message) {
+        this.code = code;
+        this.message = message;
+    }
+
+    public SalsaResponse withExpectedCode(final int expectedCode) {
+        this.expectedCode = expectedCode;
+        return this;
+    }
+
+    public SalsaResponse withCode(final int code) {
+        this.code = code;
+        return this;
+    }
+
+    public SalsaResponse withMessage(final String message) {
+        this.message = message;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "SalsaResponse{" +
+                "code=" + code +
+                ", message='" + message + '\'' +
+                ", expectedCode=" + expectedCode +
+                '}';
+    }
+}

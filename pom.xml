@@ -20,6 +20,8 @@
         <module>comot-core</module>
         <module>comot-client</module>
         <module>comot-tosca</module>
+        <module>comot-common</module>
+        <module>comot-samples</module>
     </modules>
 
     <dependencies>

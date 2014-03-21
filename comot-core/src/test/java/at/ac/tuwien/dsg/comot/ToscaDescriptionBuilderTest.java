@@ -1,7 +1,10 @@
 package at.ac.tuwien.dsg.comot;
 
 import at.ac.tuwien.dsg.comot.api.ToscaDescriptionBuilder;
-import at.ac.tuwien.dsg.comot.model.*;
+import at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate;
+import at.ac.tuwien.dsg.comot.common.model.CapabilityType;
+import at.ac.tuwien.dsg.comot.common.model.Requirement;
+import at.ac.tuwien.dsg.comot.samples.DataAsAServiceCloudApplication;
 import com.jayway.restassured.path.xml.XmlPath;
 import com.jayway.restassured.path.xml.element.Node;
 import org.junit.Before;
@@ -13,20 +16,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 
-import static at.ac.tuwien.dsg.comot.model.ArtifactTemplate.SingleScriptArtifactTemplate;
-import static at.ac.tuwien.dsg.comot.model.CloudApplication.CloudApplication;
-import static at.ac.tuwien.dsg.comot.model.CommonOperatingSystemSpecification.OpenstackSmall;
-import static at.ac.tuwien.dsg.comot.model.Constraint.*;
-import static at.ac.tuwien.dsg.comot.model.Constraint.Operator.LessThan;
-import static at.ac.tuwien.dsg.comot.model.EntityRelationship.ConnectToRelation;
-import static at.ac.tuwien.dsg.comot.model.EntityRelationship.HostedOnRelation;
-import static at.ac.tuwien.dsg.comot.model.EntityRelationship.RelationshipType.ConnectedTo;
-import static at.ac.tuwien.dsg.comot.model.EntityRelationship.RelationshipType.HostedOn;
-import static at.ac.tuwien.dsg.comot.model.OperatingSystemNode.*;
-import static at.ac.tuwien.dsg.comot.model.ServiceTemplate.ServiceTemplate;
-import static at.ac.tuwien.dsg.comot.model.ServiceTopology.ServiceTopology;
-import static at.ac.tuwien.dsg.comot.model.Strategy.Action;
-import static at.ac.tuwien.dsg.comot.model.Strategy.Strategy;
+import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.RelationshipType.ConnectedTo;
+import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.RelationshipType.HostedOn;
+import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemNode.NodeType;
 import static org.junit.Assert.*;
 
 /**
@@ -44,13 +36,13 @@ public class ToscaDescriptionBuilderTest {
     @Before
     public void setupModel() throws Exception {
         if (cloudApplicationXmlModel == null) {
-            cloudApplicationXmlModel = builder.toXml(buildCloudApplication());
+            cloudApplicationXmlModel = builder.toXml(DataAsAServiceCloudApplication.build());
+            System.out.println("Using the following cloud application for tests:  " + cloudApplicationXmlModel);
         }
     }
 
     @Test
     public void checkCassandraNode() throws Exception {
-        System.out.println(cloudApplicationXmlModel);
         XmlPath xmlPath = XmlPath.from(cloudApplicationXmlModel);
         String nodeRoot = "Definitions.ServiceTemplate.TopologyTemplate.NodeTemplate.findAll{ it.@id == 'CassandraNode'}";
         Node nodeTemplate = xmlPath.get(nodeRoot);
@@ -73,7 +65,6 @@ public class ToscaDescriptionBuilderTest {
 
     @Test
     public void checkCassandraHead() throws Exception {
-        System.out.println(cloudApplicationXmlModel);
         XmlPath xmlPath = XmlPath.from(cloudApplicationXmlModel);
         String nodeRoot = "Definitions.ServiceTemplate.TopologyTemplate.NodeTemplate.findAll{ it.@id == 'CassandraHead'}";
         Node nodeTemplate = xmlPath.get(nodeRoot);
@@ -170,88 +161,5 @@ public class ToscaDescriptionBuilderTest {
         }
     }
 
-
-    private CloudApplication buildCloudApplication() {
-
-        //
-        // Cassandra Head Node
-        //
-        ServiceNode cassandraHeadNode = SingleSoftwareNode("CassandraHead")
-                .withName("Cassandra head node (single instance)")
-                .provides(Capability.Variable("CassandraHeadIP_capa").withName("Data controller IP"))
-                .deployedBy(
-                        SingleScriptArtifactTemplate(
-                                "deployCassandraHead",
-                                "http://134.158.75.65/salsa/upload/files/daas/deployCassandraHead.sh")
-                )
-                .constrainedBy(LatencyConstraint("Co1").lessThan("0.5"));
-
-        //
-        // Cassandra Data Node
-        //
-        ServiceNode cassandraDataNode = UnboundedSoftwareNode("CassandraNode")
-                .withName("Cassandra data node (multiple instances)")
-                .deployedBy(
-                        SingleScriptArtifactTemplate(
-                                "deployCassandraNode",
-                                "http://134.158.75.65/salsa/upload/files/daas/deployCassandraNode.sh")
-                )
-                .requires(Requirement.Variable("CassandraHeadIP_req").withName("Connect to data controller"))
-                .constrainedBy(CpuUsageConstraint("Co3").lessThan("50"))
-                .controlledBy(
-                        Strategy("St2")
-                                .when(ResponseTimeConstraint("St2Co1").lessThan("300"))
-                                .and(ThroughputConstraint("St2Co2").lessThan("400"))
-                                .then(Action.ScaleIn)
-                );
-
-        //
-        // OS Head Node
-        //
-        OperatingSystemNode cassandraHeadOsNode = OperatingSystemNode("OS_Headnode")
-                .providedBy(
-                        OpenstackSmall("OS_Headnode_Small")
-                                .withProvider("dsg@openstack")
-                                .addSoftwarePackage("openjdk-7-jre")
-                );
-
-        //
-        // OS Data Node
-        //
-        OperatingSystemNode cassandraDataOsNode = OperatingSystemNode("OS_Datanode")
-                .providedBy(
-                        OpenstackSmall("OS_Datanode_Small")
-                                .withProvider("dsg@openstack")
-                                .addSoftwarePackage("openjdk-7-jre")
-                );
-
-
-        //
-        // Build containing DaaS service
-        //
-        ServiceTemplate daaSService = ServiceTemplate("DaasService")
-                .constrainedBy(CostConstraint("CG0").should(LessThan).value("1000"))
-                .definedBy(ServiceTopology("DaasTopology")
-                                .consistsOfNodes(
-                                        cassandraHeadNode,
-                                        cassandraDataNode,
-                                        cassandraDataOsNode,
-                                        cassandraHeadOsNode)
-                                .andRelationships(
-                                        ConnectToRelation("head2datanode")
-                                                .from(cassandraHeadNode.getContext().get("CassandraHeadIP_capa"))
-                                                .to(cassandraDataNode.getContext().get("CassandraHeadIP_req")),
-                                        HostedOnRelation("data2os")
-                                                .from(cassandraHeadNode)
-                                                .to(cassandraHeadOsNode),
-                                        HostedOnRelation("controller2os")
-                                                .from(cassandraDataNode)
-                                                .to(cassandraDataOsNode)
-                                )
-                );
-
-        return CloudApplication("DaaSApp").consistsOfServices(daaSService);
-    }
-
-
 }
+

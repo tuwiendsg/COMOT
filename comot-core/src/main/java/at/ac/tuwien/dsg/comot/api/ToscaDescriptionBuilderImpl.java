@@ -1,7 +1,7 @@
 package at.ac.tuwien.dsg.comot.api;
 
 import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties;
-import at.ac.tuwien.dsg.comot.model.*;
+import at.ac.tuwien.dsg.comot.common.model.*;
 import com.google.common.base.Joiner;
 import org.oasis.tosca.*;
 import org.slf4j.Logger;
