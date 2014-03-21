@@ -19,7 +19,7 @@ public class SalsaClientConfiguration {
 
     private int port = DEFAULT_PORT;
 
-    private String uri = DEFAULT_URI;
+    private String baseUri = DEFAULT_URI;
 
     private String deployUri = DEFAULT_DEPLOY_URI;
 
@@ -33,8 +33,8 @@ public class SalsaClientConfiguration {
         return port;
     }
 
-    public String getUri() {
-        return uri;
+    public String getBaseUri() {
+        return baseUri;
     }
 
 
@@ -46,8 +46,8 @@ public class SalsaClientConfiguration {
         this.port = port;
     }
 
-    public void setUri(String uri) {
-        this.uri = uri;
+    public void setBaseUri(String baseUri) {
+        this.baseUri = baseUri;
     }
 
     public void setDeployUri(String deployUri) {
@@ -58,8 +58,12 @@ public class SalsaClientConfiguration {
         this.unDeployUri = unDeployUri;
     }
 
-    public static String getDefaultDeployUri() {
-        return DEFAULT_DEPLOY_URI;
+    public String getDeployUri() {
+        return deployUri;
+    }
+
+    public String getUnDeployUri() {
+        return unDeployUri;
     }
 
     public SalsaClientConfiguration withHost(final String host) {
@@ -73,7 +77,7 @@ public class SalsaClientConfiguration {
     }
 
     public SalsaClientConfiguration withUri(final String uri) {
-        this.uri = uri;
+        this.baseUri = uri;
         return this;
     }
 
@@ -88,7 +92,7 @@ public class SalsaClientConfiguration {
         return "SalsaClientConfiguration{" +
                 "host='" + host + '\'' +
                 ", port=" + port +
-                ", uri='" + uri + '\'' +
+                ", baseUri='" + baseUri + '\'' +
                 '}';
     }
 

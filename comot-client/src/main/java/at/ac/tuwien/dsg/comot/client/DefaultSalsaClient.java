@@ -8,13 +8,17 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
+
+import static org.apache.http.entity.ContentType.APPLICATION_XML;
 
 /**
  * @author omoser
@@ -58,14 +62,25 @@ public class DefaultSalsaClient implements SalsaClient {
 
     @Override
     public SalsaResponse deploy(CloudApplication cloudApplication) throws Exception {
+        String toscaDescriptionXml = toscaDescriptionBuilder.toXml(cloudApplication);
+
         if (log.isDebugEnabled()) {
             log.debug(Markers.CLIENT, "Deploying cloud application '{}'", cloudApplication.getId());
             log.debug(Markers.CLIENT, "Using configuration '{}'", configuration);
+            log.debug(Markers.CLIENT, "TOSCA: {}", toscaDescriptionXml);
         }
 
-        String toscaDescriptionXml = toscaDescriptionBuilder.toXml(cloudApplication);
-        HttpPost method = new HttpPost(configuration.getUri());
-        method.setEntity(new StringEntity(toscaDescriptionXml));
+
+        HttpPost method = new HttpPost(configuration.getBaseUri() + configuration.getDeployUri());
+
+        StringBody toscaPart = new StringBody(toscaDescriptionXml, APPLICATION_XML.getMimeType(), Charset.forName("UTF-8"));
+        StringBody serviceNamePart = new StringBody(cloudApplication.getName());
+
+        MultipartEntity entity = new MultipartEntity();
+        entity.addPart("file", toscaPart);
+        entity.addPart("serviceName", serviceNamePart);
+
+        method.setEntity(entity);
         HttpHost endpoint = new HttpHost(configuration.getHost(), configuration.getPort());
 
         return handleResponse(httpClient.execute(endpoint, method), SalsaClientAction.DEPLOY);

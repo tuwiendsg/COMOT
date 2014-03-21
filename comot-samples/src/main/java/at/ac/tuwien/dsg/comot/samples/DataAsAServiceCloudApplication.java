@@ -99,6 +99,6 @@ public class DataAsAServiceCloudApplication {
                                 )
                 );
 
-        return CloudApplication("DaaSApp").consistsOfServices(daaSService);
+        return CloudApplication("DaaSApp").withName("DaaS Cloud Application").consistsOfServices(daaSService);
     }
 }
