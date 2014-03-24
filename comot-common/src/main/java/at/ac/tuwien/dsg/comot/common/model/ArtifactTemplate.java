@@ -12,7 +12,7 @@ public class ArtifactTemplate extends AbstractCloudEntity {
     private final Set<ArtifactReference> artifactReferences = new HashSet<>();
 
     public enum ArtifactType {
-        Script("tosca:script");
+        Script("script");
 
         private final String type;
 

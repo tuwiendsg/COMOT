@@ -113,7 +113,7 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
         Marshaller marshaller = jaxbContext.createMarshaller();
         StringWriter writer = new StringWriter();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+        //marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
         marshaller.marshal(tDefinitions, writer);
         return writer.toString();
     }
@@ -130,8 +130,8 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
             definitions.getServiceTemplateOrNodeTypeOrNodeTypeImplementation().add(tArtifactTemplate);
 
             TDeploymentArtifact tDeploymentArtifact = new TDeploymentArtifact()
-                    .withName(artifact.getId())
-                    .withArtifactType(new QName(artifact.getType()))
+                    //.withName(artifact.getId())
+                    .withArtifactType(new QName("http://void.org", artifact.getType(), "salsa")) // todo what to do here?
                     .withArtifactRef(new QName(tArtifactTemplate.getId()));
 
             TDeploymentArtifacts deploymentArtifacts = new TDeploymentArtifacts();
