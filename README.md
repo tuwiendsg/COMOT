@@ -108,8 +108,11 @@ We can deploy the CloudApplication definition from above using the SalsaClient l
 SalsaClient client = new DefaultSalsaClient();
 CloudApplication application = ... // build a cloud application following the sample from above
 SalsaResponse response = client.deploy(application);
+if (response.isExpected()) {
+  // everything is fine
+}
 String applicationId = response.getMessage();
-response = client.undeploy(applicationId);
+client.undeploy(applicationId); // ignoring response for brevity
 ```
 
 A SalsaClient is configured using a `SalsaClientConfiguration` instance. If you are using a default SALSA installation, there is not much to configure. COMOT defaults to localhost:8080/salsa. In any case you can access the client's configuration using `client.getConfiguration()`, which allows for adapting to custom SALSA installations (e.g., using a different base URL)
