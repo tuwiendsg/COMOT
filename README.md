@@ -85,8 +85,38 @@ ServiceTemplate daaSService = ServiceTemplate("DaasService")
         .andRelationships(HostedOnRelation("data2os").from(cassandraHeadNode).to(cassandraHeadOsNode)
     )
 );
+
+CloudApplication daasApplication = CloudApplication("DaaSApp")
+    .withName("DaaS Cloud Application").consistsOfServices(daaSService)
     
 ```
+
+## Using the SalsaClient
+
+COMOT provides a simple to use client for interacting with SALSA. It allows to use SALSA services without knowing the details of the various REST services that are used for managing a cloud applications lifecycle, such as deploying and undeploying the application. 
+
+The `SalsaClient` interface provides four basic methods:
+
+* `deploy(cloudApplication)` to deploy a new `CloudApplication` to SALSA
+* `undeploy(applicationId)` to undeploy a `CloudApplication` from SALSA using the ID assigned by SALSA during deployment
+* `spawn(applicationId, topologyId, nodeId, instanceCount)` adding additional instances of a particular node
+* `destroy(applicationId, topologyId, nodeId, instanceId)` removing a particular node instance
+
+We can deploy the CloudApplication definition from above using the SalsaClient like this:
+
+```java
+SalsaClient client = new DefaultSalsaClient();
+CloudApplication application = ... // build a cloud application following the sample from above
+SalsaResponse response = client.deploy(application);
+if (response.isExpected()) {
+  // everything is fine
+}
+String applicationId = response.getMessage();
+client.undeploy(applicationId); // ignoring response for brevity
+```
+
+A SalsaClient is configured using a `SalsaClientConfiguration` instance. If you are using a default SALSA installation, there is not much to configure. COMOT defaults to localhost:8080/salsa. In any case you can access the client's configuration using `client.getConfiguration()`, which allows for adapting to custom SALSA installations (e.g., using a different base URL)
+
 
 ## Build Server and Code Metrics
 We are using Jenkins and Sonar for automatic builds and code metrics.
