@@ -46,6 +46,10 @@ public class SalsaResponse {
         return this;
     }
 
+    public boolean isExpected() {
+        return expectedCode == code;
+    }
+
     @Override
     public String toString() {
         return "SalsaResponse{" +
