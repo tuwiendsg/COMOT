@@ -13,7 +13,11 @@ public class SalsaClientConfiguration {
 
     private static final String DEFAULT_DEPLOY_URI = "/deploy";
 
-    private static final String DEFAULT_UNDEPLOY_URI = "/undeploy";
+    private static final String DEFAULT_UNDEPLOY_URI = "/undeploy/{serviceId}";
+
+    private static final String DEFAULT_SPAWN_PATH = "/deployInstance/{serviceId}/{topologyId}/{nodeId}/{instanceCount}";
+
+    private static final String DEFAULT_DESTROY_PATH = "/undeployInstance/{serviceId}/{topologyId}/{nodeId}/{instanceId}";
 
     private String host = DEFAULT_HOST;
 
@@ -21,9 +25,13 @@ public class SalsaClientConfiguration {
 
     private String baseUri = DEFAULT_URI;
 
-    private String deployUri = DEFAULT_DEPLOY_URI;
+    private String deployPath = DEFAULT_DEPLOY_URI;
 
-    private String unDeployUri = DEFAULT_UNDEPLOY_URI;
+    private String undeployPath = DEFAULT_UNDEPLOY_URI;
+
+    private String spawnPath = DEFAULT_SPAWN_PATH;
+
+    private String destroyPath = DEFAULT_DESTROY_PATH;
 
     public String getHost() {
         return host;
@@ -42,6 +50,14 @@ public class SalsaClientConfiguration {
         this.host = host;
     }
 
+    public void setSpawnPath(String spawnPath) {
+        this.spawnPath = spawnPath;
+    }
+
+    public void setDestroyPath(String destroyPath) {
+        this.destroyPath = destroyPath;
+    }
+
     public void setPort(int port) {
         this.port = port;
     }
@@ -50,20 +66,20 @@ public class SalsaClientConfiguration {
         this.baseUri = baseUri;
     }
 
-    public void setDeployUri(String deployUri) {
-        this.deployUri = deployUri;
+    public void setDeployPath(String deployPath) {
+        this.deployPath = deployPath;
     }
 
-    public void setUnDeployUri(String unDeployUri) {
-        this.unDeployUri = unDeployUri;
+    public void setUndeployPath(String undeployPath) {
+        this.undeployPath = undeployPath;
     }
 
-    public String getDeployUri() {
-        return deployUri;
+    public String getDeployPath() {
+        return baseUri + deployPath;
     }
 
-    public String getUnDeployUri() {
-        return unDeployUri;
+    public String getUndeployPath() {
+        return baseUri + undeployPath;
     }
 
     public SalsaClientConfiguration withHost(final String host) {
@@ -82,9 +98,11 @@ public class SalsaClientConfiguration {
     }
 
     public SalsaClientConfiguration withDeployUri(final String deployUri) {
-        this.deployUri = deployUri;
+        this.deployPath = deployUri;
         return this;
     }
+
+
 
 
     @Override
@@ -96,4 +114,11 @@ public class SalsaClientConfiguration {
                 '}';
     }
 
+    public String getSpawnPath() {
+        return baseUri + spawnPath;
+    }
+
+    public String getDestroyPath() {
+        return baseUri + destroyPath;
+    }
 }

@@ -4,6 +4,8 @@ import at.ac.tuwien.dsg.comot.common.model.CloudApplication;
 import at.ac.tuwien.dsg.comot.samples.DataAsAServiceCloudApplication;
 import org.junit.Test;
 
+import static at.ac.tuwien.dsg.comot.client.SalsaClient.SalsaClientAction.DEPLOY;
+import static at.ac.tuwien.dsg.comot.client.SalsaClient.SalsaClientAction.UNDEPLOY;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -13,13 +15,20 @@ import static org.junit.Assert.assertEquals;
 public class SalsaClientTest {
 
     @Test
-    public void deployCloudApplicationAndCheckResponse() throws Exception {
-        SalsaClient client = new DefaultSalsaClient();
-        client.getConfiguration().setBaseUri("/rest");
+    public void deployAndUndeployCloudApplication() throws Exception {
+        SalsaClient client = buildSalsaClient();
         CloudApplication application = DataAsAServiceCloudApplication.build();
         SalsaResponse response = client.deploy(application);
-        assertEquals(SalsaClient.SalsaClientAction.DEPLOY.expectedResultCode(), response.getCode());
+        assertEquals(DEPLOY.expectedResultCode(), response.getCode());
+        String serviceId = response.getMessage();
+        response = client.undeploy(serviceId);
+        assertEquals(UNDEPLOY.expectedResultCode(), response.getCode());
     }
 
+    private SalsaClient buildSalsaClient() {
+        SalsaClient client = new DefaultSalsaClient();
+        client.getConfiguration().setBaseUri("/rest");
+        return client;
+    }
 
 }

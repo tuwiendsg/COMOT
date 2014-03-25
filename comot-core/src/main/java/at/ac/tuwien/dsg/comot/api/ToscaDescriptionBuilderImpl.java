@@ -130,7 +130,7 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
             definitions.getServiceTemplateOrNodeTypeOrNodeTypeImplementation().add(tArtifactTemplate);
 
             TDeploymentArtifact tDeploymentArtifact = new TDeploymentArtifact()
-                    //.withName(artifact.getId())
+                    .withName(artifact.getId())
                     .withArtifactType(new QName("http://void.org", artifact.getType(), "salsa")) // todo what to do here?
                     .withArtifactRef(new QName(tArtifactTemplate.getId()));
 
