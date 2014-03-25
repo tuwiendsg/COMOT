@@ -88,6 +88,17 @@ ServiceTemplate daaSService = ServiceTemplate("DaasService")
     
 ```
 
+## Using the SalsaClient
+
+COMOT provides a simple to use client for interacting with SALSA. It allows to use SALSA services without knowing the details of the various REST services that are used for managing a cloud applications lifecycle, such as deploying and undeploying the application. 
+
+The `SalsaClient` interface provides four basic methods:
+
+* `deploy(cloudApplication)` to deploy a new `CloudApplication` to SALSA
+* `undeploy(applicationId)` to undeploy a `CloudApplication` from SALSA using the ID assigned by SALSA during deployment
+* `spawn(applicationId, topologyId, nodeId, instanceCount)` adding additional instances of a particular node
+* `destroy(applicationId, topologyId, nodeId, instanceId)` removing a particular node instance
+
 ## Build Server and Code Metrics
 We are using Jenkins and Sonar for automatic builds and code metrics.
 
