@@ -25,13 +25,13 @@ public interface SalsaClient {
         }
     }
 
-    SalsaResponse deploy(CloudApplication cloudApplication) throws Exception;
+    SalsaResponse deploy(CloudApplication cloudApplication) throws SalsaClientException;
 
-    SalsaResponse undeploy(String serviceId) throws Exception;
+    SalsaResponse undeploy(String serviceId) throws SalsaClientException;
 
-    SalsaResponse spawn(String serviceId, String topologyId, String nodeId, int instanceCount) throws Exception;
+    SalsaResponse spawn(String serviceId, String topologyId, String nodeId, int instanceCount) throws SalsaClientException;
 
-    SalsaResponse destroy(String servId, String topologyId, String nodeId, String instanceId) throws Exception;
+    SalsaResponse destroy(String servId, String topologyId, String nodeId, String instanceId) throws SalsaClientException;
 
     SalsaClientConfiguration getConfiguration();
 

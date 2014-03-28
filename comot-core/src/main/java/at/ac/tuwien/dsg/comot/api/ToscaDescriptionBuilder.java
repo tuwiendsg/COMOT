@@ -8,9 +8,9 @@ import org.oasis.tosca.TDefinitions;
  */
 public interface ToscaDescriptionBuilder {
 
-    TDefinitions buildToscaDefinitions(CloudApplication application) throws Exception;
+    TDefinitions buildToscaDefinitions(CloudApplication application) throws ToscaDescriptionBuilderException;
 
-    String toXml(CloudApplication application) throws Exception;
+    String toXml(CloudApplication application) throws ToscaDescriptionBuilderException;
 
 
 }

@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot;
 
 import at.ac.tuwien.dsg.comot.api.ToscaDescriptionBuilder;
+import at.ac.tuwien.dsg.comot.api.ToscaDescriptionBuilderImpl;
 import at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate;
 import at.ac.tuwien.dsg.comot.common.model.CapabilityType;
 import at.ac.tuwien.dsg.comot.common.model.Requirement;
@@ -60,7 +61,7 @@ public class ToscaDescriptionBuilderTest {
         Node nodeDeploymentArtifacts = xmlPath.setRoot(nodeRoot).get("DeploymentArtifacts[0]");
         Node nodeDeploymentArtifact = nodeDeploymentArtifacts.get("DeploymentArtifact");
         assertEquals("deployCassandraNode", nodeDeploymentArtifact.getAttribute("name"));
-        assertEquals(ArtifactTemplate.ArtifactType.Script.toString(), nodeDeploymentArtifact.getAttribute("artifactType"));
+        assertEquals(buildExpectedScriptArtifactType(), nodeDeploymentArtifact.getAttribute("artifactType"));
     }
 
     @Test
@@ -76,12 +77,16 @@ public class ToscaDescriptionBuilderTest {
         Node nodeDeploymentArtifacts = xmlPath.setRoot(nodeRoot).get("DeploymentArtifacts[0]");
         Node nodeDeploymentArtifact = nodeDeploymentArtifacts.get("DeploymentArtifact");
         assertEquals("deployCassandraHead", nodeDeploymentArtifact.getAttribute("name"));
-        assertEquals(ArtifactTemplate.ArtifactType.Script.toString(), nodeDeploymentArtifact.getAttribute("artifactType"));
+        assertEquals(buildExpectedScriptArtifactType(), nodeDeploymentArtifact.getAttribute("artifactType"));
 
         Node nodeCapabilities = xmlPath.setRoot(nodeRoot).get("Capabilities[0]");
         Node nodeCapability = nodeCapabilities.get("Capability");
         assertEquals("CassandraHeadIP_capa", nodeCapability.getAttribute("id"));
         assertEquals(CapabilityType.Variable.toString(), nodeCapability.getAttribute("type"));
+    }
+
+    private String buildExpectedScriptArtifactType() {
+        return ToscaDescriptionBuilderImpl.DEFAULT_ARTIFACT_TYPE_PREFIX  + ":" + ArtifactTemplate.ArtifactType.Script.toString();
     }
 
     @Test

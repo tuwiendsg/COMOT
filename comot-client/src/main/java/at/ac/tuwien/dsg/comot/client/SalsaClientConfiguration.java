@@ -11,13 +11,13 @@ public class SalsaClientConfiguration {
 
     public static final String DEFAULT_URI = "/salsa";
 
-    private static final String DEFAULT_DEPLOY_URI = "/deploy";
+    private static final String DEFAULT_DEPLOY_URI = "/services/{serviceId}";
 
-    private static final String DEFAULT_UNDEPLOY_URI = "/undeploy/{serviceId}";
+    private static final String DEFAULT_UNDEPLOY_URI = "/services/{serviceId}";
 
-    private static final String DEFAULT_SPAWN_PATH = "/deployInstance/{serviceId}/{topologyId}/{nodeId}/{instanceCount}";
+    private static final String DEFAULT_SPAWN_PATH = "/services/{serviceId}/topologies/{topologyId}/nodes/{nodeId}/instance-count/{instanceCount}";
 
-    private static final String DEFAULT_DESTROY_PATH = "/undeployInstance/{serviceId}/{topologyId}/{nodeId}/{instanceId}";
+    private static final String DEFAULT_DESTROY_PATH = "/services/{serviceId}/topologies/{topologyId}/nodes/{nodeId}/instances/{instanceId}";
 
     private String host = DEFAULT_HOST;
 
@@ -44,7 +44,6 @@ public class SalsaClientConfiguration {
     public String getBaseUri() {
         return baseUri;
     }
-
 
     public void setHost(String host) {
         this.host = host;
@@ -92,17 +91,36 @@ public class SalsaClientConfiguration {
         return this;
     }
 
-    public SalsaClientConfiguration withUri(final String uri) {
-        this.baseUri = uri;
+    public SalsaClientConfiguration withBaseUri(final String baseUri) {
+        this.baseUri = baseUri;
         return this;
     }
+
+    public SalsaClientConfiguration withDeployPath(final String deployPath) {
+        this.deployPath = deployPath;
+        return this;
+    }
+
+    public SalsaClientConfiguration withUndeployPath(final String undeployPath) {
+        this.undeployPath = undeployPath;
+        return this;
+    }
+
+    public SalsaClientConfiguration withSpawnPath(final String spawnPath) {
+        this.spawnPath = spawnPath;
+        return this;
+    }
+
+    public SalsaClientConfiguration withDestroyPath(final String destroyPath) {
+        this.destroyPath = destroyPath;
+        return this;
+    }
+
 
     public SalsaClientConfiguration withDeployUri(final String deployUri) {
         this.deployPath = deployUri;
         return this;
     }
-
-
 
 
     @Override

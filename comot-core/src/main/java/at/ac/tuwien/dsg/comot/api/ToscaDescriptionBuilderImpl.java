@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot.api;
 
 import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties;
+import at.ac.tuwien.dsg.comot.common.logging.Markers;
 import at.ac.tuwien.dsg.comot.common.model.*;
 import com.google.common.base.Joiner;
 import org.oasis.tosca.*;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
 import java.io.StringWriter;
@@ -21,13 +23,15 @@ import java.util.*;
 public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(ToscaDescriptionBuilderImpl.class);
+    public static final String DEFAULT_ARTIFACT_TYPE_NAMESPACE_URI = "http://void.org";
+    public static final String DEFAULT_ARTIFACT_TYPE_PREFIX = "salsa";
 
     Map<String, TExtensibleElements> context = new HashMap<>();
 
     Map<EntityRelationship, TTopologyTemplate> unresolvedRelationships = new HashMap<>();
 
     @Override
-    public TDefinitions buildToscaDefinitions(CloudApplication application) throws Exception {
+    public TDefinitions buildToscaDefinitions(CloudApplication application) throws ToscaDescriptionBuilderException {
         if (log.isTraceEnabled()) {
             log.trace("Building TOSCA definitions for application: {}", application);
         }
@@ -107,19 +111,23 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
     }
 
     @Override
-    public String toXml(CloudApplication application) throws Exception {
-        TDefinitions tDefinitions = new ToscaDescriptionBuilderImpl().buildToscaDefinitions(application);
-        JAXBContext jaxbContext = JAXBContext.newInstance(TDefinitions.class, SalsaMappingProperties.class);
-        Marshaller marshaller = jaxbContext.createMarshaller();
-        StringWriter writer = new StringWriter();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        //marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-        marshaller.marshal(tDefinitions, writer);
-        return writer.toString();
+    public String toXml(CloudApplication application) throws ToscaDescriptionBuilderException {
+        try {
+            TDefinitions tDefinitions = new ToscaDescriptionBuilderImpl().buildToscaDefinitions(application);
+            JAXBContext jaxbContext = JAXBContext.newInstance(TDefinitions.class, SalsaMappingProperties.class);
+            Marshaller marshaller = jaxbContext.createMarshaller();
+            StringWriter writer = new StringWriter();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            marshaller.marshal(tDefinitions, writer);
+            return writer.toString();
+        } catch (JAXBException e) {
+            log.debug(Markers.API, "Exception during marshalling of CloudApplication", e);
+            throw new ToscaDescriptionBuilderException("CloudApplication '"
+                    + application.getName() + "' could not be marshalled", e);
+        }
     }
 
     private void handleDeploymentArtifacts(ServiceNode node, TNodeTemplate tNodeTemplate, Definitions definitions) {
-        TDeploymentArtifacts tDeploymentArtifacts = new TDeploymentArtifacts();
         for (ArtifactTemplate artifact : node.getDeploymentArtifacts()) {
 
             TArtifactTemplate tArtifactTemplate = new TArtifactTemplate()
@@ -131,7 +139,7 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
 
             TDeploymentArtifact tDeploymentArtifact = new TDeploymentArtifact()
                     .withName(artifact.getId())
-                    .withArtifactType(new QName("http://void.org", artifact.getType(), "salsa")) // todo what to do here?
+                    .withArtifactType(buildArtifactTypeQname(artifact)) // todo what to do here?
                     .withArtifactRef(new QName(tArtifactTemplate.getId()));
 
             TDeploymentArtifacts deploymentArtifacts = new TDeploymentArtifacts();
@@ -148,6 +156,10 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
             );
 
         }
+    }
+
+    private QName buildArtifactTypeQname(ArtifactTemplate artifact) {
+        return new QName(DEFAULT_ARTIFACT_TYPE_NAMESPACE_URI, artifact.getType(), DEFAULT_ARTIFACT_TYPE_PREFIX);
     }
 
     private void addPolicies(ServiceTemplate serviceTemplate, TBoundaryDefinitions boundaryDefinitions) {
@@ -225,7 +237,7 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
             OperatingSystemNode osNode = (OperatingSystemNode) node;
             OperatingSystemSpecification specification = osNode.getSpecification();
             SalsaMappingProperties salsaMappingProperties = new SalsaMappingProperties();
-            Map<String, String> osProperties = new HashMap();
+            Map<String, String> osProperties = new HashMap<>();
             osProperties.put("instanceType", specification.getInstanceType());
             osProperties.put("provider", specification.getProvider());
             osProperties.put("baseImage", specification.getBaseImage());
