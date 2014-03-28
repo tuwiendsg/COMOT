@@ -11,6 +11,8 @@
 
     <artifactId>comot-samples</artifactId>
 
+    <name>COMOT Samples</name>
+
     <dependencies>
         <dependency>
             <groupId>at.ac.tuwien.dsg.comot</groupId>

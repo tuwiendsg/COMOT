@@ -29,6 +29,7 @@
                         </goals>
                     </execution>
                 </executions>
+
                 <configuration>
                     <verbose>true</verbose>
                     <schemaDirectory>${basedir}/src/main/resources</schemaDirectory>
@@ -37,6 +38,7 @@
                     <extension>true</extension>
                     <args>
                         <arg>-Xfluent-api</arg>
+                        <arg>-disableXmlSecurity</arg>
                     </args>
                 </configuration>
                 <dependencies>
