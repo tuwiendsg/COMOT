@@ -74,7 +74,11 @@ public class SalsaClientTest extends AbstractSalsaClientTest {
 
     private SalsaClient prepareSalsaClient() {
         SalsaClient client = new DefaultSalsaClient();
-        client.getConfiguration().withPort(AbstractSalsaClientTest.port).withBaseUri("/");
+        client.getConfiguration()
+                .withPort(AbstractSalsaClientTest.port)
+                .withBaseUri("/")
+                .withValidatingToscaBuilder(false);
+
         return client;
     }
 

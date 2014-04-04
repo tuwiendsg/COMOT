@@ -15,9 +15,11 @@ public class SalsaClientConfiguration {
 
     private static final String DEFAULT_UNDEPLOY_URI = "/services/{serviceId}";
 
-    private static final String DEFAULT_SPAWN_PATH = "/services/{serviceId}/topologies/{topologyId}/nodes/{nodeId}/instance-count/{instanceCount}";
+    private static final String DEFAULT_SPAWN_PATH
+            = "/services/{serviceId}/topologies/{topologyId}/nodes/{nodeId}/instance-count/{instanceCount}";
 
-    private static final String DEFAULT_DESTROY_PATH = "/services/{serviceId}/topologies/{topologyId}/nodes/{nodeId}/instances/{instanceId}";
+    private static final String DEFAULT_DESTROY_PATH
+            = "/services/{serviceId}/topologies/{topologyId}/nodes/{nodeId}/instances/{instanceId}";
 
     private String host = DEFAULT_HOST;
 
@@ -32,6 +34,21 @@ public class SalsaClientConfiguration {
     private String spawnPath = DEFAULT_SPAWN_PATH;
 
     private String destroyPath = DEFAULT_DESTROY_PATH;
+
+    private boolean validatingToscaBuilder;
+
+    public SalsaClientConfiguration withValidatingToscaBuilder(final boolean validatingToscaBuilder) {
+        this.validatingToscaBuilder = validatingToscaBuilder;
+        return this;
+    }
+
+    public boolean isValidatingToscaBuilder() {
+        return validatingToscaBuilder;
+    }
+
+    public void setValidatingToscaBuilder(boolean validatingToscaBuilder) {
+        this.validatingToscaBuilder = validatingToscaBuilder;
+    }
 
     public String getHost() {
         return host;

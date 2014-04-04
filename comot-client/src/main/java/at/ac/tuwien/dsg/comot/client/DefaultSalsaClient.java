@@ -62,8 +62,20 @@ public class DefaultSalsaClient implements SalsaClient {
         this.toscaDescriptionBuilder = toscaDescriptionBuilder;
     }
 
+    public ToscaDescriptionBuilder getToscaDescriptionBuilder() {
+        return toscaDescriptionBuilder;
+    }
+
+    public HttpClient getHttpClient() {
+        return httpClient;
+    }
+
     @Override
     public SalsaResponse deploy(CloudApplication cloudApplication) throws SalsaClientException {
+        if (getConfiguration().isValidatingToscaBuilder()) {
+            toscaDescriptionBuilder.setValidating(true);
+        }
+
         String toscaDescriptionXml = toscaDescriptionBuilder.toXml(cloudApplication);
 
         if (log.isDebugEnabled()) {

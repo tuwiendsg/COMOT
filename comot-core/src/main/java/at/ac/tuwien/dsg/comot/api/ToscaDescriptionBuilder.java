@@ -12,5 +12,6 @@ public interface ToscaDescriptionBuilder {
 
     String toXml(CloudApplication application) throws ToscaDescriptionBuilderException;
 
+    void setValidating(boolean validating);
 
 }

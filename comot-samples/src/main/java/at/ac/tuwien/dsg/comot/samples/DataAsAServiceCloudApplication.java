@@ -33,6 +33,7 @@ public class DataAsAServiceCloudApplication {
                                 "deployCassandraHead",
                                 "http://134.158.75.65/salsa/upload/files/daas/deployCassandraHead.sh")
                 )
+                // todo can we imply that if there is a *Constraint then we need to enable MELA for this CloudApplication
                 .constrainedBy(LatencyConstraint("Co1").lessThan("0.5"));
 
         //
@@ -80,7 +81,7 @@ public class DataAsAServiceCloudApplication {
         //
         ServiceTemplate daaSService = ServiceTemplate("DaasService")
                 .constrainedBy(CostConstraint("CG0").lessThan("1000"))
-                .definedBy(ServiceTopology("DaasTopology")
+                .definedBy(ServiceTopology("DaasTopology")   // todo do we really need the topology indirection?
                                 .consistsOfNodes(
                                         cassandraHeadNode,
                                         cassandraDataNode,

@@ -7,12 +7,19 @@ import com.google.common.base.Joiner;
 import org.oasis.tosca.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
+import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.helpers.DefaultValidationEventHandler;
 import javax.xml.namespace.QName;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
 
@@ -23,12 +30,20 @@ import java.util.*;
 public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(ToscaDescriptionBuilderImpl.class);
+
     public static final String DEFAULT_ARTIFACT_TYPE_NAMESPACE_URI = "http://void.org";
+
     public static final String DEFAULT_ARTIFACT_TYPE_PREFIX = "salsa";
 
-    Map<String, TExtensibleElements> context = new HashMap<>();
+    public static final String DEFAULT_TOSCA_SCHEMA_FILENAME = "TOSCA-v1.0.xsd";
 
-    Map<EntityRelationship, TTopologyTemplate> unresolvedRelationships = new HashMap<>();
+    private Map<String, TExtensibleElements> context = new HashMap<>();
+
+    private Map<EntityRelationship, TTopologyTemplate> unresolvedRelationships = new HashMap<>();
+
+    private boolean validatingMarshaller;
+
+    private String toscaSchemaFilename = DEFAULT_TOSCA_SCHEMA_FILENAME;
 
     @Override
     public TDefinitions buildToscaDefinitions(CloudApplication application) throws ToscaDescriptionBuilderException {
@@ -117,14 +132,37 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
             JAXBContext jaxbContext = JAXBContext.newInstance(TDefinitions.class, SalsaMappingProperties.class);
             Marshaller marshaller = jaxbContext.createMarshaller();
             StringWriter writer = new StringWriter();
+            if (validatingMarshaller) {
+                SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+                Schema schema = sf.newSchema(new ClassPathResource(toscaSchemaFilename).getFile());
+                marshaller.setSchema(schema);
+                marshaller.setEventHandler(new DefaultValidationEventHandler());
+            }
+
+            // todo handle target namespace to allow validation
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             marshaller.marshal(tDefinitions, writer);
             return writer.toString();
         } catch (JAXBException e) {
-            log.debug(Markers.API, "Exception during marshalling of CloudApplication", e);
+            log.error(Markers.API, "Exception during marshalling of CloudApplication", e);
             throw new ToscaDescriptionBuilderException("CloudApplication '"
                     + application.getName() + "' could not be marshalled", e);
+        } catch (SAXException e) {
+            log.error(Markers.API, "Cannot load TOSCA schema definition from " + toscaSchemaFilename, e);
+            throw new ToscaDescriptionBuilderException("Unable to load TOSCA schema definition", e);
+        } catch (IOException e) {
+            log.error("Cannot find TOSCA schema definition on classpath", e);
+            throw new ToscaDescriptionBuilderException("Unable to find TOSCA schema defintion on classpath", e);
         }
+    }
+
+    @Override
+    public void setValidating(boolean validating) {
+        this.validatingMarshaller = validating;
+    }
+
+    public void setValidatingMarshaller(boolean validatingMarshaller) {
+        this.validatingMarshaller = validatingMarshaller;
     }
 
     private void handleDeploymentArtifacts(ServiceNode node, TNodeTemplate tNodeTemplate, Definitions definitions) {
@@ -343,11 +381,12 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
         return policies;
     }
 
-
     private Definitions buildTDefinitions(CloudApplication application) {
         Definitions definitions = new Definitions();
         definitions.setId(application.getId());
         definitions.setName(application.getName());
         return definitions;
     }
+
+
 }
