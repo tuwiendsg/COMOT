@@ -1,0 +1,30 @@
+id: elasticsearch
+
+deploymentConfig:
+  uri: http://134.158.75.65/artifacts/elasticsearch/deploy-es-node.sh
+  version: latest
+
+runtimeConfig:
+  arguments: -Xmx2g -Xms2g -Des.index.store.type=memory
+
+  loggingConfig:
+    dir: /var/log/elasticsearch
+
+---
+
+id: tomcat7
+
+deploymentConfig:
+  uri: http://134.158.75.65/artifacts/tomcat7/deploy-tomcat-node.sh
+  version: latest
+
+runtimeConfig:
+  environment:
+    JAVA_OPTS: -XX:MaxPermSize=256m
+    CATALINA_HOME: /opt/tomcat7
+
+  arguments: -Dorg.apache.tomcat.util.http.ServerCookie.ALWAYS_ADD_EXPIRES=true
+
+  loggingConfig:
+    dir: /var/log/tomcat7
+
