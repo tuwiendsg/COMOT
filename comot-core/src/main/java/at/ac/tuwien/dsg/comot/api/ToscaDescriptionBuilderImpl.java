@@ -129,7 +129,7 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
     public String toXml(CloudApplication application) throws ToscaDescriptionBuilderException {
         try {
             TDefinitions tDefinitions = new ToscaDescriptionBuilderImpl().buildToscaDefinitions(application);
-            JAXBContext jaxbContext = JAXBContext.newInstance(TDefinitions.class, SalsaMappingProperties.class);
+            JAXBContext jaxbContext = JAXBContext.newInstance(TDefinitions.class, SalsaMappingProperties.class, BundleConfig.class);
             Marshaller marshaller = jaxbContext.createMarshaller();
             StringWriter writer = new StringWriter();
             if (validatingMarshaller) {
@@ -188,6 +188,11 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
             for (ArtifactReference reference : artifact.getArtifactReferences()) {
                 tArtifactReferences.add(new TArtifactReference().withReference(reference.getUri()));
             }
+
+            // add properties
+            TEntityTemplate.Properties properties = new TEntityTemplate.Properties();
+            properties.withAny(artifact.getBundleConfig());
+            tArtifactTemplate.setProperties(properties);
 
             tArtifactTemplate.setArtifactReferences(new TArtifactTemplate.ArtifactReferences()
                             .withArtifactReference(tArtifactReferences)

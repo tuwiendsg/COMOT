@@ -32,6 +32,19 @@
 
         <dependency>
             <groupId>at.ac.tuwien.dsg.cloud.salsa</groupId>
+            <artifactId>salsa-engine</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <type>war</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>at.ac.tuwien.dsg.cloud.salsa</groupId>
             <artifactId>salsa-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <exclusions>
@@ -47,5 +60,12 @@
             <artifactId>xml-path</artifactId>
             <version>2.3.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.13</version>
+          </dependency>
+
     </dependencies>
 </project>

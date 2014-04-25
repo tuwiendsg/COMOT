@@ -1,48 +1,36 @@
 package at.ac.tuwien.dsg.comot;
 
 import at.ac.tuwien.dsg.comot.api.ToscaDescriptionBuilder;
-import at.ac.tuwien.dsg.comot.api.ToscaDescriptionBuilderImpl;
-import at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate;
-import at.ac.tuwien.dsg.comot.common.model.CapabilityType;
-import at.ac.tuwien.dsg.comot.common.model.Requirement;
-import at.ac.tuwien.dsg.comot.samples.DataAsAServiceCloudApplication;
-import com.jayway.restassured.path.xml.XmlPath;
-import com.jayway.restassured.path.xml.element.Node;
-import org.junit.Before;
+import at.ac.tuwien.dsg.comot.bundles.JsonBundleLoader;
+import at.ac.tuwien.dsg.comot.samples.ElasticSearchCloudApplication;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.List;
-
-import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.RelationshipType.ConnectedTo;
-import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.RelationshipType.HostedOn;
-import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemNode.NodeType;
-import static org.junit.Assert.*;
-
 /**
  * @author omoser
  */
 @ContextConfiguration(classes = {ComotContext.class})
 @RunWith(SpringJUnit4ClassRunner.class)
-public class ToscaDescriptionBuilderTest {
+public class ElasticSearchToscaBuilderTest {
 
     @Autowired
     ToscaDescriptionBuilder builder;
 
     static String cloudApplicationXmlModel;
 
-    @Before
+    @Test
     public void setupModel() throws Exception {
+       JsonBundleLoader.getInstance().init();
         if (cloudApplicationXmlModel == null) {
-            cloudApplicationXmlModel = builder.toXml(DataAsAServiceCloudApplication.build());
+            cloudApplicationXmlModel = builder.toXml(ElasticSearchCloudApplication.build());
             System.out.println("Using the following cloud application for tests:  " + cloudApplicationXmlModel);
         }
     }
 
-    @Test
+   /* @Test
     public void checkCassandraNode() throws Exception {
         XmlPath xmlPath = XmlPath.from(cloudApplicationXmlModel);
         String nodeRoot = "Definitions.ServiceTemplate.TopologyTemplate.NodeTemplate.findAll{ it.@id == 'CassandraNode'}";
@@ -165,6 +153,6 @@ public class ToscaDescriptionBuilderTest {
             }
         }
     }
-
+*/
 }
 
