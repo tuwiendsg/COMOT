@@ -7,6 +7,7 @@ public class SoftwareNode extends ServiceNode {
 
     protected SoftwareNode(String id) {
         super(id);
+        ofType(NodeType.Software);
     }
 
     public static SoftwareNode SoftwareNode(String id) {

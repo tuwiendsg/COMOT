@@ -109,6 +109,7 @@ public class BundleConfig {
 
     }
 
+    @XmlType(name = "RuntimeConfig")
     public static class RuntimeConfig {
 
         private Map<String, String> environment = new HashMap<>();
@@ -122,7 +123,7 @@ public class BundleConfig {
         }
 
 
-        @XmlElement(name = "Environment")
+        @XmlElement(name = "Environment", type = HashMap.class)
         public Map<String, String> getEnvironment() {
             return environment;
         }

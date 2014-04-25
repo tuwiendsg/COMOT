@@ -32,7 +32,6 @@
     <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.13" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.3.3" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.3.3" level="project" />
-    <orderEntry type="library" name="Maven: at.ac.tuwien.dsg.cloud.salsa:salsa-engine:war:0.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: at.ac.tuwien.dsg.cloud.salsa:salsa-common:0.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: net.sourceforge.collections:collections-generic:4.01" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.0.1" level="project" />
@@ -41,7 +40,6 @@
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpmime:4.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.james:apache-mime4j:0.6" level="project" />
     <orderEntry type="library" name="Maven: com.sun.jersey:jersey-client:1.17.1" level="project" />
-    <orderEntry type="library" name="Maven: com.sun.jersey:jersey-core:1.17.1" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.4" level="project" />
     <orderEntry type="library" name="Maven: com.jayway.restassured:xml-path:2.3.0" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.groovy:groovy-xml:2.2.1" level="project" />
@@ -61,7 +59,7 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.ccil.cowan.tagsoup:tagsoup:1.2.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.jayway.restassured:json-path:2.3.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.codehaus.groovy:groovy-json:2.2.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.codehaus.groovy:groovy-all:2.1.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.codehaus.groovy:groovy-all:2.2.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.11" level="project" />
   </component>
 </module>
