@@ -9,10 +9,10 @@ import static at.ac.tuwien.dsg.comot.common.model.Constraint.*;
 import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.ConnectToRelation;
 import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.HostedOnRelation;
 import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemNode.OperatingSystemNode;
-import static at.ac.tuwien.dsg.comot.common.model.ServiceNode.SingleSoftwareNode;
-import static at.ac.tuwien.dsg.comot.common.model.ServiceNode.UnboundedSoftwareNode;
 import static at.ac.tuwien.dsg.comot.common.model.ServiceTemplate.ServiceTemplate;
 import static at.ac.tuwien.dsg.comot.common.model.ServiceTopology.ServiceTopology;
+import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.SingleSoftwareNode;
+import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.UnboundedSoftwareNode;
 import static at.ac.tuwien.dsg.comot.common.model.Strategy.Strategy;
 
 /**
