@@ -12,11 +12,11 @@ runtimeConfig:
 
 ---
 
-id: tomcat7
+id: tomcat
 
 deploymentConfig:
-  uri: http://134.158.75.65/artifacts/tomcat7/deploy-tomcat-node.sh
-  version: latest
+  uri: http://134.158.75.65/artifacts/tomcat/deploy-tomcat-node.sh
+  version: 7.0.53
 
 runtimeConfig:
   environment:
