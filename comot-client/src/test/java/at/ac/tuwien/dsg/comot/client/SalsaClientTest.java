@@ -1,7 +1,7 @@
 package at.ac.tuwien.dsg.comot.client;
 
-import at.ac.tuwien.dsg.cloud.salsa.engine.api.NoopSalsaEngineApi;
 import at.ac.tuwien.dsg.comot.ComotContext;
+import at.ac.tuwien.dsg.comot.NoopSalsaEngineApi;
 import at.ac.tuwien.dsg.comot.common.model.CloudApplication;
 import at.ac.tuwien.dsg.comot.samples.DataAsAServiceCloudApplication;
 import com.fasterxml.jackson.databind.ObjectMapper;

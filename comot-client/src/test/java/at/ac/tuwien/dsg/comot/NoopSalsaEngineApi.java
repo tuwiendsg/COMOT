@@ -1,6 +1,6 @@
-package at.ac.tuwien.dsg.cloud.salsa.engine.api;
+package at.ac.tuwien.dsg.comot;
 
-import at.ac.tuwien.dsg.cloud.salsa.engine.SalsaEngineApi;
+import at.ac.tuwien.dsg.cloud.salsa.common.interfaces.SalsaEngineApiInterface;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +15,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+
 /**
  * @author omoser
  */
 @Service
-public class NoopSalsaEngineApi implements SalsaEngineApi {
+public class NoopSalsaEngineApi implements SalsaEngineApiInterface {
 
     private Set<String> serviceIds = new ConcurrentHashSet<>();
 
@@ -51,7 +52,6 @@ public class NoopSalsaEngineApi implements SalsaEngineApi {
             String instanceId = UUID.randomUUID().toString();
             instances.add(instanceId);
             instanceIds.add(instanceId);
-
         }
 
         return Response.ok(instances.toArray()).build();
