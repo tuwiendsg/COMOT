@@ -34,7 +34,7 @@ public class ServiceNode extends AbstractServiceDescriptionEntity {
     }
 
 
-    ServiceNode(String id) {
+    protected ServiceNode(String id) {
         super(id);
     }
 
@@ -42,17 +42,6 @@ public class ServiceNode extends AbstractServiceDescriptionEntity {
         return new ServiceNode(id);
     }
 
-    public static ServiceNode SoftwareNode(String id) {
-        return new ServiceNode(id).ofType(NodeType.Software);
-    }
-
-    public static ServiceNode SingleSoftwareNode(String id) {
-        return new ServiceNode(id).ofType(NodeType.Software).withMinInstances(1).withMaxInstances(1);
-    }
-
-    public static ServiceNode UnboundedSoftwareNode(String id) {
-        return new ServiceNode(id).ofType(NodeType.Software).withMinInstances(1).withMaxInstances(Integer.MAX_VALUE);
-    }
 
     public Set<ArtifactTemplate> getDeploymentArtifacts() {
         return deploymentArtifacts;

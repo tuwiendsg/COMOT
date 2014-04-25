@@ -11,6 +11,12 @@ public class ArtifactTemplate extends AbstractCloudEntity {
 
     private final Set<ArtifactReference> artifactReferences = new HashSet<>();
 
+    protected BundleConfig bundleConfig;
+
+    public BundleConfig getBundleConfig() {
+        return bundleConfig;
+    }
+
     public enum ArtifactType {
         Script("script");
 
@@ -26,7 +32,7 @@ public class ArtifactTemplate extends AbstractCloudEntity {
         }
     }
 
-    ArtifactTemplate(String id) {
+    protected ArtifactTemplate(String id) {
         super(id);
     }
 
@@ -72,4 +78,11 @@ public class ArtifactTemplate extends AbstractCloudEntity {
     public ArtifactTemplate ofType(ArtifactType type) {
         return (ArtifactTemplate) super.ofType(type.toString());
     }
+
+    public ArtifactTemplate withBundleConfig(final BundleConfig bundleConfig) {
+        this.bundleConfig = bundleConfig;
+        return this;
+    }
+
+
 }

@@ -22,6 +22,7 @@
         <module>comot-tosca</module>
         <module>comot-common</module>
         <module>comot-samples</module>
+        <module>comot-bundles</module>
     </modules>
 
     <dependencies>
