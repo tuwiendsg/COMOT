@@ -62,6 +62,7 @@ COMOT tries to help users with the specification of Cloud applications by provid
 
 ## A first example
 
+To get a first impression on what COMOT does for you, consider the following COMOT definition:
 
 
 ```java
@@ -90,6 +91,36 @@ CloudApplication daasApplication = CloudApplication("DaaSApp")
     .withName("DaaS Cloud Application").consistsOfServices(daaSService)
     
 ```
+
+The example above basically produces the exact same TOSCA definition from above using several conventions and shortcuts. Using COMOT over the plain TOSCA definition has two pretty obvious advantages. First, it's much shorter. And second - and even more important - you can understand what your cloud application will look like on first sight and are not required to understand the basic concepts and terminolgy inherent to TOSCA definitions.
+
+## COMOT Terminology
+
+todo: Describe `ServiceNode`, `OperatingSystemNode`, `ServiceTemplate` and `CloudApplication`
+
+## Node Bundles
+
+Making the definition of COMOT cloud applications even more concise and straightforward is the goal of _NodeBundle_s. A NodeBundle can be described as an extensible convention for recurring SoftwareNode requirements. What does that mean? Consider the Cassandra SoftwareNode definition from above:
+
+```java
+ServiceNode cassandraHeadNode = SingleSoftwareNode("CassandraHead")
+    .withName("Cassandra head node (single instance)")
+    .provides(Capability.Variable("CassandraHeadIP_capa").withName("Data controller IP"))
+    .deployedBy(SingleScriptArtifactTemplate("deployCassandraHead","http://void.org/salsa/deploy.sh"))
+    .constrainedBy(LatencyConstraint("Co1").lessThan("0.5")
+);
+```
+
+In this example, the COMOT client has to know the details of the underlying Cassandra deployment artifact. As those details are subject to change over time, COMOT provides a short-cut for defining a Cassandra node that leaves out the volatile details:
+
+```java
+CassandraNode cassandraNode = CassandraNode.CassandraNode("CassandraHead")
+    .withName("Cassandra head node (single instance)")
+    .constrainedBy(LatencyConstraint("Co1").lessThan("0.5"));
+```
+
+COMOT stores the details of the Cassandra node definition in a related bundle configuration that uses JSON or YAML to describe the detailed requirements of the Cassandra node.
+                
 
 ## Using the SalsaClient
 
