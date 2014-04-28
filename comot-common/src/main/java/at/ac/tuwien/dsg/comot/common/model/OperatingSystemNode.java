@@ -7,7 +7,7 @@ public class OperatingSystemNode extends ServiceNode {
 
     private OperatingSystemSpecification specification;
 
-    OperatingSystemNode(String id) {
+    protected OperatingSystemNode(String id) {
         super(id);
     }
 

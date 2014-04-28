@@ -55,6 +55,10 @@ public class ArtifactTemplate extends AbstractCloudEntity {
         return this;
     }
 
+    public ArtifactTemplate withBundleConfig(final BundleConfig bundleConfig) {
+        this.bundleConfig = bundleConfig;
+        return this;
+    }
 
     public Set<ArtifactReference> getArtifactReferences() {
         return artifactReferences;
@@ -78,11 +82,4 @@ public class ArtifactTemplate extends AbstractCloudEntity {
     public ArtifactTemplate ofType(ArtifactType type) {
         return (ArtifactTemplate) super.ofType(type.toString());
     }
-
-    public ArtifactTemplate withBundleConfig(final BundleConfig bundleConfig) {
-        this.bundleConfig = bundleConfig;
-        return this;
-    }
-
-
 }

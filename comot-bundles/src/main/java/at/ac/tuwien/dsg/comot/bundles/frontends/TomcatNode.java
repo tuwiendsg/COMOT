@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.bundles.nodes;
+package at.ac.tuwien.dsg.comot.bundles.frontends;
 
 import at.ac.tuwien.dsg.comot.bundles.JsonBundleLoader;
 import at.ac.tuwien.dsg.comot.common.model.BundleConfig;
@@ -16,9 +16,8 @@ public class TomcatNode extends SoftwareNode {
         super(id);
     }
 
-    public static TomcatNode Tomcat7Node(String id) {
+    public static TomcatNode TomcatNode(String id) {
         BundleConfig bundleConfig = JsonBundleLoader.getInstance().getBundleConfig("tomcat");
-
         return (TomcatNode) new TomcatNode(id)
                 .deployedBy(ScriptArtifactTemplate("id")
                         .withBundleConfig(bundleConfig)

@@ -84,4 +84,6 @@ public class OperatingSystemSpecification extends AbstractCloudEntity {
     public OperatingSystemSpecification withDescription(String description) {
         return (OperatingSystemSpecification) super.withDescription(description);
     }
+
+
 }

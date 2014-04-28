@@ -1,6 +1,6 @@
-package at.ac.tuwien.dsg.comot.bundles.nodes;
+package at.ac.tuwien.dsg.comot.bundles.dataends;
 
-import at.ac.tuwien.dsg.comot.bundles.JsonBundleLoader;
+import at.ac.tuwien.dsg.comot.bundles.BundleLoaderFactory;
 import at.ac.tuwien.dsg.comot.common.model.BundleConfig;
 import at.ac.tuwien.dsg.comot.common.model.SoftwareNode;
 
@@ -17,8 +17,7 @@ public class ElasticSearchNode extends SoftwareNode {
     }
 
     public static ElasticSearchNode ElasticSearchNode(String id) {
-        BundleConfig bundleConfig = JsonBundleLoader.getInstance().getBundleConfig("elasticsearch");
-
+        BundleConfig bundleConfig = BundleLoaderFactory.getDefaultBundleLoader().getBundleConfig("elasticsearch");
         return (ElasticSearchNode) new ElasticSearchNode(id)
                 .deployedBy(ScriptArtifactTemplate("id")
                         .withBundleConfig(bundleConfig)

@@ -1,6 +1,6 @@
-package at.ac.tuwien.dsg.comot.bundles.nodes;
+package at.ac.tuwien.dsg.comot.bundles.dataends;
 
-import at.ac.tuwien.dsg.comot.bundles.JsonBundleLoader;
+import at.ac.tuwien.dsg.comot.bundles.BundleLoaderFactory;
 import at.ac.tuwien.dsg.comot.common.model.BundleConfig;
 import at.ac.tuwien.dsg.comot.common.model.SoftwareNode;
 
@@ -17,8 +17,7 @@ public class CassandraNode extends SoftwareNode {
     }
 
     public static CassandraNode CassandraNode(String id) {
-        BundleConfig bundleConfig = JsonBundleLoader.getInstance().getBundleConfig("cassandra");
-
+        BundleConfig bundleConfig = BundleLoaderFactory.getDefaultBundleLoader().getBundleConfig("cassandra");
         return (CassandraNode) new CassandraNode(id)
                 .deployedBy(ScriptArtifactTemplate("id")
                         .withBundleConfig(bundleConfig)

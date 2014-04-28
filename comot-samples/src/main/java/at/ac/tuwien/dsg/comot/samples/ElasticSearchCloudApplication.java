@@ -1,6 +1,6 @@
 package at.ac.tuwien.dsg.comot.samples;
 
-import at.ac.tuwien.dsg.comot.bundles.nodes.ElasticSearchNode;
+import at.ac.tuwien.dsg.comot.bundles.dataends.ElasticSearchNode;
 import at.ac.tuwien.dsg.comot.common.model.CloudApplication;
 import at.ac.tuwien.dsg.comot.common.model.OperatingSystemNode;
 import at.ac.tuwien.dsg.comot.common.model.ServiceNode;
