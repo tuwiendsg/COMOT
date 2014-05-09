@@ -114,12 +114,37 @@ ServiceNode cassandraHeadNode = SingleSoftwareNode("CassandraHead")
 In this example, the COMOT client has to know the details of the underlying Cassandra deployment artifact. As those details are subject to change over time, COMOT provides a short-cut for defining a Cassandra node that leaves out the volatile details:
 
 ```java
-CassandraNode cassandraNode = CassandraNode.CassandraNode("CassandraHead")
+CassandraNode cassandraNode = CassandraNode("CassandraHead")
     .withName("Cassandra head node (single instance)")
+    .provides(Capability.Variable("CassandraHeadIP_capa").withName("Data controller IP"))
     .constrainedBy(LatencyConstraint("Co1").lessThan("0.5"));
 ```
 
-COMOT stores the details of the Cassandra node definition in a related bundle configuration that uses JSON or YAML to describe the detailed requirements of the Cassandra node.
+The example from above does not seem like a big saving on lines of code. But, besides the fact that you are not required to define the deployment details yourself, COMOT stores the details of the Cassandra node definition in a related bundle configuration that uses JSON or YAML to describe the detailed requirements of the Cassandra node:
+
+```json
+{
+    "id": "cassandra",
+
+    "deployment-config": {
+        "uri": "http://134.158.75.65/artifacts/cassandra/deploy-cassandra-node.sh",
+        "version": "2.0.7"
+    },
+
+    "runtime-config": {
+        "environment": {
+            "JAVA_OPTS": "-Xmx2g -Xms2g"
+        },
+
+        "arguments": "-Dcom.sun.management.jmxremote.port=18080",
+        "logging-config": {
+            "dir": "/var/log/cassandra"
+        }
+    }
+}
+```
+   
+Behind the scences, COMOT loads this bundle configuration and builds a `BundleConfig`. This BundleConfig is then passed to SALSA via various TOSCA property definitions. For overriding the defaults you either have the option to change the JSON definition in the bundle config or manipulate the BundleConfig object itself. 
                 
 
 ## Using the SalsaClient
