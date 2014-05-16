@@ -31,7 +31,7 @@ public interface SalsaClient {
 
     SalsaResponse spawn(String serviceId, String topologyId, String nodeId, int instanceCount) throws SalsaClientException;
 
-    SalsaResponse destroy(String servId, String topologyId, String nodeId, String instanceId) throws SalsaClientException;
+    SalsaResponse destroy(String serviceId, String topologyId, String nodeId, String instanceId) throws SalsaClientException;
 
     SalsaClientConfiguration getConfiguration();
 

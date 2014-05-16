@@ -10,12 +10,12 @@
         "runtime-config": {
             "environment": {
                 "JAVA_OPTS": "-XX:MaxPermSize=256m",
-                "CATALINA_HOME": "/opt/tomcat7"
+                "CATALINA_HOME": "/opt/tomcat"
             },
 
             "arguments": "-Dorg.apache.tomcat.util.http.ServerCookie.ALWAYS_ADD_EXPIRES=true",
             "logging-config": {
-                "dir": "/var/log/tomcat7"
+                "dir": "/var/log/tomcat"
             }
         }
     },
@@ -34,5 +34,25 @@
                 "dir": "/var/log/elasticsearch"
             }
         }
+    },
+
+{
+    "id": "cassandra",
+
+    "deployment-config": {
+        "uri": "http://134.158.75.65/artifacts/cassandra/deploy-cassandra-node.sh",
+        "version": "2.0.7"
+    },
+
+    "runtime-config": {
+        "environment": {
+            "JAVA_OPTS": "-Xmx2g -Xms2g"
+        },
+
+        "arguments": "-Dcom.sun.management.jmxremote.port=18080",
+        "logging-config": {
+            "dir": "/var/log/cassandra"
+        }
     }
+}
 ]

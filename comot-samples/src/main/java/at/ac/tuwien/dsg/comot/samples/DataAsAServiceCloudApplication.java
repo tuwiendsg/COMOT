@@ -1,5 +1,6 @@
 package at.ac.tuwien.dsg.comot.samples;
 
+import at.ac.tuwien.dsg.comot.bundles.dataends.CassandraNode;
 import at.ac.tuwien.dsg.comot.common.model.*;
 
 import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifactTemplate;
@@ -33,7 +34,11 @@ public class DataAsAServiceCloudApplication {
                                 "deployCassandraHead",
                                 "http://134.158.75.65/salsa/upload/files/daas/deployCassandraHead.sh")
                 )
-                // todo can we imply that if there is a *Constraint then we need to enable MELA for this CloudApplication
+
+                .constrainedBy(LatencyConstraint("Co1").lessThan("0.5"));
+
+        CassandraNode cassandraNode = CassandraNode.CassandraNode("CassandraHead")
+                .withName("Cassandra head node (single instance)")
                 .constrainedBy(LatencyConstraint("Co1").lessThan("0.5"));
 
         //
