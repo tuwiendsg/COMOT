@@ -2,6 +2,7 @@ package at.ac.tuwien.dsg.comot;
 
 import at.ac.tuwien.dsg.comot.api.ToscaDescriptionBuilder;
 import at.ac.tuwien.dsg.comot.api.ToscaDescriptionBuilderImpl;
+import at.ac.tuwien.dsg.comot.bundles.JsonBundleLoader;
 import at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate;
 import at.ac.tuwien.dsg.comot.common.model.CapabilityType;
 import at.ac.tuwien.dsg.comot.common.model.Requirement;
@@ -36,6 +37,7 @@ public class DaasApplicationToscaBuilderTest {
 
     @Before
     public void setupModel() throws Exception {
+        JsonBundleLoader.getInstance().init();
         if (cloudApplicationXmlModel == null) {
             cloudApplicationXmlModel = builder.toXml(DataAsAServiceCloudApplication.build());
             System.out.println("Using the following cloud application for tests:  " + cloudApplicationXmlModel);

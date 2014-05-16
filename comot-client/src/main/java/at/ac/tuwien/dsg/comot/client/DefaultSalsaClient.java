@@ -9,6 +9,7 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
@@ -127,6 +128,17 @@ public class DefaultSalsaClient implements SalsaClient {
     }
 
     @Override
+    public SalsaResponse status(String serviceId) throws SalsaClientException {
+        if (log.isDebugEnabled()) {
+            log.debug(Markers.CLIENT, "Checking status for serviceId {}", serviceId);
+        }
+
+        URI statusUri = UriBuilder.fromPath(configuration.getStatusPath()).build(serviceId);
+        HttpGet method = new HttpGet(statusUri);
+        return executeMethod(method, SalsaClientAction.STATUS);
+    }
+
+    @Override
     public SalsaClientConfiguration getConfiguration() {
         return configuration;
     }
@@ -164,6 +176,8 @@ public class DefaultSalsaClient implements SalsaClient {
             log.warn(Markers.CLIENT, "Unexpected result code from Salsa. Expected {} for action {}, but got {}",
                     action.expectedResultCode(), action, result);
         }
+
+
 
         return response;
     }

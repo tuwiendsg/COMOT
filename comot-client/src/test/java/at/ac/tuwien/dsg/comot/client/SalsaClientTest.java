@@ -72,6 +72,13 @@ public class SalsaClientTest extends AbstractSalsaClientTest {
 
     }
 
+    @Test
+    public void checkServiceStatus() {
+        SalsaClient client = prepareSalsaClient();
+        client.getConfiguration().withHost("128.130.172.215").withPort(8080);
+        SalsaResponse response = client.status("cfd5c6e6-de0c-4484-9b73-0ae7562c8f86");
+    }
+
     private SalsaClient prepareSalsaClient() {
         SalsaClient client = new DefaultSalsaClient();
         client.getConfiguration()

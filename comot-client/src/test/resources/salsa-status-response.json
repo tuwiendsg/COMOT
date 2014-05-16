@@ -1,0 +1,95 @@
+
+{
+  "id": "DaaS Pilot",
+  "state": "RUNNING",
+  "children": [
+    {
+      "id": "OS_HeadNode",
+      "state": "RUNNING",
+      "children": [
+        {
+          "id": "OS_HeadNode_0",
+          "state": "RUNNING",
+          "properties": {
+            "instanceType": "000001920",
+            "privateIp": "10.99.0.18",
+            "instanceId": "decc8622-3216-4891-ad0e-4b8edaf1960f",
+            "provider": "dsg@openstack",
+            "baseImage": "8f1428ac-f239-42e0-ab35-137f6e234101"
+          },
+          "children": [
+            {
+              "id": "CassandraHead",
+              "state": "FINISHED",
+              "children": [
+                {
+                  "id": "CassandraHead_0",
+                  "state": "FINISHED",
+                  "isAbstract": false,
+                  "nodeType": "sh",
+                  "connectto": []
+                }
+              ],
+              "isAbstract": true,
+              "nodeType": "software",
+              "connectto": []
+            }
+          ],
+          "isAbstract": false,
+          "nodeType": "os",
+          "connectto": []
+        }
+      ],
+      "isAbstract": true,
+      "nodeType": "os",
+      "connectto": []
+    },
+    {
+      "id": "OS_Datanode",
+      "state": "RUNNING",
+      "children": [
+        {
+          "id": "OS_Datanode_0",
+          "state": "RUNNING",
+          "properties": {
+            "instanceType": "000001920",
+            "privateIp": "10.99.0.10",
+            "instanceId": "f92f78b0-a7cc-4810-b0c0-e36fa7cdeda0",
+            "provider": "dsg@openstack",
+            "baseImage": "8f1428ac-f239-42e0-ab35-137f6e234101"
+          },
+          "children": [
+            {
+              "id": "CassandraNode",
+              "state": "FINISHED",
+              "children": [
+                {
+                  "id": "CassandraNode_0",
+                  "state": "FINISHED",
+                  "isAbstract": false,
+                  "nodeType": "sh",
+                  "connectto": [
+                    "CassandraHead_0"
+                  ]
+                }
+              ],
+              "isAbstract": true,
+              "nodeType": "software",
+              "connectto": [
+                "CassandraHead"
+              ]
+            }
+          ],
+          "isAbstract": false,
+          "nodeType": "os",
+          "connectto": []
+        }
+      ],
+      "isAbstract": true,
+      "nodeType": "os",
+      "connectto": []
+    }
+  ],
+  "isAbstract": true,
+  "connectto": []
+}

@@ -5,11 +5,11 @@ package at.ac.tuwien.dsg.comot.client;
  */
 public class SalsaResponse {
 
-    private int code;
+    int code;
 
-    private String message;
+    String message;
 
-    private int expectedCode;
+    int expectedCode;
 
     public SalsaResponse() {
     }

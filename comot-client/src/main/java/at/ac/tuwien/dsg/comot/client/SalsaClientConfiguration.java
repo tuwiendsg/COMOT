@@ -21,6 +21,10 @@ public class SalsaClientConfiguration {
     private static final String DEFAULT_DESTROY_PATH
             = "/services/{serviceId}/topologies/{topologyId}/nodes/{nodeId}/instances/{instanceId}";
 
+    private static final String DEFAULT_STATUS_PATH
+            = "/salsa-engine/rest/viewgenerator/cloudservice/json/full/{serviceId}";
+
+
     private String host = DEFAULT_HOST;
 
     private int port = DEFAULT_PORT;
@@ -35,7 +39,10 @@ public class SalsaClientConfiguration {
 
     private String destroyPath = DEFAULT_DESTROY_PATH;
 
+    private String statusPath = DEFAULT_STATUS_PATH;
+
     private boolean validatingToscaBuilder;
+
 
     public SalsaClientConfiguration withValidatingToscaBuilder(final boolean validatingToscaBuilder) {
         this.validatingToscaBuilder = validatingToscaBuilder;
@@ -133,12 +140,10 @@ public class SalsaClientConfiguration {
         return this;
     }
 
-
     public SalsaClientConfiguration withDeployUri(final String deployUri) {
         this.deployPath = deployUri;
         return this;
     }
-
 
     @Override
     public String toString() {
@@ -155,5 +160,13 @@ public class SalsaClientConfiguration {
 
     public String getDestroyPath() {
         return baseUri + destroyPath;
+    }
+
+    public String getStatusPath() {
+        return baseUri + statusPath;
+    }
+
+    public void setStatusPath(String statusPath) {
+        this.statusPath = statusPath;
     }
 }

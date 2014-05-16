@@ -1,13 +1,15 @@
 package at.ac.tuwien.dsg.comot;
 
-import at.ac.tuwien.dsg.cloud.salsa.common.interfaces.SalsaEngineApiInterface;
+import org.apache.commons.io.FileUtils;
 import org.eclipse.jetty.util.ConcurrentHashSet;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
@@ -20,7 +22,7 @@ import java.util.UUID;
  * @author omoser
  */
 @Service
-public class NoopSalsaEngineApi implements SalsaEngineApiInterface {
+public class NoopSalsaEngineApi implements ComotSalsaEngineApiInterface {
 
     private Set<String> serviceIds = new ConcurrentHashSet<>();
 
@@ -83,5 +85,21 @@ public class NoopSalsaEngineApi implements SalsaEngineApiInterface {
         }
 
         return Response.ok().build();
+    }
+
+    @Override
+    @GET
+    @Path("/services/{serviceId}")
+    @Produces("application/json")
+    public Response fetchStatus(@PathParam("serviceId") String serviceId) {
+        String mockResponse;
+        try {
+            mockResponse = FileUtils.readFileToString(new ClassPathResource("salsa-status-response.json").getFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new WebApplicationException();
+        }
+
+        return Response.ok().entity(mockResponse).build();
     }
 }
