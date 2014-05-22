@@ -1,95 +1,1912 @@
-
 {
-  "id": "DaaS Pilot",
-  "state": "RUNNING",
-  "children": [
-    {
-      "id": "OS_HeadNode",
-      "state": "RUNNING",
-      "children": [
+    "id": "DaaS Pilot",
+    "state": "RUNNING",
+    "children": [
         {
-          "id": "OS_HeadNode_0",
-          "state": "RUNNING",
-          "properties": {
-            "instanceType": "000001920",
-            "privateIp": "10.99.0.18",
-            "instanceId": "decc8622-3216-4891-ad0e-4b8edaf1960f",
-            "provider": "dsg@openstack",
-            "baseImage": "8f1428ac-f239-42e0-ab35-137f6e234101"
-          },
-          "children": [
-            {
-              "id": "CassandraHead",
-              "state": "FINISHED",
-              "children": [
+            "id": "OS_HeadNode",
+            "state": "RUNNING",
+            "children": [
                 {
-                  "id": "CassandraHead_0",
-                  "state": "FINISHED",
-                  "isAbstract": false,
-                  "nodeType": "sh",
-                  "connectto": []
+                    "id": "OS_HeadNode_0",
+                    "state": "RUNNING",
+                    "properties": {
+                        "instanceType": "000001920",
+                        "privateIp": "10.99.0.18",
+                        "instanceId": "bf2792b7-76d4-446f-b550-90c35beca49a",
+                        "provider": "dsg@openstack",
+                        "baseImage": "8f1428ac-f239-42e0-ab35-137f6e234101"
+                    },
+                    "monitoring": {
+                        "name": "os-headnode-0.novalocal",
+                        "ip": "10.99.0.18",
+                        "location": "unspecified",
+                        "tags": "",
+                        "reported": "1400773418",
+                        "tn": "14",
+                        "tmax": "20",
+                        "dmax": "0",
+                        "gmondStarted": "1400766498",
+                        "metrics": [
+                            {
+                                "name": "bytes_out",
+                                "value": "44.70",
+                                "type": "float",
+                                "units": "bytes/sec",
+                                "tn": "234",
+                                "tmax": "300",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "network"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Number of bytes out per second"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Bytes Sent"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "swap_total",
+                                "value": "0",
+                                "type": "float",
+                                "units": "KB",
+                                "tn": "934",
+                                "tmax": "1200",
+                                "dmax": "0",
+                                "slope": "zero",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "memory"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Total amount of swap space displayed in KBs"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Swap Space Total"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "mem_free",
+                                "value": "1389020",
+                                "type": "float",
+                                "units": "KB",
+                                "tn": "134",
+                                "tmax": "180",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "memory"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Amount of available memory"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Free Memory"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "load_fifteen",
+                                "value": "0.05",
+                                "type": "float",
+                                "units": " ",
+                                "tn": "34",
+                                "tmax": "950",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "load"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Fifteen minute load average"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Fifteen Minute Load Average"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "os_name",
+                                "value": "Linux",
+                                "type": "string",
+                                "units": "",
+                                "tn": "934",
+                                "tmax": "1200",
+                                "dmax": "0",
+                                "slope": "zero",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "system"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Operating system name"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Operating System"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "boottime",
+                                "value": "1400766432",
+                                "type": "uint32",
+                                "units": "s",
+                                "tn": "934",
+                                "tmax": "1200",
+                                "dmax": "0",
+                                "slope": "zero",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "system"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "The last time that the system was started"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Last Boot Time"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "cpu_idle",
+                                "value": "97.9",
+                                "type": "float",
+                                "units": "%",
+                                "tn": "14",
+                                "tmax": "90",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "cpu"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Percentage of time that the CPU or CPUs were idle and the system did not have an outstanding disk I/O request"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "CPU Idle"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "cpu_user",
+                                "value": "0.1",
+                                "type": "float",
+                                "units": "%",
+                                "tn": "14",
+                                "tmax": "90",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "cpu"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Percentage of CPU utilization that occurred while executing at the user level"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "CPU User"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "cpu_nice",
+                                "value": "0.0",
+                                "type": "float",
+                                "units": "%",
+                                "tn": "14",
+                                "tmax": "90",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "cpu"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Percentage of CPU utilization that occurred while executing at the user level with nice priority"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "CPU Nice"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "cpu_aidle",
+                                "value": "0.0",
+                                "type": "float",
+                                "units": "%",
+                                "tn": "14",
+                                "tmax": "3800",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "cpu"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Percent of time since boot idle CPU"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "CPU aidle"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "mem_buffers",
+                                "value": "20944",
+                                "type": "float",
+                                "units": "KB",
+                                "tn": "134",
+                                "tmax": "180",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "memory"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Amount of buffered memory"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Memory Buffers"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "cpu_system",
+                                "value": "0.1",
+                                "type": "float",
+                                "units": "%",
+                                "tn": "14",
+                                "tmax": "90",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "cpu"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Percentage of CPU utilization that occurred while executing at the system level"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "CPU System"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "part_max_used",
+                                "value": "7.4",
+                                "type": "float",
+                                "units": "%",
+                                "tn": "74",
+                                "tmax": "180",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "disk"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Maximum percent used for all partitions"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Maximum Disk Space Used"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "disk_total",
+                                "value": "63.379",
+                                "type": "double",
+                                "units": "GB",
+                                "tn": "1534",
+                                "tmax": "1200",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "disk"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Total available disk space"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Total Disk Space"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "mem_shared",
+                                "value": "0",
+                                "type": "float",
+                                "units": "KB",
+                                "tn": "134",
+                                "tmax": "180",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "memory"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Amount of shared memory"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Shared Memory"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "cpu_wio",
+                                "value": "2.0",
+                                "type": "float",
+                                "units": "%",
+                                "tn": "14",
+                                "tmax": "90",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "cpu"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Percentage of time that the CPU or CPUs were idle during which the system had an outstanding disk I/O request"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "CPU wio"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "machine_type",
+                                "value": "x86_64",
+                                "type": "string",
+                                "units": "",
+                                "tn": "934",
+                                "tmax": "1200",
+                                "dmax": "0",
+                                "slope": "zero",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "system"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "System architecture"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Machine Type"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "proc_total",
+                                "value": "97",
+                                "type": "uint32",
+                                "units": " ",
+                                "tn": "54",
+                                "tmax": "950",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "process"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Total number of processes"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Total Processes"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "cpu_num",
+                                "value": "1",
+                                "type": "uint16",
+                                "units": "CPUs",
+                                "tn": "934",
+                                "tmax": "1200",
+                                "dmax": "0",
+                                "slope": "zero",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "cpu"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Total number of CPUs"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "CPU Count"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "cpu_speed",
+                                "value": "2393",
+                                "type": "uint32",
+                                "units": "MHz",
+                                "tn": "934",
+                                "tmax": "1200",
+                                "dmax": "0",
+                                "slope": "zero",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "cpu"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "CPU Speed in terms of MHz"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "CPU Speed"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "pkts_out",
+                                "value": "0.45",
+                                "type": "float",
+                                "units": "packets/sec",
+                                "tn": "234",
+                                "tmax": "300",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "network"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Packets out per second"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Packets Sent"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "swap_free",
+                                "value": "0",
+                                "type": "float",
+                                "units": "KB",
+                                "tn": "134",
+                                "tmax": "180",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "memory"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Amount of available swap memory"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Free Swap Space"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "load_one",
+                                "value": "0.02",
+                                "type": "float",
+                                "units": " ",
+                                "tn": "34",
+                                "tmax": "70",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "load"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "One minute load average"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "One Minute Load Average"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "mem_total",
+                                "value": "1921496",
+                                "type": "float",
+                                "units": "KB",
+                                "tn": "934",
+                                "tmax": "1200",
+                                "dmax": "0",
+                                "slope": "zero",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "memory"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Total amount of memory displayed in KBs"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Memory Total"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "os_release",
+                                "value": "3.11.0-14-generic",
+                                "type": "string",
+                                "units": "",
+                                "tn": "934",
+                                "tmax": "1200",
+                                "dmax": "0",
+                                "slope": "zero",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "system"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Operating system release date"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Operating System Release"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "proc_run",
+                                "value": "0",
+                                "type": "uint32",
+                                "units": " ",
+                                "tn": "54",
+                                "tmax": "950",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "process"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Total number of running processes"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Total Running Processes"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "load_five",
+                                "value": "0.02",
+                                "type": "float",
+                                "units": " ",
+                                "tn": "34",
+                                "tmax": "325",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "load"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Five minute load average"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Five Minute Load Average"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "gexec",
+                                "value": "OFF",
+                                "type": "string",
+                                "units": "",
+                                "tn": "34",
+                                "tmax": "300",
+                                "dmax": "0",
+                                "slope": "zero",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "core"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "gexec available"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Gexec Status"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "disk_free",
+                                "value": "58.993",
+                                "type": "double",
+                                "units": "GB",
+                                "tn": "74",
+                                "tmax": "180",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "disk"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Total free disk space"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Disk Space Available"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "mem_cached",
+                                "value": "399200",
+                                "type": "float",
+                                "units": "KB",
+                                "tn": "134",
+                                "tmax": "180",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "memory"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Amount of cached memory"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Cached Memory"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "pkts_in",
+                                "value": "13.15",
+                                "type": "float",
+                                "units": "packets/sec",
+                                "tn": "234",
+                                "tmax": "300",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "network"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Packets in per second"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Packets Received"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "bytes_in",
+                                "value": "1560.05",
+                                "type": "float",
+                                "units": "bytes/sec",
+                                "tn": "234",
+                                "tmax": "300",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "network"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Number of bytes in per second"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Bytes Received"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "children": [
+                        {
+                            "id": "CassandraHead",
+                            "state": "FINISHED",
+                            "children": [
+                                {
+                                    "id": "CassandraHead_0",
+                                    "state": "FINISHED",
+                                    "isAbstract": false,
+                                    "nodeType": "sh",
+                                    "connectto": []
+                                }
+                            ],
+                            "isAbstract": true,
+                            "nodeType": "software",
+                            "connectto": []
+                        }
+                    ],
+                    "isAbstract": false,
+                    "nodeType": "os",
+                    "connectto": []
                 }
-              ],
-              "isAbstract": true,
-              "nodeType": "software",
-              "connectto": []
-            }
-          ],
-          "isAbstract": false,
-          "nodeType": "os",
-          "connectto": []
-        }
-      ],
-      "isAbstract": true,
-      "nodeType": "os",
-      "connectto": []
-    },
-    {
-      "id": "OS_Datanode",
-      "state": "RUNNING",
-      "children": [
+            ],
+            "isAbstract": true,
+            "nodeType": "os",
+            "connectto": []
+        },
         {
-          "id": "OS_Datanode_0",
-          "state": "RUNNING",
-          "properties": {
-            "instanceType": "000001920",
-            "privateIp": "10.99.0.10",
-            "instanceId": "f92f78b0-a7cc-4810-b0c0-e36fa7cdeda0",
-            "provider": "dsg@openstack",
-            "baseImage": "8f1428ac-f239-42e0-ab35-137f6e234101"
-          },
-          "children": [
-            {
-              "id": "CassandraNode",
-              "state": "FINISHED",
-              "children": [
+            "id": "OS_Datanode",
+            "state": "RUNNING",
+            "children": [
                 {
-                  "id": "CassandraNode_0",
-                  "state": "FINISHED",
-                  "isAbstract": false,
-                  "nodeType": "sh",
-                  "connectto": [
-                    "CassandraHead_0"
-                  ]
+                    "id": "OS_Datanode_0",
+                    "state": "RUNNING",
+                    "properties": {
+                        "instanceType": "000000960",
+                        "privateIp": "10.99.0.10",
+                        "instanceId": "4d0fd2e2-53f4-42f2-9560-ffac5a252a98",
+                        "provider": "dsg@openstack",
+                        "baseImage": "8f1428ac-f239-42e0-ab35-137f6e234101"
+                    },
+                    "monitoring": {
+                        "name": "os-datanode-0.novalocal",
+                        "ip": "10.99.0.10",
+                        "location": "unspecified",
+                        "tags": "",
+                        "reported": "1400773431",
+                        "tn": "1",
+                        "tmax": "20",
+                        "dmax": "0",
+                        "gmondStarted": "1400766471",
+                        "metrics": [
+                            {
+                                "name": "mem_shared",
+                                "value": "0",
+                                "type": "float",
+                                "units": "KB",
+                                "tn": "161",
+                                "tmax": "180",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "memory"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Amount of shared memory"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Shared Memory"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "cpu_wio",
+                                "value": "1.8",
+                                "type": "float",
+                                "units": "%",
+                                "tn": "20",
+                                "tmax": "90",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "cpu"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Percentage of time that the CPU or CPUs were idle during which the system had an outstanding disk I/O request"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "CPU wio"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "machine_type",
+                                "value": "x86_64",
+                                "type": "string",
+                                "units": "",
+                                "tn": "961",
+                                "tmax": "1200",
+                                "dmax": "0",
+                                "slope": "zero",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "system"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "System architecture"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Machine Type"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "proc_total",
+                                "value": "96",
+                                "type": "uint32",
+                                "units": " ",
+                                "tn": "81",
+                                "tmax": "950",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "process"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Total number of processes"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Total Processes"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "cpu_num",
+                                "value": "1",
+                                "type": "uint16",
+                                "units": "CPUs",
+                                "tn": "961",
+                                "tmax": "1200",
+                                "dmax": "0",
+                                "slope": "zero",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "cpu"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Total number of CPUs"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "CPU Count"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "cpu_speed",
+                                "value": "2393",
+                                "type": "uint32",
+                                "units": "MHz",
+                                "tn": "961",
+                                "tmax": "1200",
+                                "dmax": "0",
+                                "slope": "zero",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "cpu"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "CPU Speed in terms of MHz"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "CPU Speed"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "pkts_out",
+                                "value": "1.27",
+                                "type": "float",
+                                "units": "packets/sec",
+                                "tn": "41",
+                                "tmax": "300",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "network"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Packets out per second"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Packets Sent"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "swap_free",
+                                "value": "0",
+                                "type": "float",
+                                "units": "KB",
+                                "tn": "161",
+                                "tmax": "180",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "memory"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Amount of available swap memory"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Free Swap Space"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "load_one",
+                                "value": "0.00",
+                                "type": "float",
+                                "units": " ",
+                                "tn": "31",
+                                "tmax": "70",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "load"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "One minute load average"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "One Minute Load Average"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "mem_total",
+                                "value": "952792",
+                                "type": "float",
+                                "units": "KB",
+                                "tn": "961",
+                                "tmax": "1200",
+                                "dmax": "0",
+                                "slope": "zero",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "memory"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Total amount of memory displayed in KBs"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Memory Total"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "os_release",
+                                "value": "3.11.0-14-generic",
+                                "type": "string",
+                                "units": "",
+                                "tn": "961",
+                                "tmax": "1200",
+                                "dmax": "0",
+                                "slope": "zero",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "system"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Operating system release date"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Operating System Release"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "proc_run",
+                                "value": "0",
+                                "type": "uint32",
+                                "units": " ",
+                                "tn": "81",
+                                "tmax": "950",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "process"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Total number of running processes"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Total Running Processes"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "load_five",
+                                "value": "0.01",
+                                "type": "float",
+                                "units": " ",
+                                "tn": "31",
+                                "tmax": "325",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "load"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Five minute load average"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Five Minute Load Average"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "gexec",
+                                "value": "OFF",
+                                "type": "string",
+                                "units": "",
+                                "tn": "61",
+                                "tmax": "300",
+                                "dmax": "0",
+                                "slope": "zero",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "core"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "gexec available"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Gexec Status"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "disk_free",
+                                "value": "58.993",
+                                "type": "double",
+                                "units": "GB",
+                                "tn": "81",
+                                "tmax": "180",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "disk"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Total free disk space"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Disk Space Available"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "mem_cached",
+                                "value": "399960",
+                                "type": "float",
+                                "units": "KB",
+                                "tn": "161",
+                                "tmax": "180",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "memory"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Amount of cached memory"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Cached Memory"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "pkts_in",
+                                "value": "8.97",
+                                "type": "float",
+                                "units": "packets/sec",
+                                "tn": "41",
+                                "tmax": "300",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "network"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Packets in per second"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Packets Received"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "bytes_in",
+                                "value": "1408.48",
+                                "type": "float",
+                                "units": "bytes/sec",
+                                "tn": "41",
+                                "tmax": "300",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "network"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Number of bytes in per second"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Bytes Received"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "bytes_out",
+                                "value": "1176.72",
+                                "type": "float",
+                                "units": "bytes/sec",
+                                "tn": "41",
+                                "tmax": "300",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "network"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Number of bytes out per second"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Bytes Sent"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "swap_total",
+                                "value": "0",
+                                "type": "float",
+                                "units": "KB",
+                                "tn": "961",
+                                "tmax": "1200",
+                                "dmax": "0",
+                                "slope": "zero",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "memory"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Total amount of swap space displayed in KBs"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Swap Space Total"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "mem_free",
+                                "value": "418616",
+                                "type": "float",
+                                "units": "KB",
+                                "tn": "161",
+                                "tmax": "180",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "memory"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Amount of available memory"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Free Memory"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "load_fifteen",
+                                "value": "0.05",
+                                "type": "float",
+                                "units": " ",
+                                "tn": "31",
+                                "tmax": "950",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "load"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Fifteen minute load average"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Fifteen Minute Load Average"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "os_name",
+                                "value": "Linux",
+                                "type": "string",
+                                "units": "",
+                                "tn": "961",
+                                "tmax": "1200",
+                                "dmax": "0",
+                                "slope": "zero",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "system"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Operating system name"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Operating System"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "boottime",
+                                "value": "1400766410",
+                                "type": "uint32",
+                                "units": "s",
+                                "tn": "961",
+                                "tmax": "1200",
+                                "dmax": "0",
+                                "slope": "zero",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "system"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "The last time that the system was started"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Last Boot Time"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "cpu_idle",
+                                "value": "97.9",
+                                "type": "float",
+                                "units": "%",
+                                "tn": "20",
+                                "tmax": "90",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "cpu"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Percentage of time that the CPU or CPUs were idle and the system did not have an outstanding disk I/O request"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "CPU Idle"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "cpu_user",
+                                "value": "0.2",
+                                "type": "float",
+                                "units": "%",
+                                "tn": "20",
+                                "tmax": "90",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "cpu"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Percentage of CPU utilization that occurred while executing at the user level"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "CPU User"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "cpu_nice",
+                                "value": "0.0",
+                                "type": "float",
+                                "units": "%",
+                                "tn": "20",
+                                "tmax": "90",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "cpu"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Percentage of CPU utilization that occurred while executing at the user level with nice priority"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "CPU Nice"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "cpu_aidle",
+                                "value": "0.0",
+                                "type": "float",
+                                "units": "%",
+                                "tn": "20",
+                                "tmax": "3800",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "cpu"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Percent of time since boot idle CPU"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "CPU aidle"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "mem_buffers",
+                                "value": "20940",
+                                "type": "float",
+                                "units": "KB",
+                                "tn": "161",
+                                "tmax": "180",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "memory"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Amount of buffered memory"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Memory Buffers"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "cpu_system",
+                                "value": "0.2",
+                                "type": "float",
+                                "units": "%",
+                                "tn": "20",
+                                "tmax": "90",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "cpu"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Percentage of CPU utilization that occurred while executing at the system level"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "CPU System"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "part_max_used",
+                                "value": "7.4",
+                                "type": "float",
+                                "units": "%",
+                                "tn": "81",
+                                "tmax": "180",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "disk"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Maximum percent used for all partitions"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Maximum Disk Space Used"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "disk_total",
+                                "value": "63.379",
+                                "type": "double",
+                                "units": "GB",
+                                "tn": "1561",
+                                "tmax": "1200",
+                                "dmax": "0",
+                                "slope": "both",
+                                "gangliaExtraDataInfoCollection": [
+                                    {
+                                        "gangliaExtraElementInfo": [
+                                            {
+                                                "name": "GROUP",
+                                                "value": "disk"
+                                            },
+                                            {
+                                                "name": "DESC",
+                                                "value": "Total available disk space"
+                                            },
+                                            {
+                                                "name": "TITLE",
+                                                "value": "Total Disk Space"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "children": [
+                        {
+                            "id": "CassandraNode",
+                            "state": "FINISHED",
+                            "children": [
+                                {
+                                    "id": "CassandraNode_0",
+                                    "state": "FINISHED",
+                                    "isAbstract": false,
+                                    "nodeType": "sh",
+                                    "connectto": [
+                                        "CassandraHead_0"
+                                    ]
+                                }
+                            ],
+                            "isAbstract": true,
+                            "nodeType": "software",
+                            "connectto": [
+                                "CassandraHead"
+                            ]
+                        }
+                    ],
+                    "isAbstract": false,
+                    "nodeType": "os",
+                    "connectto": []
                 }
-              ],
-              "isAbstract": true,
-              "nodeType": "software",
-              "connectto": [
-                "CassandraHead"
-              ]
-            }
-          ],
-          "isAbstract": false,
-          "nodeType": "os",
-          "connectto": []
+            ],
+            "isAbstract": true,
+            "nodeType": "os",
+            "connectto": []
         }
-      ],
-      "isAbstract": true,
-      "nodeType": "os",
-      "connectto": []
-    }
-  ],
-  "isAbstract": true,
-  "connectto": []
+    ],
+    "isAbstract": true,
+    "connectto": []
 }

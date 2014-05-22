@@ -1,8 +1,10 @@
 package at.ac.tuwien.dsg.comot.client;
 
 import at.ac.tuwien.dsg.cloud.salsa.common.model.enums.SalsaEntityState;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.List;
 import java.util.Map;
@@ -12,6 +14,7 @@ import java.util.Map;
  */
 
 @JsonIgnoreProperties({"isAbstract", "connectto"})
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class SalsaServiceStatusResponse extends SalsaResponse {
 
     @JsonProperty("id")
@@ -28,6 +31,17 @@ public class SalsaServiceStatusResponse extends SalsaResponse {
 
     @JsonProperty
     private String nodeType;
+
+    @JsonProperty("monitoring")
+    @JsonDeserialize(as = MonitoringData.class)
+    private MonitoringData monitoringData;
+
+    public SalsaServiceStatusResponse() {
+    }
+
+    public SalsaServiceStatusResponse(SalsaResponse response) {
+        super(response.code, response.message);
+    }
 
     public SalsaServiceStatusResponse withCloudEntityId(final String cloudEntityId) {
         this.cloudEntityId = cloudEntityId;
@@ -62,6 +76,14 @@ public class SalsaServiceStatusResponse extends SalsaResponse {
     public SalsaServiceStatusResponse withExpectedCode(final int expectedCode) {
         this.expectedCode = expectedCode;
         return this;
+    }
+
+    public MonitoringData getMonitoringData() {
+        return monitoringData;
+    }
+
+    public void setMonitoringData(MonitoringData monitoringData) {
+        this.monitoringData = monitoringData;
     }
 
     public String getCloudEntityId() {

@@ -22,7 +22,8 @@ public class SalsaClientConfiguration {
             = "/services/{serviceId}/topologies/{topologyId}/nodes/{nodeId}/instances/{instanceId}";
 
     private static final String DEFAULT_STATUS_PATH
-            = "/salsa-engine/rest/viewgenerator/cloudservice/json/full/{serviceId}";
+            = "/services/{serviceId}";
+            //= "/salsa-engine/rest/viewgenerator/cloudservice/json/full/{serviceId}";
 
 
     private String host = DEFAULT_HOST;

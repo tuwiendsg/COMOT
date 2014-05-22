@@ -4,6 +4,7 @@ import at.ac.tuwien.dsg.comot.api.ToscaDescriptionBuilder;
 import at.ac.tuwien.dsg.comot.api.ToscaDescriptionBuilderImpl;
 import at.ac.tuwien.dsg.comot.common.logging.Markers;
 import at.ac.tuwien.dsg.comot.common.model.CloudApplication;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
@@ -35,6 +36,8 @@ public class DefaultSalsaClient implements SalsaClient {
     private final SalsaClientConfiguration configuration;
 
     private final ToscaDescriptionBuilder toscaDescriptionBuilder;
+
+    private final ObjectMapper mapper = new ObjectMapper();
 
     public DefaultSalsaClient() {
         httpClient = new DefaultHttpClient();
@@ -166,7 +169,7 @@ public class DefaultSalsaClient implements SalsaClient {
 
     }
 
-    protected SalsaResponse buildSalsaResponse(SalsaClientAction action, int result, String body) {
+    protected SalsaResponse buildSalsaResponse(SalsaClientAction action, int result, String body) throws IOException {
         SalsaResponse response = new SalsaResponse()
                 .withCode(result)
                 .withMessage(body)
@@ -177,7 +180,11 @@ public class DefaultSalsaClient implements SalsaClient {
                     action.expectedResultCode(), action, result);
         }
 
-
+        if (action == SalsaClientAction.STATUS) {
+            //response = new SalsaServiceStatusResponse(response).withExpectedCode(action.expectedResultCode());
+            response = mapper.reader(SalsaServiceStatusResponse.class).readValue(body);
+            response.withCode(result).withExpectedCode(action.expectedResultCode()).withMessage(body);
+        }
 
         return response;
     }
