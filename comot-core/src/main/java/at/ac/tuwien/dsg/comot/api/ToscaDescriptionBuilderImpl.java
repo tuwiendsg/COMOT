@@ -31,7 +31,7 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(ToscaDescriptionBuilderImpl.class);
 
-    public static final String DEFAULT_ARTIFACT_TYPE_NAMESPACE_URI = "http://void.org";
+    public static final String DEFAULT_ARTIFACT_TYPE_NAMESPACE_URI = "https://github.com/tuwiendsg/SALSA";
 
     public static final String DEFAULT_ARTIFACT_TYPE_PREFIX = "salsa";
 
@@ -119,6 +119,10 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
                 tTopologyTemplate.getNodeTemplateOrRelationshipTemplate().add(tRelationshipTemplate);
             }
 
+        }
+
+        if (application.hasDefaultMetricsEnabled()) {
+            definitions.getOtherAttributes().put(new QName(DEFAULT_ARTIFACT_TYPE_NAMESPACE_URI, "defaultMetricsEnabled", DEFAULT_ARTIFACT_TYPE_PREFIX), "true");
         }
 
         return definitions;

@@ -93,13 +93,13 @@ public class SalsaClientTest extends AbstractSalsaClientTest {
         assertNotNull(osHeadNode0.getMonitoringData());
         assertFalse(osHeadNode0.getMonitoringData().getMetrics().isEmpty());
 
-        MonitoringData monitoringData =  osHeadNode0.getMonitoringData();
+        MonitoringData monitoringData = osHeadNode0.getMonitoringData();
         assertEquals("os-headnode-0.novalocal", monitoringData.getName());
         assertEquals("10.99.0.18", monitoringData.getIp());
 
-        osHeadNode0.getMonitoringData().getMetrics().stream().allMatch(metric -> metric.getName() != null);
-        osHeadNode0.getMonitoringData().getMetrics().stream().allMatch(metric -> metric.getType() != null);
-        osHeadNode0.getMonitoringData().getMetrics().stream().allMatch(metric -> metric.getValue() != null);
+        assertTrue(osHeadNode0.getMonitoringData().getMetrics().stream().allMatch(metric -> metric.getName() != null));
+        assertTrue(osHeadNode0.getMonitoringData().getMetrics().stream().allMatch(metric -> metric.getType() != null));
+        assertTrue(osHeadNode0.getMonitoringData().getMetrics().stream().allMatch(metric -> metric.getValue() != null));
     }
 
     private SalsaClient prepareSalsaClient() {

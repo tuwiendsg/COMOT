@@ -105,6 +105,6 @@ public class DataAsAServiceCloudApplication {
                                 )
                 );
 
-        return CloudApplication("DaaSApp").withName("DaaS Cloud Application").consistsOfServices(daaSService);
+        return CloudApplication("DaaSApp").withName("DaaS Cloud Application").consistsOfServices(daaSService).withDefaultMetricsEnabled(true);
     }
 }

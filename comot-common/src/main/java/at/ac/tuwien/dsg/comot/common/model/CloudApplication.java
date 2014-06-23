@@ -11,6 +11,8 @@ public class CloudApplication extends AbstractServiceDescriptionEntity {
 
     private Set<ServiceTemplate> serviceTemplates = new HashSet<>();
 
+    protected boolean defaultMetricsEnabled;
+
     protected CloudApplication(String id) {
         super(id);
     }
@@ -52,6 +54,19 @@ public class CloudApplication extends AbstractServiceDescriptionEntity {
     @Override
     public CloudApplication withId(String id) {
         return (CloudApplication) super.withId(id);
+    }
+
+    public CloudApplication withDefaultMetricsEnabled(final boolean defaultMetricsEnabled) {
+        this.defaultMetricsEnabled = defaultMetricsEnabled;
+        return this;
+    }
+
+    public void setDefaultMetricsEnabled(boolean defaultMetricsEnabled) {
+        this.defaultMetricsEnabled = defaultMetricsEnabled;
+    }
+
+    public boolean hasDefaultMetricsEnabled() {
+        return defaultMetricsEnabled;
     }
 
     @Override

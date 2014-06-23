@@ -1,11 +1,11 @@
 package at.ac.tuwien.dsg.comot.samples;
 
-import at.ac.tuwien.dsg.comot.bundles.dataends.ElasticSearchNode;
 import at.ac.tuwien.dsg.comot.common.model.CloudApplication;
 import at.ac.tuwien.dsg.comot.common.model.OperatingSystemNode;
 import at.ac.tuwien.dsg.comot.common.model.ServiceNode;
 import at.ac.tuwien.dsg.comot.common.model.ServiceTemplate;
 
+import static at.ac.tuwien.dsg.comot.bundles.dataends.ElasticSearchNode.ElasticSearchNode;
 import static at.ac.tuwien.dsg.comot.common.model.CloudApplication.CloudApplication;
 import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackSmall;
 import static at.ac.tuwien.dsg.comot.common.model.Constraint.CostConstraint;
@@ -23,7 +23,7 @@ public class ElasticSearchCloudApplication {
     public static CloudApplication build() {
 
         // ElasticSearch Node
-        ServiceNode elasticSearchNode = ElasticSearchNode.ElasticSearchNode("ES1")
+        ServiceNode elasticSearchNode = ElasticSearchNode("ES1")
                 .withName("ElasticSearch node (single instance)")
                 .constrainedBy(LatencyConstraint("Co1").lessThan("0.5"));
 
@@ -51,5 +51,35 @@ public class ElasticSearchCloudApplication {
                 );
 
         return CloudApplication("EsApp").withName("Simple ElasticSearch Application").consistsOfServices(esService);
+    }
+
+    public void t() {
+
+        ServiceNode esNode = ElasticSearchNode("ES1")
+                .withName("ElasticSearch node (single instance)")
+                .constrainedBy(LatencyConstraint("Co1").lessThan("0.5"));
+
+        OperatingSystemNode osNode = OperatingSystemNode("OS")
+                .providedBy(
+                        OpenstackSmall("OS_Headnode_Small")
+                                .withProvider("dsg@openstack")
+                                .addSoftwarePackage("openjdk-7-jre")
+                );
+
+        ServiceTemplate esService = ServiceTemplate("EsService")
+                .constrainedBy(CostConstraint("CG0").lessThan("1000"))
+                .definedBy(ServiceTopology("EsTopology")
+                                .consistsOfNodes(esNode, osNode)
+                                .andRelationships(
+                                        HostedOnRelation("es2os")
+                                                .from(esNode)
+                                                .to(osNode)
+                                )
+                );
+
+        CloudApplication("EsApp")
+                .withName("Simple ElasticSearch Application")
+                .consistsOfServices(esService);
+
     }
 }
