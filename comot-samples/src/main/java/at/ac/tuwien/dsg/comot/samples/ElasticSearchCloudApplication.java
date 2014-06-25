@@ -1,8 +1,8 @@
 package at.ac.tuwien.dsg.comot.samples;
 
 import at.ac.tuwien.dsg.comot.common.model.CloudApplication;
-import at.ac.tuwien.dsg.comot.common.model.OperatingSystemNode;
-import at.ac.tuwien.dsg.comot.common.model.ServiceNode;
+import at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit;
+import at.ac.tuwien.dsg.comot.common.model.ServiceUnit;
 import at.ac.tuwien.dsg.comot.common.model.ServiceTemplate;
 
 import static at.ac.tuwien.dsg.comot.bundles.dataends.ElasticSearchNode.ElasticSearchNode;
@@ -11,9 +11,9 @@ import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecifica
 import static at.ac.tuwien.dsg.comot.common.model.Constraint.CostConstraint;
 import static at.ac.tuwien.dsg.comot.common.model.Constraint.LatencyConstraint;
 import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.HostedOnRelation;
-import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemNode.OperatingSystemNode;
+import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingSystemNode;
 import static at.ac.tuwien.dsg.comot.common.model.ServiceTemplate.ServiceTemplate;
-import static at.ac.tuwien.dsg.comot.common.model.ServiceTopology.ServiceTopology;
+import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
 
 /**
  * @author omoser
@@ -23,31 +23,32 @@ public class ElasticSearchCloudApplication {
     public static CloudApplication build() {
 
         // ElasticSearch Node
-        ServiceNode elasticSearchNode = ElasticSearchNode("ES1")
+        ServiceUnit elasticSearchNode = ElasticSearchNode("ES1")
                 .withName("ElasticSearch node (single instance)")
                 .constrainedBy(LatencyConstraint("Co1").lessThan("0.5"));
 
-
         // OS Node for ES deployment
-        OperatingSystemNode operatingSystemNode = OperatingSystemNode("OS")
+        OperatingSystemUnit operatingSystemNode = OperatingSystemNode("OS")
                 .providedBy(
                         OpenstackSmall("OS_Headnode_Small")
-                                .withProvider("dsg@openstack")
-                                .addSoftwarePackage("openjdk-7-jre")
+                        .withProvider("dsg@openstack")
+                        .addSoftwarePackage("openjdk-7-jre")
                 );
+
+        ServiceTopology searchTopology = ServiceTopology.ServiceTopology("SearchTopology");
+
+        searchTopology
+                .withServiceUnits(elasticSearchNode,
+                        operatingSystemNode);
 
         // Build containing DaaS service
         ServiceTemplate esService = ServiceTemplate("EsService")
                 .constrainedBy(CostConstraint("CG0").lessThan("1000"))
-                .definedBy(ServiceTopology("EsTopology")
-                                .consistsOfNodes(
-                                        elasticSearchNode,
-                                        operatingSystemNode)
-                                .andRelationships(
-                                        HostedOnRelation("es2os")
-                                                .from(elasticSearchNode)
-                                                .to(operatingSystemNode)
-                                )
+                .consistsOfTopologies(searchTopology)
+                .andRelationships(
+                        HostedOnRelation("es2os")
+                        .from(elasticSearchNode)
+                        .to(operatingSystemNode)
                 );
 
         return CloudApplication("EsApp").withName("Simple ElasticSearch Application").consistsOfServices(esService);
@@ -55,26 +56,29 @@ public class ElasticSearchCloudApplication {
 
     public void t() {
 
-        ServiceNode esNode = ElasticSearchNode("ES1")
+        ServiceUnit esNode = ElasticSearchNode("ES1")
                 .withName("ElasticSearch node (single instance)")
                 .constrainedBy(LatencyConstraint("Co1").lessThan("0.5"));
 
-        OperatingSystemNode osNode = OperatingSystemNode("OS")
+        OperatingSystemUnit osNode = OperatingSystemNode("OS")
                 .providedBy(
                         OpenstackSmall("OS_Headnode_Small")
-                                .withProvider("dsg@openstack")
-                                .addSoftwarePackage("openjdk-7-jre")
+                        .withProvider("dsg@openstack")
+                        .addSoftwarePackage("openjdk-7-jre")
                 );
+
+        ServiceTopology esTopology = ServiceTopology.ServiceTopology("ESTopology");
+        esTopology
+                .withServiceUnits(esNode,
+                        osNode);
 
         ServiceTemplate esService = ServiceTemplate("EsService")
                 .constrainedBy(CostConstraint("CG0").lessThan("1000"))
-                .definedBy(ServiceTopology("EsTopology")
-                                .consistsOfNodes(esNode, osNode)
-                                .andRelationships(
-                                        HostedOnRelation("es2os")
-                                                .from(esNode)
-                                                .to(osNode)
-                                )
+                .consistsOfTopologies(esTopology)
+                .andRelationships(
+                        HostedOnRelation("es2os")
+                        .from(esNode)
+                        .to(osNode)
                 );
 
         CloudApplication("EsApp")

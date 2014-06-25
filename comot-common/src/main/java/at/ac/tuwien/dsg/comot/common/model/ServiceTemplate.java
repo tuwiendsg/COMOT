@@ -1,11 +1,14 @@
 package at.ac.tuwien.dsg.comot.common.model;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
 /**
  * @author omoser
  */
 public class ServiceTemplate extends AbstractServiceDescriptionEntity {
-
-    private ServiceTopology serviceTopology;
 
     private EntityRelationship relationship;
 
@@ -13,27 +16,38 @@ public class ServiceTemplate extends AbstractServiceDescriptionEntity {
         super(id);
     }
 
-    public static ServiceTemplate ServiceTemplate(String id) {
-        return new ServiceTemplate(id);
-    }
+    private Set<ServiceTopology> serviceNodes = new HashSet<>();
 
-    public ServiceTemplate definedBy(final ServiceTopology serviceTopology) {
-        this.serviceTopology = serviceTopology;
+    private Set<EntityRelationship> relationships = new HashSet<>();
+
+    public ServiceTemplate consistsOfTopologies(ServiceTopology... nodes) {
+        serviceNodes.addAll(Arrays.asList(nodes));
         return this;
     }
 
-    public ServiceTemplate withRelationship(final EntityRelationship relationship) {
-        this.relationship = relationship;
+    public ServiceTemplate with(EntityRelationship relationship) {
+        relationships.add(relationship);
         return this;
     }
 
-    public ServiceTopology getServiceTopology() {
-        return serviceTopology;
+    public ServiceTemplate andRelationships(EntityRelationship... relationships) {
+        this.relationships.addAll(Arrays.asList(relationships));
+        return this;
     }
+
+    public Set<EntityRelationship> getRelationships() {
+        return relationships;
+    }
+    
+    @Override
+    public ServiceTemplate provides(ElasticityCapability... capabilities) {
+        return (ServiceTemplate) super.provides(capabilities);
+    }
+    
 
     @Override
-    public ServiceTemplate provides(Capability... capabilities) {
-        return (ServiceTemplate) super.provides(capabilities);
+    public ServiceTemplate exposes(Capability... capabilities) {
+        return (ServiceTemplate) super.exposes(capabilities);
     }
 
     @Override
@@ -72,31 +86,51 @@ public class ServiceTemplate extends AbstractServiceDescriptionEntity {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ServiceTemplate)) return false;
+    public String toString() {
+        return "ServiceTemplate{"
+                + "serviceNodes=" + serviceNodes
+                + ", relationships=" + relationships
+                + "} " + super.toString();
+    }
 
-        ServiceTemplate that = (ServiceTemplate) o;
+    public Set<ServiceTopology> getServiceTopologies() {
+        return serviceNodes;
+    }
 
-        if (relationship != null ? !relationship.equals(that.relationship) : that.relationship != null) return false;
-        if (serviceTopology != null ? !serviceTopology.equals(that.serviceTopology) : that.serviceTopology != null)
-            return false;
+    public boolean hasRelationships() {
+        return !relationships.isEmpty();
+    }
 
-        return true;
+    public static ServiceTemplate ServiceTemplate(String id) {
+        return new ServiceTemplate(id);
+    }
+
+    public ServiceTemplate withRelationship(final EntityRelationship relationship) {
+        this.relationship = relationship;
+        return this;
     }
 
     @Override
     public int hashCode() {
-        int result = serviceTopology != null ? serviceTopology.hashCode() : 0;
-        result = 31 * result + (relationship != null ? relationship.hashCode() : 0);
-        return result;
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.serviceNodes);
+        hash = 67 * hash + Objects.hashCode(this.relationships);
+        return hash;
     }
 
     @Override
-    public String toString() {
-        return "ServiceTemplate{" +
-                "serviceTopology=" + serviceTopology +
-                ", relationship=" + relationship +
-                "} " + super.toString();
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ServiceTemplate other = (ServiceTemplate) obj;
+        if (!Objects.equals(this.serviceNodes, other.serviceNodes)) {
+            return false;
+        }
+        return true;
     }
+
 }

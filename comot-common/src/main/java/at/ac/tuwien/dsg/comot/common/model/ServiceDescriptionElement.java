@@ -15,8 +15,13 @@ public interface ServiceDescriptionElement extends CloudEntity {
     Set<Requirement> getRequirements();
 
     Set<Capability> getCapabilities();
+    
+    Set<ElasticityCapability> getElasticityCapabilities();
 
+    
     Map<String, Object> getProperties();
+    
+    
 
 
 }

@@ -1,19 +1,19 @@
 package at.ac.tuwien.dsg.comot.common.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
- * @author omoser
+ * @author Daniel Moldovan
  */
 public class ServiceTopology extends AbstractServiceDescriptionEntity {
 
-    private Set<ServiceNode> serviceNodes = new HashSet<>();
+    private List<ServiceUnit> serviceNodes = new ArrayList<>();
 
-    private Set<EntityRelationship> relationships = new HashSet<>();
-
-    ServiceTopology(String id) {
+    protected ServiceTopology(String id) {
         super(id);
     }
 
@@ -21,78 +21,26 @@ public class ServiceTopology extends AbstractServiceDescriptionEntity {
         return new ServiceTopology(id);
     }
 
-    public ServiceTopology consistsOfNodes(ServiceNode... nodes) {
-        serviceNodes.addAll(Arrays.asList(nodes));
-        return this;
-    }
-
-    public ServiceTopology with(EntityRelationship relationship) {
-        relationships.add(relationship);
-        return this;
-    }
-
-    public ServiceTopology andRelationships(EntityRelationship... relationships) {
-        this.relationships.addAll(Arrays.asList(relationships));
-        return this;
-    }
-
-    public Set<EntityRelationship> getRelationships() {
-        return relationships;
-    }
-
-    @Override
-    public AbstractServiceDescriptionEntity provides(Capability... capabilities) {
-        return super.provides(capabilities);
-    }
-
-    @Override
-    public AbstractServiceDescriptionEntity requires(Requirement... requirements) {
-        return super.requires(requirements);
-    }
-
-    @Override
-    public AbstractServiceDescriptionEntity constrainedBy(Constraint... constraints) {
-        return super.constrainedBy(constraints);
-    }
-
-    @Override
-    public AbstractServiceDescriptionEntity controlledBy(Strategy... strategies) {
-        return super.controlledBy(strategies);
-    }
-
-    @Override
-    public AbstractCloudEntity withId(String id) {
-        return super.withId(id);
-    }
-
-    @Override
-    public AbstractCloudEntity withDescription(String description) {
-        return super.withDescription(description);
-    }
-
-    @Override
-    public AbstractCloudEntity withName(String name) {
-        return super.withName(name);
-    }
-
-    @Override
-    public AbstractCloudEntity ofType(String type) {
-        return super.ofType(type);
-    }
-
-    @Override
-    public String toString() {
-        return "ServiceTopology{" +
-                "serviceNodes=" + serviceNodes +
-                ", relationships=" + relationships +
-                "} " + super.toString();
-    }
-
-    public Set<ServiceNode> getServiceNodes() {
+    public List<ServiceUnit> getServiceUnits() {
         return serviceNodes;
     }
 
-    public boolean hasRelationships() {
-        return !relationships.isEmpty();
+    public void setServiceUnits(List<ServiceUnit> serviceNodes) {
+        this.serviceNodes = serviceNodes;
     }
+
+    public void addServiceUnit(ServiceUnit serviceNode) {
+        this.serviceNodes.add(serviceNode);
+    }
+
+    public void removeServiceUnit(ServiceUnit serviceNode) {
+        this.serviceNodes.remove(serviceNode);
+    }
+
+    public ServiceTopology withServiceUnits(ServiceUnit... serviceNodes) {
+        this.serviceNodes.addAll(Arrays.asList(serviceNodes));
+        return this;
+    }
+ 
+
 }

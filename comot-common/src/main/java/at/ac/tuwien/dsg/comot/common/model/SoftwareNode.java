@@ -3,7 +3,7 @@ package at.ac.tuwien.dsg.comot.common.model;
 /**
  * @author omoser
  */
-public class SoftwareNode extends ServiceNode {
+public class SoftwareNode extends ServiceUnit {
 
     protected SoftwareNode(String id) {
         super(id);
@@ -19,7 +19,10 @@ public class SoftwareNode extends ServiceNode {
     }
 
     public static SoftwareNode UnboundedSoftwareNode(String id) {
-        return new SoftwareNode(id).ofType(NodeType.Software).withMinInstances(1).withMaxInstances(Integer.MAX_VALUE);
+        return new SoftwareNode(id).ofType(NodeType.Software).withMinInstances(1).withMaxInstances(Integer.MAX_VALUE)
+                .provides(ElasticityCapability.ScaleIn(id))
+                .provides(ElasticityCapability.ScaleOut(id))
+                ;
     }
 
     @Override
@@ -88,7 +91,12 @@ public class SoftwareNode extends ServiceNode {
     }
 
     @Override
-    public SoftwareNode provides(Capability... capabilities) {
+    public SoftwareNode exposes(Capability... capabilities) {
+        return (SoftwareNode) super.exposes(capabilities);
+    }
+
+    @Override
+    public SoftwareNode provides(ElasticityCapability... capabilities) {
         return (SoftwareNode) super.provides(capabilities);
     }
 }

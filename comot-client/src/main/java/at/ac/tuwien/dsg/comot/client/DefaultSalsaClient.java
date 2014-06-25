@@ -58,8 +58,8 @@ public class DefaultSalsaClient implements SalsaClient {
     }
 
     public DefaultSalsaClient(HttpClient httpClient,
-                              SalsaClientConfiguration configuration,
-                              ToscaDescriptionBuilder toscaDescriptionBuilder) {
+            SalsaClientConfiguration configuration,
+            ToscaDescriptionBuilder toscaDescriptionBuilder) {
 
         this.httpClient = httpClient;
         this.configuration = configuration;
@@ -93,7 +93,6 @@ public class DefaultSalsaClient implements SalsaClient {
         method.setEntity(new StringEntity(toscaDescriptionXml, ContentType.APPLICATION_XML));
         return executeMethod(method, SalsaClientAction.DEPLOY);
     }
-
 
     @Override
     public SalsaResponse undeploy(String serviceId) throws SalsaClientException {
@@ -180,12 +179,26 @@ public class DefaultSalsaClient implements SalsaClient {
                     action.expectedResultCode(), action, result);
         }
 
-        if (action == SalsaClientAction.STATUS) {
-            //response = new SalsaServiceStatusResponse(response).withExpectedCode(action.expectedResultCode());
-            response = mapper.reader(SalsaServiceStatusResponse.class).readValue(body);
-            response.withCode(result).withExpectedCode(action.expectedResultCode()).withMessage(body);
-        }
-
+        //TODO: make mapping work
+//        if (action == SalsaClientAction.STATUS) {
+//            //response = new SalsaServiceStatusResponse(response).withExpectedCode(action.expectedResultCode());
+//            response = mapper.reader(SalsaServiceStatusResponse.class).readValue(body);
+//            response.withCode(result).withExpectedCode(action.expectedResultCode()).withMessage(body);
+//        }
         return response;
     }
+
+    public SalsaResponse getServiceDeploymentInfo(String serviceId) {
+
+        if (log.isDebugEnabled()) {
+            log.debug(Markers.CLIENT, "Getting deployment information for serviceId {}", serviceId);
+        }
+
+        URI statusUri = UriBuilder.fromPath(configuration.getDeploymentInfoPath()).build(serviceId);
+
+        HttpGet method = new HttpGet(statusUri);
+        return executeMethod(method, SalsaClientAction.SERVICE_DEPLOYMENT_INFO);
+
+    }
+
 }

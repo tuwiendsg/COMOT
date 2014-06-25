@@ -3,6 +3,8 @@ package at.ac.tuwien.dsg.comot.common.model;
 /**
  * @author omoser
  */
+//TODO: one constraint should be able to take more operators
+//Example: metric a AND metric B OR metric c
 public class Constraint extends AbstractCloudEntity implements Renderable {
 
     private Metric metric;
@@ -16,28 +18,31 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
         context.put(id, this);
     }
 
-    public static Constraint Constraint(String id) {
-        return new Constraint(id);
+//    public static Constraint Constraint(String id) {
+//        return new Constraint(id);
+//    }
+    public static Constraint MetricConstraint(String id, Metric constraintMetric) {
+        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(constraintMetric);
     }
 
     public static Constraint LatencyConstraint(String id) {
-        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.Latency);
+        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.Latency());
     }
 
     public static Constraint ResponseTimeConstraint(String id) {
-        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.ResponseTime);
+        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.ResponseTime());
     }
 
     public static Constraint ThroughputConstraint(String id) {
-        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.Throughput);
+        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.Throughput());
     }
 
     public static Constraint CostConstraint(String id) {
-        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.Cost);
+        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.Cost());
     }
 
     public static Constraint CpuUsageConstraint(String id) {
-        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.CpuUsage);
+        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.CpuUsage());
     }
 
     public Constraint value(final String value) {
@@ -88,12 +93,10 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
         return (Constraint) super.withName(name);
     }
 
-
     @Override
     public Constraint ofType(String type) {
         return (Constraint) super.ofType(type);
     }
-
 
     public Constraint ofType(ConstraintType type) {
         return (Constraint) super.ofType(type.toString());
@@ -111,20 +114,33 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
         return value;
     }
 
+    public static class Metric {
 
-    public enum Metric {
+        public static Metric Latency() {
+            return new Metric("latency", "ms");
+        }
 
-        Latency("latency", "ms"),
-        CpuUsage("cpuUsage", "%"),
-        ResponseTime("responseTime", "ms"),
-        Cost("cost", "$"),
-        Throughput("throughgput", "");
+        public static Metric CpuUsage() {
+            return new Metric("cpuUsage", "%");
+        }
+
+        public static Metric ResponseTime() {
+            return new Metric("responseTime", "ms");
+        }
+
+        public static Metric Cost() {
+            return new Metric("cost", "$");
+        }
+
+        public static Metric Throughput() {
+            return new Metric("throughgput", "operations/s");
+        }
 
         private final String name;
 
         private final String unit;
 
-        Metric(String metric, String unit) {
+        public Metric(String metric, String unit) {
             this.name = metric;
             this.unit = unit;
         }
@@ -137,24 +153,26 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
             return unit;
         }
 
-
     }
 
     public enum Operator {
 
         LessThan("<"),
+        LessEqual("<="),
         GreaterThan(">"),
+        GreaterEqual(">"),
+        
         Equals("=="),
         And("AND"),
         Or("OR"),
-        UNDEF("__UNDEF__");
+        UNDEF("");
+//        UNDEF("__UNDEF__");
 
         private final String operator;
 
         Operator(String value) {
             this.operator = value;
         }
-
 
         @Override
         public String toString() {
@@ -163,6 +181,7 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
     }
 
     public enum ConstraintType {
+
         SYBL("SYBLConstraint");
 
         private final String type;
@@ -170,7 +189,6 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
         ConstraintType(String type) {
             this.type = type;
         }
-
 
         @Override
         public String toString() {
@@ -180,14 +198,24 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Constraint)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Constraint)) {
+            return false;
+        }
 
         Constraint that = (Constraint) o;
 
-        if (metric != that.metric) return false;
-        if (operator != that.operator) return false;
-        if (value != null ? !value.equals(that.value) : that.value != null) return false;
+        if (metric != that.metric) {
+            return false;
+        }
+        if (operator != that.operator) {
+            return false;
+        }
+        if (value != null ? !value.equals(that.value) : that.value != null) {
+            return false;
+        }
 
         return true;
     }
@@ -206,10 +234,10 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
 
     @Override
     public String toString() {
-        return "Constraint{" +
-                "name=" + metric +
-                ", operator=" + operator +
-                ", operator='" + value + '\'' +
-                "} " + super.toString();
+        return "Constraint{"
+                + "name=" + metric
+                + ", operator=" + operator
+                + ", operator='" + value + '\''
+                + "} " + super.toString();
     }
 }

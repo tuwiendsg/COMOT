@@ -18,7 +18,7 @@ public class ArtifactTemplate extends AbstractCloudEntity {
     }
 
     public enum ArtifactType {
-        Script("script");
+        Script("sh");
 
         private final String type;
 
