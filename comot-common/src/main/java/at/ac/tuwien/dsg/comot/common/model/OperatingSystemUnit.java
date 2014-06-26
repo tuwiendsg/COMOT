@@ -12,7 +12,7 @@ public class OperatingSystemUnit extends ServiceUnit {
     }
 
     public static OperatingSystemUnit OperatingSystemNode(String id) {
-        return new OperatingSystemUnit(id).ofType(NodeType.OperatingSystem);
+        return new OperatingSystemUnit(id).ofType(NodeType.OperatingSystem).andMaxInstances(Integer.MAX_VALUE);
     }
 
     public OperatingSystemUnit providedBy(OperatingSystemSpecification specification) {

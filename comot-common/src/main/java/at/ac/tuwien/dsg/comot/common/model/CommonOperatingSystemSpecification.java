@@ -20,6 +20,11 @@ public final class CommonOperatingSystemSpecification {
 //900007680 w1.large
 //900015360 w1.xlarge
     
+    public static OperatingSystemSpecification OpenstackTiny(String id) {
+        return new OperatingSystemSpecification(id)
+                .withInstanceType("000000512") //.withInstanceType("m1.small")
+                .withBaseImage("8f1428ac-f239-42e0-ab35-137f6e234101"); //.withBaseImage("ami-00000163");
+    }
     public static OperatingSystemSpecification OpenstackMicro(String id) {
         return new OperatingSystemSpecification(id)
                 .withInstanceType("000000960") //.withInstanceType("m1.small")
