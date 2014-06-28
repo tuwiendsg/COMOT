@@ -9,10 +9,10 @@ import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecifica
 import static at.ac.tuwien.dsg.comot.common.model.Constraint.*;
 import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.ConnectToRelation;
 import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.HostedOnRelation;
-import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingSystemNode;
+import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingSystemUnit;
 import static at.ac.tuwien.dsg.comot.common.model.ServiceTemplate.ServiceTemplate;
-import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.SingleSoftwareNode;
-import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.UnboundedSoftwareNode;
+import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.SingleSoftwareUnit;
+import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.UnboundedSoftwareUnit;
 import static at.ac.tuwien.dsg.comot.common.model.Strategy.Strategy;
 
 /**
@@ -25,7 +25,7 @@ public class DataAsAServiceCloudApplication {
         //
         // Cassandra Head Node
         //
-        ServiceUnit cassandraHeadNode = SingleSoftwareNode("CassandraHead")
+        ServiceUnit cassandraHeadNode = SingleSoftwareUnit("CassandraHead")
                 .withName("Cassandra head node (single instance)")
                 .exposes(Capability.Variable("CassandraHeadIP_capa").withName("Data controller IP"))
                 .deployedBy(
@@ -42,7 +42,7 @@ public class DataAsAServiceCloudApplication {
         //
         // Cassandra Data Node
         //
-        ServiceUnit cassandraDataNode = UnboundedSoftwareNode("CassandraNode")
+        ServiceUnit cassandraDataNode = UnboundedSoftwareUnit("CassandraNode")
                 .withName("Cassandra data node (multiple instances)")
                 .deployedBy(
                         SingleScriptArtifactTemplate(
@@ -61,7 +61,7 @@ public class DataAsAServiceCloudApplication {
         //
         // OS Head Node
         //
-        OperatingSystemUnit cassandraHeadOsNode = OperatingSystemNode("OS_Headnode")
+        OperatingSystemUnit cassandraHeadOsNode = OperatingSystemUnit("OS_Headnode")
                 .providedBy(
                         OpenstackSmall("OS_Headnode_Small")
                         .withProvider("dsg@openstack")
@@ -71,7 +71,7 @@ public class DataAsAServiceCloudApplication {
         //
         // OS Data Node
         //
-        OperatingSystemUnit cassandraDataOsNode = OperatingSystemNode("OS_Datanode")
+        OperatingSystemUnit cassandraDataOsNode = OperatingSystemUnit("OS_Datanode")
                 .providedBy(
                         OpenstackSmall("OS_Datanode_Small")
                         .withProvider("dsg@openstack")

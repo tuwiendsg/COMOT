@@ -11,7 +11,7 @@ import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecifica
 import static at.ac.tuwien.dsg.comot.common.model.Constraint.CostConstraint;
 import static at.ac.tuwien.dsg.comot.common.model.Constraint.LatencyConstraint;
 import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.HostedOnRelation;
-import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingSystemNode;
+import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingSystemUnit;
 import static at.ac.tuwien.dsg.comot.common.model.ServiceTemplate.ServiceTemplate;
 import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
 
@@ -28,7 +28,7 @@ public class ElasticSearchCloudApplication {
                 .constrainedBy(LatencyConstraint("Co1").lessThan("0.5"));
 
         // OS Node for ES deployment
-        OperatingSystemUnit operatingSystemNode = OperatingSystemNode("OS")
+        OperatingSystemUnit operatingSystemNode = OperatingSystemUnit("OS")
                 .providedBy(
                         OpenstackSmall("OS_Headnode_Small")
                         .withProvider("dsg@openstack")
@@ -60,7 +60,7 @@ public class ElasticSearchCloudApplication {
                 .withName("ElasticSearch node (single instance)")
                 .constrainedBy(LatencyConstraint("Co1").lessThan("0.5"));
 
-        OperatingSystemUnit osNode = OperatingSystemNode("OS")
+        OperatingSystemUnit osNode = OperatingSystemUnit("OS")
                 .providedBy(
                         OpenstackSmall("OS_Headnode_Small")
                         .withProvider("dsg@openstack")

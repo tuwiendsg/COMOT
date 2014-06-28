@@ -14,11 +14,11 @@ public class SoftwareNode extends ServiceUnit {
         return new SoftwareNode(id).ofType(NodeType.Software);
     }
 
-    public static SoftwareNode SingleSoftwareNode(String id) {
+    public static SoftwareNode SingleSoftwareUnit(String id) {
         return new SoftwareNode(id).ofType(NodeType.Software).withMinInstances(1).withMaxInstances(1);
     }
 
-    public static SoftwareNode UnboundedSoftwareNode(String id) {
+    public static SoftwareNode UnboundedSoftwareUnit(String id) {
         return new SoftwareNode(id).ofType(NodeType.Software).withMinInstances(1).withMaxInstances(Integer.MAX_VALUE)
                 .provides(ElasticityCapability.ScaleIn(id))
                 .provides(ElasticityCapability.ScaleOut(id))

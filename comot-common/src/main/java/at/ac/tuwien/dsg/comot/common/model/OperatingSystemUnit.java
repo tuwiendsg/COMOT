@@ -11,7 +11,7 @@ public class OperatingSystemUnit extends ServiceUnit {
         super(id);
     }
 
-    public static OperatingSystemUnit OperatingSystemNode(String id) {
+    public static OperatingSystemUnit OperatingSystemUnit(String id) {
         return new OperatingSystemUnit(id).ofType(NodeType.OperatingSystem).andMaxInstances(Integer.MAX_VALUE);
     }
 

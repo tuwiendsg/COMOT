@@ -11,6 +11,13 @@ import java.util.Set;
 public class ServiceTemplate extends AbstractServiceDescriptionEntity {
 
     private EntityRelationship relationship;
+    
+    //TODO: implement this in API
+    private String metricCompositonRulesFile;
+    
+    private String effectsCompositonRulesFile;
+    
+    
 
     ServiceTemplate(String id) {
         super(id);
@@ -133,4 +140,47 @@ public class ServiceTemplate extends AbstractServiceDescriptionEntity {
         return true;
     }
 
+    
+    public ServiceTemplate withMetricCompositonRulesFile(final String metricCompositonRulesFile) {
+        this.metricCompositonRulesFile = metricCompositonRulesFile;
+        return this;
+    }
+    
+    
+    public ServiceTemplate withDefaultMetrics() {
+        this.metricCompositonRulesFile = "./config/resources/compositionRules.xml";
+        return this;
+    }
+
+    public String getMetricCompositonRulesFile() {
+        return metricCompositonRulesFile;
+    }
+ 
+    
+    public ServiceTemplate withActionEffectsCompositonRulesFile(final String effectsCompositonRulesFile) {
+        this.effectsCompositonRulesFile = effectsCompositonRulesFile;
+        return this;
+    }
+ 
+    
+    
+    
+    
+    public ServiceTemplate withDefaultActionEffects() {
+        this.effectsCompositonRulesFile = "./config/resources/effects.json";
+        return this;
+    }
+
+    public String getEffectsCompositonRulesFile() {
+        return effectsCompositonRulesFile;
+    }
+ 
+    
+ 
+    
+    
+    
+    
+    
+    
 }
