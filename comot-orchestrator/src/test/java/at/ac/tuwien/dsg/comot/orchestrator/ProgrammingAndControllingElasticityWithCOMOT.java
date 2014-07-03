@@ -92,7 +92,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 //scale IN if throughput < 200 and responseTime < 200
                 .controlledBy(Strategy("ST2")
                         .when(Constraint.MetricConstraint("ST2CO1", new Metric("responseTime", "ms")).lessThan("200"))
-                        .and(Constraint.MetricConstraint("ST2CO2", new Metric("avgThroughput", "operations/s")).lessThan("200"))
+                        .and(Constraint.MetricConstraint("ST2CO2", new Metric("throughput", "operations/s")).lessThan("200"))
                         .then(Strategy.Action.ScaleIn)
                 );
 
@@ -110,7 +110,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
 
         //specify constraints on the data topology
         //thus, the CPU usage of all Service Unit instances of the data end Topology must be below 80%
-        dataEndTopology.constrainedBy(Constraint.MetricConstraint("DataEndCO1", new Metric("cpuUsage", "%")).lessThan("80"));
+        dataEndTopology.constrainedBy(Constraint.MetricConstraint("DataEndCO1", new Metric("cpuUsage", "%")).lessThan("40"));
 
         //define event processing unit topology
         ServiceTopology eventProcessingTopology = ServiceTopology("EventProcessingTopology")
@@ -118,7 +118,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                         , loadbalancerVM, eventProcessingVM
                 );
         
-        eventProcessingTopology.constrainedBy(Constraint.MetricConstraint("C02", new Metric("responseTime", "ms")).lessThan("600"));
+        eventProcessingTopology.constrainedBy(Constraint.MetricConstraint("C02", new Metric("responseTime", "ms")).lessThan("400"));
 
         //describe the service template which will hold more topologies
         ServiceTemplate serviceTemplate = ServiceTemplate("DaasService")
@@ -175,9 +175,8 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                         .withRsyblPort(8081);
                 
                 //deploy, monitor and control
-                
-//                orchestrator.deployAndControl(serviceTemplate);
-                orchestrator.controlExisting(serviceTemplate);
+                orchestrator.deployAndControl(serviceTemplate);
+//                orchestrator.controlExisting(serviceTemplate);
                 
     }
 }

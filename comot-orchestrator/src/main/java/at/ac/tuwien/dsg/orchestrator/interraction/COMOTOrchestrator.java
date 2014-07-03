@@ -13,6 +13,8 @@ import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.abstractModelXML.Cl
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 import at.ac.tuwien.dsg.orchestrator.interraction.rSYBL.rSYBLInterraction;
 import at.ac.tuwien.dsg.orchestrator.interraction.salsa.SalsaInterraction;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -60,6 +62,13 @@ public class COMOTOrchestrator {
 
         defaultSalsaClient.deploy(application);
         salsaInterraction.waitUntilRunning(serviceTemplate.getId());
+        
+        try {
+            //wait 30 seconds more
+            Thread.sleep(30000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(COMOTOrchestrator.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         DeploymentDescription deploymentDescription = salsaInterraction.getServiceDeploymentInfo(serviceTemplate.getId());
 
