@@ -142,6 +142,11 @@ public class DefaultSalsaClient implements SalsaClient {
     }
 
     @Override
+    public SalsaResponse deploymentInfo(String serviceId) {
+        return null;
+    }
+
+    @Override
     public SalsaClientConfiguration getConfiguration() {
         return configuration;
     }
@@ -188,4 +193,18 @@ public class DefaultSalsaClient implements SalsaClient {
 
         return response;
     }
+
+    public SalsaResponse getServiceDeploymentInfo(String serviceId) {
+
+        if (log.isDebugEnabled()) {
+            log.debug(Markers.CLIENT, "Getting deployment information for serviceId {}", serviceId);
+        }
+
+        URI statusUri = UriBuilder.fromPath(configuration.getDeploymentInfoPath()).build(serviceId);
+
+        HttpGet method = new HttpGet(statusUri);
+        return executeMethod(method, SalsaClientAction.SERVICE_DEPLOYMENT_INFO);
+
+    }
+
 }

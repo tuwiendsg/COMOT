@@ -6,6 +6,7 @@ import at.ac.tuwien.dsg.comot.bundles.JsonBundleLoader;
 import at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate;
 import at.ac.tuwien.dsg.comot.common.model.CapabilityType;
 import at.ac.tuwien.dsg.comot.common.model.Requirement;
+import at.ac.tuwien.dsg.comot.common.model.ServiceUnit;
 import at.ac.tuwien.dsg.comot.samples.DataAsAServiceCloudApplication;
 import com.jayway.restassured.path.xml.XmlPath;
 import com.jayway.restassured.path.xml.element.Node;
@@ -20,7 +21,6 @@ import java.util.List;
 
 import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.RelationshipType.ConnectedTo;
 import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.RelationshipType.HostedOn;
-import static at.ac.tuwien.dsg.comot.common.model.ServiceNode.NodeType;
 import static org.junit.Assert.*;
 
 /**
@@ -49,7 +49,7 @@ public class DaasApplicationToscaBuilderTest {
         XmlPath xmlPath = XmlPath.from(cloudApplicationXmlModel);
         String nodeRoot = "Definitions.ServiceTemplate.TopologyTemplate.NodeTemplate.findAll{ it.@id == 'CassandraNode'}";
         Node nodeTemplate = xmlPath.get(nodeRoot);
-        assertEquals(NodeType.Software.toString(), nodeTemplate.getAttribute("type"));
+        assertEquals(ServiceUnit.NodeType.Software.toString(), nodeTemplate.getAttribute("type"));
         assertEquals("CassandraNode", nodeTemplate.getAttribute("id"));
         assertEquals("1", nodeTemplate.getAttribute("minInstances"));
         assertEquals(String.valueOf(Integer.MAX_VALUE), nodeTemplate.getAttribute("maxInstances"));
@@ -71,7 +71,7 @@ public class DaasApplicationToscaBuilderTest {
         XmlPath xmlPath = XmlPath.from(cloudApplicationXmlModel);
         String nodeRoot = "Definitions.ServiceTemplate.TopologyTemplate.NodeTemplate.findAll{ it.@id == 'CassandraHead'}";
         Node nodeTemplate = xmlPath.get(nodeRoot);
-        assertEquals(NodeType.Software.toString(), nodeTemplate.getAttribute("type"));
+        assertEquals(ServiceUnit.NodeType.Software.toString(), nodeTemplate.getAttribute("type"));
         assertEquals("CassandraHead", nodeTemplate.getAttribute("id"));
         assertEquals("1", nodeTemplate.getAttribute("minInstances"));
         assertEquals("1", nodeTemplate.getAttribute("maxInstances"));
@@ -136,7 +136,7 @@ public class DaasApplicationToscaBuilderTest {
         XmlPath xmlPath = XmlPath.from(cloudApplicationXmlModel);
         String nodeRoot = "Definitions.ServiceTemplate.TopologyTemplate.NodeTemplate.findAll{ it.@id == '" + nodeId + "'}";
         Node nodeTemplate = xmlPath.get(nodeRoot);
-        assertEquals(NodeType.OperatingSystem.toString(), nodeTemplate.getAttribute("type"));
+        assertEquals(ServiceUnit.NodeType.OperatingSystem.toString(), nodeTemplate.getAttribute("type"));
         assertEquals(nodeId, nodeTemplate.getAttribute("id"));
         assertEquals(minInstances, nodeTemplate.getAttribute("minInstances"));
         assertEquals(maxInstances, nodeTemplate.getAttribute("maxInstances"));
@@ -151,13 +151,13 @@ public class DaasApplicationToscaBuilderTest {
             String name = property.getAttribute("name");
             switch (name) {
                 case "instanceType":
-                    assertEquals("m1.small", property.value());
+                    assertEquals("000001920", property.value());
                     break;
                 case "provider":
                     assertEquals("dsg@openstack", property.value());
                     break;
                 case "baseImage":
-                    assertEquals("ami-00000163", property.value());
+                    assertEquals("8f1428ac-f239-42e0-ab35-137f6e234101", property.value());
                     break;
                 case "packages":
                     assertEquals("openjdk-7-jre", property.value());

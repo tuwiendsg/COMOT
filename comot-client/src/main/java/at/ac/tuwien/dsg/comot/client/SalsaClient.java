@@ -12,7 +12,7 @@ public interface SalsaClient {
 
     public enum SalsaClientAction {
 
-        DEPLOY(SC_CREATED), UNDEPLOY(SC_OK), SPAWN(SC_OK), DESTROY(SC_OK), STATUS(SC_OK);
+        DEPLOY(SC_CREATED), UNDEPLOY(SC_OK), SPAWN(SC_OK), DESTROY(SC_OK), STATUS(SC_OK), SERVICE_DEPLOYMENT_INFO(SC_OK);
 
         final int expectedHttpResultCode;
 
@@ -34,6 +34,8 @@ public interface SalsaClient {
     SalsaResponse destroy(String serviceId, String topologyId, String nodeId, String instanceId) throws SalsaClientException;
 
     SalsaResponse status(String serviceId) throws SalsaClientException;
+
+    SalsaResponse deploymentInfo(String serviceId);
 
     SalsaClientConfiguration getConfiguration();
 

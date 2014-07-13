@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
  * @author omoser
  */
 @Configuration
-@ComponentScan(basePackages = {"at.ac.tuwien.dsg"})
+@ComponentScan(basePackages = {"at.ac.tuwien.dsg.comot"})
 public class ComotContext {
 
 }

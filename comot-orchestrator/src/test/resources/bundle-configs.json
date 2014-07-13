@@ -1,0 +1,38 @@
+[
+    {
+        "id": "tomcat7",
+
+        "deployment-config": {
+            "uri": "http://134.158.75.65/artifacts/tomcat7/deploy-tomcat-node.sh",
+            "version": "latest"
+        },
+
+        "runtime-config": {
+            "environment": {
+                "JAVA_OPTS": "-XX:MaxPermSize=256m",
+                "CATALINA_HOME": "/opt/tomcat7"
+            },
+
+            "arguments": "-Dorg.apache.tomcat.util.http.ServerCookie.ALWAYS_ADD_EXPIRES=true",
+            "logging-config": {
+                "dir": "/var/log/tomcat7"
+            }
+        }
+    },
+
+    {
+        "id": "elasticsearch",
+
+        "deployment-config": {
+            "uri": "http://134.158.75.65/artifacts/elasticsearch/deploy-es-node.sh",
+            "version": "latest"
+        },
+
+        "runtime-config": {
+            "arguments": "-Xmx2g -Xms2g -Des.index.store.type=memory",
+            "logging-config": {
+                "dir": "/var/log/elasticsearch"
+            }
+        }
+    }
+]

@@ -16,29 +16,31 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
         context.put(id, this);
     }
 
-    public static Constraint Constraint(String id) {
-        return new Constraint(id);
+    public static Constraint MetricConstraint(String id, Metric constraintMetric) {
+        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(constraintMetric);
     }
 
+
     public static Constraint LatencyConstraint(String id) {
-        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.Latency);
+        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.Latency());
     }
 
     public static Constraint ResponseTimeConstraint(String id) {
-        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.ResponseTime);
+        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.ResponseTime());
     }
 
     public static Constraint ThroughputConstraint(String id) {
-        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.Throughput);
+        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.Throughput());
     }
 
     public static Constraint CostConstraint(String id) {
-        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.Cost);
+        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.Cost());
     }
 
     public static Constraint CpuUsageConstraint(String id) {
-        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.CpuUsage);
+        return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.CpuUsage());
     }
+
 
     public Constraint value(final String value) {
         this.value = value;
@@ -88,12 +90,10 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
         return (Constraint) super.withName(name);
     }
 
-
     @Override
     public Constraint ofType(String type) {
         return (Constraint) super.ofType(type);
     }
-
 
     public Constraint ofType(ConstraintType type) {
         return (Constraint) super.ofType(type.toString());
@@ -112,19 +112,33 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
     }
 
 
-    public enum Metric {
+    public static class Metric {
 
-        Latency("latency", "ms"),
-        CpuUsage("cpuUsage", "%"),
-        ResponseTime("responseTime", "ms"),
-        Cost("cost", "$"),
-        Throughput("throughgput", "");
+        public static Metric Latency() {
+            return new Metric("latency", "ms");
+        }
+
+        public static Metric CpuUsage() {
+            return new Metric("cpuUsage", "%");
+        }
+
+        public static Metric ResponseTime() {
+            return new Metric("responseTime", "ms");
+        }
+
+        public static Metric Cost() {
+            return new Metric("cost", "$");
+        }
+
+        public static Metric Throughput() {
+            return new Metric("throughgput", "operations/s");
+        }
 
         private final String name;
 
         private final String unit;
 
-        Metric(String metric, String unit) {
+        public Metric(String metric, String unit) {
             this.name = metric;
             this.unit = unit;
         }
@@ -137,8 +151,8 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
             return unit;
         }
 
-
     }
+
 
     public enum Operator {
 

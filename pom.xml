@@ -23,6 +23,7 @@
         <module>comot-common</module>
         <module>comot-samples</module>
         <module>comot-bundles</module>
+        <module>comot-orchestrator</module>
     </modules>
 
     <dependencies>

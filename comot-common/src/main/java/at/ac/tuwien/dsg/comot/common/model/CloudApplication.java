@@ -32,8 +32,8 @@ public class CloudApplication extends AbstractServiceDescriptionEntity {
     }
 
     @Override
-    public CloudApplication provides(Capability... capabilities) {
-        return (CloudApplication) super.provides(capabilities);
+    public CloudApplication exposes(Capability... capabilities) {
+        return (CloudApplication) super.exposes(capabilities);
     }
 
     @Override

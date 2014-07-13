@@ -89,7 +89,7 @@ public class CassandraNode extends SoftwareNode {
     }
 
     @Override
-    public CassandraNode provides(Capability... capabilities) {
-        return (CassandraNode) super.provides(capabilities);
+    public CassandraNode exposes(Capability... capabilities) {
+        return (CassandraNode) super.exposes(capabilities);
     }
 }

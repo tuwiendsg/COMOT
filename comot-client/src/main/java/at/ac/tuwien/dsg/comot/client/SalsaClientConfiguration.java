@@ -9,9 +9,9 @@ public class SalsaClientConfiguration {
 
     public static final int DEFAULT_PORT = 8080;
 
-    public static final String DEFAULT_URI = "/salsa";
+    public static final String DEFAULT_URI = "/salsa-engine/rest";
 
-    private static final String DEFAULT_DEPLOY_URI = "/services/{serviceId}";
+    private static final String DEFAULT_DEPLOY_URI = "/services/xml";
 
     private static final String DEFAULT_UNDEPLOY_URI = "/services/{serviceId}";
 
@@ -23,8 +23,9 @@ public class SalsaClientConfiguration {
 
     private static final String DEFAULT_STATUS_PATH
             = "/services/{serviceId}";
-            //= "/salsa-engine/rest/viewgenerator/cloudservice/json/full/{serviceId}";
 
+    private static final String DEFAULT_DEPLOYMENT_INFO_PATH
+            = "/salsa-engine/rest/services/tosca/{serviceId}/sybl";
 
     private String host = DEFAULT_HOST;
 
@@ -42,8 +43,9 @@ public class SalsaClientConfiguration {
 
     private String statusPath = DEFAULT_STATUS_PATH;
 
-    private boolean validatingToscaBuilder;
+    private String deploymentInfoPath = DEFAULT_DEPLOYMENT_INFO_PATH;
 
+    private boolean validatingToscaBuilder;
 
     public SalsaClientConfiguration withValidatingToscaBuilder(final boolean validatingToscaBuilder) {
         this.validatingToscaBuilder = validatingToscaBuilder;
@@ -170,4 +172,22 @@ public class SalsaClientConfiguration {
     public void setStatusPath(String statusPath) {
         this.statusPath = statusPath;
     }
+
+    public String getDeploymentInfoPath() {
+        return  deploymentInfoPath;
+    }
+
+    public void setDeploymentInfoPath(String deploymentInfoPath) {
+        this.deploymentInfoPath = deploymentInfoPath;
+    }
+
+
+    public SalsaClientConfiguration withDeploymentInfoPath(final String deploymentInfoPath) {
+        this.deploymentInfoPath = deploymentInfoPath;
+        return this;
+    }
+
+
+
+
 }

@@ -15,6 +15,8 @@ public abstract class AbstractServiceDescriptionEntity extends AbstractCloudEnti
 
     Set<Capability> capabilities = new HashSet<>();
 
+    Set<ElasticityCapability> elasticityCapabilities = new HashSet<>();
+
     Map<String, Object> properties = new HashMap<>();
 
     AbstractServiceDescriptionEntity(String id) {
@@ -37,6 +39,8 @@ public abstract class AbstractServiceDescriptionEntity extends AbstractCloudEnti
         return !capabilities.isEmpty();
     }
 
+    public boolean hasElasticityCapabilities() { return !elasticityCapabilities.isEmpty(); }
+
     @Override
     public Set<Strategy> getStrategies() {
         return strategies;
@@ -58,11 +62,16 @@ public abstract class AbstractServiceDescriptionEntity extends AbstractCloudEnti
     }
 
     @Override
+    public Set<ElasticityCapability> getElasticityCapabilities() {
+        return elasticityCapabilities;
+    }
+
+    @Override
     public Map<String, Object> getProperties() {
         return properties;
     }
 
-    public AbstractServiceDescriptionEntity provides(Capability... capabilities) {
+    public AbstractServiceDescriptionEntity exposes(Capability... capabilities) {
         this.capabilities.addAll(Arrays.asList(capabilities));
         return this;
     }
@@ -79,6 +88,11 @@ public abstract class AbstractServiceDescriptionEntity extends AbstractCloudEnti
 
     public AbstractServiceDescriptionEntity controlledBy(Strategy... strategies) {
         this.strategies.addAll(Arrays.asList(strategies));
+        return this;
+    }
+
+    public AbstractServiceDescriptionEntity provides(ElasticityCapability... capabilities) {
+        this.elasticityCapabilities.addAll(Arrays.asList(capabilities));
         return this;
     }
 

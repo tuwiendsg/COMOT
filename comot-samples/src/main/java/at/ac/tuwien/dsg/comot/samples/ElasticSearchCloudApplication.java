@@ -1,9 +1,6 @@
 package at.ac.tuwien.dsg.comot.samples;
 
-import at.ac.tuwien.dsg.comot.common.model.CloudApplication;
-import at.ac.tuwien.dsg.comot.common.model.OperatingSystemNode;
-import at.ac.tuwien.dsg.comot.common.model.ServiceNode;
-import at.ac.tuwien.dsg.comot.common.model.ServiceTemplate;
+import at.ac.tuwien.dsg.comot.common.model.*;
 
 import static at.ac.tuwien.dsg.comot.bundles.dataends.ElasticSearchNode.ElasticSearchNode;
 import static at.ac.tuwien.dsg.comot.common.model.CloudApplication.CloudApplication;
@@ -11,7 +8,7 @@ import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecifica
 import static at.ac.tuwien.dsg.comot.common.model.Constraint.CostConstraint;
 import static at.ac.tuwien.dsg.comot.common.model.Constraint.LatencyConstraint;
 import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.HostedOnRelation;
-import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemNode.OperatingSystemNode;
+import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingSystemUnit;
 import static at.ac.tuwien.dsg.comot.common.model.ServiceTemplate.ServiceTemplate;
 import static at.ac.tuwien.dsg.comot.common.model.ServiceTopology.ServiceTopology;
 
@@ -23,63 +20,33 @@ public class ElasticSearchCloudApplication {
     public static CloudApplication build() {
 
         // ElasticSearch Node
-        ServiceNode elasticSearchNode = ElasticSearchNode("ES1")
+        ServiceUnit elasticSearchNode = ElasticSearchNode("ES1")
                 .withName("ElasticSearch node (single instance)")
                 .constrainedBy(LatencyConstraint("Co1").lessThan("0.5"));
 
-
         // OS Node for ES deployment
-        OperatingSystemNode operatingSystemNode = OperatingSystemNode("OS")
+        OperatingSystemUnit operatingSystemNode = OperatingSystemUnit("OS")
                 .providedBy(
                         OpenstackSmall("OS_Headnode_Small")
                                 .withProvider("dsg@openstack")
                                 .addSoftwarePackage("openjdk-7-jre")
                 );
 
+        ServiceTopology searchTopology = ServiceTopology("SearchTopology")
+                .consistsOf(elasticSearchNode, operatingSystemNode);
+
         // Build containing DaaS service
         ServiceTemplate esService = ServiceTemplate("EsService")
                 .constrainedBy(CostConstraint("CG0").lessThan("1000"))
-                .definedBy(ServiceTopology("EsTopology")
-                                .consistsOfNodes(
-                                        elasticSearchNode,
-                                        operatingSystemNode)
-                                .andRelationships(
-                                        HostedOnRelation("es2os")
-                                                .from(elasticSearchNode)
-                                                .to(operatingSystemNode)
-                                )
+                .consistsOf(searchTopology)
+                .with(
+                        HostedOnRelation("es2os")
+                                .from(elasticSearchNode)
+                                .to(operatingSystemNode)
                 );
 
         return CloudApplication("EsApp").withName("Simple ElasticSearch Application").consistsOfServices(esService);
     }
 
-    public void t() {
 
-        ServiceNode esNode = ElasticSearchNode("ES1")
-                .withName("ElasticSearch node (single instance)")
-                .constrainedBy(LatencyConstraint("Co1").lessThan("0.5"));
-
-        OperatingSystemNode osNode = OperatingSystemNode("OS")
-                .providedBy(
-                        OpenstackSmall("OS_Headnode_Small")
-                                .withProvider("dsg@openstack")
-                                .addSoftwarePackage("openjdk-7-jre")
-                );
-
-        ServiceTemplate esService = ServiceTemplate("EsService")
-                .constrainedBy(CostConstraint("CG0").lessThan("1000"))
-                .definedBy(ServiceTopology("EsTopology")
-                                .consistsOfNodes(esNode, osNode)
-                                .andRelationships(
-                                        HostedOnRelation("es2os")
-                                                .from(esNode)
-                                                .to(osNode)
-                                )
-                );
-
-        CloudApplication("EsApp")
-                .withName("Simple ElasticSearch Application")
-                .consistsOfServices(esService);
-
-    }
 }
