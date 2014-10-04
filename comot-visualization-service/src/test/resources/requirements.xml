@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Requirements TargetServiceID="CloudService">
+    <Requirement TargetServiceLevel="SERVICE">
+        <TargetMonitoredElementID>CloudService</TargetMonitoredElementID>
+	<TargetMetric name="cost/client/h" type="COST"/>
+        <Condition ID="costCond" Type="LESS_EQUAL">
+            <MetricValue ValueType="NUMERIC">
+                <Value xsi:type="xs:double" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">0.0034</Value>
+            </MetricValue>
+        </Condition>
+    </Requirement>
+</Requirements>

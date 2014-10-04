@@ -24,6 +24,7 @@
         <module>comot-samples</module>
         <module>comot-bundles</module>
         <module>comot-orchestrator</module>
+         <module>comot-visualization-service</module>
     </modules>
 
     <dependencies>
