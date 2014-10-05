@@ -80,19 +80,19 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
             for (ServiceTopology concept : serviceTemplate.getServiceTopologies()) {
                 for (ServiceUnit node : concept.getServiceUnits()) {
                     TNodeTemplate tNodeTemplate = new TNodeTemplate()
-                        .withId(node.getId())
-                        .withName(node.getName())
-                        .withType(new QName(node.getType()))
-                        .withMinInstances(node.getMinInstances())
-                        .withMaxInstances(String.valueOf(node.getMaxInstances()))
-                        .withCapabilities(getCapabilities(node))
-                        .withRequirements(getRequirements(node))
-                        .withPolicies(getPolicies(node))
-                        .withProperties(getProperties(node));
+                            .withId(node.getId())
+                            .withName(node.getName())
+                            .withType(new QName(node.getType()))
+                            .withMinInstances(node.getMinInstances())
+                            .withMaxInstances(String.valueOf(node.getMaxInstances()))
+                            .withCapabilities(getCapabilities(node))
+                            .withRequirements(getRequirements(node))
+                            .withPolicies(getPolicies(node))
+                            .withProperties(getProperties(node));
 
-                handleDeploymentArtifacts(node, tNodeTemplate, definitions);
-                context.put(tNodeTemplate.getId(), tNodeTemplate);
-                tNodeTemplates.add(tNodeTemplate);
+                    handleDeploymentArtifacts(node, tNodeTemplate, definitions);
+                    context.put(tNodeTemplate.getId(), tNodeTemplate);
+                    tNodeTemplates.add(tNodeTemplate);
                 }
             }
 
@@ -199,7 +199,7 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
             tArtifactTemplate.setProperties(properties);
 
             tArtifactTemplate.setArtifactReferences(new TArtifactTemplate.ArtifactReferences()
-                            .withArtifactReference(tArtifactReferences)
+                    .withArtifactReference(tArtifactReferences)
             );
 
         }
@@ -274,7 +274,6 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
     private TServiceTemplate getTServiceTemplate(String id) {
         return context.get(id) != null ? (TServiceTemplate) context.get(id) : new TServiceTemplate().withId(id);
     }
-
 
     // todo implement
     private TEntityTemplate.Properties getProperties(ServiceUnit node) {

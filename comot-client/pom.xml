@@ -73,6 +73,7 @@
             <artifactId>jackson-jaxrs-json-provider</artifactId>
             <version>2.3.3</version>
         </dependency>
+        
         <dependency>
             <groupId>at.ac.tuwien.dsg.cloud.salsa</groupId>
             <artifactId>salsa-common</artifactId>
@@ -87,6 +88,7 @@
                     <artifactId>slf4j-log4j12</artifactId>
                 </exclusion>
             </exclusions>
+            <type>jar</type>
         </dependency>
 
     </dependencies>

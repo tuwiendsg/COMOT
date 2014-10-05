@@ -1,5 +1,6 @@
-package at.ac.tuwien.dsg.comot;
+spackage at.ac.tuwien.dsg.comot;
 
+import at.ac.tuwien.dsg.comot.ComotContext;
 import at.ac.tuwien.dsg.comot.api.ToscaDescriptionBuilder;
 import at.ac.tuwien.dsg.comot.api.ToscaDescriptionBuilderImpl;
 import at.ac.tuwien.dsg.comot.bundles.JsonBundleLoader;
@@ -88,7 +89,7 @@ public class DaasApplicationToscaBuilderTest {
     }
 
     private String buildExpectedScriptArtifactType() {
-        return ToscaDescriptionBuilderImpl.DEFAULT_ARTIFACT_TYPE_PREFIX  + ":" + ArtifactTemplate.ArtifactType.Script.toString();
+        return ToscaDescriptionBuilderImpl.DEFAULT_ARTIFACT_TYPE_PREFIX + ":" + ArtifactTemplate.ArtifactType.Script.toString();
     }
 
     @Test
@@ -131,7 +132,6 @@ public class DaasApplicationToscaBuilderTest {
         assertEquals(target, targetElement.getAttribute("ref"));
     }
 
-
     private void checkOsNode(String nodeId, String minInstances, String maxInstances) {
         XmlPath xmlPath = XmlPath.from(cloudApplicationXmlModel);
         String nodeRoot = "Definitions.ServiceTemplate.TopologyTemplate.NodeTemplate.findAll{ it.@id == '" + nodeId + "'}";
@@ -169,4 +169,3 @@ public class DaasApplicationToscaBuilderTest {
     }
 
 }
-

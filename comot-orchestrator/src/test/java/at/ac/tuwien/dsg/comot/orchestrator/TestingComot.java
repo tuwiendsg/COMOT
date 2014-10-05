@@ -7,7 +7,7 @@ package at.ac.tuwien.dsg.comot.orchestrator;
 
 import at.ac.tuwien.dsg.comot.common.model.*;
 import at.ac.tuwien.dsg.comot.common.model.Constraint.Metric;
-import at.ac.tuwien.dsg.orchestrator.interraction.ComotOrchestrator;
+import at.ac.tuwien.dsg.orchestrator.interraction.COMOTOrchestrator;
 
 import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifactTemplate;
 import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackMicro;
@@ -20,6 +20,33 @@ import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.SingleSoftwareUni
 import static at.ac.tuwien.dsg.comot.common.model.Strategy.Strategy;
 
 /**
+ * ======= import static
+ * at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifactTemplate;
+ * import at.ac.tuwien.dsg.comot.common.model.Capability; import static
+ * at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackMicro;
+ * import static
+ * at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackSmall;
+ * import at.ac.tuwien.dsg.comot.common.model.Constraint; import
+ * at.ac.tuwien.dsg.comot.common.model.Constraint.Metric; import static
+ * at.ac.tuwien.dsg.comot.common.model.EntityRelationship.ConnectToRelation;
+ * import static
+ * at.ac.tuwien.dsg.comot.common.model.EntityRelationship.HostedOnRelation;
+ * import at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit; import static
+ * at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingSystemUnit;
+ * import at.ac.tuwien.dsg.comot.common.model.Requirement; import
+ * at.ac.tuwien.dsg.comot.common.model.ServiceTemplate; import
+ * at.ac.tuwien.dsg.comot.common.model.ServiceTopology; import static
+ * at.ac.tuwien.dsg.comot.common.model.ServiceTopology.ServiceTopology; import
+ * at.ac.tuwien.dsg.comot.common.model.ServiceUnit; import static
+ * at.ac.tuwien.dsg.comot.common.model.SoftwareNode.SingleSoftwareUnit; import
+ * at.ac.tuwien.dsg.comot.common.model.Strategy; import static
+ * at.ac.tuwien.dsg.comot.common.model.Strategy.Strategy; import
+ * at.ac.tuwien.dsg.orchestrator.interraction.COMOTOrchestrator;
+ *
+ * /**
+ *
+ * >>>>>>> comot-orchestrator
+ *
  * @author Daniel Moldovan E-Mail: d.moldovan@dsg.tuwien.ac.at
  */
 public class TestingComot {
@@ -34,22 +61,19 @@ public class TestingComot {
                 .deployedBy(SingleScriptArtifactTemplate("deployLoadBalancerArtifact", "deployLoadBalancer.sh"))
                 .exposes(Capability.Variable("LoadBalancerCapability_IP"));
 
-
         ServiceUnit dataNodeUnit = SingleSoftwareUnit("DataNodeUnit")
                 .deployedBy(SingleScriptArtifactTemplate("artifactID", "artifact"))
                 .requires(Requirement.Variable("dataControllerIP"))
                 .controlledBy(Strategy("ST1")
                         .when(Constraint.MetricConstraint("ST1CO1",
-                                new Metric("metric", "unit")).lessThan("value"))
+                                        new Metric("metric", "unit")).lessThan("value"))
                         .then(Strategy.Action.ScaleIn));
-
 
         OperatingSystemUnit dataNodeOS = OperatingSystemUnit("DataNodeVM")
                 .providedBy(OpenstackMicro("OS_DataNode_Small")
-                                .withProvider("dsg@openstack")
-                                .addSoftwarePackage("openjdk-7-jre")
+                        .withProvider("dsg@openstack")
+                        .addSoftwarePackage("openjdk-7-jre")
                 );
-
 
         ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
                 .deployedBy(SingleScriptArtifactTemplate("deployEventProcessingArtifact", "deployEventProcessing.sh"))
@@ -62,63 +86,58 @@ public class TestingComot {
 
         OperatingSystemUnit dataControllerOS = OperatingSystemUnit.OperatingSystemUnit("DataControllerVM")
                 .providedBy(OpenstackSmall("OS_DataController_Small")
-                                .withProvider("dsg@openstack")
-                                .addSoftwarePackage("openjdk-7-jre")
-                                .addSoftwarePackage("ganglia-monitor")
-                                .addSoftwarePackage("gmetad")
+                        .withProvider("dsg@openstack")
+                        .addSoftwarePackage("openjdk-7-jre")
+                        .addSoftwarePackage("ganglia-monitor")
+                        .addSoftwarePackage("gmetad")
                 );
-
 
         OperatingSystemUnit loadBalancerrOS = OperatingSystemUnit.OperatingSystemUnit("DLoadbalancerVM")
                 .providedBy(OpenstackSmall("OS_LoadBalancer_Small")
-                                .withProvider("dsg@openstack")
-                                .addSoftwarePackage("openjdk-7-jre")
-                                .addSoftwarePackage("ganglia-monitor")
-                                .addSoftwarePackage("gmetad")
+                        .withProvider("dsg@openstack")
+                        .addSoftwarePackage("openjdk-7-jre")
+                        .addSoftwarePackage("ganglia-monitor")
+                        .addSoftwarePackage("gmetad")
                 );
 
         OperatingSystemUnit eventProcessingOS = OperatingSystemUnit.OperatingSystemUnit("EventProcessingVM")
                 .providedBy(OpenstackMicro("OS_EventProcessing_Micro")
-                                .withProvider("dsg@openstack")
-                                .addSoftwarePackage("openjdk-7-jre")
-                                .addSoftwarePackage("ganglia-monitor")
-                                .addSoftwarePackage("gmetad")
+                        .withProvider("dsg@openstack")
+                        .addSoftwarePackage("openjdk-7-jre")
+                        .addSoftwarePackage("ganglia-monitor")
+                        .addSoftwarePackage("gmetad")
                 );
 
-
         ServiceTopology dataEndTopology = ServiceTopology("DataEndTopology")
-                .consistsOf(dataControllerUnit, dataNodeUnit,
+                .withServiceUnits(dataControllerUnit, dataNodeUnit,
                         dataControllerOS, dataNodeOS);
 
         dataEndTopology.constrainedBy(
                 Constraint.MetricConstraint("DataEnd_CO1",
-                        new Metric("metric", "unit")).lessThan("value")
-        );
-
+                        new Metric("metruic", "unit")).lessThan("value"));
 
         ServiceTopology eventProcessingTopology = ServiceTopology.ServiceTopology("EventProcessingTopology")
-                .consistsOf(eventProcessingUnit, loadBalancerUnit, loadBalancerrOS, eventProcessingOS);
+                .withServiceUnits(eventProcessingUnit, loadBalancerUnit, loadBalancerrOS, eventProcessingOS);
 
         eventProcessingTopology.constrainedBy(Constraint.MetricConstraint("C02", new Metric("responseTime", "ms")).lessThan("600"));
 
-
         ServiceTemplate dataService = ServiceTemplate.ServiceTemplate("DaasService")
-                .consistsOf(dataEndTopology, dataEndTopology)
-                .with(
+                .consistsOfTopologies(dataEndTopology)
+                .consistsOfTopologies(eventProcessingTopology)
+                .andRelationships(
                         HostedOnRelation("dataControllerHostedOnVM")
-                                .from(dataControllerUnit)
-                                .to(dataControllerOS),
-
+                        .from(dataControllerUnit)
+                        .to(dataControllerOS),
                         ConnectToRelation("dataNodeToDataController")
-                                .from(dataControllerUnit.getContext().get("DataControllerCapability_IP"))
-                                .to(dataNodeUnit.getContext().get("DataController_IP_req_dataNode"))
-//                      ...
+                        .from(dataControllerUnit.getContext().get("DataControllerCapability_IP"))
+                        .to(dataNodeUnit.getContext().get("DataController_IP_req_dataNode"))
+                //                      ...
                 )
                 .withDefaultMetrics()
                 .withDefaultActionEffects();
         ;
 
-        ComotOrchestrator orchestrator = new ComotOrchestrator();
+        COMOTOrchestrator orchestrator = new COMOTOrchestrator();
 
         orchestrator.deployAndControl(dataService);
 //   

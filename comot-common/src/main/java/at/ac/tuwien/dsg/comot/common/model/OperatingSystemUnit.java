@@ -15,10 +15,6 @@ public class OperatingSystemUnit extends ServiceUnit {
         return new OperatingSystemUnit(id).ofType(NodeType.OperatingSystem).andMaxInstances(1);
     }
 
-    public static OperatingSystemUnit UnboundedOperatingSystemUnit(String id) {
-        return new OperatingSystemUnit(id).ofType(NodeType.OperatingSystem).andMaxInstances(Integer.MAX_VALUE);
-    }
-
     public OperatingSystemUnit providedBy(OperatingSystemSpecification specification) {
         this.specification = specification;
         return this;

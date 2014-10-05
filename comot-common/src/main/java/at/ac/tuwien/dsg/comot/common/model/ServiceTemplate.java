@@ -2,12 +2,15 @@ package at.ac.tuwien.dsg.comot.common.model;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
  * @author omoser
  */
 public class ServiceTemplate extends AbstractServiceDescriptionEntity {
+
+    private EntityRelationship relationship;
 
     //TODO: implement this in API
     private String metricCompositonRulesFile;
@@ -18,20 +21,21 @@ public class ServiceTemplate extends AbstractServiceDescriptionEntity {
         super(id);
     }
 
-    public static ServiceTemplate ServiceTemplate(String id) {
-        return new ServiceTemplate(id);
-    }
-
-    private Set<ServiceTopology> serviceTopologies = new HashSet<>();
+    private Set<ServiceTopology> serviceNodes = new HashSet<>();
 
     private Set<EntityRelationship> relationships = new HashSet<>();
 
-    public ServiceTemplate consistsOf(ServiceTopology... nodes) {
-        serviceTopologies.addAll(Arrays.asList(nodes));
+    public ServiceTemplate consistsOfTopologies(ServiceTopology... nodes) {
+        serviceNodes.addAll(Arrays.asList(nodes));
         return this;
     }
 
-    public ServiceTemplate with(EntityRelationship... relationships) {
+    public ServiceTemplate with(EntityRelationship relationship) {
+        relationships.add(relationship);
+        return this;
+    }
+
+    public ServiceTemplate andRelationships(EntityRelationship... relationships) {
         this.relationships.addAll(Arrays.asList(relationships));
         return this;
     }
@@ -40,8 +44,10 @@ public class ServiceTemplate extends AbstractServiceDescriptionEntity {
         return relationships;
     }
 
-    public Set<ServiceTopology> getServiceTopologies() {
-        return serviceTopologies;
+    @Override
+
+    public ServiceTemplate provides(ElasticityCapability... capabilities) {
+        return (ServiceTemplate) super.provides(capabilities);
     }
 
     @Override
@@ -84,7 +90,6 @@ public class ServiceTemplate extends AbstractServiceDescriptionEntity {
         return (ServiceTemplate) super.ofType(type);
     }
 
-
     public boolean hasRelationships() {
         return !relationships.isEmpty();
     }
@@ -93,7 +98,6 @@ public class ServiceTemplate extends AbstractServiceDescriptionEntity {
         this.metricCompositonRulesFile = metricCompositonRulesFile;
         return this;
     }
-
 
     public ServiceTemplate withDefaultMetrics() {
         this.metricCompositonRulesFile = "./config/resources/compositionRules.xml";
@@ -104,12 +108,10 @@ public class ServiceTemplate extends AbstractServiceDescriptionEntity {
         return metricCompositonRulesFile;
     }
 
-
     public ServiceTemplate withActionEffectsCompositonRulesFile(final String effectsCompositonRulesFile) {
         this.effectsCompositonRulesFile = effectsCompositonRulesFile;
         return this;
     }
-
 
     public ServiceTemplate withDefaultActionEffects() {
         this.effectsCompositonRulesFile = "./config/resources/effects.json";
@@ -121,33 +123,47 @@ public class ServiceTemplate extends AbstractServiceDescriptionEntity {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ServiceTemplate)) return false;
-        if (!super.equals(o)) return false;
+    public String toString() {
+        return "ServiceTemplate{"
+                + "serviceNodes=" + serviceNodes
+                + ", relationships=" + relationships
+                + "} " + super.toString();
+    }
 
-        ServiceTemplate that = (ServiceTemplate) o;
+    public Set<ServiceTopology> getServiceTopologies() {
+        return serviceNodes;
+    }
 
-        if (effectsCompositonRulesFile != null ? !effectsCompositonRulesFile.equals(that.effectsCompositonRulesFile) : that.effectsCompositonRulesFile != null)
-            return false;
-        if (metricCompositonRulesFile != null ? !metricCompositonRulesFile.equals(that.metricCompositonRulesFile) : that.metricCompositonRulesFile != null)
-            return false;
-        if (relationships != null ? !relationships.equals(that.relationships) : that.relationships != null)
-            return false;
-        if (serviceTopologies != null ? !serviceTopologies.equals(that.serviceTopologies) : that.serviceTopologies != null) return false;
+    public static ServiceTemplate ServiceTemplate(String id) {
+        return new ServiceTemplate(id);
+    }
 
-        return true;
+    public ServiceTemplate withRelationship(final EntityRelationship relationship) {
+        this.relationship = relationship;
+        return this;
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (metricCompositonRulesFile != null ? metricCompositonRulesFile.hashCode() : 0);
-        result = 31 * result + (effectsCompositonRulesFile != null ? effectsCompositonRulesFile.hashCode() : 0);
-        result = 31 * result + (serviceTopologies != null ? serviceTopologies.hashCode() : 0);
-        result = 31 * result + (relationships != null ? relationships.hashCode() : 0);
-        return result;
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.serviceNodes);
+        hash = 67 * hash + Objects.hashCode(this.relationships);
+        return hash;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ServiceTemplate other = (ServiceTemplate) obj;
+        if (!Objects.equals(this.serviceNodes, other.serviceNodes)) {
+            return false;
+        }
+        return true;
+    }
 
 }

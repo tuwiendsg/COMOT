@@ -3,6 +3,8 @@ package at.ac.tuwien.dsg.comot.common.model;
 /**
  * @author omoser
  */
+//TODO: one constraint should be able to take more operators
+//Example: metric a AND metric B OR metric c
 public class Constraint extends AbstractCloudEntity implements Renderable {
 
     private Metric metric;
@@ -19,7 +21,6 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
     public static Constraint MetricConstraint(String id, Metric constraintMetric) {
         return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(constraintMetric);
     }
-
 
     public static Constraint LatencyConstraint(String id) {
         return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.Latency());
@@ -40,7 +41,6 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
     public static Constraint CpuUsageConstraint(String id) {
         return new Constraint(id).ofType(ConstraintType.SYBL).forMetric(Metric.CpuUsage());
     }
-
 
     public Constraint value(final String value) {
         this.value = value;
@@ -111,7 +111,6 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
         return value;
     }
 
-
     public static class Metric {
 
         public static Metric Latency() {
@@ -153,22 +152,23 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
 
     }
 
-
     public enum Operator {
 
         LessThan("<"),
+        LessEqual("<="),
         GreaterThan(">"),
+        GreaterEqual(">"),
         Equals("=="),
         And("AND"),
         Or("OR"),
-        UNDEF("__UNDEF__");
+        UNDEF("");
+//        UNDEF("__UNDEF__");
 
         private final String operator;
 
         Operator(String value) {
             this.operator = value;
         }
-
 
         @Override
         public String toString() {
@@ -177,6 +177,7 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
     }
 
     public enum ConstraintType {
+
         SYBL("SYBLConstraint");
 
         private final String type;
@@ -184,7 +185,6 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
         ConstraintType(String type) {
             this.type = type;
         }
-
 
         @Override
         public String toString() {
@@ -194,14 +194,24 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Constraint)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Constraint)) {
+            return false;
+        }
 
         Constraint that = (Constraint) o;
 
-        if (metric != that.metric) return false;
-        if (operator != that.operator) return false;
-        if (value != null ? !value.equals(that.value) : that.value != null) return false;
+        if (metric != that.metric) {
+            return false;
+        }
+        if (operator != that.operator) {
+            return false;
+        }
+        if (value != null ? !value.equals(that.value) : that.value != null) {
+            return false;
+        }
 
         return true;
     }
@@ -220,10 +230,10 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
 
     @Override
     public String toString() {
-        return "Constraint{" +
-                "name=" + metric +
-                ", operator=" + operator +
-                ", operator='" + value + '\'' +
-                "} " + super.toString();
+        return "Constraint{"
+                + "name=" + metric
+                + ", operator=" + operator
+                + ", operator='" + value + '\''
+                + "} " + super.toString();
     }
 }

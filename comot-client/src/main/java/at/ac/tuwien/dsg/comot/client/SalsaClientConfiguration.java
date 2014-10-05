@@ -150,11 +150,11 @@ public class SalsaClientConfiguration {
 
     @Override
     public String toString() {
-        return "SalsaClientConfiguration{" +
-                "host='" + host + '\'' +
-                ", port=" + port +
-                ", baseUri='" + baseUri + '\'' +
-                '}';
+        return "SalsaClientConfiguration{"
+                + "host='" + host + '\''
+                + ", port=" + port
+                + ", baseUri='" + baseUri + '\''
+                + '}';
     }
 
     public String getSpawnPath() {
@@ -174,20 +174,15 @@ public class SalsaClientConfiguration {
     }
 
     public String getDeploymentInfoPath() {
-        return  deploymentInfoPath;
+        return deploymentInfoPath;
     }
 
     public void setDeploymentInfoPath(String deploymentInfoPath) {
         this.deploymentInfoPath = deploymentInfoPath;
     }
 
-
     public SalsaClientConfiguration withDeploymentInfoPath(final String deploymentInfoPath) {
         this.deploymentInfoPath = deploymentInfoPath;
         return this;
     }
-
-
-
-
 }

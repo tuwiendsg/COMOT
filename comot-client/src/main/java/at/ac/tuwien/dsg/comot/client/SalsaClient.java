@@ -34,6 +34,8 @@ public interface SalsaClient {
     SalsaResponse destroy(String serviceId, String topologyId, String nodeId, String instanceId) throws SalsaClientException;
 
     SalsaResponse status(String serviceId) throws SalsaClientException;
+    
+    SalsaResponse getServiceDeploymentInfo(String serviceId);
 
     SalsaResponse deploymentInfo(String serviceId);
 

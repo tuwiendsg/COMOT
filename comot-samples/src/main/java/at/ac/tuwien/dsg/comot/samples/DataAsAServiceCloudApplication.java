@@ -34,7 +34,6 @@ public class DataAsAServiceCloudApplication {
                 )
                 .constrainedBy(LatencyConstraint("Co1").lessThan("0.5"));
 
-
         //
         // Cassandra Data Node
         //
@@ -49,9 +48,9 @@ public class DataAsAServiceCloudApplication {
                 .constrainedBy(CpuUsageConstraint("Co3").lessThan("50"))
                 .controlledBy(
                         Strategy("St2")
-                                .when(ResponseTimeConstraint("St2Co1").lessThan("300"))
-                                .and(ThroughputConstraint("St2Co2").lessThan("400"))
-                                .then(Strategy.Action.ScaleIn)
+                        .when(ResponseTimeConstraint("St2Co1").lessThan("300"))
+                        .and(ThroughputConstraint("St2Co2").lessThan("400"))
+                        .then(Strategy.Action.ScaleIn)
                 );
 
         //
@@ -60,8 +59,8 @@ public class DataAsAServiceCloudApplication {
         OperatingSystemUnit cassandraHeadOsNode = OperatingSystemUnit("OS_Headnode")
                 .providedBy(
                         OpenstackSmall("OS_Headnode_Small")
-                                .withProvider("dsg@openstack")
-                                .addSoftwarePackage("openjdk-7-jre")
+                        .withProvider("dsg@openstack")
+                        .addSoftwarePackage("openjdk-7-jre")
                 );
 
         //
@@ -70,34 +69,32 @@ public class DataAsAServiceCloudApplication {
         OperatingSystemUnit cassandraDataOsNode = OperatingSystemUnit("OS_Datanode")
                 .providedBy(
                         OpenstackSmall("OS_Datanode_Small")
-                                .withProvider("dsg@openstack")
-                                .addSoftwarePackage("openjdk-7-jre")
+                        .withProvider("dsg@openstack")
+                        .addSoftwarePackage("openjdk-7-jre")
                 );
 
-        ServiceTopology serviceTopologyConcept = ServiceTopology("DataEndTopology")
-                .consistsOf(
-                        cassandraHeadNode,
+        ServiceTopology serviceTopologyConcept = ServiceTopology.ServiceTopology("DataEndTopology");
+
+        serviceTopologyConcept
+                .withServiceUnits(cassandraHeadNode,
                         cassandraDataNode,
                         cassandraDataOsNode,
-                        cassandraHeadOsNode
-                );
-
+                        cassandraHeadOsNode);
         //
         // Build containing DaaS service
         //
         ServiceTemplate daaSService = ServiceTemplate.ServiceTemplate("DaasService")
                 .constrainedBy(CostConstraint("CG0").lessThan("1000"))
-                .consistsOf(serviceTopologyConcept)
-                .with(
+                .andRelationships(
                         ConnectToRelation("head2datanode")
-                                .from(cassandraHeadNode.getContext().get("CassandraHeadIP_capa"))
-                                .to(cassandraDataNode.getContext().get("CassandraHeadIP_req")),
+                        .from(cassandraHeadNode.getContext().get("CassandraHeadIP_capa"))
+                        .to(cassandraDataNode.getContext().get("CassandraHeadIP_req")),
                         HostedOnRelation("data2os")
-                                .from(cassandraHeadNode)
-                                .to(cassandraHeadOsNode),
+                        .from(cassandraHeadNode)
+                        .to(cassandraHeadOsNode),
                         HostedOnRelation("controller2os")
-                                .from(cassandraDataNode)
-                                .to(cassandraDataOsNode)
+                        .from(cassandraDataNode)
+                        .to(cassandraDataOsNode)
                 );
 
         return CloudApplication("DaaSApp").withName("DaaS Cloud Application").consistsOfServices(daaSService).withDefaultMetricsEnabled(true);

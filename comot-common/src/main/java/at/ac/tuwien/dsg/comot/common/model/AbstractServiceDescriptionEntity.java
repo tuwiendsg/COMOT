@@ -36,10 +36,12 @@ public abstract class AbstractServiceDescriptionEntity extends AbstractCloudEnti
     }
 
     public boolean hasStrategies() {
-        return !capabilities.isEmpty();
+        return !strategies.isEmpty();
     }
 
-    public boolean hasElasticityCapabilities() { return !elasticityCapabilities.isEmpty(); }
+    public boolean hasElasticityCapabilities() {
+        return !elasticityCapabilities.isEmpty();
+    }
 
     @Override
     public Set<Strategy> getStrategies() {
@@ -76,6 +78,11 @@ public abstract class AbstractServiceDescriptionEntity extends AbstractCloudEnti
         return this;
     }
 
+    public AbstractServiceDescriptionEntity provides(ElasticityCapability... capabilities) {
+        this.elasticityCapabilities.addAll(Arrays.asList(capabilities));
+        return this;
+    }
+
     public AbstractServiceDescriptionEntity requires(Requirement... requirements) {
         this.requirements.addAll(Arrays.asList(requirements));
         return this;
@@ -90,12 +97,5 @@ public abstract class AbstractServiceDescriptionEntity extends AbstractCloudEnti
         this.strategies.addAll(Arrays.asList(strategies));
         return this;
     }
-
-    public AbstractServiceDescriptionEntity provides(ElasticityCapability... capabilities) {
-        this.elasticityCapabilities.addAll(Arrays.asList(capabilities));
-        return this;
-    }
-
-    // todo public AbstractServiceDescriptionElement features(Properties...)
 
 }

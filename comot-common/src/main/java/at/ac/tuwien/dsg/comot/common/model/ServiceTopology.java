@@ -1,19 +1,19 @@
 package at.ac.tuwien.dsg.comot.common.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
- * @author omoser
+ * @author Daniel Moldovan
  */
 public class ServiceTopology extends AbstractServiceDescriptionEntity {
 
-    private Set<ServiceUnit> serviceUnits = new HashSet<>();
+    private List<ServiceUnit> serviceNodes = new ArrayList<>();
 
-    private Set<EntityRelationship> relationships = new HashSet<>();
-
-    ServiceTopology(String id) {
+    protected ServiceTopology(String id) {
         super(id);
     }
 
@@ -21,32 +21,30 @@ public class ServiceTopology extends AbstractServiceDescriptionEntity {
         return new ServiceTopology(id);
     }
 
-    public ServiceTopology consistsOf(ServiceUnit... nodes) {
-        serviceUnits.addAll(Arrays.asList(nodes));
-        return this;
+    public List<ServiceUnit> getServiceUnits() {
+        return serviceNodes;
     }
 
-    public ServiceTopology with(EntityRelationship relationship) {
-        relationships.add(relationship);
-        return this;
+    public void setServiceUnits(List<ServiceUnit> serviceNodes) {
+        this.serviceNodes = serviceNodes;
     }
 
-    public ServiceTopology with(EntityRelationship... relationships) {
-        this.relationships.addAll(Arrays.asList(relationships));
-        return this;
+    public void addServiceUnit(ServiceUnit serviceNode) {
+        this.serviceNodes.add(serviceNode);
     }
 
-    public Set<EntityRelationship> getRelationships() {
-        return relationships;
+    public void removeServiceUnit(ServiceUnit serviceNode) {
+        this.serviceNodes.remove(serviceNode);
+    }
+
+    public ServiceTopology withServiceUnits(ServiceUnit... serviceNodes) {
+        this.serviceNodes.addAll(Arrays.asList(serviceNodes));
+        return this;
     }
 
     @Override
     public AbstractServiceDescriptionEntity exposes(Capability... capabilities) {
         return super.exposes(capabilities);
-    }
-
-    public Set<ServiceUnit> getServiceUnits() {
-        return serviceUnits;
     }
 
 }
