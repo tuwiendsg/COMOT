@@ -23,7 +23,6 @@ import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.logging.Level;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -45,11 +44,9 @@ public class SalsaInterraction {
         defaultSalsaClient.getConfiguration().setHost("128.130.172.215");
 
     }
-    
-    
 
     public DeploymentDescription getServiceDeploymentInfo(String serviceId) {
-        DeploymentDescription deploymentInfo = null;
+        DeploymentDescription deploymentInfo = new DeploymentDescription();
 
         if (log.isDebugEnabled()) {
             log.debug(Markers.CLIENT, "Getting deployment information for serviceId {}", serviceId);
@@ -58,15 +55,17 @@ public class SalsaInterraction {
         SalsaResponse response = defaultSalsaClient.getServiceDeploymentInfo(serviceId);
 
         String serviceDescription = response.getMessage();
-        try {
-            JAXBContext a = JAXBContext.newInstance(DeploymentDescription.class);
-            Unmarshaller u = a.createUnmarshaller();
-            if (!serviceDescription.equalsIgnoreCase("")) {
-                Object object = u.unmarshal(new StringReader(serviceDescription));
-                deploymentInfo = (DeploymentDescription) object;
+        if (response.isExpected()) {
+            try {
+                JAXBContext a = JAXBContext.newInstance(DeploymentDescription.class);
+                Unmarshaller u = a.createUnmarshaller();
+                if (!serviceDescription.equalsIgnoreCase("")) {
+                    Object object = u.unmarshal(new StringReader(serviceDescription));
+                    deploymentInfo = (DeploymentDescription) object;
+                }
+            } catch (JAXBException e) {
+                log.error(e.getStackTrace().toString());
             }
-        } catch (JAXBException e) {
-            log.error(e.getStackTrace().toString());
         }
 
         return deploymentInfo;
@@ -104,11 +103,11 @@ public class SalsaInterraction {
 
             CloudService service = this.getStatus(serviceID);
 
-            if (!service.getState().equals(SalsaEntityState.RUNNING)) {
+            if (!service.getState().equals(SalsaEntityState.FINISHED) && !service.getState().equals(SalsaEntityState.RUNNING)) {
                 allRunning = false;
             } else {
                 for (at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceUnit serviceUnit : service.getAllComponentByType(SalsaEntityType.SOFTWARE)) {
-                    if (!serviceUnit.getState().equals(SalsaEntityState.FINISHED)) {
+                    if (serviceUnit != null && !serviceUnit.getState().equals(SalsaEntityState.FINISHED)) {
                         allRunning = false;
                         break;
                     }
@@ -181,6 +180,5 @@ public class SalsaInterraction {
         this.defaultSalsaClient = defaultSalsaClient;
         return this;
     }
- 
 
 }

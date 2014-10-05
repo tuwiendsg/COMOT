@@ -67,11 +67,11 @@ public class rSYBLInterraction {
 
         deploymentDescription = enrichWithElasticityCapabilities(deploymentDescription, serviceTemplate);
 
-        DefaultHttpClient httpClient = new DefaultHttpClient();
         HttpHost endpoint = new HttpHost(rSYBL_BASE_IP, rSYBL_BASE_PORT);
 
         {
-            URI prepareConfigURI = UriBuilder.fromPath(rSYBL_BASE_URL + "/prepareControl").build();
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            URI prepareConfigURI = UriBuilder.fromPath(rSYBL_BASE_URL + "/" + serviceTemplate.getId() + "/prepareControl").build();
             HttpPut prepareConfig = new HttpPut(prepareConfigURI);
 
             try {
@@ -83,6 +83,7 @@ public class rSYBLInterraction {
             }
         }
         {
+            DefaultHttpClient httpClient = new DefaultHttpClient();
 
             try {
 
@@ -96,7 +97,7 @@ public class rSYBLInterraction {
                 marshaller.marshal(deploymentDescription, sw);
                 log.info(sw.toString());
 
-                URI putDeploymentStructureURL = UriBuilder.fromPath(rSYBL_BASE_URL + "/serviceDeployment").build();
+                URI putDeploymentStructureURL = UriBuilder.fromPath(rSYBL_BASE_URL + "/" + serviceTemplate.getId() + "/deployment").build();
                 HttpPut putDeployment = new HttpPut(putDeploymentStructureURL);
 
                 StringEntity entity = new StringEntity(sw.getBuffer().toString());
@@ -127,6 +128,7 @@ public class rSYBLInterraction {
         }
 
         {
+            DefaultHttpClient httpClient = new DefaultHttpClient();
 
             try {
 
@@ -139,7 +141,7 @@ public class rSYBLInterraction {
                 marshaller.marshal(cloudServiceXML, sw);
                 log.info(sw.toString());
 
-                URI putDeploymentStructureURL = UriBuilder.fromPath(rSYBL_BASE_URL + "/serviceDescription").build();
+                URI putDeploymentStructureURL = UriBuilder.fromPath(rSYBL_BASE_URL + "/" + serviceTemplate.getId() + "/description").build();
                 HttpPut putDeployment = new HttpPut(putDeploymentStructureURL);
 
                 StringEntity entity = new StringEntity(sw.getBuffer().toString());
@@ -170,6 +172,7 @@ public class rSYBLInterraction {
         }
 
         {
+            DefaultHttpClient httpClient = new DefaultHttpClient();
 
             try {
 
@@ -182,7 +185,7 @@ public class rSYBLInterraction {
                 marshaller.marshal(compositionRulesConfiguration, sw);
                 log.info(sw.toString());
 
-                URI putDeploymentStructureURL = UriBuilder.fromPath(rSYBL_BASE_URL + "/metricsCompositionRules").build();
+                URI putDeploymentStructureURL = UriBuilder.fromPath(rSYBL_BASE_URL + "/" + serviceTemplate.getId() + "/compositionRules").build();
                 HttpPut putDeployment = new HttpPut(putDeploymentStructureURL);
 
                 StringEntity entity = new StringEntity(sw.getBuffer().toString());
@@ -213,10 +216,11 @@ public class rSYBLInterraction {
         }
 
         {
+            DefaultHttpClient httpClient = new DefaultHttpClient();
 
             try {
 
-                URI putDeploymentStructureURL = UriBuilder.fromPath(rSYBL_BASE_URL + "/elasticityCapabilitiesEffects").build();
+                URI putDeploymentStructureURL = UriBuilder.fromPath(rSYBL_BASE_URL + "/" + serviceTemplate.getId() + "/elasticityCapabilitiesEffects").build();
                 HttpPut putDeployment = new HttpPut(putDeploymentStructureURL);
 
                 StringEntity entity = new StringEntity(effectsJSON);
@@ -226,10 +230,9 @@ public class rSYBLInterraction {
 
                 putDeployment.setEntity(entity);
 
-              
                 log.info("Send updated Effects");
                 log.info(effectsJSON);
-                
+
                 HttpResponse response = httpClient.execute(endpoint, putDeployment);
 
                 HttpEntity resEntity = response.getEntity();
@@ -251,7 +254,8 @@ public class rSYBLInterraction {
         }
 
         {
-            URI prepareConfigURI = UriBuilder.fromPath(rSYBL_BASE_URL + "/startControl").build();
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            URI prepareConfigURI = UriBuilder.fromPath(rSYBL_BASE_URL + "/" + serviceTemplate.getId() + "/startControl").build();
             HttpPut prepareConfig = new HttpPut(prepareConfigURI);
 
             try {
@@ -266,10 +270,11 @@ public class rSYBLInterraction {
     }
 
     public void sendUpdatedConfigToRSYBL(ServiceTemplate serviceTemplate, CompositionRulesConfiguration compositionRulesConfiguration, String effectsJSON) {
-        DefaultHttpClient httpClient = new DefaultHttpClient();
+
         HttpHost endpoint = new HttpHost(rSYBL_BASE_IP, rSYBL_BASE_PORT);
 
         {
+            DefaultHttpClient httpClient = new DefaultHttpClient();
 
             try {
 
@@ -283,7 +288,7 @@ public class rSYBLInterraction {
                 marshaller.marshal(compositionRulesConfiguration, sw);
                 log.info(sw.toString());
 
-                URI putDeploymentStructureURL = UriBuilder.fromPath(rSYBL_BASE_URL + "/replaceCompositionRulesFromCurrentCloudService").build();
+                URI putDeploymentStructureURL = UriBuilder.fromPath(rSYBL_BASE_URL + "/" + serviceTemplate.getId() + "/compositionRules").build();
                 HttpPost putDeployment = new HttpPost(putDeploymentStructureURL);
 
                 StringEntity entity = new StringEntity(sw.getBuffer().toString());
@@ -314,10 +319,11 @@ public class rSYBLInterraction {
         }
 
         {
+            DefaultHttpClient httpClient = new DefaultHttpClient();
 
             try {
 
-                URI putDeploymentStructureURL = UriBuilder.fromPath(rSYBL_BASE_URL + "/replaceEffectsForCurrentCloudService").build();
+                URI putDeploymentStructureURL = UriBuilder.fromPath(rSYBL_BASE_URL + "/" + serviceTemplate.getId() + "/elasticityCapabilitiesEffects").build();
                 HttpPost putDeployment = new HttpPost(putDeploymentStructureURL);
 
                 StringEntity entity = new StringEntity(effectsJSON);
@@ -329,7 +335,7 @@ public class rSYBLInterraction {
 
                 log.info("Send updated Effects");
                 log.info(effectsJSON);
-                
+
                 HttpResponse response = httpClient.execute(endpoint, putDeployment);
 
                 HttpEntity resEntity = response.getEntity();
@@ -351,6 +357,7 @@ public class rSYBLInterraction {
         }
 
         {
+            DefaultHttpClient httpClient = new DefaultHttpClient();
 
             try {
 
@@ -363,7 +370,7 @@ public class rSYBLInterraction {
                 marshaller.marshal(cloudServiceXML, sw);
                 log.info(sw.toString());
 
-                URI putDeploymentStructureURL = UriBuilder.fromPath(rSYBL_BASE_URL + "/replaceCloudServiceRequirementsFromCurrentCloudService").build();
+                URI putDeploymentStructureURL = UriBuilder.fromPath(rSYBL_BASE_URL + "/" + serviceTemplate.getId() + "/elasticityRequirements").build();
                 HttpPost putDeployment = new HttpPost(putDeploymentStructureURL);
 
                 StringEntity entity = new StringEntity(sw.getBuffer().toString());
@@ -413,7 +420,7 @@ public class rSYBLInterraction {
 //        return compositionRulesConfiguration;
 //    }
 
-    public CompositionRulesConfiguration loadMetricCompositionRules(String path) {
+    public CompositionRulesConfiguration loadMetricCompositionRules(String serviceID, String path) {
         CompositionRulesConfiguration compositionRulesConfiguration = null;
         try {
             JAXBContext a = JAXBContext.newInstance(CompositionRulesConfiguration.class);
@@ -427,6 +434,7 @@ public class rSYBLInterraction {
         } catch (FileNotFoundException ex) {
             java.util.logging.Logger.getLogger(rSYBLInterraction.class.getName()).log(Level.SEVERE, null, ex);
         }
+        compositionRulesConfiguration.setTargetServiceID(serviceID);
 
         return compositionRulesConfiguration;
     }
@@ -537,10 +545,11 @@ public class rSYBLInterraction {
 
                 if (toFromRelationships.containsKey(serviceUnitID)) {
                     RelationshipXML relationshipXML = new RelationshipXML();
-                    relationshipXML.setMaster(serviceUnitID);
-                    relationshipXML.setSlave(toFromRelationships.get(serviceUnitID));
+                    relationshipXML.setSource(serviceUnitID);
+                    relationshipXML.setTarget(toFromRelationships.get(serviceUnitID));
+                    relationshipXML.setType(serviceUnitID);
 
-                    serviceTopologyXML.setRelationship(relationshipXML);
+                    serviceTopologyXML.addRelationship(relationshipXML);
                 }
 
                 if (serviceUnit.hasConstraints()) {

@@ -62,27 +62,53 @@ public class COMOTOrchestrator {
 
         defaultSalsaClient.deploy(application);
         salsaInterraction.waitUntilRunning(serviceTemplate.getId());
-        
-        try {
-            //wait 30 seconds more
-            Thread.sleep(30000);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(COMOTOrchestrator.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+//        try {
+//            //wait 30 seconds more
+//            Thread.sleep(30000);
+//        } catch (InterruptedException ex) {
+//            Logger.getLogger(COMOTOrchestrator.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//
         DeploymentDescription deploymentDescription = salsaInterraction.getServiceDeploymentInfo(serviceTemplate.getId());
 
         sYBLInterraction.sendInitialConfigToRSYBL(serviceTemplate, deploymentDescription,
-                sYBLInterraction.loadMetricCompositionRules(serviceTemplate.getMetricCompositonRulesFile()),
+                sYBLInterraction.loadMetricCompositionRules(serviceTemplate.getId(), serviceTemplate.getMetricCompositonRulesFile()),
                 sYBLInterraction.loadJSONEffects(serviceTemplate.getEffectsCompositonRulesFile()));
+
+    }
+
+    public void deploy(ServiceTemplate serviceTemplate) {
+
+        CloudApplication application = CloudApplication(serviceTemplate.getId()).withName(serviceTemplate.getId()).consistsOfServices(serviceTemplate).withDefaultMetricsEnabled(true);
+
+        defaultSalsaClient.deploy(application);
+        salsaInterraction.waitUntilRunning(serviceTemplate.getId());
+        DeploymentDescription deploymentDescription = salsaInterraction.getServiceDeploymentInfo(serviceTemplate.getId());
+
+    }
+
+    public void updateServiceReqsOrStruct(ServiceTemplate serviceTemplate) {
+
+        sYBLInterraction.sendUpdatedConfigToRSYBL(serviceTemplate,
+                sYBLInterraction.loadMetricCompositionRules(serviceTemplate.getId(), serviceTemplate.getMetricCompositonRulesFile()),
+                sYBLInterraction.loadJSONEffects(serviceTemplate.getEffectsCompositonRulesFile())
+        );
 
     }
 
     public void controlExisting(ServiceTemplate serviceTemplate) {
 
-        sYBLInterraction.sendUpdatedConfigToRSYBL(serviceTemplate,
-                sYBLInterraction.loadMetricCompositionRules(serviceTemplate.getMetricCompositonRulesFile()),
+        DeploymentDescription deploymentDescription = salsaInterraction.getServiceDeploymentInfo(serviceTemplate.getId());
+
+        sYBLInterraction.sendInitialConfigToRSYBL(serviceTemplate, deploymentDescription,
+                sYBLInterraction.loadMetricCompositionRules(serviceTemplate.getId(), serviceTemplate.getMetricCompositonRulesFile()),
                 sYBLInterraction.loadJSONEffects(serviceTemplate.getEffectsCompositonRulesFile()));
+
+    }
+
+    public void getSalsaStatus(ServiceTemplate serviceTemplate) {
+
+        DeploymentDescription deploymentDescription = salsaInterraction.getServiceDeploymentInfo(serviceTemplate.getId());
 
     }
 

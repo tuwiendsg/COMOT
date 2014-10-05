@@ -25,13 +25,13 @@ import at.ac.tuwien.dsg.orchestrator.interraction.COMOTOrchestrator;
  *
  * @author http://dsg.tuwien.ac.at
  */
-public class ProgrammingAndControllingElasticityWithCOMOT {
+public class ProgrammingAndControllingElasticityWithCOMOT_GXG {
 
     public static void main(String[] args) {
         //specify service units in terms of software
 
         //need to specify details of VM and operating system to deploy the software servide units on
-        OperatingSystemUnit dataControllerVM = OperatingSystemUnit("DataControllerVM")
+        OperatingSystemUnit mqtt_brokerVM = OperatingSystemUnit("mqtt_brokerVM")
                 .providedBy(OpenstackSmall("OpenStackSmall_OS_DC")
                         .withProvider("dsg@openstack")
                         .addSoftwarePackage("openjdk-7-jre")
@@ -39,16 +39,9 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                         .addSoftwarePackage("gmetad")
                 );
 
-        OperatingSystemUnit dataNodeVM = OperatingSystemUnit("DataNodeVM")
-                .providedBy(OpenstackMicro("OpenStackMicro_OS_DN")
-                        .withProvider("dsg@openstack")
-                        .addSoftwarePackage("openjdk-7-jre")
-                        .addSoftwarePackage("ganglia-monitor")
-                        .addSoftwarePackage("gmetad")
-                );
 
         //finally, we define Vm types for event processing
-        OperatingSystemUnit loadbalancerVM = OperatingSystemUnit("LoadbalancerVM")
+        OperatingSystemUnit sensorVM = OperatingSystemUnit("sensorVM")
                 .providedBy(OpenstackSmall("OpenStackSmall_OS_LB")
                         .withProvider("dsg@openstack")
                         .addSoftwarePackage("openjdk-7-jre")
@@ -56,8 +49,8 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                         .addSoftwarePackage("gmetad")
                 );
 
-        OperatingSystemUnit eventProcessingVM = OperatingSystemUnit("EventProcessingVM")
-                .providedBy(OpenstackMicro("OpenStackMicro_OS_EP")
+        OperatingSystemUnit processingVM = OperatingSystemUnit("processingVM")
+                .providedBy(OpenstackSmall("OpenStackSmall_OS_LB")
                         .withProvider("dsg@openstack")
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
@@ -65,93 +58,64 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 );
 
         //start with Data End, and first with Data Controller
-        ServiceUnit dataControllerUnit = SingleSoftwareUnit("DataControllerUnit")
+        ServiceUnit mqtt_brokerUnit = SingleSoftwareUnit("mqtt_broker")
                 //software artifacts needed for unit deployment   = script to deploy Cassandra
-                .deployedBy(SingleScriptArtifactTemplate("deployDataControllerArtifact", "deployCassandraSeed.sh"))
+                .deployedBy(SingleScriptArtifactTemplate("deployArtifactMQTT", "/IoT/run_mqtt_broker.sh"))
                 //data controller exposed its IP 
-                .exposes(Capability.Variable("DataController_IP_information"));
+                .exposes(Capability.Variable("brokerIp_Capability"));
 
-        //specify data node
-        ServiceUnit dataNodeUnit = SingleSoftwareUnit("DataNodeUnit")
-                .deployedBy(SingleScriptArtifactTemplate("deployDataNodeArtifact", "deployCassandraNode.sh"))
-                //data node MUST KNOW the IP of cassandra seed, to connect to it and join data cluster
-                .requires(Requirement.Variable("DataController_IP_Data_Node_Req").withName("requiringDataNodeIP"))
-                //express elasticity strategy: Scale IN Data Node when cpu usage < 40%
-                .controlledBy(Strategy("ST1")
-                        .when(Constraint.MetricConstraint("ST1CO1", new Metric("cpuUsage", "%")).lessThan("40"))
-                        .then(Strategy.Action.ScaleIn)
-                );
-
-        //add the service units belonging to the event processing topology
-        ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
-                .deployedBy(SingleScriptArtifactTemplate("deployEventProcessingArtifact", "deployEventProcessing.sh"))
-                //event processing must register in Load Balancer, so it needs the IP
-                .requires(Requirement.Variable("EventProcessingUnit_LoadBalancer_IP_Req"))
-                //event processing also needs to querry the Data Controller to access data
-                .requires(Requirement.Variable("EventProcessingUnit_DataController_IP_Req"))
-                //scale IN if throughput < 200 and responseTime < 200
-                .controlledBy(Strategy("ST2")
-                        .when(Constraint.MetricConstraint("ST2CO1", new Metric("responseTime", "ms")).lessThan("200"))
-                        .and(Constraint.MetricConstraint("ST2CO2", new Metric("throughput", "operations/s")).lessThan("200"))
-                        .then(Strategy.Action.ScaleIn)
-                );
-
-        //add the service units belonging to the event processing topology
-        ServiceUnit loadbalancerUnit = SingleSoftwareUnit("LoadBalancerUnit")
-                //load balancer must provide IP
-                .exposes(Capability.Variable("LoadBalancer_IP_information"))
-                .deployedBy(SingleScriptArtifactTemplate("deployLoadBalancerArtifact", "deployLoadBalancer.sh"));
-
-        //Describe a Data End service topology containing the previous 2 software service units
-        ServiceTopology dataEndTopology = ServiceTopology("DataEndTopology")
-                .withServiceUnits(dataControllerUnit, dataNodeUnit //add also OS units to topology
-                        , dataControllerVM, dataNodeVM
-                );
-
-        //specify constraints on the data topology
-        //thus, the CPU usage of all Service Unit instances of the data end Topology must be below 80%
-        dataEndTopology.constrainedBy(Constraint.MetricConstraint("DataEndCO1", new Metric("cpuUsage", "%")).lessThan("40"));
-
-        //define event processing unit topology
-        ServiceTopology eventProcessingTopology = ServiceTopology("EventProcessingTopology")
-                .withServiceUnits(loadbalancerUnit, eventProcessingUnit //add vm types to topology
-                        , loadbalancerVM, eventProcessingVM
-                );
         
-        eventProcessingTopology.constrainedBy(Constraint.MetricConstraint("C02", new Metric("responseTime", "ms")).lessThan("400"));
+        
+        //start with Data End, and first with Data Controller
+        ServiceUnit processingUnit = SingleSoftwareUnit("processing")
+                //software artifacts needed for unit deployment   = script to deploy Cassandra
+                .deployedBy(SingleScriptArtifactTemplate("deployArtifactProcessing", "/IoT/install-local-analysis-service.sh"))
+                //data controller exposed its IP 
+                .requires(Requirement.Variable("brokerIp_Requirement"));
 
+        
+        
+        //start with Data End, and first with Data Controller
+        ServiceUnit sensorUnit = SingleSoftwareUnit("sensor")
+                //software artifacts needed for unit deployment   = script to deploy Cassandra
+                .deployedBy(SingleScriptArtifactTemplate("deployArtifactSensor", "/IoT/run_sensor.sh"))
+                //data controller exposed its IP 
+                 .requires(Requirement.Variable("brokerIp_Requirement_2"));
+
+        
+        
+       
+        //Describe a Data End service topology containing the previous 2 software service units
+        ServiceTopology serviceTopology = ServiceTopology("ServiceTopology")
+                .withServiceUnits( mqtt_brokerUnit, mqtt_brokerVM, processingUnit,processingVM, sensorUnit, sensorVM
+                );
+
+        
         //describe the service template which will hold more topologies
         ServiceTemplate serviceTemplate = ServiceTemplate("DaasService")
-                .consistsOfTopologies(dataEndTopology)
-                .consistsOfTopologies(eventProcessingTopology)
+                .consistsOfTopologies(serviceTopology)
+                
                 //defining CONNECT_TO and HOSTED_ON relationships
                 .andRelationships(
                         //Data Controller IP send to Data Node
-                        ConnectToRelation("dataNodeToDataController")
-                        .from(dataControllerUnit.getContext().get("DataController_IP_information"))
-                        .to(dataNodeUnit.getContext().get("DataController_IP_Data_Node_Req")) //specify which software unit goes to which VM
+                        ConnectToRelation("sensor_to_broker")
+                        .from(mqtt_brokerUnit.getContext().get("brokerIp_Capability"))
+                        .to(processingUnit.getContext().get("brokerIp_Requirement_2")) //specify which software unit goes to which VM
                         ,
                         //event processing gets IP from load balancer
-                        ConnectToRelation("eventProcessingToLoadBalancer")
-                        .from(loadbalancerUnit.getContext().get("LoadBalancer_IP_information"))
-                        .to(eventProcessingUnit.getContext().get("EventProcessingUnit_LoadBalancer_IP_Req")) //specify which software unit goes to which VM
+                        ConnectToRelation("b")
+                        .from(mqtt_brokerUnit.getContext().get("brokerIp_Capability"))
+                        .to(sensorUnit.getContext().get("brokerIp_Requirement")) //specify which software unit goes to which VM
                         ,
-                        //event processing gets IP from data controller
-                        ConnectToRelation("eventProcessingToDataController")
-                        .from(dataControllerUnit.getContext().get("DataController_IP_information"))
-                        .to(eventProcessingUnit.getContext().get("EventProcessingUnit_DataController_IP_Req")) //specify which software unit goes to which VM
-                        ,
-                        HostedOnRelation("dataControllerToVM")
-                        .from(dataControllerUnit)
-                        .to(dataControllerVM),
-                        HostedOnRelation("dataNodeToVM")
-                        .from(dataNodeUnit)
-                        .to(dataNodeVM) //add hosted on relatinos
-                        , HostedOnRelation("loadbalancerToVM")
-                        .from(loadbalancerUnit)
-                        .to(loadbalancerVM), HostedOnRelation("eventProcessingToVM")
-                        .from(eventProcessingUnit)
-                        .to(eventProcessingVM)
+                        HostedOnRelation("d")
+                        .from(mqtt_brokerUnit)
+                        .to(mqtt_brokerVM),
+                        HostedOnRelation("e")
+                        .from(processingUnit)
+                        .to(processingVM) //add hosted on relatinos
+                        , HostedOnRelation("f")
+                        .from(sensorUnit)
+                        .to(sensorVM)
                 )
                 // as we have horizontally scalable distributed systems (one service unit can have more instances)
                 //metrics must be aggregated among VMs
