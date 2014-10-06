@@ -171,7 +171,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
         eventProcessingTopology.constrainedBy(Constraint.MetricConstraint("C02", new Metric("responseTime", "ms")).lessThan("400"));
 
         //describe the service template which will hold more topologies
-        ServiceTemplate serviceTemplate = ServiceTemplate("IoTDaaSTst")
+        ServiceTemplate serviceTemplate = ServiceTemplate("IoTDaaS2")
                 .consistsOfTopologies(dataEndTopology)
                 .consistsOfTopologies(eventProcessingTopology)
                 .consistsOfTopologies(localProcessinTopology)
@@ -245,15 +245,14 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 .withSalsaPort(8080)
                 //we have rSYBL elasticity control service and MELA 
                 //deployed separately
-                //                .withRsyblIP("128.130.172.214")
-                .withRsyblIP("localhost")
-                //                                .withRsyblIP("109.231.121.97")
+//                                                .withRsyblIP("128.130.172.214")
+                                                .withRsyblIP("localhost")
+//                .withRsyblIP("109.231.121.8")
                 .withRsyblPort(8280);
-//                .withRsyblPort(8280);
 
         //deploy, monitor and control
-//        orchestrator.deploy(serviceTemplate);
-        orchestrator.controlExisting(serviceTemplate);
+        orchestrator.deploy(serviceTemplate);
+//        orchestrator.controlExisting(serviceTemplate);
 
     }
 }

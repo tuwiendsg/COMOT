@@ -37,8 +37,6 @@ public interface SalsaClient {
     
     SalsaResponse getServiceDeploymentInfo(String serviceId);
 
-    SalsaResponse deploymentInfo(String serviceId);
-
     SalsaClientConfiguration getConfiguration();
 
 
