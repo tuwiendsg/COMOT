@@ -211,7 +211,7 @@
                         </goals>
                         <phase>package</phase>
                         <configuration>
-                            <path>/Visualization</path>
+                            <path>/COMOT</path>
                         </configuration>
                     </execution>
                 </executions>

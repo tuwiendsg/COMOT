@@ -180,19 +180,19 @@
                         div.setAttribute('id', service.name);
 
 
-//                        var iframe = document.createElement('iframe');
-//                        var h2 = document.createElement('h2');
-//                        h2.innerHTML = service.name;
-//                        iframe.setAttribute('src', service.url);
-//                        iframe.setAttribute('style', 'width:100%; height:100%');
-//                        div.appendChild(h2);
-                        //currently we refresh each time we reshow the frames
-                        var iframe = document.createElement('object');
+                        var iframe = document.createElement('iframe');
                         var h2 = document.createElement('h2');
                         h2.innerHTML = service.name;
-                        iframe.setAttribute('type', "text/html");
-                        iframe.setAttribute('data', service.url);
+                        iframe.setAttribute('src', service.url);
                         iframe.setAttribute('style', 'width:100%; height:100%');
+                        div.appendChild(h2);
+                        //currently we refresh each time we reshow the frames
+//                        var iframe = document.createElement('object');
+//                        var h2 = document.createElement('h2');
+//                        h2.innerHTML = service.name;
+//                        iframe.setAttribute('type', "text/html");
+//                        iframe.setAttribute('data', service.url);
+//                        iframe.setAttribute('style', 'width:100%; height:100%');
 //                        div.appendChild(h2);
 
                         div.appendChild(iframe);
