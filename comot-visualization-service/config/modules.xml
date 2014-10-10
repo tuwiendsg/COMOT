@@ -1,4 +1,13 @@
-   <bean id="openStackUI" class="at.ac.tuwien.dsg.comot.visualisation.service.config.ComotUIModule" lazy-init="false">
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:cxf="http://cxf.apache.org/core"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
+     <bean id="openStackUI" class="at.ac.tuwien.dsg.comot.visualisation.service.config.ComotUIModule" lazy-init="false">
         <property name="name" value="Cloud Infrastructure Management"/>
         <property name="url" value="http://openstack.infosys.tuwien.ac.at/horizon/nova/"/>
    </bean>
@@ -22,17 +31,17 @@
 
     <bean id="melaUI" class="at.ac.tuwien.dsg.comot.visualisation.service.config.ComotUIModule" lazy-init="false">
         <property name="name" value="Elasticity Monitoring"/>
-        <property name="url" value="http://localhost:8180/MELA/"/>
+        <property name="url" value="http://128.130.172.214:8180/MELA/"/>
     </bean>
 
     <bean id="rSYBLUI" class="at.ac.tuwien.dsg.comot.visualisation.service.config.ComotUIModule" lazy-init="false">
         <property name="name" value="Control"/>
-        <property name="url" value="http://localhost:8280/rSYBL/"/>
+        <property name="url" value="http://128.130.172.214:8280/rSYBL/"/>
     </bean>
 
    <bean id="melaUIAnalytics" class="at.ac.tuwien.dsg.comot.visualisation.service.config.ComotUIModule" lazy-init="false">
         <property name="name" value="Elasticity Analytics"/>
-        <property name="url" value="http://localhost:8181/MELA/"/>
+        <property name="url" value="http://128.130.172.214:8181/MELA/"/>
    </bean>
 
    <bean id="esadicsUI" class="at.ac.tuwien.dsg.comot.visualisation.service.config.ComotUIModule" lazy-init="false">
@@ -40,3 +49,11 @@
         <property name="url" value="http://128.130.172.216:8080/EDASICH/"/>
    </bean>
 
+    <bean id="salamUI" class="at.ac.tuwien.dsg.comot.visualisation.service.config.ComotUIModule" lazy-init="false">
+        <property name="name" value="SALAM"/>
+        <property name="url" value="http://128.130.172.191:8080/web-ui/"/>
+   </bean>
+
+
+
+</beans>
