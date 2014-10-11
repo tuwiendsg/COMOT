@@ -1,7 +1,9 @@
 package at.ac.tuwien.dsg.comot.orchestrator;
 
+import at.ac.tuwien.dsg.comot.client.DefaultSalsaClient;
 import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifactTemplate;
 import at.ac.tuwien.dsg.comot.common.model.Capability;
+import at.ac.tuwien.dsg.comot.common.model.CloudService;
 import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackMicro;
 import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackSmall;
 import at.ac.tuwien.dsg.comot.common.model.Constraint;
@@ -11,12 +13,13 @@ import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.HostedOnRel
 import at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit;
 import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingSystemUnit;
 import at.ac.tuwien.dsg.comot.common.model.Requirement;
-import at.ac.tuwien.dsg.comot.common.model.ServiceTemplate;
-import static at.ac.tuwien.dsg.comot.common.model.ServiceTemplate.ServiceTemplate;
+import at.ac.tuwien.dsg.comot.common.model.CloudService;
+import static at.ac.tuwien.dsg.comot.common.model.CloudService.ServiceTemplate;
 import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
 import static at.ac.tuwien.dsg.comot.common.model.ServiceTopology.ServiceTopology;
 import at.ac.tuwien.dsg.comot.common.model.ServiceUnit;
 import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.SingleSoftwareUnit;
+import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.UnboundedSoftwareUnit;
 import at.ac.tuwien.dsg.comot.common.model.Strategy;
 import static at.ac.tuwien.dsg.comot.common.model.Strategy.Strategy;
 import at.ac.tuwien.dsg.orchestrator.interraction.COMOTOrchestrator;
@@ -33,7 +36,6 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
         //need to specify details of VM and operating system to deploy the software servide units on
         OperatingSystemUnit dataControllerVM = OperatingSystemUnit("DataControllerUnitVM")
                 .providedBy(OpenstackSmall("OpenStackSmall_OS_DC")
-                        .withProvider("dsg@openstack")
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
                         .addSoftwarePackage("gmetad")
@@ -41,7 +43,6 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
 
         OperatingSystemUnit dataNodeVM = OperatingSystemUnit("DataNodeUnitVM")
                 .providedBy(OpenstackMicro("OpenStackMicro_OS_DN")
-                        .withProvider("dsg@openstack")
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
                         .addSoftwarePackage("gmetad")
@@ -50,7 +51,6 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
         //finally, we define Vm types for event processing
         OperatingSystemUnit loadbalancerVM = OperatingSystemUnit("LoadBalancerUnitVM")
                 .providedBy(OpenstackSmall("OpenStackSmall_OS_LB")
-                        .withProvider("dsg@openstack")
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
                         .addSoftwarePackage("gmetad")
@@ -59,34 +59,30 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
         OperatingSystemUnit eventProcessingVM = OperatingSystemUnit("EventProcessingUnitVM")
                 .providedBy(OpenstackSmall("OpenStackMicro_OS_EP")
                         .withBaseImage("be6ae07b-7deb-4926-bfd7-b11afe228d6a")
-                        .withProvider("dsg@openstack")
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
                         .addSoftwarePackage("gmetad")
                 );
 
         OperatingSystemUnit localProcessingVM = OperatingSystemUnit("LocalProcessingUnitVM")
-                .providedBy(OpenstackSmall("OpenStackSmall_OS_LB")
+                .providedBy(OpenstackSmall("OpenStackSmall_OS_LP")
                         .withBaseImage("be6ae07b-7deb-4926-bfd7-b11afe228d6a")
-                        .withProvider("dsg@openstack")
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
                         .addSoftwarePackage("gmetad")
                 );
 
         OperatingSystemUnit mqttQueueVM = OperatingSystemUnit("MqttQueueVM")
-                .providedBy(OpenstackSmall("OpenStackSmall_OS_LB")
-                        .withBaseImage("be6ae07b-7deb-4926-bfd7-b11afe228d6a")
-                        .withProvider("dsg@openstack")
+                .providedBy(OpenstackSmall("OpenStackSmall_OS_MQTT")
+                        .withBaseImage("17ffd200-315f-4ba8-9e77-c294efc772bd")
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
                         .addSoftwarePackage("gmetad")
                 );
 
         OperatingSystemUnit momVM = OperatingSystemUnit("MoMVM")
-                .providedBy(OpenstackSmall("OpenStackSmall_OS_LB")
+                .providedBy(OpenstackSmall("OpenStackSmall_OS_MOM")
                         .withBaseImage("be6ae07b-7deb-4926-bfd7-b11afe228d6a")
-                        .withProvider("dsg@openstack")
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
                         .addSoftwarePackage("gmetad")
@@ -114,7 +110,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
         ServiceUnit momUnit = SingleSoftwareUnit("MOM")
                 //load balancer must provide IP
                 .exposes(Capability.Variable("MOM_IP_information"))
-                .deployedBy(SingleScriptArtifactTemplate("deployMOMArtifact", "deployQueue.sh"));
+                .deployedBy(SingleScriptArtifactTemplate("deployMOMArtifact", "http://128.130.172.215/salsa/upload/files/DaasService/deployQueue.sh"));
 
         //add the service units belonging to the event processing topology
         ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
@@ -137,7 +133,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 .exposes(Capability.Variable("LoadBalancer_IP_information"))
                 .deployedBy(SingleScriptArtifactTemplate("deployLoadBalancerArtifact", "http://128.130.172.215/salsa/upload/files/DaasService/deployLoadBalancer.sh"));
 
-        ServiceUnit mqttUnit = SingleSoftwareUnit("MQTTQueueUnit")
+        ServiceUnit mqttUnit = SingleSoftwareUnit("QueueUnit")
                 //load balancer must provide IP
                 .exposes(Capability.Variable("brokerIp_Capability"))
                 .deployedBy(SingleScriptArtifactTemplate("deployMQTTBroker", "http://128.130.172.215/salsa/upload/files/DaasService/IoT/run_mqtt_broker.sh"));
@@ -171,7 +167,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
         eventProcessingTopology.constrainedBy(Constraint.MetricConstraint("C02", new Metric("responseTime", "ms")).lessThan("400"));
 
         //describe the service template which will hold more topologies
-        ServiceTemplate serviceTemplate = ServiceTemplate("IoTDaaS2")
+        CloudService serviceTemplate = ServiceTemplate("IoTDaaSTMP")
                 .consistsOfTopologies(dataEndTopology)
                 .consistsOfTopologies(eventProcessingTopology)
                 .consistsOfTopologies(localProcessinTopology)
@@ -192,11 +188,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                         .from(dataControllerUnit.getContext().get("DataController_IP_information"))
                         .to(eventProcessingUnit.getContext().get("EventProcessingUnit_DataController_IP_Req")) //specify which software unit goes to which VM
                         ,
-                        ConnectToRelation("eventProcessingToMOM_IP")
-                        .from(dataControllerUnit.getContext().get("MOM_IP_information"))
-                        .to(eventProcessingUnit.getContext().get("EventProcessingUnit_MOM_IP_Req")) //specify which software unit goes to which VM
-                        ,
-                        ConnectToRelation("eventProcessingToMOM_IP")
+                        ConnectToRelation("eventProcessingToMOM")
                         .from(momUnit.getContext().get("MOM_IP_information"))
                         .to(eventProcessingUnit.getContext().get("EventProcessingUnit_MOM_IP_Req")) //specify which software unit goes to which VM
                         ,
@@ -245,14 +237,20 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 .withSalsaPort(8080)
                 //we have rSYBL elasticity control service and MELA 
                 //deployed separately
-//                                                .withRsyblIP("128.130.172.214")
-                                                .withRsyblIP("localhost")
-//                .withRsyblIP("109.231.121.8")
+                                                                .withRsyblIP("128.130.172.214")
+//                .withRsyblIP("localhost")
+                //                .withRsyblIP("109.231.121.66")
                 .withRsyblPort(8280);
 
         //deploy, monitor and control
+//        orchestrator.deployAndControl(serviceTemplate);
         orchestrator.deploy(serviceTemplate);
 //        orchestrator.controlExisting(serviceTemplate);
+
+//        DefaultSalsaClient salsa = new DefaultSalsaClient();
+//        String xml = salsa.getToscaDescriptionBuilder().toXml(serviceTemplate);
+//        System.out.print(xml);
+//        System.out.print("DONE !");
 
     }
 }

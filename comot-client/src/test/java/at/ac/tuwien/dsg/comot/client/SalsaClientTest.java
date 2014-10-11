@@ -5,8 +5,8 @@
 //import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityState;
 //import at.ac.tuwien.dsg.comot.ComotContext;
 //import at.ac.tuwien.dsg.comot.NoopSalsaEngineApi;
-//import at.ac.tuwien.dsg.comot.common.model.CloudApplication;
-//import at.ac.tuwien.dsg.comot.samples.DataAsAServiceCloudApplication;
+//import at.ac.tuwien.dsg.comot.common.model.CloudService;
+//import at.ac.tuwien.dsg.comot.samples.DataAsAServiceCloudService;
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //import org.junit.Test;
 //import org.junit.runner.RunWith;
@@ -28,9 +28,9 @@
 //public class SalsaClientTest extends AbstractSalsaClientTest {
 //
 //    @Test
-//    public void deployAndUndeployCloudApplication() throws Exception {
+//    public void deployAndUndeployCloudService() throws Exception {
 //        SalsaClient client = prepareSalsaClient();
-//        CloudApplication application = DataAsAServiceCloudApplication.build();
+//        CloudService application = DataAsAServiceCloudService.build();
 //        SalsaResponse response = client.deploy(application);
 //        assertTrue(response.isExpected());
 //        assertEquals(SalsaClient.SalsaClientAction.DEPLOY.expectedResultCode(), response.getCode());

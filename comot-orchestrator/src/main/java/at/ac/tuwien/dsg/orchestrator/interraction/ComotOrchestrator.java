@@ -6,8 +6,7 @@
 package at.ac.tuwien.dsg.orchestrator.interraction;
 
 import at.ac.tuwien.dsg.comot.client.DefaultSalsaClient;
-import at.ac.tuwien.dsg.comot.common.model.CloudApplication;
-import at.ac.tuwien.dsg.comot.common.model.ServiceTemplate;
+import at.ac.tuwien.dsg.comot.common.model.CloudService;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 import at.ac.tuwien.dsg.orchestrator.interraction.rsybl.RsyblConnector;
 import at.ac.tuwien.dsg.orchestrator.interraction.salsa.SalsaConnector;
@@ -15,7 +14,7 @@ import at.ac.tuwien.dsg.orchestrator.interraction.salsa.SalsaConnector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static at.ac.tuwien.dsg.comot.common.model.CloudApplication.CloudApplication;
+import static at.ac.tuwien.dsg.comot.common.model.CloudService.CloudService;
 
 /**
  *
@@ -57,11 +56,9 @@ public class ComotOrchestrator {
         return this;
     }
 
-    public void deployAndControl(ServiceTemplate serviceTemplate) {
+    public void deployAndControl(CloudService serviceTemplate) {
 
-        CloudApplication application = CloudApplication(serviceTemplate.getId()).withName(serviceTemplate.getId()).consistsOfServices(serviceTemplate).withDefaultMetricsEnabled(true);
-
-        defaultSalsaClient.deploy(application);
+        defaultSalsaClient.deploy(serviceTemplate);
         salsaConnector.waitUntilRunning(serviceTemplate.getId());
         
         try {
@@ -79,7 +76,7 @@ public class ComotOrchestrator {
 
     }
 
-    public void controlExisting(ServiceTemplate serviceTemplate) {
+    public void controlExisting(CloudService serviceTemplate) {
 
         sYBLInterraction.sendUpdatedConfigToRSYBL(serviceTemplate,
                 sYBLInterraction.loadMetricCompositionRules(serviceTemplate.getMetricCompositonRulesFile()),

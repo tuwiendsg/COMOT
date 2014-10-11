@@ -12,7 +12,6 @@ import at.ac.tuwien.dsg.comot.api.ToscaDescriptionBuilderImpl;
 import at.ac.tuwien.dsg.comot.client.DefaultSalsaClient;
 import at.ac.tuwien.dsg.comot.client.SalsaResponse;
 import at.ac.tuwien.dsg.comot.common.logging.Markers;
-import at.ac.tuwien.dsg.comot.common.model.CloudApplication;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -103,7 +102,7 @@ public class SalsaInterraction {
 
             CloudService service = this.getStatus(serviceID);
 
-            if (!service.getState().equals(SalsaEntityState.FINISHED) && !service.getState().equals(SalsaEntityState.RUNNING)) {
+            if (!service.getState().equals(SalsaEntityState.FINISHED) || !service.getState().equals(SalsaEntityState.RUNNING)) {
                 allRunning = false;
             } else {
                 for (at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceUnit serviceUnit : service.getAllComponentByType(SalsaEntityType.SOFTWARE)) {
@@ -123,7 +122,7 @@ public class SalsaInterraction {
         } while (!allRunning);
     }
 
-    public void deploy(CloudApplication application) {
+    public void deploy(at.ac.tuwien.dsg.comot.common.model.CloudService application) {
         ToscaDescriptionBuilderImpl tdbi = new ToscaDescriptionBuilderImpl();
 
         String tosca = tdbi.toXml(application);

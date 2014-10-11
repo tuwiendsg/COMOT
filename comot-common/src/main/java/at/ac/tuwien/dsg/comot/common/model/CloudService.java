@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * @author omoser
  */
-public class ServiceTemplate extends AbstractServiceDescriptionEntity {
+public class CloudService extends AbstractServiceDescriptionEntity {
 
     private EntityRelationship relationship;
 
@@ -17,7 +17,7 @@ public class ServiceTemplate extends AbstractServiceDescriptionEntity {
 
     private String effectsCompositonRulesFile;
 
-    ServiceTemplate(String id) {
+    CloudService(String id) {
         super(id);
     }
 
@@ -25,17 +25,17 @@ public class ServiceTemplate extends AbstractServiceDescriptionEntity {
 
     private Set<EntityRelationship> relationships = new HashSet<>();
 
-    public ServiceTemplate consistsOfTopologies(ServiceTopology... nodes) {
+    public CloudService consistsOfTopologies(ServiceTopology... nodes) {
         serviceNodes.addAll(Arrays.asList(nodes));
         return this;
     }
 
-    public ServiceTemplate with(EntityRelationship relationship) {
+    public CloudService with(EntityRelationship relationship) {
         relationships.add(relationship);
         return this;
     }
 
-    public ServiceTemplate andRelationships(EntityRelationship... relationships) {
+    public CloudService andRelationships(EntityRelationship... relationships) {
         this.relationships.addAll(Arrays.asList(relationships));
         return this;
     }
@@ -44,62 +44,66 @@ public class ServiceTemplate extends AbstractServiceDescriptionEntity {
         return relationships;
     }
 
-    @Override
-
-    public ServiceTemplate provides(ElasticityCapability... capabilities) {
-        return (ServiceTemplate) super.provides(capabilities);
+    public static CloudService CloudService(String id) {
+        return new CloudService(id);
     }
 
     @Override
-    public ServiceTemplate exposes(Capability... capabilities) {
-        return (ServiceTemplate) super.exposes(capabilities);
+
+    public CloudService provides(ElasticityCapability... capabilities) {
+        return (CloudService) super.provides(capabilities);
     }
 
     @Override
-    public ServiceTemplate requires(Requirement... requirements) {
-        return (ServiceTemplate) super.requires(requirements);
+    public CloudService exposes(Capability... capabilities) {
+        return (CloudService) super.exposes(capabilities);
     }
 
     @Override
-    public ServiceTemplate constrainedBy(Constraint... constraints) {
-        return (ServiceTemplate) super.constrainedBy(constraints);
+    public CloudService requires(Requirement... requirements) {
+        return (CloudService) super.requires(requirements);
     }
 
     @Override
-    public ServiceTemplate controlledBy(Strategy... strategies) {
-        return (ServiceTemplate) super.controlledBy(strategies);
+    public CloudService constrainedBy(Constraint... constraints) {
+        return (CloudService) super.constrainedBy(constraints);
     }
 
     @Override
-    public ServiceTemplate withId(String id) {
-        return (ServiceTemplate) super.withId(id);
+    public CloudService controlledBy(Strategy... strategies) {
+        return (CloudService) super.controlledBy(strategies);
     }
 
     @Override
-    public ServiceTemplate withDescription(String description) {
-        return (ServiceTemplate) super.withDescription(description);
+    public CloudService withId(String id) {
+        return (CloudService) super.withId(id);
     }
 
     @Override
-    public ServiceTemplate withName(String name) {
-        return (ServiceTemplate) super.withName(name);
+    public CloudService withDescription(String description) {
+        return (CloudService) super.withDescription(description);
     }
 
     @Override
-    public ServiceTemplate ofType(String type) {
-        return (ServiceTemplate) super.ofType(type);
+    public CloudService withName(String name) {
+        return (CloudService) super.withName(name);
+    }
+
+    @Override
+    public CloudService ofType(String type) {
+        return (CloudService) super.ofType(type);
     }
 
     public boolean hasRelationships() {
         return !relationships.isEmpty();
     }
 
-    public ServiceTemplate withMetricCompositonRulesFile(final String metricCompositonRulesFile) {
+    public CloudService withMetricCompositonRulesFile(final String metricCompositonRulesFile) {
         this.metricCompositonRulesFile = metricCompositonRulesFile;
         return this;
     }
 
-    public ServiceTemplate withDefaultMetrics() {
+    public CloudService withDefaultMetrics() {
         this.metricCompositonRulesFile = "./config/resources/compositionRules.xml";
         return this;
     }
@@ -108,12 +112,12 @@ public class ServiceTemplate extends AbstractServiceDescriptionEntity {
         return metricCompositonRulesFile;
     }
 
-    public ServiceTemplate withActionEffectsCompositonRulesFile(final String effectsCompositonRulesFile) {
+    public CloudService withActionEffectsCompositonRulesFile(final String effectsCompositonRulesFile) {
         this.effectsCompositonRulesFile = effectsCompositonRulesFile;
         return this;
     }
 
-    public ServiceTemplate withDefaultActionEffects() {
+    public CloudService withDefaultActionEffects() {
         this.effectsCompositonRulesFile = "./config/resources/effects.json";
         return this;
     }
@@ -134,11 +138,11 @@ public class ServiceTemplate extends AbstractServiceDescriptionEntity {
         return serviceNodes;
     }
 
-    public static ServiceTemplate ServiceTemplate(String id) {
-        return new ServiceTemplate(id);
+    public static CloudService ServiceTemplate(String id) {
+        return new CloudService(id).withName(id);
     }
 
-    public ServiceTemplate withRelationship(final EntityRelationship relationship) {
+    public CloudService withRelationship(final EntityRelationship relationship) {
         this.relationship = relationship;
         return this;
     }
@@ -159,7 +163,7 @@ public class ServiceTemplate extends AbstractServiceDescriptionEntity {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final ServiceTemplate other = (ServiceTemplate) obj;
+        final CloudService other = (CloudService) obj;
         if (!Objects.equals(this.serviceNodes, other.serviceNodes)) {
             return false;
         }

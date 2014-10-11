@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot.api;
 
-import at.ac.tuwien.dsg.comot.common.model.CloudApplication;
+//import at.ac.tuwien.dsg.comot.common.model.CloudService;
+import at.ac.tuwien.dsg.comot.common.model.CloudService;
 import org.oasis.tosca.TDefinitions;
 
 /**
@@ -8,9 +9,9 @@ import org.oasis.tosca.TDefinitions;
  */
 public interface ToscaDescriptionBuilder {
 
-    TDefinitions buildToscaDefinitions(CloudApplication application) throws ToscaDescriptionBuilderException;
+    TDefinitions buildToscaDefinitions(CloudService cloudService) throws ToscaDescriptionBuilderException;
 
-    String toXml(CloudApplication application) throws ToscaDescriptionBuilderException;
+    String toXml(CloudService cloudService) throws ToscaDescriptionBuilderException;
 
     void setValidating(boolean validating);
 

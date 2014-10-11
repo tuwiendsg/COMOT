@@ -3,7 +3,7 @@ package at.ac.tuwien.dsg.comot.client;
 import at.ac.tuwien.dsg.comot.api.ToscaDescriptionBuilder;
 import at.ac.tuwien.dsg.comot.api.ToscaDescriptionBuilderImpl;
 import at.ac.tuwien.dsg.comot.common.logging.Markers;
-import at.ac.tuwien.dsg.comot.common.model.CloudApplication;
+import at.ac.tuwien.dsg.comot.common.model.CloudService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
@@ -75,20 +75,20 @@ public class DefaultSalsaClient implements SalsaClient {
     }
 
     @Override
-    public SalsaResponse deploy(CloudApplication cloudApplication) throws SalsaClientException {
+    public SalsaResponse deploy(CloudService CloudService) throws SalsaClientException {
         if (getConfiguration().isValidatingToscaBuilder()) {
             toscaDescriptionBuilder.setValidating(true);
         }
 
-        String toscaDescriptionXml = toscaDescriptionBuilder.toXml(cloudApplication);
+        String toscaDescriptionXml = toscaDescriptionBuilder.toXml(CloudService);
 
         if (log.isDebugEnabled()) {
-            log.debug(Markers.CLIENT, "Deploying cloud application '{}'", cloudApplication.getId());
+            log.debug(Markers.CLIENT, "Deploying cloud application '{}'", CloudService.getId());
             log.debug(Markers.CLIENT, "Using configuration '{}'", configuration);
             log.debug(Markers.CLIENT, "TOSCA: {}", toscaDescriptionXml);
         }
 
-        URI deploymentUri = UriBuilder.fromPath(configuration.getDeployPath()).build(cloudApplication.getName());
+        URI deploymentUri = UriBuilder.fromPath(configuration.getDeployPath()).build(CloudService.getName());
         HttpPut method = new HttpPut(deploymentUri);
         method.setEntity(new StringEntity(toscaDescriptionXml, ContentType.APPLICATION_XML));
         return executeMethod(method, SalsaClientAction.DEPLOY);

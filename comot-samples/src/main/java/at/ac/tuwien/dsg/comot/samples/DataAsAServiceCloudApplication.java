@@ -3,7 +3,6 @@ package at.ac.tuwien.dsg.comot.samples;
 import at.ac.tuwien.dsg.comot.common.model.*;
 
 import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifactTemplate;
-import static at.ac.tuwien.dsg.comot.common.model.CloudApplication.CloudApplication;
 import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackSmall;
 import static at.ac.tuwien.dsg.comot.common.model.Constraint.*;
 import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.ConnectToRelation;
@@ -19,7 +18,7 @@ import static at.ac.tuwien.dsg.comot.common.model.Strategy.Strategy;
  */
 public class DataAsAServiceCloudApplication {
 
-    public static CloudApplication build() {
+    public static CloudService build() {
 
         //
         // Cassandra Head Node
@@ -83,7 +82,7 @@ public class DataAsAServiceCloudApplication {
         //
         // Build containing DaaS service
         //
-        ServiceTemplate daaSService = ServiceTemplate.ServiceTemplate("DaasService")
+        CloudService daaSService = CloudService.ServiceTemplate("DaasService")
                 .constrainedBy(CostConstraint("CG0").lessThan("1000"))
                 .andRelationships(
                         ConnectToRelation("head2datanode")
@@ -97,6 +96,6 @@ public class DataAsAServiceCloudApplication {
                         .to(cassandraDataOsNode)
                 );
 
-        return CloudApplication("DaaSApp").withName("DaaS Cloud Application").consistsOfServices(daaSService).withDefaultMetricsEnabled(true);
+        return daaSService.withDefaultMetrics();
     }
 }

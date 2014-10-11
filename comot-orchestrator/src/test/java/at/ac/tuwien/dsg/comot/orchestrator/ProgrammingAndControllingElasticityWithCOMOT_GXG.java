@@ -11,8 +11,8 @@ import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.HostedOnRel
 import at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit;
 import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingSystemUnit;
 import at.ac.tuwien.dsg.comot.common.model.Requirement;
-import at.ac.tuwien.dsg.comot.common.model.ServiceTemplate;
-import static at.ac.tuwien.dsg.comot.common.model.ServiceTemplate.ServiceTemplate;
+import at.ac.tuwien.dsg.comot.common.model.CloudService;
+import static at.ac.tuwien.dsg.comot.common.model.CloudService.ServiceTemplate;
 import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
 import static at.ac.tuwien.dsg.comot.common.model.ServiceTopology.ServiceTopology;
 import at.ac.tuwien.dsg.comot.common.model.ServiceUnit;
@@ -92,7 +92,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT_GXG {
 
         
         //describe the service template which will hold more topologies
-        ServiceTemplate serviceTemplate = ServiceTemplate("DaasService")
+        CloudService serviceTemplate = ServiceTemplate("DaasService")
                 .consistsOfTopologies(serviceTopology)
                 
                 //defining CONNECT_TO and HOSTED_ON relationships

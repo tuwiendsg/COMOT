@@ -46,62 +46,58 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
     private String toscaSchemaFilename = DEFAULT_TOSCA_SCHEMA_FILENAME;
 
     @Override
-    public TDefinitions buildToscaDefinitions(CloudApplication application) throws ToscaDescriptionBuilderException {
+    public TDefinitions buildToscaDefinitions(CloudService cloudService) throws ToscaDescriptionBuilderException {
         if (log.isTraceEnabled()) {
-            log.trace("Building TOSCA definitions for application: {}", application);
+            log.trace("Building TOSCA definitions for application: {}", cloudService);
         }
 
-        Definitions definitions = buildTDefinitions(application);
+        Definitions definitions = buildTDefinitions(cloudService);
         List<TExtensibleElements> tServiceTemplates = definitions.getServiceTemplateOrNodeTypeOrNodeTypeImplementation();
-        for (ServiceTemplate serviceTemplate : application.getServiceTemplates()) {
-            TServiceTemplate tServiceTemplate = getTServiceTemplate(serviceTemplate.getId());
+
+//        TBoundaryDefinitions boundaryDefinitions = new TBoundaryDefinitions();
+//        tServiceTemplate.setBoundaryDefinitions(boundaryDefinitions);
+//        if (cloudService.hasConstraints() || cloudService.hasStrategies()) {
+//            addPolicies(cloudService, boundaryDefinitions);
+//        }
+//
+//        if (cloudService.hasRequirements()) {
+//            boundaryDefinitions.setRequirements(getRequirements(cloudService));
+//        }
+//
+//        if (cloudService.hasCapabilities()) {
+//            boundaryDefinitions.setCapabilities(getCapabilities(cloudService));
+//        }
+        for (ServiceTopology concept : cloudService.getServiceTopologies()) {
+            List<TNodeTemplate> tNodeTemplates = new ArrayList<>();
+            TServiceTemplate tServiceTemplate = new TServiceTemplate().withId(concept.getId()).withName(concept.getName());
             context.put(tServiceTemplate.getId(), tServiceTemplate);
-
-            TBoundaryDefinitions boundaryDefinitions = new TBoundaryDefinitions();
-            tServiceTemplate.setBoundaryDefinitions(boundaryDefinitions);
-
-            if (serviceTemplate.hasConstraints() || serviceTemplate.hasStrategies()) {
-                addPolicies(serviceTemplate, boundaryDefinitions);
-            }
-
-            if (serviceTemplate.hasRequirements()) {
-                boundaryDefinitions.setRequirements(getRequirements(serviceTemplate));
-            }
-
-            if (serviceTemplate.hasCapabilities()) {
-                boundaryDefinitions.setCapabilities(getCapabilities(serviceTemplate));
-            }
-
             tServiceTemplates.add(tServiceTemplate);
-
             TTopologyTemplate tTopologyTemplate = new TTopologyTemplate();
 
-            List<TNodeTemplate> tNodeTemplates = new ArrayList<>();
-            for (ServiceTopology concept : serviceTemplate.getServiceTopologies()) {
-                for (ServiceUnit node : concept.getServiceUnits()) {
-                    TNodeTemplate tNodeTemplate = new TNodeTemplate()
-                            .withId(node.getId())
-                            .withName(node.getName())
-                            .withType(new QName(node.getType()))
-                            .withMinInstances(node.getMinInstances())
-                            .withMaxInstances(String.valueOf(node.getMaxInstances()))
-                            .withCapabilities(getCapabilities(node))
-                            .withRequirements(getRequirements(node))
-                            .withPolicies(getPolicies(node))
-                            .withProperties(getProperties(node));
+            for (ServiceUnit node : concept.getServiceUnits()) {
 
-                    handleDeploymentArtifacts(node, tNodeTemplate, definitions);
-                    context.put(tNodeTemplate.getId(), tNodeTemplate);
-                    tNodeTemplates.add(tNodeTemplate);
-                }
+                TNodeTemplate tNodeTemplate = new TNodeTemplate()
+                        .withId(node.getId())
+                        .withName(node.getName())
+                        .withType(new QName(node.getType()))
+                        .withMinInstances(node.getMinInstances())
+                        .withMaxInstances(String.valueOf(node.getMaxInstances()))
+                        .withCapabilities(getCapabilities(node))
+                        .withRequirements(getRequirements(node))
+                        .withPolicies(getPolicies(node))
+                        .withProperties(getProperties(node));
+
+                handleDeploymentArtifacts(node, tNodeTemplate, definitions);
+                context.put(tNodeTemplate.getId(), tNodeTemplate);
+                tNodeTemplates.add(tNodeTemplate);
             }
 
             List<TEntityTemplate> entityTemplates = new ArrayList<>();
 
             //moved relationship generation here. If it is before nodes, it does not work
             List<TRelationshipTemplate> relationshipTemplates = new ArrayList<>();
-            if (serviceTemplate.hasRelationships()) {
-                relationshipTemplates.addAll(extractRelationships(serviceTemplate, tTopologyTemplate));
+            if (cloudService.hasRelationships()) {
+                relationshipTemplates.addAll(extractRelationships(cloudService, tTopologyTemplate));
             }
 
             entityTemplates.addAll(relationshipTemplates);
@@ -109,7 +105,6 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
             tTopologyTemplate.withNodeTemplateOrRelationshipTemplate(entityTemplates);
             tServiceTemplate.setTopologyTemplate(tTopologyTemplate);
         }
-
         // add deployment artifacts
         // resolve unresolved relationships, throw exception if there are still unresolved entities
         if (!unresolvedRelationships.isEmpty()) {
@@ -122,16 +117,15 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
 
         }
 
-        if (application.hasDefaultMetricsEnabled()) {
-            definitions.getOtherAttributes().put(new QName(DEFAULT_ARTIFACT_TYPE_NAMESPACE_URI, "defaultMetricsEnabled", DEFAULT_ARTIFACT_TYPE_PREFIX), "true");
-        }
-
+//        if (cloudService.hasDefaultMetricsEnabled()) {
+//            definitions.getOtherAttributes().put(new QName(DEFAULT_ARTIFACT_TYPE_NAMESPACE_URI, "defaultMetricsEnabled", DEFAULT_ARTIFACT_TYPE_PREFIX), "true");
+//        }
         return definitions;
 
     }
 
     @Override
-    public String toXml(CloudApplication application) throws ToscaDescriptionBuilderException {
+    public String toXml(CloudService application) throws ToscaDescriptionBuilderException {
         try {
             TDefinitions tDefinitions = new ToscaDescriptionBuilderImpl().buildToscaDefinitions(application);
             JAXBContext jaxbContext = JAXBContext.newInstance(TDefinitions.class, SalsaMappingProperties.class, BundleConfig.class);
@@ -149,8 +143,8 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
             marshaller.marshal(tDefinitions, writer);
             return writer.toString();
         } catch (JAXBException e) {
-            log.error(Markers.API, "Exception during marshalling of CloudApplication", e);
-            throw new ToscaDescriptionBuilderException("CloudApplication '"
+            log.error(Markers.API, "Exception during marshalling of CloudService", e);
+            throw new ToscaDescriptionBuilderException("CloudService '"
                     + application.getName() + "' could not be marshalled", e);
         } catch (SAXException e) {
             log.error(Markers.API, "Cannot load TOSCA schema definition from " + toscaSchemaFilename, e);
@@ -209,20 +203,20 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
         return new QName(DEFAULT_ARTIFACT_TYPE_NAMESPACE_URI, artifact.getType(), DEFAULT_ARTIFACT_TYPE_PREFIX);
     }
 
-    private void addPolicies(ServiceTemplate serviceTemplate, TBoundaryDefinitions boundaryDefinitions) {
+    private void addPolicies(CloudService serviceTemplate, TBoundaryDefinitions boundaryDefinitions) {
         List<TPolicy> tPolicies = new ArrayList<>();
         tPolicies.addAll(getConstraintPolicies(serviceTemplate));
         tPolicies.addAll(getStrategyPolicies(serviceTemplate));
         boundaryDefinitions.setPolicies(new TBoundaryDefinitions.Policies().withPolicy(tPolicies));
     }
 
-    // todo implement getCapabilities(ServiceTemplate)
-    private TBoundaryDefinitions.Capabilities getCapabilities(ServiceTemplate serviceTemplate) {
+    // todo implement getCapabilities(CloudService)
+    private TBoundaryDefinitions.Capabilities getCapabilities(CloudService serviceTemplate) {
         return new TBoundaryDefinitions.Capabilities();
     }
 
-    // todo implement getRequirements(ServiceTemplate)
-    private TBoundaryDefinitions.Requirements getRequirements(ServiceTemplate serviceTemplate) {
+    // todo implement getRequirements(CloudService)
+    private TBoundaryDefinitions.Requirements getRequirements(CloudService serviceTemplate) {
         return new TBoundaryDefinitions.Requirements();
     }
 
@@ -252,7 +246,7 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
         }
     }
 
-    private List<TRelationshipTemplate> extractRelationships(ServiceTemplate serviceTemplate, TTopologyTemplate tTopologyTemplate) {
+    private List<TRelationshipTemplate> extractRelationships(CloudService serviceTemplate, TTopologyTemplate tTopologyTemplate) {
         List<TRelationshipTemplate> relationshipTemplates = new ArrayList<>();
         for (EntityRelationship relationship : serviceTemplate.getRelationships()) {
             TRelationshipTemplate template = buildTRelationshipTemplate(relationship, false);
@@ -267,14 +261,12 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
         return relationshipTemplates;
     }
 
-    private TTopologyTemplate getTTopologyTemplate(String id) {
-        return context.get(id) != null ? (TTopologyTemplate) context.get(id) : new TTopologyTemplate();
-    }
-
-    private TServiceTemplate getTServiceTemplate(String id) {
-        return context.get(id) != null ? (TServiceTemplate) context.get(id) : new TServiceTemplate().withId(id);
-    }
-
+//    private TTopologyTemplate getTTopologyTemplate(String id) {
+//        return context.get(id) != null ? (TTopologyTemplate) context.get(id) : new TTopologyTemplate();
+//    }
+//    private TServiceTemplate getTServiceTemplate(String id) {
+//        return context.get(id) != null ? (TServiceTemplate) context.get(id) : new TServiceTemplate().withId(id);
+//    }
     // todo implement
     private TEntityTemplate.Properties getProperties(ServiceUnit node) {
         TEntityTemplate.Properties properties = new TEntityTemplate.Properties();
@@ -357,7 +349,7 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
         return new TNodeTemplate.Capabilities().withCapability(capabilities);
     }
 
-    private List<TPolicy> getConstraintPolicies(ServiceTemplate serviceTemplate) {
+    private List<TPolicy> getConstraintPolicies(CloudService serviceTemplate) {
         List<TPolicy> policies = new ArrayList<>();
         for (Constraint constraint : serviceTemplate.getConstraints()) {
             TPolicy tPolicy = new TPolicy()
@@ -371,7 +363,7 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
         return policies;
     }
 
-    private List<TPolicy> getStrategyPolicies(ServiceTemplate serviceTemplate) {
+    private List<TPolicy> getStrategyPolicies(CloudService serviceTemplate) {
         List<TPolicy> policies = new ArrayList<>();
         for (Strategy strategy : serviceTemplate.getStrategies()) {
             TPolicy tPolicy = new TPolicy()
@@ -385,10 +377,10 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
         return policies;
     }
 
-    private Definitions buildTDefinitions(CloudApplication application) {
+    private Definitions buildTDefinitions(CloudService service) {
         Definitions definitions = new Definitions();
-        definitions.setId(application.getId());
-        definitions.setName(application.getName());
+        definitions.setId(service.getId());
+        definitions.setName(service.getName());
         return definitions;
     }
 

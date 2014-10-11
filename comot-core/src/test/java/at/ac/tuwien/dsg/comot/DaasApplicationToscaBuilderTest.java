@@ -7,7 +7,7 @@
 //import at.ac.tuwien.dsg.comot.common.model.CapabilityType;
 //import at.ac.tuwien.dsg.comot.common.model.Requirement;
 //import at.ac.tuwien.dsg.comot.common.model.ServiceUnit;
-//import at.ac.tuwien.dsg.comot.samples.DataAsAServiceCloudApplication;
+//import at.ac.tuwien.dsg.comot.samples.DataAsAServiceCloudService;
 //import com.jayway.restassured.path.xml.XmlPath;
 //import com.jayway.restassured.path.xml.element.Node;
 //import org.junit.Before;
@@ -33,20 +33,20 @@
 //    @Autowired
 //    ToscaDescriptionBuilder builder;
 //
-//    static String cloudApplicationXmlModel;
+//    static String CloudServiceXmlModel;
 //
 //    @Before
 //    public void setupModel() throws Exception {
 //        JsonBundleLoader.getInstance().init();
-//        if (cloudApplicationXmlModel == null) {
-//            cloudApplicationXmlModel = builder.toXml(DataAsAServiceCloudApplication.build());
-//            System.out.println("Using the following cloud application for tests:  " + cloudApplicationXmlModel);
+//        if (CloudServiceXmlModel == null) {
+//            CloudServiceXmlModel = builder.toXml(DataAsAServiceCloudService.build());
+//            System.out.println("Using the following cloud application for tests:  " + CloudServiceXmlModel);
 //        }
 //    }
 //
 //    @Test
 //    public void checkCassandraNode() throws Exception {
-//        XmlPath xmlPath = XmlPath.from(cloudApplicationXmlModel);
+//        XmlPath xmlPath = XmlPath.from(CloudServiceXmlModel);
 //        String nodeRoot = "Definitions.ServiceTemplate.TopologyTemplate.NodeTemplate.findAll{ it.@id == 'CassandraNode'}";
 //        Node nodeTemplate = xmlPath.get(nodeRoot);
 //        assertEquals(ServiceUnit.NodeType.Software.toString(), nodeTemplate.getAttribute("type"));
@@ -68,7 +68,7 @@
 //
 //    @Test
 //    public void checkCassandraHead() throws Exception {
-//        XmlPath xmlPath = XmlPath.from(cloudApplicationXmlModel);
+//        XmlPath xmlPath = XmlPath.from(CloudServiceXmlModel);
 //        String nodeRoot = "Definitions.ServiceTemplate.TopologyTemplate.NodeTemplate.findAll{ it.@id == 'CassandraHead'}";
 //        Node nodeTemplate = xmlPath.get(nodeRoot);
 //        assertEquals(ServiceUnit.NodeType.Software.toString(), nodeTemplate.getAttribute("type"));
@@ -117,7 +117,7 @@
 //    }
 //
 //    private void checkRelationshipTemplate(String templateId, String type, String source, String target) {
-//        XmlPath xmlPath = XmlPath.from(cloudApplicationXmlModel);
+//        XmlPath xmlPath = XmlPath.from(CloudServiceXmlModel);
 //        String nodeRoot = "Definitions.ServiceTemplate.TopologyTemplate.RelationshipTemplate.findAll{ it.@id == '" + templateId + "'}";
 //        Node relationshipTemplate = xmlPath.get(nodeRoot);
 //        assertNotNull(relationshipTemplate);
@@ -132,7 +132,7 @@
 //    }
 //
 //    private void checkOsNode(String nodeId, String minInstances, String maxInstances) {
-//        XmlPath xmlPath = XmlPath.from(cloudApplicationXmlModel);
+//        XmlPath xmlPath = XmlPath.from(CloudServiceXmlModel);
 //        String nodeRoot = "Definitions.ServiceTemplate.TopologyTemplate.NodeTemplate.findAll{ it.@id == '" + nodeId + "'}";
 //        Node nodeTemplate = xmlPath.get(nodeRoot);
 //        assertEquals(ServiceUnit.NodeType.OperatingSystem.toString(), nodeTemplate.getAttribute("type"));

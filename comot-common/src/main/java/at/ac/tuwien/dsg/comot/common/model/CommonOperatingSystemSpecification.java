@@ -20,24 +20,28 @@ public final class CommonOperatingSystemSpecification {
 //900015360 w1.xlarge
     public static OperatingSystemSpecification OpenstackTiny(String id) {
         return new OperatingSystemSpecification(id)
+                .withProvider("dsg@openstack")
                 .withInstanceType("000000512") //.withInstanceType("m1.small")
                 .withBaseImage("8f1428ac-f239-42e0-ab35-137f6e234101"); //.withBaseImage("ami-00000163");
     }
 
     public static OperatingSystemSpecification OpenstackMicro(String id) {
         return new OperatingSystemSpecification(id)
+                .withProvider("dsg@openstack")
                 .withInstanceType("000000960") //.withInstanceType("m1.small")
                 .withBaseImage("8f1428ac-f239-42e0-ab35-137f6e234101"); //.withBaseImage("ami-00000163");
     }
 
     public static OperatingSystemSpecification OpenstackSmall(String id) {
         return new OperatingSystemSpecification(id)
+                .withProvider("dsg@openstack")
                 .withInstanceType("000001920") //.withInstanceType("m1.small")
                 .withBaseImage("8f1428ac-f239-42e0-ab35-137f6e234101"); //.withBaseImage("ami-00000163");
     }
 
     public static OperatingSystemSpecification OpenstackMedium(String id) {
         return new OperatingSystemSpecification(id)
+                .withProvider("dsg@openstack")
                 .withInstanceType("000003750")
                 .withBaseImage("8f1428ac-f239-42e0-ab35-137f6e234101"); // todo set correct base image for medium
     }

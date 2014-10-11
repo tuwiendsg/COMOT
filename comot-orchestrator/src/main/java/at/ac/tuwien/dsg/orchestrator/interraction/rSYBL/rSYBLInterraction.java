@@ -10,7 +10,7 @@ import at.ac.tuwien.dsg.comot.common.model.Constraint;
 import at.ac.tuwien.dsg.comot.common.model.ElasticityCapability;
 import at.ac.tuwien.dsg.comot.common.model.EntityRelationship;
 import at.ac.tuwien.dsg.comot.common.model.Requirement;
-import at.ac.tuwien.dsg.comot.common.model.ServiceTemplate;
+import at.ac.tuwien.dsg.comot.common.model.CloudService;
 import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
 import at.ac.tuwien.dsg.comot.common.model.ServiceUnit;
 import at.ac.tuwien.dsg.comot.common.model.Strategy;
@@ -63,7 +63,7 @@ public class rSYBLInterraction {
     private Integer rSYBL_BASE_PORT = 8081;
     private String rSYBL_BASE_URL = "/rSYBL/restWS";
 
-    public void sendInitialConfigToRSYBL(ServiceTemplate serviceTemplate, DeploymentDescription deploymentDescription, CompositionRulesConfiguration compositionRulesConfiguration, String effectsJSON) {
+    public void sendInitialConfigToRSYBL(CloudService serviceTemplate, DeploymentDescription deploymentDescription, CompositionRulesConfiguration compositionRulesConfiguration, String effectsJSON) {
 
         deploymentDescription = enrichWithElasticityCapabilities(deploymentDescription, serviceTemplate);
 
@@ -269,7 +269,7 @@ public class rSYBLInterraction {
 
     }
 
-    public void sendUpdatedConfigToRSYBL(ServiceTemplate serviceTemplate, CompositionRulesConfiguration compositionRulesConfiguration, String effectsJSON) {
+    public void sendUpdatedConfigToRSYBL(CloudService serviceTemplate, CompositionRulesConfiguration compositionRulesConfiguration, String effectsJSON) {
 
         HttpHost endpoint = new HttpHost(rSYBL_BASE_IP, rSYBL_BASE_PORT);
 
@@ -472,7 +472,7 @@ public class rSYBLInterraction {
         return json;
     }
 
-    public CloudServiceXML toRSYBLRepresentation(ServiceTemplate serviceTemplate) {
+    public CloudServiceXML toRSYBLRepresentation(CloudService serviceTemplate) {
         CloudServiceXML cloudServiceXML = new CloudServiceXML();
         cloudServiceXML.setId(serviceTemplate.getId());
 
@@ -661,7 +661,7 @@ public class rSYBLInterraction {
      * @param serviceTemplate
      * @return
      */
-    public DeploymentDescription enrichWithElasticityCapabilities(DeploymentDescription deploymentDescription, ServiceTemplate serviceTemplate) {
+    public DeploymentDescription enrichWithElasticityCapabilities(DeploymentDescription deploymentDescription, CloudService serviceTemplate) {
         //get a Map of Deployment Units and a map of SoftwareUnits, and match capabilities
         Map<String, ServiceUnit> softwareUnits = new HashMap<>();
 

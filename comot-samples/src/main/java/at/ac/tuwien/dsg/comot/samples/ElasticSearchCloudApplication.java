@@ -1,18 +1,16 @@
 package at.ac.tuwien.dsg.comot.samples;
 
-import at.ac.tuwien.dsg.comot.common.model.CloudApplication;
+import at.ac.tuwien.dsg.comot.common.model.CloudService;
 import at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit;
 import at.ac.tuwien.dsg.comot.common.model.ServiceUnit;
-import at.ac.tuwien.dsg.comot.common.model.ServiceTemplate;
 
 import static at.ac.tuwien.dsg.comot.bundles.dataends.ElasticSearchNode.ElasticSearchNode;
-import static at.ac.tuwien.dsg.comot.common.model.CloudApplication.CloudApplication;
+import static at.ac.tuwien.dsg.comot.common.model.CloudService.ServiceTemplate;
 import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackSmall;
 import static at.ac.tuwien.dsg.comot.common.model.Constraint.CostConstraint;
 import static at.ac.tuwien.dsg.comot.common.model.Constraint.LatencyConstraint;
 import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.HostedOnRelation;
 import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingSystemUnit;
-import static at.ac.tuwien.dsg.comot.common.model.ServiceTemplate.ServiceTemplate;
 import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
 
 /**
@@ -20,7 +18,7 @@ import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
  */
 public class ElasticSearchCloudApplication {
 
-    public static CloudApplication build() {
+    public static CloudService build() {
 
         // ElasticSearch Node
         ServiceUnit elasticSearchNode = ElasticSearchNode("ES1")
@@ -42,7 +40,7 @@ public class ElasticSearchCloudApplication {
                         operatingSystemNode);
 
         // Build containing DaaS service
-        ServiceTemplate esService = ServiceTemplate("EsService")
+        CloudService esService = ServiceTemplate("EsService")
                 .constrainedBy(CostConstraint("CG0").lessThan("1000"))
                 .consistsOfTopologies(searchTopology)
                 .andRelationships(
@@ -51,7 +49,7 @@ public class ElasticSearchCloudApplication {
                         .to(operatingSystemNode)
                 );
 
-        return CloudApplication("EsApp").withName("Simple ElasticSearch Application").consistsOfServices(esService);
+        return esService;
     }
 
     public void t() {
@@ -72,7 +70,7 @@ public class ElasticSearchCloudApplication {
                 .withServiceUnits(esNode,
                         osNode);
 
-        ServiceTemplate esService = ServiceTemplate("EsService")
+        CloudService esService = ServiceTemplate("EsService")
                 .constrainedBy(CostConstraint("CG0").lessThan("1000"))
                 .consistsOfTopologies(esTopology)
                 .andRelationships(
@@ -80,10 +78,6 @@ public class ElasticSearchCloudApplication {
                         .from(esNode)
                         .to(osNode)
                 );
-
-        CloudApplication("EsApp")
-                .withName("Simple ElasticSearch Application")
-                .consistsOfServices(esService);
-
+ 
     }
 }

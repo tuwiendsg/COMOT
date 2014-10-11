@@ -121,7 +121,7 @@ public class TestingComot {
 
         eventProcessingTopology.constrainedBy(Constraint.MetricConstraint("C02", new Metric("responseTime", "ms")).lessThan("600"));
 
-        ServiceTemplate dataService = ServiceTemplate.ServiceTemplate("DaasService")
+        CloudService dataService = CloudService.ServiceTemplate("DaasService")
                 .consistsOfTopologies(dataEndTopology)
                 .consistsOfTopologies(eventProcessingTopology)
                 .andRelationships(

@@ -1,6 +1,6 @@
 package at.ac.tuwien.dsg.comot.client;
 
-import at.ac.tuwien.dsg.comot.common.model.CloudApplication;
+import at.ac.tuwien.dsg.comot.common.model.CloudService;
 
 import static org.apache.http.HttpStatus.SC_CREATED;
 import static org.apache.http.HttpStatus.SC_OK;
@@ -25,7 +25,7 @@ public interface SalsaClient {
         }
     }
 
-    SalsaResponse deploy(CloudApplication cloudApplication) throws SalsaClientException;
+    SalsaResponse deploy(CloudService CloudService) throws SalsaClientException;
 
     SalsaResponse undeploy(String serviceId) throws SalsaClientException;
 

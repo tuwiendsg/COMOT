@@ -6,9 +6,9 @@
 package at.ac.tuwien.dsg.orchestrator.interraction;
 
 import at.ac.tuwien.dsg.comot.client.DefaultSalsaClient;
-import at.ac.tuwien.dsg.comot.common.model.CloudApplication;
-import static at.ac.tuwien.dsg.comot.common.model.CloudApplication.CloudApplication;
-import at.ac.tuwien.dsg.comot.common.model.ServiceTemplate;
+import at.ac.tuwien.dsg.comot.common.model.CloudService;
+import static at.ac.tuwien.dsg.comot.common.model.CloudService.CloudService;
+import at.ac.tuwien.dsg.comot.common.model.CloudService;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.abstractModelXML.CloudServiceXML;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 import at.ac.tuwien.dsg.orchestrator.interraction.rSYBL.rSYBLInterraction;
@@ -56,11 +56,9 @@ public class COMOTOrchestrator {
         return this;
     }
 
-    public void deployAndControl(ServiceTemplate serviceTemplate) {
+    public void deployAndControl(CloudService serviceTemplate) {
 
-        CloudApplication application = CloudApplication(serviceTemplate.getId()).withName(serviceTemplate.getId()).consistsOfServices(serviceTemplate).withDefaultMetricsEnabled(true);
-
-        defaultSalsaClient.deploy(application);
+        defaultSalsaClient.deploy(serviceTemplate);
         salsaInterraction.waitUntilRunning(serviceTemplate.getId());
 //        try {
 //            //wait 30 seconds more
@@ -77,17 +75,15 @@ public class COMOTOrchestrator {
 
     }
 
-    public void deploy(ServiceTemplate serviceTemplate) {
+    public void deploy(CloudService serviceTemplate) {
 
-        CloudApplication application = CloudApplication(serviceTemplate.getId()).withName(serviceTemplate.getId()).consistsOfServices(serviceTemplate).withDefaultMetricsEnabled(true);
-
-        defaultSalsaClient.deploy(application);
+        defaultSalsaClient.deploy(serviceTemplate);
         salsaInterraction.waitUntilRunning(serviceTemplate.getId());
         DeploymentDescription deploymentDescription = salsaInterraction.getServiceDeploymentInfo(serviceTemplate.getId());
 
     }
 
-    public void updateServiceReqsOrStruct(ServiceTemplate serviceTemplate) {
+    public void updateServiceReqsOrStruct(CloudService serviceTemplate) {
 
         sYBLInterraction.sendUpdatedConfigToRSYBL(serviceTemplate,
                 sYBLInterraction.loadMetricCompositionRules(serviceTemplate.getId(), serviceTemplate.getMetricCompositonRulesFile()),
@@ -96,7 +92,7 @@ public class COMOTOrchestrator {
 
     }
 
-    public void controlExisting(ServiceTemplate serviceTemplate) {
+    public void controlExisting(CloudService serviceTemplate) {
 
         DeploymentDescription deploymentDescription = salsaInterraction.getServiceDeploymentInfo(serviceTemplate.getId());
 
@@ -106,7 +102,7 @@ public class COMOTOrchestrator {
 
     }
 
-    public void getSalsaStatus(ServiceTemplate serviceTemplate) {
+    public void getSalsaStatus(CloudService serviceTemplate) {
 
         DeploymentDescription deploymentDescription = salsaInterraction.getServiceDeploymentInfo(serviceTemplate.getId());
 

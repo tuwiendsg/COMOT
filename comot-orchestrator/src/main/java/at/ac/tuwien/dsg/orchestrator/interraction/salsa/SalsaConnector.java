@@ -12,7 +12,6 @@ import at.ac.tuwien.dsg.comot.api.ToscaDescriptionBuilderImpl;
 import at.ac.tuwien.dsg.comot.client.DefaultSalsaClient;
 import at.ac.tuwien.dsg.comot.client.SalsaResponse;
 import at.ac.tuwien.dsg.comot.common.logging.Markers;
-import at.ac.tuwien.dsg.comot.common.model.CloudApplication;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,7 +115,7 @@ public class SalsaConnector {
         } while (!allRunning);
     }
 
-    public void deploy(CloudApplication application) {
+    public void deploy(at.ac.tuwien.dsg.comot.common.model.CloudService application) {
         ToscaDescriptionBuilderImpl tdbi = new ToscaDescriptionBuilderImpl();
 
         String tosca = tdbi.toXml(application);
