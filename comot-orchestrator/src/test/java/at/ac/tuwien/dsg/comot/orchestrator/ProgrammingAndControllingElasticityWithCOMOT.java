@@ -1,27 +1,24 @@
 package at.ac.tuwien.dsg.comot.orchestrator;
 
-import at.ac.tuwien.dsg.comot.client.DefaultSalsaClient;
 import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifactTemplate;
-import at.ac.tuwien.dsg.comot.common.model.Capability;
-import at.ac.tuwien.dsg.comot.common.model.CloudService;
+import static at.ac.tuwien.dsg.comot.common.model.CloudService.ServiceTemplate;
 import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackMicro;
 import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackSmall;
-import at.ac.tuwien.dsg.comot.common.model.Constraint;
-import at.ac.tuwien.dsg.comot.common.model.Constraint.Metric;
 import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.ConnectToRelation;
 import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.HostedOnRelation;
-import at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit;
 import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingSystemUnit;
-import at.ac.tuwien.dsg.comot.common.model.Requirement;
-import at.ac.tuwien.dsg.comot.common.model.CloudService;
-import static at.ac.tuwien.dsg.comot.common.model.CloudService.ServiceTemplate;
-import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
 import static at.ac.tuwien.dsg.comot.common.model.ServiceTopology.ServiceTopology;
-import at.ac.tuwien.dsg.comot.common.model.ServiceUnit;
 import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.SingleSoftwareUnit;
-import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.UnboundedSoftwareUnit;
-import at.ac.tuwien.dsg.comot.common.model.Strategy;
 import static at.ac.tuwien.dsg.comot.common.model.Strategy.Strategy;
+import at.ac.tuwien.dsg.comot.common.model.Capability;
+import at.ac.tuwien.dsg.comot.common.model.CloudService;
+import at.ac.tuwien.dsg.comot.common.model.Constraint;
+import at.ac.tuwien.dsg.comot.common.model.Constraint.Metric;
+import at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit;
+import at.ac.tuwien.dsg.comot.common.model.Requirement;
+import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
+import at.ac.tuwien.dsg.comot.common.model.ServiceUnit;
+import at.ac.tuwien.dsg.comot.common.model.Strategy;
 import at.ac.tuwien.dsg.orchestrator.interraction.COMOTOrchestrator;
 
 /**
@@ -167,7 +164,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
         eventProcessingTopology.constrainedBy(Constraint.MetricConstraint("C02", new Metric("responseTime", "ms")).lessThan("400"));
 
         //describe the service template which will hold more topologies
-        CloudService serviceTemplate = ServiceTemplate("IoTDaaSTMP")
+        CloudService serviceTemplate = ServiceTemplate("test_comot")
                 .consistsOfTopologies(dataEndTopology)
                 .consistsOfTopologies(eventProcessingTopology)
                 .consistsOfTopologies(localProcessinTopology)
@@ -237,8 +234,8 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 .withSalsaPort(8080)
                 //we have rSYBL elasticity control service and MELA 
                 //deployed separately
-                                                                .withRsyblIP("128.130.172.214")
-//                .withRsyblIP("localhost")
+//                                                                .withRsyblIP("128.130.172.214")
+                .withRsyblIP("localhost")
                 //                .withRsyblIP("109.231.121.66")
                 .withRsyblPort(8280);
 

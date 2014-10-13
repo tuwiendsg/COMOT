@@ -11,7 +11,7 @@ import static at.ac.tuwien.dsg.comot.common.model.CloudService.CloudService;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.abstractModelXML.CloudServiceXML;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
-import at.ac.tuwien.dsg.orchestrator.interraction.rSYBL.rSYBLInterraction;
+import at.ac.tuwien.dsg.orchestrator.interraction.rsybl.rSYBLInterraction;
 import at.ac.tuwien.dsg.orchestrator.interraction.salsa.SalsaInterraction;
 import java.util.logging.Level;
 import java.util.logging.Logger;

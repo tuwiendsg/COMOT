@@ -99,7 +99,7 @@ public class SalsaConnector {
                 allRunning = false;
             } else {
                 for (at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceUnit serviceUnit : service.getAllComponentByType(SalsaEntityType.SOFTWARE)) {
-                    if (!serviceUnit.getState().equals(SalsaEntityState.FINISHED)) {
+                    if (!serviceUnit.getState().equals(SalsaEntityState.DEPLOYED)) {
                         allRunning = false;
                         break;
                     }
