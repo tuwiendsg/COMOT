@@ -25,8 +25,9 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
+        	<!-- TODO consider putting this only to scope test -->
             <groupId>at.ac.tuwien.dsg.comot</groupId>
-            <artifactId>comot-samples</artifactId>
+            <artifactId>comot-bundles</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 

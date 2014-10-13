@@ -21,7 +21,6 @@
         <module>comot-client</module>
         <module>comot-tosca</module>
         <module>comot-common</module>
-        <module>comot-samples</module>
         <module>comot-bundles</module>
         <module>comot-orchestrator</module>
         <module>comot-visualization-service</module>
