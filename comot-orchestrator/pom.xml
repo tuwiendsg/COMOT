@@ -177,16 +177,3 @@
         </plugins>
     </build>
 </project>
-<!--
-
-[INFO] +- at.ac.tuwien.dsg.cloud.salsa:salsa-common:jar:0.0.1-SNAPSHOT:compile
-[INFO] |  +- commons-io:commons-io:jar:2.4:compile
-[INFO] |  +- org.apache.cxf:cxf-rt-frontend-jaxrs:jar:3.0.0-milestone1:compile
-[INFO] |  |  +- org.apache.cxf:cxf-core:jar:3.0.0-milestone1:compile
-[INFO] |  |  \- javax.annotation:javax.annotation-api:jar:1.2:compile
-[INFO] |  +- org.apache.cxf:cxf-rt-transports-http:jar:3.0.0-milestone1:compile
-[INFO] |  +- org.apache.cxf:cxf-rt-rs-client:jar:3.0.0-milestone1:compile
-[INFO] |  +- org.apache.cxf:cxf-rt-transports-http-hc:jar:3.0.0-milestone1:compile
-[INFO] |  |  +- org.apache.httpcomponents:httpcore-nio:jar:4.3:compile
-[INFO] |  |  \- org.apache.httpcomponents:httpasyncclient:jar:4.0:compile
-[INFO] |  \- com.google.code.gson:gson:jar:2.2.4:compile-->
