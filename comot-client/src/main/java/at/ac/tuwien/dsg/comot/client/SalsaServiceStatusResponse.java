@@ -1,12 +1,13 @@
 package at.ac.tuwien.dsg.comot.client;
+import java.util.List;
+import java.util.Map;
+
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityState;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author omoser

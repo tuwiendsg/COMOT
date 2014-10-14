@@ -1,10 +1,11 @@
 package at.ac.tuwien.dsg.comot.client;
 
-import at.ac.tuwien.dsg.comot.api.ToscaDescriptionBuilder;
-import at.ac.tuwien.dsg.comot.api.ToscaDescriptionBuilderImpl;
-import at.ac.tuwien.dsg.comot.common.logging.Markers;
-import at.ac.tuwien.dsg.comot.common.model.CloudService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.URI;
+
+import javax.ws.rs.core.UriBuilder;
+
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
@@ -19,10 +20,12 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.core.UriBuilder;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.URI;
+import at.ac.tuwien.dsg.comot.api.ToscaDescriptionBuilder;
+import at.ac.tuwien.dsg.comot.api.ToscaDescriptionBuilderImpl;
+import at.ac.tuwien.dsg.comot.common.logging.Markers;
+import at.ac.tuwien.dsg.comot.common.model.CloudService;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author omoser

@@ -1,9 +1,8 @@
 package at.ac.tuwien.dsg.comot.client;
 
-import at.ac.tuwien.dsg.comot.common.model.CloudService;
-
 import static org.apache.http.HttpStatus.SC_CREATED;
 import static org.apache.http.HttpStatus.SC_OK;
+import at.ac.tuwien.dsg.comot.common.model.CloudService;
 
 /**
  * @author omoser
