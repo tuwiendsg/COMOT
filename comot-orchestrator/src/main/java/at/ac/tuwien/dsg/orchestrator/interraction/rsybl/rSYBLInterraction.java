@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package at.ac.tuwien.dsg.orchestrator.interraction.rSYBL;
+package at.ac.tuwien.dsg.orchestrator.interraction.rsybl;
 
 import at.ac.tuwien.dsg.comot.common.model.Capability;
 import at.ac.tuwien.dsg.comot.common.model.Constraint;

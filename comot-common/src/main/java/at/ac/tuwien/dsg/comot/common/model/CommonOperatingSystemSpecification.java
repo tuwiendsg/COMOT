@@ -45,5 +45,13 @@ public final class CommonOperatingSystemSpecification {
                 .withInstanceType("000003750")
                 .withBaseImage("8f1428ac-f239-42e0-ab35-137f6e234101"); // todo set correct base image for medium
     }
+    
+    
+       public static OperatingSystemSpecification FlexiantSmall(String id) {
+        return new OperatingSystemSpecification(id)
+                .withProvider("celar@flexiant")
+                .withInstanceType("1/2048") //.withInstanceType("m1.small")
+                .withBaseImage("a064bd97-c84c-38ef-aa37-c7391a8c8259"); //.withBaseImage("ami-00000163");
+    }
 
 }

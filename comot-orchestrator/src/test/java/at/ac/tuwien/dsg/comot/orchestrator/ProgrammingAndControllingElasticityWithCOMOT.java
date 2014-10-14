@@ -1,6 +1,5 @@
 package at.ac.tuwien.dsg.comot.orchestrator;
 
-import at.ac.tuwien.dsg.comot.client.DefaultSalsaClient;
 import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifactTemplate;
 import at.ac.tuwien.dsg.comot.common.model.Capability;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;
@@ -107,7 +106,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 );
 
         //add the service units belonging to the event processing topology
-        ServiceUnit momUnit = SingleSoftwareUnit("MOM")
+        ServiceUnit momUnit = SingleSoftwareUnit("MOMUnit")
                 //load balancer must provide IP
                 .exposes(Capability.Variable("MOM_IP_information"))
                 .deployedBy(SingleScriptArtifactTemplate("deployMOMArtifact", "http://128.130.172.215/salsa/upload/files/DaasService/deployQueue.sh"));
@@ -141,7 +140,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
         ServiceUnit localProcessingUnit = SingleSoftwareUnit("LocalProcessingUnit")
                 //load balancer must provide IP
                 .requires(Requirement.Variable("brokerIp_Requirement"))
-                .requires(Requirement.Variable("daasIp_Requirement"))
+                .requires(Requirement.Variable("loadBalancerIp_Requirement"))
                 .deployedBy(SingleScriptArtifactTemplate("deployLocalProcessing", "http://128.130.172.215/salsa/upload/files/DaasService/IoT/install-local-analysis-service.sh"));
 
         //Describe a Data End service topology containing the previous 2 software service units
@@ -160,14 +159,17 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                         , loadbalancerVM, eventProcessingVM, momVM
                 );
 
-        ServiceTopology localProcessinTopology = ServiceTopology("LocalProcessingTopology")
+        ServiceTopology localProcessinTopology = ServiceTopology("Gateway")
                 .withServiceUnits(mqttQueueVM, mqttUnit, localProcessingUnit, localProcessingVM
                 );
+        localProcessinTopology.controlledBy(Strategy("St1").when(Constraint.MetricConstraint("ST1CO1", new Metric("avgBufferSize", "#")).lessThan("5"))
+                .then(Strategy.Action.ScaleIn))
+                .constrainedBy(Constraint.MetricConstraint("CO1", new Metric("avgBufferSize", "#")).lessThan("50"));
 
         eventProcessingTopology.constrainedBy(Constraint.MetricConstraint("C02", new Metric("responseTime", "ms")).lessThan("400"));
 
         //describe the service template which will hold more topologies
-        CloudService serviceTemplate = ServiceTemplate("IoTDaaSTMP")
+        CloudService serviceTemplate = ServiceTemplate("IoTDaaSControl")
                 .consistsOfTopologies(dataEndTopology)
                 .consistsOfTopologies(eventProcessingTopology)
                 .consistsOfTopologies(localProcessinTopology)
@@ -192,14 +194,15 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                         .from(momUnit.getContext().get("MOM_IP_information"))
                         .to(eventProcessingUnit.getContext().get("EventProcessingUnit_MOM_IP_Req")) //specify which software unit goes to which VM
                         ,
-                        ConnectToRelation("queue_to_DaaS")
-                        .from(loadbalancerUnit.getContext().get("LoadBalancer_IP_information"))
-                        .to(eventProcessingUnit.getContext().get("daasIp_Requirement")) //specify which software unit goes to which VM
-                        ,
                         ConnectToRelation("mqtt_broker")
-                        .from(loadbalancerUnit.getContext().get("brokerIp_Capability"))
-                        .to(eventProcessingUnit.getContext().get("brokerIp_Requirement")) //specify which software unit goes to which VM
+                        .from(mqttUnit.getContext().get("brokerIp_Capability"))
+                        .to(localProcessingUnit.getContext().get("brokerIp_Requirement")) //specify which software unit goes to which VM
                         ,
+                        ConnectToRelation("load_balancer")
+                        .from(loadbalancerUnit.getContext().get("LoadBalancer_IP_information"))
+                        .to(localProcessingUnit.getContext().get("loadBalancerIp_Requirement")) //specify which software unit goes to which VM
+                        ,
+                        
                         HostedOnRelation("dataControllerToVM")
                         .from(dataControllerUnit)
                         .to(dataControllerVM),
@@ -237,20 +240,15 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 .withSalsaPort(8080)
                 //we have rSYBL elasticity control service and MELA 
                 //deployed separately
-                                                                .withRsyblIP("128.130.172.214")
-//                .withRsyblIP("localhost")
+                .withRsyblIP("128.130.172.214")
+                //                .withRsyblIP("localhost")
                 //                .withRsyblIP("109.231.121.66")
                 .withRsyblPort(8280);
 
         //deploy, monitor and control
 //        orchestrator.deployAndControl(serviceTemplate);
-        orchestrator.deploy(serviceTemplate);
-//        orchestrator.controlExisting(serviceTemplate);
-
-//        DefaultSalsaClient salsa = new DefaultSalsaClient();
-//        String xml = salsa.getToscaDescriptionBuilder().toXml(serviceTemplate);
-//        System.out.print(xml);
-//        System.out.print("DONE !");
+//        orchestrator.deploy(serviceTemplate);
+        orchestrator.controlExisting(serviceTemplate);
 
     }
 }

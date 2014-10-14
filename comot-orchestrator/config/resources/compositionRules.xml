@@ -1,8 +1,41 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <CompositionRulesConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                               xsi:noNamespaceSchemaLocation="compositionRules.xsd" TargetServiceID="IoTControl">
+                               xsi:noNamespaceSchemaLocation="compositionRules.xsd">
     
     <MetricsCompositionRules>
+        
+        <CompositionRule TargetMonitoredElementLevel="SERVICE_UNIT">
+            <TargetMonitoredElementID>LocalProcessingUnit</TargetMonitoredElementID>
+            <ResultingMetric type="RESOURCE" measurementUnit="#" name="bufferSize"/>
+            <Operation MetricSourceMonitoredElementLevel="VM" type="SUM">
+                <ReferenceMetric type="RESOURCE" name="bufferSize"/>
+            </Operation>
+        </CompositionRule>
+        <CompositionRule TargetMonitoredElementLevel="SERVICE_UNIT">
+            <TargetMonitoredElementID>LocalProcessingUnit</TargetMonitoredElementID>
+            <ResultingMetric type="RESOURCE" measurementUnit="#" name="avgBufferSize"/>
+            <Operation MetricSourceMonitoredElementLevel="VM" type="AVG">
+                <ReferenceMetric type="RESOURCE" name="bufferSize"/>
+            </Operation>
+        </CompositionRule>
+        
+        <CompositionRule TargetMonitoredElementLevel="SERVICE_TOPOLOGY">
+            <ResultingMetric type="RESOURCE" measurementUnit="#" name="bufferSize"/>
+            <Operation MetricSourceMonitoredElementLevel="SERVICE_UNIT" type="KEEP">
+                <ReferenceMetric type="RESOURCE" measurementUnit="no" name="bufferSize"/>
+                <SourceMonitoredElementID>LocalProcessingUnit</SourceMonitoredElementID>
+            </Operation>
+        </CompositionRule>
+        
+        <CompositionRule TargetMonitoredElementLevel="SERVICE_TOPOLOGY">
+            <ResultingMetric type="RESOURCE" measurementUnit="#" name="avgBufferSize"/>
+            <Operation MetricSourceMonitoredElementLevel="SERVICE_UNIT" type="KEEP">
+                <ReferenceMetric type="RESOURCE" measurementUnit="no" name="avgBufferSize"/>
+                <SourceMonitoredElementID>LocalProcessingUnit</SourceMonitoredElementID>
+            </Operation>
+        </CompositionRule>
+        
+        
         <CompositionRule TargetMonitoredElementLevel="SERVICE_UNIT">
            
             <ResultingMetric type="RESOURCE" measurementUnit="no" name="activeConnections"/>
