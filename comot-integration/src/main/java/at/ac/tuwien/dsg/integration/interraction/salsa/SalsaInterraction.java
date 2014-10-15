@@ -34,7 +34,7 @@ import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescripti
 public class SalsaInterraction {
 
 	private DefaultSalsaClient defaultSalsaClient;
-	
+
 	private static final long CHECK_STATE_TIMEOUT = 10000;
 
 	private static final Logger log = LoggerFactory.getLogger(SalsaInterraction.class);
@@ -110,7 +110,7 @@ public class SalsaInterraction {
 
 			inProgress = true;
 			service = this.getStatus(serviceID);
-			
+
 			log.info("Waiting until service " + serviceID + " is running. Now in state={}", service.getState());
 
 			if (service.getState().equals(SalsaEntityState.DEPLOYED)

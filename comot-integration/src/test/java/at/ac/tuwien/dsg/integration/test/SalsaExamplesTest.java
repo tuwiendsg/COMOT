@@ -14,12 +14,18 @@ import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
 import at.ac.tuwien.dsg.integration.interraction.ComotOrchestrator;
 import at.ac.tuwien.dsg.integration.interraction.salsa.SalsaInterraction;
 
-public class BasicTest {
+/**
+ * https://github.com/tuwiendsg/SALSA/tree/master/examples
+ * 
+ * @author jurajcik
+ *
+ */
+public class SalsaExamplesTest {
 
 	private static final String SALSA_IP = "128.130.172.215";
 	
 	@Test
-	public void testBasic(){
+	public void testDeployOneVM(){
 		
 		 OperatingSystemUnit dataControllerVM = OperatingSystemUnit("example_OS")
 	                .providedBy(OpenstackMicro("example_VM")
@@ -42,6 +48,11 @@ public class BasicTest {
 		 
 		 orchestrator.deploy(serviceTemplate);
 
+	}
+	
+	@Test
+	public void testDeployExecutableOnVM(){
+		
 	}
 	
 	@Test
