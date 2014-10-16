@@ -29,6 +29,31 @@
             <artifactId>comot-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        
+        <dependency>
+			<groupId>at.ac.tuwien.mela</groupId>
+			<artifactId>MELA-Common</artifactId>
+			<version>3.0-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-web</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
          <!--
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

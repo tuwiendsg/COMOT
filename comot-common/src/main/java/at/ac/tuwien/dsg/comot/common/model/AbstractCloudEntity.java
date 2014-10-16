@@ -1,9 +1,9 @@
 package at.ac.tuwien.dsg.comot.common.model;
 
-import com.google.common.collect.ImmutableMap;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * @author omoser

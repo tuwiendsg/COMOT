@@ -1,7 +1,5 @@
-package at.ac.tuwien.dsg.comot.client;
+package at.ac.tuwien.dsg.comot.client.stub;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -17,12 +15,10 @@ import at.ac.tuwien.dsg.comot.common.logging.Markers;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 
-public class SalsaStub implements DeploymentService{
+public class SalsaStub extends CoreServiceStub implements DeploymentService{
 
-	private static final Logger log = LoggerFactory.getLogger(SalsaStub.class);
+	private final Logger log = LoggerFactory.getLogger(SalsaStub.class);
 
-	protected static final String DEF_HOST = "localhost";
-	protected static final int DEF_PORT = 8080;
 	protected static final String DEF_BASE_PATH = "/salsa-engine/rest";
 
 	protected static final String DEPLOY_PATH = "services/xml";
@@ -34,8 +30,6 @@ public class SalsaStub implements DeploymentService{
 
 	protected final ToscaDescriptionBuilder toscaBuilder;
 
-	protected Client client;
-	protected String baseUri;
 
 	public SalsaStub() {
 		this(DEF_HOST, DEF_PORT);
@@ -50,10 +44,7 @@ public class SalsaStub implements DeploymentService{
 	}
 
 	public SalsaStub(String host, int port, String basePath) {
-
-		baseUri = "http://" + host + ":" + port + basePath;
-
-		client = ClientBuilder.newClient(); // TODO close
+		super(host, port, basePath);
 
 		toscaBuilder = new ToscaDescriptionBuilderImpl();
 		// toscaBuilder.setValidating(true); // TODO validation fails
@@ -69,7 +60,7 @@ public class SalsaStub implements DeploymentService{
 			log.debug(Markers.CLIENT, "TOSCA: {}", toscaDescriptionXml);
 		}
 
-		Response response = client.target(baseUri)
+		Response response = client.target(getBaseUri())
 				.path(DEPLOY_PATH)
 				.request(MediaType.APPLICATION_XML)
 				.put(Entity.xml(toscaDescriptionXml));
@@ -94,11 +85,11 @@ public class SalsaStub implements DeploymentService{
 			log.debug(Markers.CLIENT, "Undeploying service with serviceId '{}'", serviceId);
 		}
 
-		Response response = client.target(baseUri)
+		Response response = client.target(getBaseUri())
 				.path(UNDEPLOY_PATH)
 				.resolveTemplate("serviceId", serviceId)
-				.request()
-				.header("Accept", MediaType.TEXT_XML)
+				.request( MediaType.TEXT_XML)
+				//.header("Accept", MediaType.TEXT_XML)
 				.delete();
 
 		processResponseStatus(response);
@@ -121,13 +112,14 @@ public class SalsaStub implements DeploymentService{
 					instanceCount, serviceId, topologyId, nodeId);
 		}
 
-		Response response = client.target(baseUri)
+		Response response = client.target(getBaseUri())
 				.path(SPAWN_PATH)
 				.resolveTemplate("serviceId", serviceId)
 				.resolveTemplate("topologyId", topologyId)
 				.resolveTemplate("nodeId", nodeId)
 				.resolveTemplate("instanceCount", instanceCount)
-				.request().header("Accept", MediaType.TEXT_XML)
+				.request(MediaType.TEXT_XML)
+				//.header("Accept", MediaType.TEXT_XML)
 				.post(Entity.text(""));
 
 		processResponseStatus(response);
@@ -150,14 +142,14 @@ public class SalsaStub implements DeploymentService{
 					instanceId, serviceId, topologyId, nodeId);
 		}
 
-		Response response = client.target(baseUri)
+		Response response = client.target(getBaseUri())
 				.path(DESTROY_PATH)
 				.resolveTemplate("serviceId", serviceId)
 				.resolveTemplate("topologyId", topologyId)
 				.resolveTemplate("nodeId", nodeId)
 				.resolveTemplate("instanceId", instanceId)
-				.request()
-				.header("Accept", MediaType.TEXT_XML)
+				.request(MediaType.TEXT_XML)
+				//.header("Accept", MediaType.TEXT_XML)
 				.delete();
 
 		processResponseStatus(response);
@@ -179,11 +171,11 @@ public class SalsaStub implements DeploymentService{
 			log.debug(Markers.CLIENT, "Checking status for serviceId {}", serviceId);
 		}
 
-		Response response = client.target(baseUri)
+		Response response = client.target(getBaseUri())
 				.path(STATUS_PATH)
 				.resolveTemplate("serviceId", serviceId)
-				.request()
-				.header("Accept", MediaType.TEXT_XML)
+				.request(MediaType.TEXT_XML)
+				//.header("Accept", MediaType.TEXT_XML)
 				.get();
 
 		processResponseStatus(response);
@@ -206,11 +198,11 @@ public class SalsaStub implements DeploymentService{
 			log.debug(Markers.CLIENT, "Getting DeploymentInfo for serviceId {}", serviceId);
 		}
 
-		Response response = client.target(baseUri)
+		Response response = client.target(getBaseUri())
 				.path(DEPLOYMENT_INFO_PATH)
 				.resolveTemplate("serviceId", serviceId)
-				.request()
-				.header("Accept", MediaType.TEXT_XML)
+				.request(MediaType.TEXT_XML)
+				//.header("Accept", MediaType.TEXT_XML)
 				.get();
 
 		processResponseStatus(response);
@@ -223,37 +215,5 @@ public class SalsaStub implements DeploymentService{
 		}
 		return description;
 	}
-	
-
-	protected void processResponseStatus(Response response) throws CoreServiceException {
-
-		int code = response.getStatus();
-		int hundreds = code / 100;
-		String msg;
-
-		switch (hundreds) {
-		case 1:
-			break;
-		case 2:
-			log.debug(Markers.CLIENT, "HTTP response status code={}", code);
-			break;
-		case 3:
-			break;
-		case 4:
-			msg = response.readEntity(String.class);
-			log.warn(Markers.CLIENT, "HTTP response status code={} , message='{}' ", code, msg);
-			throw new CoreServiceException(code, msg);
-		case 5:
-			msg = response.readEntity(String.class);
-			log.error(Markers.CLIENT, "HTTP response status code={} , message='{}' ", code, msg);
-			throw new CoreServiceException(code, msg);
-		}
-
-	}
-	
-	@Override
-	public void close(){
-		client.close();
-	}
-
+		
 }

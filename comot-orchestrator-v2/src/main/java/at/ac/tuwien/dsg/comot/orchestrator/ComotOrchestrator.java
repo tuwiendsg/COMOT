@@ -8,11 +8,13 @@ package at.ac.tuwien.dsg.comot.orchestrator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.ac.tuwien.dsg.comot.client.SalsaStub;
+import at.ac.tuwien.dsg.comot.client.RsyblService;
+import at.ac.tuwien.dsg.comot.client.stub.RsyblStub;
+import at.ac.tuwien.dsg.comot.client.stub.SalsaStub;
 import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
-import at.ac.tuwien.dsg.comot.common.coreservices.DeploymentService;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
+import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
 public class ComotOrchestrator {
 
@@ -26,112 +28,84 @@ public class ComotOrchestrator {
 	protected int deploymentPort = 8080;
 
 	protected SalsaInterraction salsaInterraction;
-	protected rSYBLInterraction sYBLInterraction;
-	protected DeploymentService depServ;
+	protected RsyblService rsyblService;
+	protected SalsaStub salsaStub;
+	private RsyblStub rsybl;
 
 	protected boolean changedMon;
 	protected boolean changedContr;
 	protected boolean changedDepl;
 
 	public ComotOrchestrator() {
-		depServ = new SalsaStub(deploymentIp, deploymentPort);
-		salsaInterraction = new SalsaInterraction(depServ);
-		sYBLInterraction = new rSYBLInterraction();
+		salsaStub = new SalsaStub(deploymentIp, deploymentPort);
+		salsaInterraction = new SalsaInterraction(salsaStub);
+		rsybl = new RsyblStub(controlIp, controlPort);
+		rsyblService = new RsyblService(rsybl);
 	}
 
 	public ComotOrchestrator withSalsaIP(String ip) {
-		deploymentIp = ip;
-		changedDepl = true;
+		salsaStub.setHost(ip);
 		return this;
 
 	}
 
 	public ComotOrchestrator withSalsaPort(Integer port) {
-		deploymentPort = port;
-		changedDepl = true;
+		salsaStub.setPort(port);
 		return this;
 	}
 
 	public ComotOrchestrator withRsyblIP(String ip) {
-		controlIp = ip;
-		changedContr = true;
+		rsybl.setHost(ip);
 		return this;
 	}
 
 	public ComotOrchestrator withRsyblPort(Integer port) {
-		controlPort = port;
-		changedContr = true;
+		rsybl.setPort(port);
 		return this;
 	}
 
-	protected void checkIfChanged() {
-		
-		if (changedDepl) {
-			depServ.close();
-			depServ = new SalsaStub(deploymentIp, deploymentPort);
-			salsaInterraction.setDeploymentService(depServ);
-		}
-		
-		if (changedContr) {
-
-		}
-	}
-
-	public void deployAndControl(CloudService serviceTemplate) throws CoreServiceException {
-
-		depServ.deploy(serviceTemplate);
-		salsaInterraction.waitUntilRunning(serviceTemplate.getId());
-
-		DeploymentDescription deploymentDescription = depServ.getServiceDeploymentInfo(serviceTemplate.getId());
-
-		log.info("deploymentDescription: " + deploymentDescription);
-
-		sYBLInterraction.sendInitialConfigToRSYBL(
-				serviceTemplate,
-				deploymentDescription,
-				sYBLInterraction.loadMetricCompositionRules(serviceTemplate.getId(),
-						serviceTemplate.getMetricCompositonRulesFile()),
-				sYBLInterraction.loadJSONEffects(serviceTemplate.getEffectsCompositonRulesFile()));
-
-	}
+	// /////////////////////
 
 	public void deploy(CloudService serviceTemplate) throws CoreServiceException {
 
-		depServ.deploy(serviceTemplate);
+		salsaStub.deploy(serviceTemplate);
 		salsaInterraction.waitUntilRunning(serviceTemplate.getId());
-		DeploymentDescription deploymentDescription = depServ.getServiceDeploymentInfo(serviceTemplate.getId());
-
-		log.info("deploymentDescription: " + deploymentDescription);
-	}
-
-	public void updateServiceReqsOrStruct(CloudService serviceTemplate) {
-
-		sYBLInterraction.sendUpdatedConfigToRSYBL(
-				serviceTemplate,
-				sYBLInterraction.loadMetricCompositionRules(serviceTemplate.getId(),
-						serviceTemplate.getMetricCompositonRulesFile()),
-				sYBLInterraction.loadJSONEffects(serviceTemplate.getEffectsCompositonRulesFile())
-				);
+		DeploymentDescription deploymentDescription = salsaStub.getServiceDeploymentInfo(serviceTemplate.getId());
 
 	}
 
-	public void controlExisting(CloudService serviceTemplate) throws CoreServiceException {
+	public void deployAndControl(
+			CloudService serviceTemplate,
+			CompositionRulesConfiguration compositionRulesConfiguration,
+			String effectsJSON) throws CoreServiceException {
 
-		DeploymentDescription deploymentDescription = depServ.getServiceDeploymentInfo(serviceTemplate.getId());
+		salsaStub.deploy(serviceTemplate);
+		salsaInterraction.waitUntilRunning(serviceTemplate.getId());
 
-		sYBLInterraction.sendInitialConfigToRSYBL(
-				serviceTemplate,
-				deploymentDescription,
-				sYBLInterraction.loadMetricCompositionRules(serviceTemplate.getId(),
-						serviceTemplate.getMetricCompositonRulesFile()),
-				sYBLInterraction.loadJSONEffects(serviceTemplate.getEffectsCompositonRulesFile()));
+		DeploymentDescription deploymentDescription = salsaStub.getServiceDeploymentInfo(serviceTemplate.getId());
+
+		rsyblService.sendInitialConfig(serviceTemplate, deploymentDescription, compositionRulesConfiguration,
+				effectsJSON);
+	}
+
+	public void updateServiceReqsOrStruct(
+			CloudService serviceTemplate,
+			CompositionRulesConfiguration compositionRulesConfiguration,
+			String effectsJSON) throws CoreServiceException {
+
+		rsyblService.sendUpdatedConfig(serviceTemplate, compositionRulesConfiguration, effectsJSON);
 
 	}
 
-	public void getSalsaStatus(CloudService serviceTemplate) throws CoreServiceException {
+	public void controlExisting(
+			CloudService serviceTemplate,
+			CompositionRulesConfiguration compositionRulesConfiguration,
+			String effectsJSON) throws CoreServiceException {
 
-		DeploymentDescription deploymentDescription = depServ.getServiceDeploymentInfo(serviceTemplate.getId());
+		DeploymentDescription deploymentDescription = salsaStub.getServiceDeploymentInfo(serviceTemplate.getId());
 
+		rsyblService.sendInitialConfig(serviceTemplate, deploymentDescription, compositionRulesConfiguration,
+				effectsJSON);
 	}
 
 }

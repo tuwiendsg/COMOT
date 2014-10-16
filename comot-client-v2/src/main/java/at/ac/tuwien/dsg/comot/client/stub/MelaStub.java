@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.client;
+package at.ac.tuwien.dsg.comot.client.stub;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

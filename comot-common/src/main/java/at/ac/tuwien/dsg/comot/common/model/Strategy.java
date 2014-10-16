@@ -1,10 +1,14 @@
 package at.ac.tuwien.dsg.comot.common.model;
 
-import com.google.common.base.Joiner;
-
-import java.util.*;
-
 import static java.lang.String.format;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import com.google.common.base.Joiner;
 
 /**
  * Created by omoser on 3/1/14.

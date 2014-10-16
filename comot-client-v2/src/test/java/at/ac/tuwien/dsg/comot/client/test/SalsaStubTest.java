@@ -4,7 +4,9 @@ import static at.ac.tuwien.dsg.comot.common.model.CloudService.ServiceTemplate;
 import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackMicro;
 import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingSystemUnit;
 import static at.ac.tuwien.dsg.comot.common.model.ServiceTopology.ServiceTopology;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityState;
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityType;
-import at.ac.tuwien.dsg.comot.client.SalsaStub;
+import at.ac.tuwien.dsg.comot.client.stub.SalsaStub;
 import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;
 import at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit;
