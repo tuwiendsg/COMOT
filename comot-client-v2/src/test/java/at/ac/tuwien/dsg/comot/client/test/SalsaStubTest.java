@@ -78,21 +78,22 @@ public class SalsaStubTest {
 		assertEquals(1, vm_count);
 
 		// spawn 2 new instances
-		salsa.spawn(serviceId, topologyId, nodeId, 2);
+		salsa.spawn(serviceId, topologyId, nodeId, 1);
 
 		do {
 
 			Thread.sleep(10000);
 			service = salsa.getStatus(serviceId);
 
-			if (countIter > 12) {
+			if (countIter > 60) {
 				countIter = 0;
 				break;
 			}
 
-		} while (3 != service.getAllReplicaByType(SalsaEntityType.OPERATING_SYSTEM).size());
+		} while (2 != service.getAllReplicaByType(SalsaEntityType.OPERATING_SYSTEM).size());
 
-		assertEquals(3, vm_count);
+		vm_count = service.getAllReplicaByType(SalsaEntityType.OPERATING_SYSTEM).size();
+		assertEquals(2, vm_count);
 
 		// destroy one instance
 		salsa.destroy(serviceId, topologyId, nodeId, 1);
@@ -107,9 +108,10 @@ public class SalsaStubTest {
 				break;
 			}
 
-		} while (2 != service.getAllReplicaByType(SalsaEntityType.OPERATING_SYSTEM).size());
+		} while (1 != service.getAllReplicaByType(SalsaEntityType.OPERATING_SYSTEM).size());
 
-		assertEquals(2, vm_count);
+		vm_count = service.getAllReplicaByType(SalsaEntityType.OPERATING_SYSTEM).size();
+		assertEquals(1, vm_count);
 
 		// undeploy
 		salsa.undeploy(serviceId);
