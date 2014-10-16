@@ -1,30 +1,62 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>comot-client-v2</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>COMOT Client</name>
     <parent>
-        <artifactId>comot-parent</artifactId>
         <groupId>at.ac.tuwien.dsg.comot</groupId>
+        <artifactId>comot-parent</artifactId>
+        <relativePath>../pom.xml</relativePath>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>comot-common</artifactId>
-    <name>COMOT Common</name>
+    <properties>
+        <groovy.version>2.2.1</groovy.version>
+    </properties>
 
     <dependencies>
+    
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
+            <groupId>at.ac.tuwien.dsg.comot</groupId>
+            <artifactId>comot-core</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>at.ac.tuwien.dsg.comot</groupId>
+            <artifactId>comot-common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+         <!--
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <version>4.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+-->
+
+        <!-- TEST dependencies 
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-bundle-jaxrs</artifactId>
+            <version>2.7.11</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
             <version>2.3.3</version>
         </dependency>
-        
-        <dependency>
-            <groupId>at.ac.tuwien.rSYBL.control-service</groupId>
-            <artifactId>rSYBL-cloud-application-dependency-graph</artifactId>
-            <version>0.1-SNAPSHOT</version>  
-        </dependency>
-        
+        -->
+        <!-- 
         <dependency>
             <groupId>at.ac.tuwien.dsg.cloud.salsa</groupId>
             <artifactId>salsa-common</artifactId>
@@ -69,9 +101,16 @@
             </exclusions>
             <type>jar</type>
         </dependency>
+        -->
     </dependencies>
-    
-  
 
+    <build>
+    
+    	
+    
+        <plugins>
+           
+        </plugins>
+    </build>
 
 </project>
