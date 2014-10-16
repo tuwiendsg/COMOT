@@ -2,6 +2,7 @@ package at.ac.tuwien.dsg.ElasticityInformationService.Application;
 
 import java.io.File;
 
+import org.apache.log4j.Logger;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
@@ -33,7 +34,8 @@ import at.ac.tuwien.dsg.ElasticityInformationService.settings.EliseConfiguration
 //@Import(RepositoryRestMvcConfiguration.class)
 //@EnableAutoConfiguration
 public class DataServiceGeneration extends Neo4jConfiguration implements CommandLineRunner {
-
+	static Logger logger;
+	
     public DataServiceGeneration() {
         setBasePackage("at.ac.tuwien.dsg.ElasticityInformationService");
     }
@@ -64,7 +66,7 @@ public class DataServiceGeneration extends Neo4jConfiguration implements Command
     }
     
     private void generateOpenStack(){
-    	System.out.println("Create database for OpenStack DSG");
+    	logger.debug("Create database for OpenStack DSG");
     	Transaction tx = graphDatabase.beginTx();
     	CloudProvider os = new CloudProvider("dsg@openstack", "IAAS");    	
     	enRepo.save(os);
@@ -79,7 +81,7 @@ public class DataServiceGeneration extends Neo4jConfiguration implements Command
     	
     	suRepository.save(osVm);
     	tx.success();
-    	System.out.println("Do the generation");
+    	logger.debug("Do the generation");
     	
     	// resource of the cloud provider
     	ResourceType rComputing = new ResourceType("Computing");
