@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.client.test;
+package at.ac.tuwien.dsg.comot.client.test.stub;
 
 import static at.ac.tuwien.dsg.comot.common.model.CloudService.ServiceTemplate;
 import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackMicro;
@@ -8,6 +8,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -49,6 +50,11 @@ public class SalsaStubTest {
 				.consistsOfTopologies(topology)
 				.withDefaultMetrics()
 				.withDefaultActionEffects();
+	}
+	
+	@After
+	public void cleanUp(){
+		salsa.close();
 	}
 
 	@Test

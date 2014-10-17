@@ -10,12 +10,11 @@ import org.slf4j.LoggerFactory;
 import at.ac.tuwien.dsg.comot.api.ToscaDescriptionBuilder;
 import at.ac.tuwien.dsg.comot.api.ToscaDescriptionBuilderImpl;
 import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
-import at.ac.tuwien.dsg.comot.common.coreservices.DeploymentService;
 import at.ac.tuwien.dsg.comot.common.logging.Markers;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 
-public class SalsaStub extends CoreServiceStub implements DeploymentService{
+public class SalsaStub extends CoreServiceStub {
 
 	private final Logger log = LoggerFactory.getLogger(SalsaStub.class);
 
@@ -30,11 +29,10 @@ public class SalsaStub extends CoreServiceStub implements DeploymentService{
 
 	protected final ToscaDescriptionBuilder toscaBuilder;
 
-
 	public SalsaStub() {
 		this(DEF_HOST, DEF_PORT);
 	}
-	
+
 	public SalsaStub(String host) {
 		this(host, DEF_PORT, DEF_BASE_PATH);
 	}
@@ -50,7 +48,6 @@ public class SalsaStub extends CoreServiceStub implements DeploymentService{
 		// toscaBuilder.setValidating(true); // TODO validation fails
 	}
 
-	@Override
 	public String deploy(CloudService CloudService) throws CoreServiceException {
 
 		String toscaDescriptionXml = toscaBuilder.toXml(CloudService);
@@ -78,7 +75,6 @@ public class SalsaStub extends CoreServiceStub implements DeploymentService{
 
 	}
 
-	@Override
 	public void undeploy(String serviceId) throws CoreServiceException {
 
 		if (log.isDebugEnabled()) {
@@ -88,8 +84,8 @@ public class SalsaStub extends CoreServiceStub implements DeploymentService{
 		Response response = client.target(getBaseUri())
 				.path(UNDEPLOY_PATH)
 				.resolveTemplate("serviceId", serviceId)
-				.request( MediaType.TEXT_XML)
-				//.header("Accept", MediaType.TEXT_XML)
+				.request(MediaType.TEXT_XML)
+				// .header("Accept", MediaType.TEXT_XML)
 				.delete();
 
 		processResponseStatus(response);
@@ -102,7 +98,6 @@ public class SalsaStub extends CoreServiceStub implements DeploymentService{
 		}
 	}
 
-	@Override
 	public void spawn(String serviceId, String topologyId, String nodeId, int instanceCount)
 			throws CoreServiceException {
 
@@ -119,7 +114,7 @@ public class SalsaStub extends CoreServiceStub implements DeploymentService{
 				.resolveTemplate("nodeId", nodeId)
 				.resolveTemplate("instanceCount", instanceCount)
 				.request(MediaType.TEXT_XML)
-				//.header("Accept", MediaType.TEXT_XML)
+				// .header("Accept", MediaType.TEXT_XML)
 				.post(Entity.text(""));
 
 		processResponseStatus(response);
@@ -134,7 +129,6 @@ public class SalsaStub extends CoreServiceStub implements DeploymentService{
 		}
 	}
 
-	@Override
 	public void destroy(String serviceId, String topologyId, String nodeId, int instanceId) throws CoreServiceException {
 
 		if (log.isDebugEnabled()) {
@@ -149,7 +143,7 @@ public class SalsaStub extends CoreServiceStub implements DeploymentService{
 				.resolveTemplate("nodeId", nodeId)
 				.resolveTemplate("instanceId", instanceId)
 				.request(MediaType.TEXT_XML)
-				//.header("Accept", MediaType.TEXT_XML)
+				// .header("Accept", MediaType.TEXT_XML)
 				.delete();
 
 		processResponseStatus(response);
@@ -163,7 +157,6 @@ public class SalsaStub extends CoreServiceStub implements DeploymentService{
 		}
 	}
 
-	@Override
 	public at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService getStatus(String serviceId)
 			throws CoreServiceException {
 
@@ -175,7 +168,7 @@ public class SalsaStub extends CoreServiceStub implements DeploymentService{
 				.path(STATUS_PATH)
 				.resolveTemplate("serviceId", serviceId)
 				.request(MediaType.TEXT_XML)
-				//.header("Accept", MediaType.TEXT_XML)
+				// .header("Accept", MediaType.TEXT_XML)
 				.get();
 
 		processResponseStatus(response);
@@ -191,7 +184,6 @@ public class SalsaStub extends CoreServiceStub implements DeploymentService{
 
 	}
 
-	@Override
 	public DeploymentDescription getServiceDeploymentInfo(String serviceId) throws CoreServiceException {
 
 		if (log.isDebugEnabled()) {
@@ -202,7 +194,7 @@ public class SalsaStub extends CoreServiceStub implements DeploymentService{
 				.path(DEPLOYMENT_INFO_PATH)
 				.resolveTemplate("serviceId", serviceId)
 				.request(MediaType.TEXT_XML)
-				//.header("Accept", MediaType.TEXT_XML)
+				// .header("Accept", MediaType.TEXT_XML)
 				.get();
 
 		processResponseStatus(response);
@@ -215,5 +207,5 @@ public class SalsaStub extends CoreServiceStub implements DeploymentService{
 		}
 		return description;
 	}
-		
+
 }

@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.integration.test;
+package at.ac.tuwien.dsg.comot.orchestrator.test;
 
 import static at.ac.tuwien.dsg.comot.common.model.CloudService.ServiceTemplate;
 import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackMicro;

@@ -1,5 +1,5 @@
 package at.ac.tuwien.dsg.comot.common.coreservices;
 
-public interface MonitoringService {
+public interface MonitoringClient extends CoreServiceClient{
 	// TODO
 }

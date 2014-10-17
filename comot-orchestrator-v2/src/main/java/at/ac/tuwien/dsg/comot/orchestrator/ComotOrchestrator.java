@@ -7,60 +7,50 @@ package at.ac.tuwien.dsg.comot.orchestrator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.client.RsyblService;
-import at.ac.tuwien.dsg.comot.client.stub.RsyblStub;
-import at.ac.tuwien.dsg.comot.client.stub.SalsaStub;
+import at.ac.tuwien.dsg.comot.client.ControlClientRsybl;
 import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
+import at.ac.tuwien.dsg.comot.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
+@Component
 public class ComotOrchestrator {
 
 	private static final Logger log = LoggerFactory.getLogger(ComotOrchestrator.class);
 
-	protected String monitoringIp = "localhost";
-	protected String controlIp = "localhost";
-	protected String deploymentIp = "localhost";
-	protected int monitoringPort = 8180;
-	protected int controlPort = 8280;
-	protected int deploymentPort = 8080;
+	private static final long CHECK_STATE_TIMEOUT = 10000;
 
-	protected SalsaInterraction salsaInterraction;
-	protected RsyblService rsyblService;
-	protected SalsaStub salsaStub;
-	private RsyblStub rsybl;
-
-	protected boolean changedMon;
-	protected boolean changedContr;
-	protected boolean changedDepl;
+	@Autowired
+	protected DeploymentClient deployment; // TODO set host port
+	@Autowired
+	protected ControlClientRsybl control;  // TODO set host port
 
 	public ComotOrchestrator() {
-		salsaStub = new SalsaStub(deploymentIp, deploymentPort);
-		salsaInterraction = new SalsaInterraction(salsaStub);
-		rsybl = new RsyblStub(controlIp, controlPort);
-		rsyblService = new RsyblService(rsybl);
+		
 	}
 
 	public ComotOrchestrator withSalsaIP(String ip) {
-		salsaStub.setHost(ip);
+		deployment.setHost(ip);
 		return this;
 
 	}
 
 	public ComotOrchestrator withSalsaPort(Integer port) {
-		salsaStub.setPort(port);
+		deployment.setPort(port);
 		return this;
 	}
 
 	public ComotOrchestrator withRsyblIP(String ip) {
-		rsybl.setHost(ip);
+		control.setHost(ip);
 		return this;
 	}
 
 	public ComotOrchestrator withRsyblPort(Integer port) {
-		rsybl.setPort(port);
+		control.setPort(port);
 		return this;
 	}
 
@@ -68,10 +58,29 @@ public class ComotOrchestrator {
 
 	public void deploy(CloudService serviceTemplate) throws CoreServiceException {
 
-		salsaStub.deploy(serviceTemplate);
-		salsaInterraction.waitUntilRunning(serviceTemplate.getId());
-		DeploymentDescription deploymentDescription = salsaStub.getServiceDeploymentInfo(serviceTemplate.getId());
+		deployment.deploy(serviceTemplate);
 
+		do {
+			try {
+				Thread.sleep(CHECK_STATE_TIMEOUT);
+			} catch (InterruptedException ex) {
+				log.error(ex.getMessage(), ex);
+			}
+		} while (!deployment.isRunning(serviceTemplate.getId()));
+
+	}
+	
+	public void controlExisting(
+			CloudService serviceTemplate,
+			CompositionRulesConfiguration compositionRulesConfiguration,
+			String effectsJSON) throws CoreServiceException {
+
+		DeploymentDescription deploymentDescription = deployment.getServiceDeploymentInfo(serviceTemplate.getId());
+
+		control.sendInitialConfig(serviceTemplate, deploymentDescription, compositionRulesConfiguration,
+				effectsJSON);
+		
+		control.startControl(serviceTemplate.getId());
 	}
 
 	public void deployAndControl(
@@ -79,13 +88,9 @@ public class ComotOrchestrator {
 			CompositionRulesConfiguration compositionRulesConfiguration,
 			String effectsJSON) throws CoreServiceException {
 
-		salsaStub.deploy(serviceTemplate);
-		salsaInterraction.waitUntilRunning(serviceTemplate.getId());
+		deploy(serviceTemplate);
 
-		DeploymentDescription deploymentDescription = salsaStub.getServiceDeploymentInfo(serviceTemplate.getId());
-
-		rsyblService.sendInitialConfig(serviceTemplate, deploymentDescription, compositionRulesConfiguration,
-				effectsJSON);
+		controlExisting(serviceTemplate, compositionRulesConfiguration, effectsJSON);
 	}
 
 	public void updateServiceReqsOrStruct(
@@ -93,19 +98,8 @@ public class ComotOrchestrator {
 			CompositionRulesConfiguration compositionRulesConfiguration,
 			String effectsJSON) throws CoreServiceException {
 
-		rsyblService.sendUpdatedConfig(serviceTemplate, compositionRulesConfiguration, effectsJSON);
+		control.sendUpdatedConfig(serviceTemplate, compositionRulesConfiguration, effectsJSON);
 
-	}
-
-	public void controlExisting(
-			CloudService serviceTemplate,
-			CompositionRulesConfiguration compositionRulesConfiguration,
-			String effectsJSON) throws CoreServiceException {
-
-		DeploymentDescription deploymentDescription = salsaStub.getServiceDeploymentInfo(serviceTemplate.getId());
-
-		rsyblService.sendInitialConfig(serviceTemplate, deploymentDescription, compositionRulesConfiguration,
-				effectsJSON);
 	}
 
 }

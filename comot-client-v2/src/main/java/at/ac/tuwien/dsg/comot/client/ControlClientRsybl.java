@@ -8,8 +8,10 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.client.stub.RsyblStub;
+import at.ac.tuwien.dsg.comot.common.coreservices.ControlClient;
 import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.Capability;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;
@@ -29,18 +31,18 @@ import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescripti
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentUnit;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
-public class RsyblService {
+@Component
+public class ControlClientRsybl implements ControlClient{
 
-	private final Logger log = LoggerFactory.getLogger(RsyblService.class);
+	private final Logger log = LoggerFactory.getLogger(ControlClientRsybl.class);
 
 	protected RsyblStub rsybl;
 
-	public RsyblService(RsyblStub rsybl) {
-		this.rsybl = rsybl;
+	public ControlClientRsybl() {
+		rsybl = new RsyblStub();
 	}
 
-	// ////////////
-
+	@Override
 	public void sendInitialConfig(
 			CloudService service,
 			DeploymentDescription deploymentDescription,
@@ -64,10 +66,10 @@ public class RsyblService {
 		if (effectsJSON != null) {//optional
 			rsybl.elasticityCapabilitiesEffects(serviceId, effectsJSON);
 		}
-		
-		rsybl.startControl(serviceId);
+
 	}
 
+	@Override
 	public void sendUpdatedConfig(
 			CloudService service,
 			CompositionRulesConfiguration compositionRulesConfiguration,
@@ -84,18 +86,16 @@ public class RsyblService {
 
 	}
 
-	
-	public void startControl(String serviceId) {
-
+	@Override
+	public void startControl(String serviceId) throws CoreServiceException {
+		rsybl.startControl(serviceId);
 	}
 
-	public void stopControl(String serviceId) {
-
+	@Override
+	public void stopControl(String serviceId) throws CoreServiceException {
+		rsybl.stopControl(serviceId);
 	}
 
-	public void replaceRequirements() {
-
-	}
 
 	// ////////////
 
@@ -318,6 +318,16 @@ public class RsyblService {
 
 		return deploymentDescription;
 
+	}
+
+	@Override
+	public void setHost(String host) {
+		rsybl.setHost(host);
+	}
+
+	@Override
+	public void setPort(int port) {
+		rsybl.setPort(port);
 	}
 	
 	
