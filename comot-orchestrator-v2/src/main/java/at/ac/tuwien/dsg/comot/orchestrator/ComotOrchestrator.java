@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.client.ControlClientRsybl;
+import at.ac.tuwien.dsg.comot.common.coreservices.ControlClient;
 import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;
@@ -27,7 +27,7 @@ public class ComotOrchestrator {
 	@Autowired
 	protected DeploymentClient deployment; // TODO set host port
 	@Autowired
-	protected ControlClientRsybl control;  // TODO set host port
+	protected ControlClient control;  // TODO set host port
 
 	public ComotOrchestrator() {
 		

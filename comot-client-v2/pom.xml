@@ -27,6 +27,13 @@
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-common</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>at.ac.tuwien.dsg.comot</groupId>
+			<artifactId>comot-core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -55,7 +62,18 @@
 
 	<build>
 		<plugins>
-
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.5</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 

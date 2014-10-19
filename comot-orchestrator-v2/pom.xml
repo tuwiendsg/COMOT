@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>comot-orchestrator-v2</artifactId>
 	<packaging>jar</packaging>
-	<name>COMOT Integration</name>
+	<name>COMOT Orchestrator</name>
 
 	<parent>
 		<groupId>at.ac.tuwien.dsg.comot</groupId>
@@ -26,6 +26,34 @@
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-client-v2</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>at.ac.tuwien.dsg.comot</groupId>
+			<artifactId>comot-client-v2</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>at.ac.tuwien.dsg.comot</groupId>
+			<artifactId>comot-core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 
 		<!-- TUWIEN -->
 		<dependency>
@@ -36,7 +64,7 @@
 			<groupId>at.ac.tuwien.rSYBL.control-service</groupId>
 			<artifactId>rSYBL-cloud-application-dependency-graph</artifactId>
 		</dependency>
-		
+
 	</dependencies>
 
 	<build>

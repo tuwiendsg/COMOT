@@ -4,7 +4,6 @@ import javax.annotation.PreDestroy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityState;
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityType;
@@ -14,7 +13,7 @@ import at.ac.tuwien.dsg.comot.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 
-@Component
+
 public class DeploymentClientSalsa implements DeploymentClient {
 
 	private final Logger log = LoggerFactory.getLogger(DeploymentClientSalsa.class);

@@ -49,18 +49,29 @@
 			<groupId>at.ac.tuwien.dsg.cloud.salsa</groupId>
 			<artifactId>salsa-common</artifactId>
 		</dependency>
-<!-- 
-		<dependency>
-			<groupId>com.jayway.restassured</groupId>
-			<artifactId>xml-path</artifactId>
-			<version>2.3.0</version>
-		</dependency>
-	
-		<dependency>
-			<groupId>org.yaml</groupId>
-			<artifactId>snakeyaml</artifactId>
-			<version>1.13</version>
-		</dependency>
--->
+		<!-- <dependency> <groupId>com.jayway.restassured</groupId> <artifactId>xml-path</artifactId> <version>2.3.0</version> 
+			</dependency> <dependency> <groupId>org.yaml</groupId> <artifactId>snakeyaml</artifactId> <version>1.13</version> </dependency> -->
+
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.5</version>
+				<executions>
+					<execution>
+						<configuration>
+							<forceCreation>true</forceCreation>
+						</configuration>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 </project>

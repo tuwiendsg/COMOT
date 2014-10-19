@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.samples;
+package at.ac.tuwien.dsg.comot.core.test.samples;
 
 import at.ac.tuwien.dsg.comot.common.model.*;
 

@@ -30,7 +30,7 @@ public abstract class CoreServiceStub {
 		this.port = port;
 		this.basePath = basePath;
 
-		client = ClientBuilder.newClient(); // TODO close
+		client = ClientBuilder.newClient(); 
 	}
 
 	protected String getBaseUri() {

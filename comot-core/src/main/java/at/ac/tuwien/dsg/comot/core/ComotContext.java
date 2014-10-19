@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot;
+package at.ac.tuwien.dsg.comot.core;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

@@ -4,12 +4,11 @@ import javax.annotation.PreDestroy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.client.stub.MelaStub;
 import at.ac.tuwien.dsg.comot.common.coreservices.MonitoringClient;
 
-@Component
+
 public class MonitoringClientMela implements MonitoringClient{
 
 	private final Logger log = LoggerFactory.getLogger(MonitoringClientMela.class);
@@ -24,7 +23,7 @@ public class MonitoringClientMela implements MonitoringClient{
 	
 	@PreDestroy
 	public void cleanup() {
-		log.info("closing salsa client");
+		log.info("closing mela client");
 		mela.close();
 	}
 

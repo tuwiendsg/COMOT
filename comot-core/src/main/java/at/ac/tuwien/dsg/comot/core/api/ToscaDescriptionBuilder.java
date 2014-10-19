@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.api;
+package at.ac.tuwien.dsg.comot.core.api;
 
 //import at.ac.tuwien.dsg.comot.common.model.CloudService;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;

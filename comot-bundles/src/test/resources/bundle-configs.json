@@ -1,58 +1,55 @@
 [
-    {
-        "id": "tomcat",
+	{
+		"id": "tomcat",
+		"deployment-config": {
+			"uri": "http://134.158.75.65/artifacts/tomcat/deploy-tomcat-node.sh",
+			"version": "7.0.53"
+		},
 
-        "deployment-config": {
-            "uri": "http://134.158.75.65/artifacts/tomcat/deploy-tomcat-node.sh",
-            "version": "7.0.53"
-        },
+		"runtime-config": {
+			"environment": {
+				"JAVA_OPTS": "-XX:MaxPermSize=256m",
+				"CATALINA_HOME": "/opt/tomcat"
+			},
 
-        "runtime-config": {
-            "environment": {
-                "JAVA_OPTS": "-XX:MaxPermSize=256m",
-                "CATALINA_HOME": "/opt/tomcat"
-            },
+			"arguments": "-Dorg.apache.tomcat.util.http.ServerCookie.ALWAYS_ADD_EXPIRES=true",
+			"logging-config": {
+				"dir": "/var/log/tomcat"
+			}
+		}
+	},
 
-            "arguments": "-Dorg.apache.tomcat.util.http.ServerCookie.ALWAYS_ADD_EXPIRES=true",
-            "logging-config": {
-                "dir": "/var/log/tomcat"
-            }
-        }
-    },
+	{
+		"id": "elasticsearch",
+		"deployment-config": {
+			"uri": "http://134.158.75.65/artifacts/elasticsearch/deploy-es-node.sh",
+			"version": "latest"
+		},
 
-    {
-        "id": "elasticsearch",
+		"runtime-config": {
+			"arguments": "-Xmx2g -Xms2g -Des.index.store.type=memory",
+			"logging-config": {
+				"dir": "/var/log/elasticsearch"
+			}
+		}
+	},
 
-        "deployment-config": {
-            "uri": "http://134.158.75.65/artifacts/elasticsearch/deploy-es-node.sh",
-            "version": "latest"
-        },
+	{
+		"id": "cassandra",
+		"deployment-config": {
+			"uri": "http://134.158.75.65/artifacts/cassandra/deploy-cassandra-node.sh",
+			"version": "2.0.7"
+		},
 
-        "runtime-config": {
-            "arguments": "-Xmx2g -Xms2g -Des.index.store.type=memory",
-            "logging-config": {
-                "dir": "/var/log/elasticsearch"
-            }
-        }
-    },
+		"runtime-config": {
+			"environment": {
+				"JAVA_OPTS": "-Xmx2g -Xms2g"
+			},
 
-{
-    "id": "cassandra",
-
-    "deployment-config": {
-        "uri": "http://134.158.75.65/artifacts/cassandra/deploy-cassandra-node.sh",
-        "version": "2.0.7"
-    },
-
-    "runtime-config": {
-        "environment": {
-            "JAVA_OPTS": "-Xmx2g -Xms2g"
-        },
-
-        "arguments": "-Dcom.sun.management.jmxremote.port=18080",
-        "logging-config": {
-            "dir": "/var/log/cassandra"
-        }
-    }
-}
+			"arguments": "-Dcom.sun.management.jmxremote.port=18080",
+			"logging-config": {
+				"dir": "/var/log/cassandra"
+			}
+		}
+	}
 ]

@@ -1,8 +1,10 @@
 package at.ac.tuwien.dsg.comot;
 
-import at.ac.tuwien.dsg.comot.api.ToscaDescriptionBuilder;
 import at.ac.tuwien.dsg.comot.bundles.JsonBundleLoader;
-import at.ac.tuwien.dsg.comot.samples.ElasticSearchCloudApplication;
+import at.ac.tuwien.dsg.comot.core.ComotContext;
+import at.ac.tuwien.dsg.comot.core.api.ToscaDescriptionBuilder;
+import at.ac.tuwien.dsg.comot.core.test.samples.ElasticSearchCloudApplication;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

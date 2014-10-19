@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.api;
+package at.ac.tuwien.dsg.comot.core.api;
 
 /**
  * @author omoser

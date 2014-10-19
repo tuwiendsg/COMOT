@@ -1,9 +1,5 @@
 package at.ac.tuwien.dsg.comot.client.test.stub;
 
-import static at.ac.tuwien.dsg.comot.common.model.CloudService.ServiceTemplate;
-import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackMicro;
-import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingSystemUnit;
-import static at.ac.tuwien.dsg.comot.common.model.ServiceTopology.ServiceTopology;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
@@ -19,37 +15,22 @@ import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityT
 import at.ac.tuwien.dsg.comot.client.stub.SalsaStub;
 import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;
-import at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit;
-import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
+import at.ac.tuwien.dsg.comot.core.test.samples.ExampleDeployOneVM;
 
 public class SalsaStubTest {
 
 	private static final Logger log = LoggerFactory.getLogger(SalsaStubTest.class);
 
 	private static final String SALSA_IP = "128.130.172.215";
-	private static final String serviceId = "example_deployOneVM";
-	private static final String topologyId = "example_topology";
-	private static final String nodeId = "example_OS";
-
+	
 	private SalsaStub salsa;
 	private CloudService serviceTemplate;
 
 	@Before
 	public void setup() {
 		salsa = new SalsaStub(SALSA_IP);
-
-		OperatingSystemUnit dataControllerVM = OperatingSystemUnit(nodeId)
-				.providedBy(OpenstackMicro("example_VM")
-						.addSoftwarePackage("openjdk-7-jre"))
-				.andMaxInstances(5);
-
-		ServiceTopology topology = ServiceTopology(topologyId)
-				.withServiceUnits(dataControllerVM);
-
-		serviceTemplate = ServiceTemplate(serviceId)
-				.consistsOfTopologies(topology)
-				.withDefaultMetrics()
-				.withDefaultActionEffects();
+		
+		serviceTemplate = ExampleDeployOneVM.build();
 	}
 	
 	@After
@@ -69,7 +50,7 @@ public class SalsaStubTest {
 		do {
 
 			Thread.sleep(10000);
-			service = salsa.getStatus(serviceId);
+			service = salsa.getStatus(serviceTemplate.getId());
 
 			if (countIter > 60) {
 				countIter = 0;
@@ -80,18 +61,18 @@ public class SalsaStubTest {
 		|| service.getState().equals(SalsaEntityState.RUNNING)));
 
 		// check DeploymentInfo
-		assertNotNull(salsa.getServiceDeploymentInfo(serviceId));
+		assertNotNull(salsa.getServiceDeploymentInfo(serviceTemplate.getId()));
 
 		int vm_count = service.getAllReplicaByType(SalsaEntityType.OPERATING_SYSTEM).size();
 		assertEquals(1, vm_count);
 
 		// spawn 2 new instances
-		salsa.spawn(serviceId, topologyId, nodeId, 1);
+		salsa.spawn(serviceTemplate.getId(), ExampleDeployOneVM.TOPOLOGY_ID, ExampleDeployOneVM.NODE_ID, 1);
 
 		do {
 
 			Thread.sleep(10000);
-			service = salsa.getStatus(serviceId);
+			service = salsa.getStatus(serviceTemplate.getId());
 
 			if (countIter > 60) {
 				countIter = 0;
@@ -104,12 +85,12 @@ public class SalsaStubTest {
 		assertEquals(2, vm_count);
 
 		// destroy one instance
-		salsa.destroy(serviceId, topologyId, nodeId, 1);
+		salsa.destroy(serviceTemplate.getId(), ExampleDeployOneVM.TOPOLOGY_ID, ExampleDeployOneVM.NODE_ID, 1);
 
 		do {
 
 			Thread.sleep(10000);
-			service = salsa.getStatus(serviceId);
+			service = salsa.getStatus(serviceTemplate.getId());
 
 			if (countIter > 12) {
 				countIter = 0;
@@ -122,13 +103,13 @@ public class SalsaStubTest {
 		assertEquals(1, vm_count);
 
 		// undeploy
-		salsa.undeploy(serviceId);
+		salsa.undeploy(serviceTemplate.getId());
 
 		try {
 			do {
 
 				Thread.sleep(10000);
-				service = salsa.getStatus(serviceId);
+				service = salsa.getStatus(serviceTemplate.getId());
 
 				if (countIter > 12) {
 					countIter = 0;
@@ -150,27 +131,27 @@ public class SalsaStubTest {
 
 	@Test
 	public void testStatus() throws CoreServiceException {
-		salsa.getStatus(serviceId);
+		salsa.getStatus(serviceTemplate.getId());
 	}
 
 	@Test
 	public void testDeploymentDescription() throws CoreServiceException {
-		salsa.getServiceDeploymentInfo(serviceId);
+		salsa.getServiceDeploymentInfo(serviceTemplate.getId());
 	}
 
 	@Test
 	public void testUndeploy() throws CoreServiceException {
-		salsa.undeploy(serviceId);
+		salsa.undeploy(serviceTemplate.getId());
 	}
 
 	@Test
 	public void testSpawnInstance() throws CoreServiceException {
-		salsa.spawn(serviceId, topologyId, nodeId, 2);
+		salsa.spawn(serviceTemplate.getId(), ExampleDeployOneVM.TOPOLOGY_ID, ExampleDeployOneVM.NODE_ID, 2);
 	}
 
 	@Test
 	public void testDestroyInstance() throws CoreServiceException {
-		salsa.destroy(serviceId, topologyId, nodeId, 1);
+		salsa.destroy(serviceTemplate.getId(), ExampleDeployOneVM.TOPOLOGY_ID, ExampleDeployOneVM.NODE_ID, 1);
 	}
 
 }

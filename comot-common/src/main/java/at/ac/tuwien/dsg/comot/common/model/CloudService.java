@@ -104,7 +104,7 @@ public class CloudService extends AbstractServiceDescriptionEntity {
     }
 
     public CloudService withDefaultMetrics() {
-        this.metricCompositonRulesFile = "./config/resources/compositionRules.xml";
+        this.metricCompositonRulesFile = "./elasticity/compositionRules.xml";
         return this;
     }
 
@@ -118,7 +118,7 @@ public class CloudService extends AbstractServiceDescriptionEntity {
     }
 
     public CloudService withDefaultActionEffects() {
-        this.effectsCompositonRulesFile = "./config/resources/effects.json";
+        this.effectsCompositonRulesFile = "./elasticity/effects.json";
         return this;
     }
 

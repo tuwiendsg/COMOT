@@ -5,10 +5,6 @@
  */
 package at.ac.tuwien.dsg.comot.orchestrator;
 
-import at.ac.tuwien.dsg.comot.common.model.*;
-import at.ac.tuwien.dsg.comot.common.model.Constraint.Metric;
-
-
 import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifactTemplate;
 import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackMicro;
 import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackSmall;
@@ -18,6 +14,26 @@ import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingS
 import static at.ac.tuwien.dsg.comot.common.model.ServiceTopology.ServiceTopology;
 import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.SingleSoftwareUnit;
 import static at.ac.tuwien.dsg.comot.common.model.Strategy.Strategy;
+
+import java.io.IOException;
+
+import javax.xml.bind.JAXBException;
+
+import org.junit.Test;
+
+import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
+import at.ac.tuwien.dsg.comot.common.model.Capability;
+import at.ac.tuwien.dsg.comot.common.model.CloudService;
+import at.ac.tuwien.dsg.comot.common.model.Constraint;
+import at.ac.tuwien.dsg.comot.common.model.Constraint.Metric;
+import at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit;
+import at.ac.tuwien.dsg.comot.common.model.Requirement;
+import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
+import at.ac.tuwien.dsg.comot.common.model.ServiceUnit;
+import at.ac.tuwien.dsg.comot.common.model.Strategy;
+import at.ac.tuwien.dsg.comot.core.test.TestUtils;
+import at.ac.tuwien.dsg.comot.orchestrator.test.AbstractTest;
+import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
 /**
  * ======= import static
@@ -49,9 +65,10 @@ import static at.ac.tuwien.dsg.comot.common.model.Strategy.Strategy;
  *
  * @author Daniel Moldovan E-Mail: d.moldovan@dsg.tuwien.ac.at
  */
-public class TestingComot {
+public class TestingComot extends AbstractTest{
 
-    public static void main(String[] args) {
+	@Test
+	public void testStuff() throws JAXBException, IOException, CoreServiceException {
 
         ServiceUnit dataControllerUnit = SingleSoftwareUnit("DataControllerUnit")
                 .deployedBy(SingleScriptArtifactTemplate("deployCassandraSeedArtifact", "deployCassandraSeed.sh"))
@@ -137,9 +154,13 @@ public class TestingComot {
                 .withDefaultActionEffects();
         ;
 
-        ComotOrchestrator orchestrator = new ComotOrchestrator();
+       
+    	CompositionRulesConfiguration rules = TestUtils.loadMetricCompositionRules(dataService.getId(),
+    			dataService.getMetricCompositonRulesFile());
+		
+		String effects = TestUtils.loadFile(dataService.getEffectsCompositonRulesFile());
+		
+		orchestrator.deployAndControl(dataService, rules, effects);
 
-        orchestrator.deployAndControl(dataService);
-//   
     }
 }

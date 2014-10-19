@@ -6,9 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PreDestroy;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.client.stub.RsyblStub;
 import at.ac.tuwien.dsg.comot.common.coreservices.ControlClient;
@@ -31,7 +32,7 @@ import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescripti
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentUnit;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
-@Component
+
 public class ControlClientRsybl implements ControlClient{
 
 	private final Logger log = LoggerFactory.getLogger(ControlClientRsybl.class);
@@ -318,6 +319,12 @@ public class ControlClientRsybl implements ControlClient{
 
 		return deploymentDescription;
 
+	}
+	
+	@PreDestroy
+	public void cleanup() {
+		log.info("closing rsybl client");
+		rsybl.close();
 	}
 
 	@Override

@@ -1,33 +1,40 @@
 package at.ac.tuwien.dsg.comot.orchestrator;
 
 import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifactTemplate;
-import at.ac.tuwien.dsg.comot.common.model.Capability;
-import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackMicro;
+import static at.ac.tuwien.dsg.comot.common.model.CloudService.ServiceTemplate;
 import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackSmall;
-import at.ac.tuwien.dsg.comot.common.model.Constraint;
-import at.ac.tuwien.dsg.comot.common.model.Constraint.Metric;
 import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.ConnectToRelation;
 import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.HostedOnRelation;
-import at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit;
 import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingSystemUnit;
-import at.ac.tuwien.dsg.comot.common.model.Requirement;
-import at.ac.tuwien.dsg.comot.common.model.CloudService;
-import static at.ac.tuwien.dsg.comot.common.model.CloudService.ServiceTemplate;
-import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
 import static at.ac.tuwien.dsg.comot.common.model.ServiceTopology.ServiceTopology;
-import at.ac.tuwien.dsg.comot.common.model.ServiceUnit;
 import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.SingleSoftwareUnit;
-import at.ac.tuwien.dsg.comot.common.model.Strategy;
-import static at.ac.tuwien.dsg.comot.common.model.Strategy.Strategy;
+
+import java.io.IOException;
+
+import javax.xml.bind.JAXBException;
+
+import org.junit.Test;
+
+import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
+import at.ac.tuwien.dsg.comot.common.model.Capability;
+import at.ac.tuwien.dsg.comot.common.model.CloudService;
+import at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit;
+import at.ac.tuwien.dsg.comot.common.model.Requirement;
+import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
+import at.ac.tuwien.dsg.comot.common.model.ServiceUnit;
+import at.ac.tuwien.dsg.comot.core.test.TestUtils;
+import at.ac.tuwien.dsg.comot.orchestrator.test.AbstractTest;
+import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
 
 /**
  *
  * @author http://dsg.tuwien.ac.at
  */
-public class ProgrammingAndControllingElasticityWithCOMOT_GXG {
+public class ProgrammingAndControllingElasticityWithCOMOT_GXG extends AbstractTest{
 
-    public static void main(String[] args) {
+	@Test
+	public void testStuff() throws JAXBException, IOException, CoreServiceException {
         //specify service units in terms of software
 
         //need to specify details of VM and operating system to deploy the software servide units on
@@ -127,7 +134,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT_GXG {
                 ;
         
                 //instantiate COMOT orchestrator to deploy, monitor and control the service
-        ComotOrchestrator orchestrator = new ComotOrchestrator()
+        orchestrator 
                         //we have SALSA as cloud management tool
                         //curently deployed separately
                         .withSalsaIP("128.130.172.215")
@@ -139,7 +146,12 @@ public class ProgrammingAndControllingElasticityWithCOMOT_GXG {
                         .withRsyblPort(8081);
                 
                 //deploy, monitor and control
-                orchestrator.deployAndControl(serviceTemplate);
+        CompositionRulesConfiguration rules = TestUtils.loadMetricCompositionRules(serviceTemplate.getId(),
+				serviceTemplate.getMetricCompositonRulesFile());
+
+		String effects = TestUtils.loadFile(serviceTemplate.getEffectsCompositonRulesFile());
+
+		orchestrator.deployAndControl(serviceTemplate, rules, effects);
 //                orchestrator.controlExisting(serviceTemplate);
                 
     }

@@ -57,6 +57,11 @@
 			</dependency>
 			<dependency>
 				<groupId>at.ac.tuwien.dsg.comot</groupId>
+				<artifactId>comot-orchestrator-v2</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>at.ac.tuwien.dsg.comot</groupId>
 				<artifactId>comot-visualization-service</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
