@@ -7,20 +7,21 @@ import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.comot.client.stub.MelaStub;
 import at.ac.tuwien.dsg.comot.common.coreservices.MonitoringClient;
+import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement;
 
-
-public class MonitoringClientMela implements MonitoringClient{
+public class MonitoringClientMela implements MonitoringClient {
 
 	private final Logger log = LoggerFactory.getLogger(MonitoringClientMela.class);
-	
+
 	protected MelaStub mela;
-	
-	public MonitoringClientMela(){
+
+	public MonitoringClientMela() {
 		this.mela = new MelaStub();
 	}
-	
+
 	// TODO
-	
+
+
 	@PreDestroy
 	public void cleanup() {
 		log.info("closing mela client");

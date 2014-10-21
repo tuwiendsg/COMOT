@@ -102,7 +102,7 @@ public class RsyblStub extends CoreServiceStub {
 		}
 	}
 
-	public void metricsCompositionRules(String serviceId, CompositionRulesConfiguration compositionRulesConfiguration)
+	public void sendMetricsCompositionRules(String serviceId, CompositionRulesConfiguration compositionRulesConfiguration)
 			throws CoreServiceException {
 
 		Response response = client.target(getBaseUri())
@@ -141,7 +141,7 @@ public class RsyblStub extends CoreServiceStub {
 		}
 	}
 
-	public void elasticityCapabilitiesEffects(String serviceId, String effectsJSON) throws CoreServiceException {
+	public void sendElasticityCapabilitiesEffects(String serviceId, String effectsJSON) throws CoreServiceException {
 
 		Response response = client.target(getBaseUri())
 				.path(ECE_PATH)

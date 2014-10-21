@@ -115,6 +115,10 @@
 						<groupId>log4j</groupId>
 						<artifactId>log4j</artifactId>
 					</exclusion>
+					<exclusion>
+						<groupId>com.googlecode.json-simple</groupId>
+						<artifactId>json-simple</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -194,6 +198,18 @@
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
 				<version>15.0</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.json</groupId>
+				<artifactId>json</artifactId>
+				<version>20140107</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-rt-rs-client</artifactId>
+				<version>3.0.2</version>
 			</dependency>
 
 			<!-- TEST dependencies -->

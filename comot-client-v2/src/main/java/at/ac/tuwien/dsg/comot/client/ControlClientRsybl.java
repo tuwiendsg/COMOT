@@ -61,11 +61,11 @@ public class ControlClientRsybl implements ControlClient{
 		rsybl.serviceDeployment(serviceId, deploymentDescription);
 
 		if (compositionRulesConfiguration != null) {//optional
-			rsybl.metricsCompositionRules(serviceId, compositionRulesConfiguration);
+			rsybl.sendMetricsCompositionRules(serviceId, compositionRulesConfiguration);
 		}
 		
 		if (effectsJSON != null) {//optional
-			rsybl.elasticityCapabilitiesEffects(serviceId, effectsJSON);
+			rsybl.sendElasticityCapabilitiesEffects(serviceId, effectsJSON);
 		}
 
 	}

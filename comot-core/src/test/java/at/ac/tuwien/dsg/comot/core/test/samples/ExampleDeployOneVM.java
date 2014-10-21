@@ -12,7 +12,7 @@ public class ExampleDeployOneVM {
 
 	public static final String SERVICE_ID = "example_deployOneVM";
 	public static final String TOPOLOGY_ID = "example_topology";
-	public static final String NODE_ID = "example_OS";
+	public static final String NODE_ID = "example_OS_comot";
 
 	public static CloudService build() {
 

@@ -19,8 +19,6 @@ import at.ac.tuwien.dsg.comot.core.test.samples.ExampleDeployOneVM;
 
 public class SalsaStubTest {
 
-	private static final Logger log = LoggerFactory.getLogger(SalsaStubTest.class);
-
 	private static final String SALSA_IP = "128.130.172.215";
 	
 	private SalsaStub salsa;
