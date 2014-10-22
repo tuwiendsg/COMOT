@@ -85,6 +85,7 @@ public class COMOTOrchestrator {
 
     public void updateServiceReqsOrStruct(CloudService serviceTemplate) {
 
+       
         sYBLInterraction.sendUpdatedConfigToRSYBL(serviceTemplate,
                 sYBLInterraction.loadMetricCompositionRules(serviceTemplate.getId(), serviceTemplate.getMetricCompositonRulesFile()),
                 sYBLInterraction.loadJSONEffects(serviceTemplate.getEffectsCompositonRulesFile())
@@ -93,6 +94,8 @@ public class COMOTOrchestrator {
     }
 
     public void controlExisting(CloudService serviceTemplate) {
+        
+         salsaInterraction.waitUntilRunning(serviceTemplate.getId());
 
         DeploymentDescription deploymentDescription = salsaInterraction.getServiceDeploymentInfo(serviceTemplate.getId());
 
