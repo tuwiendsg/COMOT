@@ -1,5 +1,4 @@
-
-    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     <ns2:Definitions id="EsApp" name="Simple ElasticSearch Application"
                      xmlns:ns2="http://docs.oasis-open.org/tosca/ns/2011/12">
         <ns2:ServiceTemplate id="EsService">

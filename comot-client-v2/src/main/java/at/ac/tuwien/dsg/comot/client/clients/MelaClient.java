@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.client.stub;
+package at.ac.tuwien.dsg.comot.client.clients;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +21,9 @@ import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitorin
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitoringSnapshots;
 import at.ac.tuwien.dsg.mela.common.requirements.Requirements;
 
-public class MelaStub extends CoreServiceStub {
+public class MelaClient extends CoreServiceClient {
 
-	private static final Logger log = LoggerFactory.getLogger(MelaStub.class);
+	private static final Logger log = LoggerFactory.getLogger(MelaClient.class);
 
 	protected static final String DEF_BASE_PATH = "/MELA/REST_WS"; // TODO
 
@@ -39,19 +39,19 @@ public class MelaStub extends CoreServiceStub {
 	protected static final String GET_DATA_INTERVAL_PATH = "{serviceId}/historicalmonitoringdata/ininterval/xml";
 	protected static final String GET_DATA_LASTX_PATH = "{serviceId}/historicalmonitoringdata/lastX/xml";
 
-	public MelaStub() {
+	public MelaClient() {
 		this(DEF_HOST, DEF_PORT);
 	}
 
-	public MelaStub(String host) {
+	public MelaClient(String host) {
 		this(host, DEF_PORT, DEF_BASE_PATH);
 	}
 
-	public MelaStub(String host, int port) {
+	public MelaClient(String host, int port) {
 		this(host, port, DEF_BASE_PATH);
 	}
 
-	public MelaStub(String host, int port, String basePath) {
+	public MelaClient(String host, int port, String basePath) {
 		super(host, port, basePath);
 	}
 

@@ -25,9 +25,9 @@ public class ComotOrchestrator {
 	private static final long CHECK_STATE_TIMEOUT = 10000;
 
 	@Autowired
-	protected DeploymentClient deployment; // TODO set host port
+	protected DeploymentClient deployment;
 	@Autowired
-	protected ControlClient control;  // TODO set host port
+	protected ControlClient control; 
 
 	public ComotOrchestrator() {
 		

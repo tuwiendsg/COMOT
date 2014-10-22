@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.client.stub;
+package at.ac.tuwien.dsg.comot.client.clients;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.logging.Markers;
 
-public abstract class CoreServiceStub {
+public abstract class CoreServiceClient {
 
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -24,7 +24,7 @@ public abstract class CoreServiceStub {
 	protected int port;
 	protected String basePath;
 
-	public CoreServiceStub(String host, int port, String basePath) {
+	public CoreServiceClient(String host, int port, String basePath) {
 		super();
 		this.host = host;
 		this.port = port;

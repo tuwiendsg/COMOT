@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.client.test.stub;
+package at.ac.tuwien.dsg.comot.client.test.clients;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -12,21 +12,21 @@ import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityState;
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityType;
-import at.ac.tuwien.dsg.comot.client.stub.SalsaStub;
+import at.ac.tuwien.dsg.comot.client.clients.SalsaClient;
 import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;
 import at.ac.tuwien.dsg.comot.core.test.samples.ExampleDeployOneVM;
 
-public class SalsaStubTest {
+public class SalsaClientTest {
 
 	private static final String SALSA_IP = "128.130.172.215";
 	
-	private SalsaStub salsa;
+	private SalsaClient salsa;
 	private CloudService serviceTemplate;
 
 	@Before
 	public void setup() {
-		salsa = new SalsaStub(SALSA_IP);
+		salsa = new SalsaClient(SALSA_IP);
 		
 		serviceTemplate = ExampleDeployOneVM.build();
 	}

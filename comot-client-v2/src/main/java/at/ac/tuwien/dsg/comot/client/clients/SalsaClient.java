@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.client.stub;
+package at.ac.tuwien.dsg.comot.client.clients;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -14,9 +14,9 @@ import at.ac.tuwien.dsg.comot.core.api.ToscaDescriptionBuilder;
 import at.ac.tuwien.dsg.comot.core.api.ToscaDescriptionBuilderImpl;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 
-public class SalsaStub extends CoreServiceStub {
+public class SalsaClient extends CoreServiceClient {
 
-	private final Logger log = LoggerFactory.getLogger(SalsaStub.class);
+	private final Logger log = LoggerFactory.getLogger(SalsaClient.class);
 
 	protected static final String DEF_BASE_PATH = "/salsa-engine/rest";
 
@@ -29,19 +29,19 @@ public class SalsaStub extends CoreServiceStub {
 
 	protected final ToscaDescriptionBuilder toscaBuilder;
 
-	public SalsaStub() {
+	public SalsaClient() {
 		this(DEF_HOST, DEF_PORT);
 	}
 
-	public SalsaStub(String host) {
+	public SalsaClient(String host) {
 		this(host, DEF_PORT, DEF_BASE_PATH);
 	}
 
-	public SalsaStub(String host, int port) {
+	public SalsaClient(String host, int port) {
 		this(host, port, DEF_BASE_PATH);
 	}
 
-	public SalsaStub(String host, int port, String basePath) {
+	public SalsaClient(String host, int port, String basePath) {
 		super(host, port, basePath);
 
 		toscaBuilder = new ToscaDescriptionBuilderImpl();

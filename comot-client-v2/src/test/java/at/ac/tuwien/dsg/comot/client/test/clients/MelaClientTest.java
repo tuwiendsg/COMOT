@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.client.test.stub;
+package at.ac.tuwien.dsg.comot.client.test.clients;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -12,8 +12,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import at.ac.tuwien.dsg.comot.client.stub.MelaStub;
-import at.ac.tuwien.dsg.comot.client.stub.SalsaStub;
+import at.ac.tuwien.dsg.comot.client.clients.MelaClient;
+import at.ac.tuwien.dsg.comot.client.clients.SalsaClient;
 import at.ac.tuwien.dsg.comot.client.test.AbstractTest;
 import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
@@ -26,12 +26,12 @@ import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitoringSnapshot;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitoringSnapshots;
 
-public class MelaStubTest extends AbstractTest {
+public class MelaClientTest extends AbstractTest {
 
 	private static final String SALSA_IP = "128.130.172.215";
 
-	private MelaStub mela;
-	private SalsaStub salsa;
+	private MelaClient mela;
+	private SalsaClient salsa;
 	private CloudService serviceTemplate;
 	private String serviceId;
 
@@ -43,8 +43,8 @@ public class MelaStubTest extends AbstractTest {
 	@Before
 	public void setup() {
 
-		salsa = new SalsaStub(SALSA_IP);
-		mela = new MelaStub("128.130.172.216", 8180);
+		salsa = new SalsaClient(SALSA_IP);
+		mela = new MelaClient("128.130.172.216", 8180);
 
 		serviceTemplate = ExampleExecutableOnVM.build();
 		serviceId = serviceTemplate.getId();

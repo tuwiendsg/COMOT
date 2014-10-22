@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityState;
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityType;
-import at.ac.tuwien.dsg.comot.client.stub.SalsaStub;
+import at.ac.tuwien.dsg.comot.client.clients.SalsaClient;
 import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;
@@ -18,10 +18,10 @@ public class DeploymentClientSalsa implements DeploymentClient {
 
 	private final Logger log = LoggerFactory.getLogger(DeploymentClientSalsa.class);
 
-	protected SalsaStub salsa;
+	protected SalsaClient salsa;
 
 	public DeploymentClientSalsa() {
-		salsa = new SalsaStub();
+		salsa = new SalsaClient();
 	}
 
 	@Override

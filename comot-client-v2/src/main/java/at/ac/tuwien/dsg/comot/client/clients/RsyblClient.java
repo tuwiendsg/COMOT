@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.client.stub;
+package at.ac.tuwien.dsg.comot.client.clients;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -13,9 +13,9 @@ import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.abstractModelXML.Cl
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
-public class RsyblStub extends CoreServiceStub {
+public class RsyblClient extends CoreServiceClient {
 
-	private final Logger log = LoggerFactory.getLogger(RsyblStub.class);
+	private final Logger log = LoggerFactory.getLogger(RsyblClient.class);
 
 	protected static final String DEF_BASE_PATH = "/rSYBL/restWS";
 
@@ -28,19 +28,19 @@ public class RsyblStub extends CoreServiceStub {
 	protected static final String STOP_CONTROL_PATH = "{id}/stopControl";
 	protected static final String REPLACE_REQUIREMENTS_PATH = "{id}/elasticityRequirements/xml";
 
-	public RsyblStub() {
+	public RsyblClient() {
 		this(DEF_HOST, DEF_PORT);
 	}
 
-	public RsyblStub(String host) {
+	public RsyblClient(String host) {
 		this(host, DEF_PORT, DEF_BASE_PATH);
 	}
 
-	public RsyblStub(String host, int port) {
+	public RsyblClient(String host, int port) {
 		this(host, port, DEF_BASE_PATH);
 	}
 
-	public RsyblStub(String host, int port, String basePath) {
+	public RsyblClient(String host, int port, String basePath) {
 		super(host, port, basePath);
 	}
 

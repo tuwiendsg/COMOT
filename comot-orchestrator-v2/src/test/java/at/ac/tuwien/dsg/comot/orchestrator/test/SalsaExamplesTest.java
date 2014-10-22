@@ -45,15 +45,15 @@ public class SalsaExamplesTest extends AbstractTest {
 	public void testExecutableOnVM() throws CoreServiceException, JAXBException, IOException {
 
 		CloudService service = ExampleExecutableOnVM.build();
-/*
+
 		CompositionRulesConfiguration rules = TestUtils.loadMetricCompositionRules(service.getId(),
 				service.getMetricCompositonRulesFile());
 
 		String effects = TestUtils.loadFile(service.getEffectsCompositonRulesFile());
 
 		log.info(effects);
-*/
-		orchestrator.deploy(service);
+
+		orchestrator.deployAndControl(service, rules, effects);
 
 	}
 

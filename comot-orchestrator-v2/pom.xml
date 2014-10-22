@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>comot-orchestrator-v2</artifactId>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 	<name>COMOT Orchestrator</name>
 
 	<parent>
@@ -51,6 +51,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<scope>test</scope>
 		</dependency>
@@ -69,6 +73,19 @@
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>9.0.0.RC2</version>
+				<configuration>
+					<scanIntervalSeconds>0</scanIntervalSeconds>
+					<httpConnector>
+						<port>8380</port>
+					</httpConnector>
+					<contextXml>${basedir}/src/main/webapp/WEB-INF/jetty-context.xml</contextXml>
+					<!-- <webApp> <contextPath>/app</contextPath> </webApp>-->
+				</configuration>
+			</plugin>
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>2.7</version>

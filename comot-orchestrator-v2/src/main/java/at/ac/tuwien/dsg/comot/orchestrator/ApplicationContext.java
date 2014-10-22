@@ -1,10 +1,12 @@
-package at.ac.tuwien.dsg.comot.client.test;
+package at.ac.tuwien.dsg.comot.orchestrator;
 
 import javax.annotation.Resource;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.core.env.Environment;
 
 import at.ac.tuwien.dsg.comot.client.ControlClientRsybl;
@@ -15,9 +17,11 @@ import at.ac.tuwien.dsg.comot.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.common.coreservices.MonitoringClient;
 
 @Configuration
-// @PropertySource({ "classpath:spring/properties/application.properties" })
-@ComponentScan({ "at.ac.tuwien.dsg.comot.client" })
-public class TestClientContext {
+//@PropertySource({ "classpath:spring/properties/application.properties" })
+//@Import()
+@ImportResource({"classpath:META-INF/cxf/cxf.xml", "classpath:WEB-INF/beans.xml"})
+@ComponentScan({ "at.ac.tuwien.dsg.comot.orchestrator" })
+public class ApplicationContext {
 
 	@Resource
 	public Environment env;
