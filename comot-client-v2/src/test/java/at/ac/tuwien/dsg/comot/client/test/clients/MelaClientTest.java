@@ -18,6 +18,7 @@ import at.ac.tuwien.dsg.comot.client.test.AbstractTest;
 import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;
+import at.ac.tuwien.dsg.comot.core.api.ToscaDescriptionBuilderImpl;
 import at.ac.tuwien.dsg.comot.core.test.TestUtils;
 import at.ac.tuwien.dsg.comot.core.test.samples.ExampleDeployOneVM;
 import at.ac.tuwien.dsg.comot.core.test.samples.ExampleExecutableOnVM;
@@ -74,7 +75,9 @@ public class MelaClientTest extends AbstractTest {
 
 	@Test
 	public void helperDeploy() throws CoreServiceException {
-		salsa.deploy(serviceTemplate);
+		
+		
+		salsa.deploy(new ToscaDescriptionBuilderImpl().toXml(serviceTemplate));
 	}
 
 	@Test

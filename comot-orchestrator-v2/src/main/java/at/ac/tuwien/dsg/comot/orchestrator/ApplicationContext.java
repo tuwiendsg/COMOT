@@ -19,7 +19,7 @@ import at.ac.tuwien.dsg.comot.common.coreservices.MonitoringClient;
 @Configuration
 //@PropertySource({ "classpath:spring/properties/application.properties" })
 //@Import()
-@ImportResource({"classpath:META-INF/cxf/cxf.xml", "classpath:WEB-INF/beans.xml"})
+//@ImportResource({"classpath:WEB-INF/beans.xml"})
 @ComponentScan({ "at.ac.tuwien.dsg.comot.orchestrator" })
 public class ApplicationContext {
 

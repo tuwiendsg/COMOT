@@ -7,14 +7,14 @@ import static org.junit.Assert.fail;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityState;
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityType;
 import at.ac.tuwien.dsg.comot.client.clients.SalsaClient;
 import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;
+import at.ac.tuwien.dsg.comot.core.api.ToscaDescriptionBuilder;
+import at.ac.tuwien.dsg.comot.core.api.ToscaDescriptionBuilderImpl;
 import at.ac.tuwien.dsg.comot.core.test.samples.ExampleDeployOneVM;
 
 public class SalsaClientTest {
@@ -23,6 +23,7 @@ public class SalsaClientTest {
 	
 	private SalsaClient salsa;
 	private CloudService serviceTemplate;
+	protected ToscaDescriptionBuilder toscaBuilder;
 
 	@Before
 	public void setup() {
@@ -43,7 +44,7 @@ public class SalsaClientTest {
 		int countIter = 0;
 
 		// deploy
-		salsa.deploy(serviceTemplate);
+		salsa.deploy(new ToscaDescriptionBuilderImpl().toXml(serviceTemplate));
 
 		do {
 
@@ -124,7 +125,7 @@ public class SalsaClientTest {
 
 	@Test
 	public void testDeploy() throws CoreServiceException {
-		salsa.deploy(serviceTemplate);
+		salsa.deploy(new ToscaDescriptionBuilderImpl().toXml(serviceTemplate));
 	}
 
 	@Test

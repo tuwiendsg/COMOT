@@ -4,12 +4,16 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
+import org.json.JSONObject;
+import org.json.XML;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;
+import at.ac.tuwien.dsg.comot.core.api.ToscaDescriptionBuilderImpl;
 import at.ac.tuwien.dsg.comot.core.test.TestUtils;
 import at.ac.tuwien.dsg.comot.core.test.samples.ExampleDeployOneVM;
 import at.ac.tuwien.dsg.comot.core.test.samples.ExampleExecutableOnVM;
@@ -40,7 +44,7 @@ public class SalsaExamplesTest extends AbstractTest {
 		orchestrator.deployAndControl(service, rules, effects);
 
 	}
-	
+
 	@Test
 	public void testExecutableOnVM() throws CoreServiceException, JAXBException, IOException {
 
@@ -54,6 +58,20 @@ public class SalsaExamplesTest extends AbstractTest {
 		log.info(effects);
 
 		orchestrator.deployAndControl(service, rules, effects);
+
+	}
+
+	@Test
+	public void testConverting() {
+
+		CloudService service = ExampleExecutableOnVM.build();
+
+		String xml = new ToscaDescriptionBuilderImpl().toXml(service);
+		log.info("xml: " + xml);
+
+		JSONObject json = XML.toJSONObject(xml);
+
+		log.info("json: " + json);
 
 	}
 

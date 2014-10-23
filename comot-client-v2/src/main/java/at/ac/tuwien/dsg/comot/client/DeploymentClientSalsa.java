@@ -11,22 +11,37 @@ import at.ac.tuwien.dsg.comot.client.clients.SalsaClient;
 import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;
+import at.ac.tuwien.dsg.comot.core.api.ToscaDescriptionBuilder;
+import at.ac.tuwien.dsg.comot.core.api.ToscaDescriptionBuilderImpl;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
-
 
 public class DeploymentClientSalsa implements DeploymentClient {
 
 	private final Logger log = LoggerFactory.getLogger(DeploymentClientSalsa.class);
 
 	protected SalsaClient salsa;
+	// @Autowired
+	protected ToscaDescriptionBuilder toscaBuilder;
 
 	public DeploymentClientSalsa() {
+		
+		toscaBuilder = new ToscaDescriptionBuilderImpl();
+		// toscaBuilder.setValidating(true); // TODO validation fails
+		
 		salsa = new SalsaClient();
 	}
 
 	@Override
 	public String deploy(CloudService CloudService) throws CoreServiceException {
-		return salsa.deploy(CloudService);
+
+		String toscaDescriptionXml = toscaBuilder.toXml(CloudService);
+
+		return salsa.deploy(toscaDescriptionXml);
+	}
+	
+	@Override
+	public String deploy(String toscaDescriptionXml) throws CoreServiceException {
+		return salsa.deploy(toscaDescriptionXml);
 	}
 
 	@Override

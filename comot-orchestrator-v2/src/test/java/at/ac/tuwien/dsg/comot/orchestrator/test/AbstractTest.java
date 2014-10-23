@@ -13,14 +13,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import at.ac.tuwien.dsg.comot.client.test.TestClientContext;
-import at.ac.tuwien.dsg.comot.common.coreservices.ControlClient;
-import at.ac.tuwien.dsg.comot.common.coreservices.DeploymentClient;
-import at.ac.tuwien.dsg.comot.common.coreservices.MonitoringClient;
+import at.ac.tuwien.dsg.comot.core.ComotContext;
+import at.ac.tuwien.dsg.comot.core.api.ToscaDescriptionBuilder;
 import at.ac.tuwien.dsg.comot.orchestrator.ComotOrchestrator;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
-@ContextConfiguration(classes = { TestClientContext.class, TestOrchestratorContext.class })
+@ContextConfiguration(classes = { TestClientContext.class, TestOrchestratorContext.class, ComotContext.class })
 public abstract class AbstractTest {
 
 	protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -30,6 +29,9 @@ public abstract class AbstractTest {
 	
 	@Autowired
 	protected ComotOrchestrator orchestrator;
+	
+	@Autowired
+	protected ToscaDescriptionBuilder toscaBuilder;
 	
 
 }

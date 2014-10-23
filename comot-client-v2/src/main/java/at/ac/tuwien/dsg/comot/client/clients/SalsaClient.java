@@ -9,9 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.logging.Markers;
-import at.ac.tuwien.dsg.comot.common.model.CloudService;
-import at.ac.tuwien.dsg.comot.core.api.ToscaDescriptionBuilder;
-import at.ac.tuwien.dsg.comot.core.api.ToscaDescriptionBuilderImpl;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 
 public class SalsaClient extends CoreServiceClient {
@@ -27,8 +24,6 @@ public class SalsaClient extends CoreServiceClient {
 	protected static final String STATUS_PATH = "services/{serviceId}";
 	protected static final String DEPLOYMENT_INFO_PATH = "services/tosca/{serviceId}/sybl";
 
-	protected final ToscaDescriptionBuilder toscaBuilder;
-
 	public SalsaClient() {
 		this(DEF_HOST, DEF_PORT);
 	}
@@ -43,17 +38,12 @@ public class SalsaClient extends CoreServiceClient {
 
 	public SalsaClient(String host, int port, String basePath) {
 		super(host, port, basePath);
-
-		toscaBuilder = new ToscaDescriptionBuilderImpl();
-		// toscaBuilder.setValidating(true); // TODO validation fails
 	}
 
-	public String deploy(CloudService CloudService) throws CoreServiceException {
-
-		String toscaDescriptionXml = toscaBuilder.toXml(CloudService);
+	public String deploy(String toscaDescriptionXml) throws CoreServiceException {
 
 		if (log.isDebugEnabled()) {
-			log.debug(Markers.CLIENT, "Deploying cloud application '{}'", CloudService.getId());
+			log.debug(Markers.CLIENT, "Deploying cloud application");
 			log.debug(Markers.CLIENT, "TOSCA: {}", toscaDescriptionXml);
 		}
 
@@ -67,7 +57,7 @@ public class SalsaClient extends CoreServiceClient {
 		String serviceId = response.readEntity(String.class);
 
 		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "Successfully deployed '{}'. Response: '{}'", CloudService.getId(),
+			log.info(Markers.CLIENT, "Successfully deployed. Response: '{}'", 
 					serviceId);
 		}
 

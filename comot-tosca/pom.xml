@@ -14,11 +14,9 @@
 	<build>
 		<plugins>
 			<plugin>
-				<!--<groupId>org.codehaus.mojo</groupId> <artifactId>jaxb2-maven-plugin</artifactId> 
-					<version>1.5</version> -->
 				<groupId>org.jvnet.jaxb2.maven2</groupId>
 				<artifactId>maven-jaxb2-plugin</artifactId>
-				<version>0.8.3</version>
+				<version>0.11.0</version>
 				<executions>
 					<execution>
 						<goals>
@@ -47,7 +45,7 @@
 					<dependency>
 						<groupId>org.jvnet.jaxb2_commons</groupId>
 						<artifactId>jaxb2-basics</artifactId>
-						<version>0.6.4</version>
+						<version>0.9.0</version>
 					</dependency>
 				</dependencies>
 			</plugin>
