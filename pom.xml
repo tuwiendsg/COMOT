@@ -21,11 +21,11 @@
 
 	<modules>
 		<module>comot-core</module>
-		<module>comot-client-v2</module>
+		<module>comot-cs</module>
 		<module>comot-tosca</module>
 		<module>comot-common</module>
 		<module>comot-bundles</module>
-		<module>comot-orchestrator-v2</module>
+		<module>comot-ui</module>
 		<module>comot-visualization-service</module>
 	</modules>
 
@@ -108,7 +108,7 @@
 			</dependency>
 			<dependency>
 				<groupId>at.ac.tuwien.dsg.comot</groupId>
-				<artifactId>comot-client-v2</artifactId>
+				<artifactId>comot-cs</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
@@ -119,11 +119,6 @@
 			<dependency>
 				<groupId>at.ac.tuwien.dsg.comot</groupId>
 				<artifactId>comot-tosca</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>at.ac.tuwien.dsg.comot</groupId>
-				<artifactId>comot-orchestrator-v2</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>

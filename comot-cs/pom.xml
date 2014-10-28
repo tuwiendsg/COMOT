@@ -1,9 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>comot-core</artifactId>
+	<artifactId>comot-cs</artifactId>
 	<packaging>jar</packaging>
-	<name>COMOT Core</name>
+	<name>COMOT Cloud Services</name>
+	<description>Connectors to core services through REST</description>
 	<parent>
 		<groupId>at.ac.tuwien.dsg.comot</groupId>
 		<artifactId>comot-parent</artifactId>
@@ -12,30 +13,35 @@
 	</parent>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.4.3</version>
+		</dependency>
 
+		<dependency>
+			<groupId>at.ac.tuwien.dsg.comot</groupId>
+			<artifactId>comot-tosca</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-common</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
-			<artifactId>comot-cs</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>at.ac.tuwien.dsg.comot</groupId>
-			<artifactId>comot-cs</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-common</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
-
 
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -52,14 +58,14 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
+			<groupId>at.ac.tuwien.mela</groupId>
+			<artifactId>MELA-Common</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>at.ac.tuwien.dsg.cloud.salsa</groupId>
 			<artifactId>salsa-common</artifactId>
 		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -70,9 +76,6 @@
 				<version>2.5</version>
 				<executions>
 					<execution>
-						<configuration>
-							<forceCreation>true</forceCreation>
-						</configuration>
 						<goals>
 							<goal>test-jar</goal>
 						</goals>
