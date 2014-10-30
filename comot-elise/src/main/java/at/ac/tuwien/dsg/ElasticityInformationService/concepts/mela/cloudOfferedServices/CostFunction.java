@@ -25,7 +25,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import at.ac.tuwien.dsg.ElasticityInformationService.concepts.Entity;
+import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.neo4j.annotation.NodeEntity;
+
+import at.ac.tuwien.dsg.ElasticityInformationService.concepts.ServiceEntity;
 import at.ac.tuwien.dsg.ElasticityInformationService.concepts.Link;
 
 /**
@@ -34,9 +37,9 @@ import at.ac.tuwien.dsg.ElasticityInformationService.concepts.Link;
  * @E-mail: d.moldovan@dsg.tuwien.ac.at
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "CostFunction")
-public class CostFunction extends Entity {
+@NodeEntity
+@TypeAlias("CostFunction")
+public class CostFunction extends ServiceEntity {
 
     //utility for which cost is applied
 //    private serviceUnit utility;
@@ -45,13 +48,13 @@ public class CostFunction extends Entity {
     //Is Entity to support ServiceUnit, or Resource and Quality options (you pay separately per I/O performance, etc)
 
     
-    private Set<Entity> appliedInConjunctionWith;
+    private Set<ServiceEntity> appliedInConjunctionWith;
     
     private Set<CostElement> costElements;
 
     {
         costElements = new HashSet<CostElement>();
-        appliedInConjunctionWith = new HashSet<Entity>();
+        appliedInConjunctionWith = new HashSet<ServiceEntity>();
     }
 
     public CostFunction() {
@@ -61,11 +64,11 @@ public class CostFunction extends Entity {
         super(name);
     }
 
-    public Set<Entity> getAppliedInConjunctionWith() {
+    public Set<ServiceEntity> getAppliedInConjunctionWith() {
         return appliedInConjunctionWith;
     }
 
-    public void setAppliedInConjunctionWith(Set<Entity> appliedInConjunctionWith) {
+    public void setAppliedInConjunctionWith(Set<ServiceEntity> appliedInConjunctionWith) {
         this.appliedInConjunctionWith = appliedInConjunctionWith;
     }
 
@@ -75,7 +78,7 @@ public class CostFunction extends Entity {
 
     public List<QualityType> getAppliedInConjunctionWithQuality() {
         List<QualityType> list = new ArrayList<QualityType>();
-        for (Entity e : appliedInConjunctionWith) {
+        for (ServiceEntity e : appliedInConjunctionWith) {
             if (e instanceof QualityType) {
                 list.add((QualityType) e);
             }
@@ -85,7 +88,7 @@ public class CostFunction extends Entity {
 
     public List<ResourceType> getAppliedInConjunctionWithResource() {
         List<ResourceType> list = new ArrayList<ResourceType>();
-        for (Entity e : appliedInConjunctionWith) {
+        for (ServiceEntity e : appliedInConjunctionWith) {
             if (e instanceof ResourceType) {
                 list.add((ResourceType) e);
             }
@@ -95,7 +98,7 @@ public class CostFunction extends Entity {
 
     public List<CloudOfferedServiceUnit> getAppliedInConjunctionWithServiceUnit() {
         List<CloudOfferedServiceUnit> list = new ArrayList<CloudOfferedServiceUnit>();
-        for (Entity e : appliedInConjunctionWith) {
+        for (ServiceEntity e : appliedInConjunctionWith) {
             if (e instanceof CloudOfferedServiceUnit) {
                 list.add((CloudOfferedServiceUnit) e);
             }
@@ -128,7 +131,7 @@ public class CostFunction extends Entity {
         costElements.remove(ce);
     }
 
-    public void addUtilityAppliedInConjunctionWith(Entity u) {
+    public void addUtilityAppliedInConjunctionWith(ServiceEntity u) {
         if (u instanceof CostFunction) {
             System.err.println("Adding " + u.name + " as in conjunction with for " + this.name);
             new Exception().printStackTrace();
@@ -136,7 +139,7 @@ public class CostFunction extends Entity {
         this.appliedInConjunctionWith.add(u);
     }
 
-    public void removeUtilityAppliedInConjunctionWith(Entity u) {
+    public void removeUtilityAppliedInConjunctionWith(ServiceEntity u) {
         this.appliedInConjunctionWith.remove(u);
     }
 

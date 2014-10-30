@@ -31,7 +31,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import at.ac.tuwien.dsg.ElasticityInformationService.concepts.Entity;
+import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.neo4j.annotation.NodeEntity;
+
+import at.ac.tuwien.dsg.ElasticityInformationService.concepts.ServiceEntity;
 import at.ac.tuwien.dsg.ElasticityInformationService.concepts.mela.helper.CostIntervalMapAdapter;
 import at.ac.tuwien.dsg.ElasticityInformationService.concepts.mela.monitoringConcepts.Metric;
 import at.ac.tuwien.dsg.ElasticityInformationService.concepts.mela.monitoringConcepts.MetricValue;
@@ -42,9 +45,9 @@ import at.ac.tuwien.dsg.ElasticityInformationService.concepts.mela.monitoringCon
  * @E-mail: d.moldovan@dsg.tuwien.ac.at
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "CostFunction")
-public class CostElement extends Entity implements Comparable<CostElement> {
+@NodeEntity
+@TypeAlias("CostElement")
+public class CostElement extends ServiceEntity implements Comparable<CostElement> {
 
     @XmlAttribute(name = "type", required = true)
     private String type;

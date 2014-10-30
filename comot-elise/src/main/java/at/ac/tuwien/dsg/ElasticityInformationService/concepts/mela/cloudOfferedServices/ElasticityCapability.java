@@ -27,7 +27,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import at.ac.tuwien.dsg.ElasticityInformationService.concepts.Entity;
+import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.neo4j.annotation.NodeEntity;
+
+import at.ac.tuwien.dsg.ElasticityInformationService.concepts.ServiceEntity;
 
 /**
  * One elasticity capability has more dependencies, between which we need to choose 1
@@ -36,8 +39,9 @@ import at.ac.tuwien.dsg.ElasticityInformationService.concepts.Entity;
  * @E-mail: d.moldovan@dsg.tuwien.ac.at
  *
  */
-
-public class ElasticityCapability extends Entity {
+@NodeEntity
+@TypeAlias("ElasticityCapability")
+public class ElasticityCapability extends ServiceEntity {
 
 
     private Set<Dependency> dependencies;
@@ -87,8 +91,8 @@ public class ElasticityCapability extends Entity {
         dependencies.removeAll(e);
     }
 
-    public List<Entity> getOptionalDependencies() {
-        List<Entity> optionalDepenencies = new ArrayList<Entity>();
+    public List<ServiceEntity> getOptionalDependencies() {
+        List<ServiceEntity> optionalDepenencies = new ArrayList<ServiceEntity>();
         for (Dependency d : dependencies) {
             if (d.getDependencyType().equals(Type.OPTIONAL_ASSOCIATION)) {
                 optionalDepenencies.add(d.target);
@@ -98,8 +102,8 @@ public class ElasticityCapability extends Entity {
         return optionalDepenencies;
     }
 
-    public List<Entity> getMandatoryDependencies() {
-        List<Entity> optionalDepenencies = new ArrayList<Entity>();
+    public List<ServiceEntity> getMandatoryDependencies() {
+        List<ServiceEntity> optionalDepenencies = new ArrayList<ServiceEntity>();
         for (Dependency d : dependencies) {
             if (d.getDependencyType().equals(Type.MANDATORY_ASSOCIATION)) {
                 optionalDepenencies.add(d.target);
@@ -119,7 +123,7 @@ public class ElasticityCapability extends Entity {
             return null;
         } else {
         	Iterator<Dependency> iter = dependencies.iterator();
-        	Entity target= iter.next().getTarget();
+        	ServiceEntity target= iter.next().getTarget();
 //            Entity target = dependencies.get(0).getTarget();
             return target.getClass();
         }
@@ -173,7 +177,7 @@ public class ElasticityCapability extends Entity {
         //entity for which the characteristic is defined (Resource or Quality)
         //this is abstract: Example: Computing
         @XmlElement(name = "DependencyTarget", required = false)
-        private Entity target;
+        private ServiceEntity target;
 
         @XmlElement(name = "CapabilityTarget", required = false)
         private String dependencyType;
@@ -185,15 +189,15 @@ public class ElasticityCapability extends Entity {
             volatility = new Volatility();
         }
 
-        public Entity getTarget() {
+        public ServiceEntity getTarget() {
             return target;
         }
 
-        public void setTarget(Entity target) {
+        public void setTarget(ServiceEntity target) {
             this.target = target;
         }
 
-        public Dependency withTarget(Entity target) {
+        public Dependency withTarget(ServiceEntity target) {
             this.target = target;
             return this;
         }
@@ -231,7 +235,7 @@ public class ElasticityCapability extends Entity {
         public Dependency() {
         }
 
-        public Dependency(Entity target, String dependencyType) {
+        public Dependency(ServiceEntity target, String dependencyType) {
             this.target = target;
             this.dependencyType = dependencyType;
         }

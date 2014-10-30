@@ -5,7 +5,7 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import at.ac.tuwien.dsg.ElasticityInformationService.concepts.Entity;
+import at.ac.tuwien.dsg.ElasticityInformationService.concepts.ServiceEntity;
 import at.ac.tuwien.dsg.ElasticityInformationService.concepts.mela.helper.PropertiesAdapter;
 import at.ac.tuwien.dsg.ElasticityInformationService.concepts.mela.monitoringConcepts.Metric;
 import at.ac.tuwien.dsg.ElasticityInformationService.concepts.mela.monitoringConcepts.MetricValue;
@@ -14,8 +14,8 @@ public class ServiceIntance {
 	String state;	
 	private Map<Metric, MetricValue> runtimeProperties;
 	
-	private Entity hostOnEntity;	
-	private List<Entity> connecttoEntity;
+	private ServiceEntity hostOnEntity;	
+	private List<ServiceEntity> connecttoEntity;
 
 	public String getState() {
 		return state;

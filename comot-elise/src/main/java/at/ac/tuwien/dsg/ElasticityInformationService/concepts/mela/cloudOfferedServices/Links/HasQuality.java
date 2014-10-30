@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package at.ac.tuwien.dsg.ElasticityInformationService.concepts.mela.cloudOfferedServices;
+package at.ac.tuwien.dsg.ElasticityInformationService.concepts.mela.cloudOfferedServices.Links;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,10 +35,10 @@ import at.ac.tuwien.dsg.ElasticityInformationService.concepts.mela.monitoringCon
  *
  */
 @RelationshipEntity(type = LinkType.CLOUD_OFFER_SERVICE_HAS_QUALITY)
-public class QualityValue extends Link implements Cloneable {
-
-
-//    private Map<Metric, MetricValue> properties;
+public class HasQuality extends Link implements Cloneable {
+	private static final long serialVersionUID = 5680592213196655998L;
+	
+	//    private Map<Metric, MetricValue> properties;
 	 private DynamicProperties metrics = new DynamicPropertiesContainer();
 	 private DynamicProperties metricValue = new DynamicPropertiesContainer();
 
@@ -46,10 +46,10 @@ public class QualityValue extends Link implements Cloneable {
 //        properties = new LinkedHashMap<Metric, MetricValue>();
 //    }
 
-    public QualityValue() {
+    public HasQuality() {
     }
 
-    public QualityValue(String name) {
+    public HasQuality(String name) {
         super(name);
     }
 
@@ -101,8 +101,8 @@ public class QualityValue extends Link implements Cloneable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof QualityValue) {
-        	QualityValue their = (QualityValue) obj;
+        if (obj instanceof HasQuality) {
+        	HasQuality their = (HasQuality) obj;
              Map<Metric, MetricValue> theirProperties = their.getProperties();
              Map<Metric, MetricValue> properties = this.getProperties();
 

@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package at.ac.tuwien.dsg.ElasticityInformationService.concepts.mela.cloudOfferedServices;
+package at.ac.tuwien.dsg.ElasticityInformationService.concepts.mela.cloudOfferedServices.Links;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +23,7 @@ import org.springframework.data.neo4j.annotation.RelationshipEntity;
 import org.springframework.data.neo4j.fieldaccess.DynamicProperties;
 import org.springframework.data.neo4j.fieldaccess.DynamicPropertiesContainer;
 
-import at.ac.tuwien.dsg.ElasticityInformationService.concepts.Entity;
+import at.ac.tuwien.dsg.ElasticityInformationService.concepts.ServiceEntity;
 import at.ac.tuwien.dsg.ElasticityInformationService.concepts.Link;
 import at.ac.tuwien.dsg.ElasticityInformationService.concepts.LinkType;
 import at.ac.tuwien.dsg.ElasticityInformationService.concepts.mela.monitoringConcepts.Metric;
@@ -36,11 +36,11 @@ import at.ac.tuwien.dsg.ElasticityInformationService.concepts.mela.monitoringCon
  *
  */
 @RelationshipEntity(type = LinkType.CLOUD_OFFER_SERVICE_HAS_RESOURCE)
-public class ResourceValue extends Link implements Cloneable {
+public class HasResource extends Link implements Cloneable {
    
 //    private Map<Metric, MetricValue> properties;	
-	
-    private DynamicProperties metrics = new DynamicPropertiesContainer();
+	private static final long serialVersionUID = -8960026477565015538L;
+	private DynamicProperties metrics = new DynamicPropertiesContainer();
     private DynamicProperties metricValue = new DynamicPropertiesContainer();
    
     {
@@ -63,10 +63,10 @@ public class ResourceValue extends Link implements Cloneable {
 //        this.properties = properties;
 //    }
     
-    public ResourceValue() {
+    public HasResource() {
     }
 
-    public ResourceValue(String name) {
+    public HasResource(String name) {
         this.name = name;
     }
 
@@ -101,8 +101,8 @@ public class ResourceValue extends Link implements Cloneable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof ResourceValue) {
-            ResourceValue their = (ResourceValue) obj;
+        if (obj instanceof HasResource) {
+            HasResource their = (HasResource) obj;
             Map<Metric, MetricValue> theirProperties = their.getProperties();
             Map<Metric, MetricValue> properties = this.getProperties();
 

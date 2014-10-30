@@ -1,8 +1,12 @@
-package at.ac.tuwien.dsg.ElasticityInformationService.concepts.salsa.cloudservicestructure;
+package at.ac.tuwien.dsg.ElasticityInformationService.concepts.salsa.cloudservicestructure.Links;
+
+import org.springframework.data.neo4j.annotation.RelationshipEntity;
 
 import at.ac.tuwien.dsg.ElasticityInformationService.concepts.Link;
+import at.ac.tuwien.dsg.ElasticityInformationService.concepts.LinkType;
 
-public class ServiceUnitRequirement extends Link{
+@RelationshipEntity(type=LinkType.SERVICE_UNIT_DEPLOYMENT_DEPENDENCY)
+public class ServiceUnitDeploymentDependency extends Link{
 	
 	String name;
 	DependencyType dependencyType;
@@ -18,15 +22,15 @@ public class ServiceUnitRequirement extends Link{
 		MANDATORY, OPTIONAL, CONFLICT;
 	}
 	
-	public ServiceUnitRequirement() {}
+	public ServiceUnitDeploymentDependency() {}
 	
-	public ServiceUnitRequirement(String name, DependencyType dependencyType){
+	public ServiceUnitDeploymentDependency(String name, DependencyType dependencyType){
 		this.name=  name;
 		this.dependencyType = dependencyType;
 		this.restriction = DependencyRestriction.MANDATORY;
 	}
 	
-	public ServiceUnitRequirement(String name, DependencyType dependencyType, DependencyRestriction restriction){
+	public ServiceUnitDeploymentDependency(String name, DependencyType dependencyType, DependencyRestriction restriction){
 		this.name = name;
 		this.dependencyType = dependencyType;
 		this.restriction = restriction;

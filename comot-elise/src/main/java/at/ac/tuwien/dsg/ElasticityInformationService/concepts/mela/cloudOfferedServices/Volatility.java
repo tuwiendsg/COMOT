@@ -21,7 +21,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import at.ac.tuwien.dsg.ElasticityInformationService.concepts.Entity;
+import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.neo4j.annotation.NodeEntity;
+
+import at.ac.tuwien.dsg.ElasticityInformationService.concepts.ServiceEntity;
 
 /**
  *
@@ -29,7 +32,9 @@ import at.ac.tuwien.dsg.ElasticityInformationService.concepts.Entity;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Volatility")
-public class Volatility extends Entity implements Cloneable {
+@NodeEntity
+@TypeAlias("Volatility")
+public class Volatility extends ServiceEntity implements Cloneable {
 
     @XmlAttribute(name = "minimumLifetimeInHours", required = true)
     private int minimumLifetimeInHours;

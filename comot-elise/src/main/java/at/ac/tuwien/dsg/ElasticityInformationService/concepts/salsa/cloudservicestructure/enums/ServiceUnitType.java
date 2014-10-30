@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.ElasticityInformationService.concepts.salsa.cloudservicestructure;
+package at.ac.tuwien.dsg.ElasticityInformationService.concepts.salsa.cloudservicestructure.enums;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;

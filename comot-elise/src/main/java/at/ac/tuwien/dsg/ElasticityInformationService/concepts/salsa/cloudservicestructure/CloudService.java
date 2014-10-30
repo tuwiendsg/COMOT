@@ -3,9 +3,13 @@ package at.ac.tuwien.dsg.ElasticityInformationService.concepts.salsa.cloudservic
 import java.util.ArrayList;
 import java.util.List;
 
-import at.ac.tuwien.dsg.ElasticityInformationService.concepts.Entity;
+import org.springframework.data.neo4j.annotation.NodeEntity;
 
-public class CloudService extends Entity {
+import at.ac.tuwien.dsg.ElasticityInformationService.concepts.ServiceEntity;
+
+@NodeEntity
+public class CloudService extends ServiceEntity {
+	private static final long serialVersionUID = 6885494187731318894L;
 	List<ServiceTopology> topologies;
 
 	public CloudService(){		

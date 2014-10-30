@@ -1,9 +1,9 @@
 package at.ac.tuwien.dsg.ElasticityInformationService.concepts.sybl.elasticityInformation;
 
-import at.ac.tuwien.dsg.ElasticityInformationService.concepts.Entity;
+import at.ac.tuwien.dsg.ElasticityInformationService.concepts.ServiceEntity;
 
 
-public class ElasticityRequirement extends Entity{
+public class ElasticityRequirement extends ServiceEntity{
 	private SYBLAnnotation annotation;
 
 	public SYBLAnnotation getAnnotation() {

@@ -3,21 +3,24 @@ package at.ac.tuwien.dsg.ElasticityInformationService.concepts.mela.cloudOffered
 import java.util.Set;
 
 import org.neo4j.graphdb.Direction;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedToVia;
 
-import at.ac.tuwien.dsg.ElasticityInformationService.concepts.Entity;
+import at.ac.tuwien.dsg.ElasticityInformationService.concepts.ServiceEntity;
 import at.ac.tuwien.dsg.ElasticityInformationService.concepts.LinkType;
+import at.ac.tuwien.dsg.ElasticityInformationService.concepts.mela.cloudOfferedServices.Links.HasQuality;
 
 @NodeEntity
-public class QualityType extends Entity {
+@TypeAlias("QualityType")
+public class QualityType extends ServiceEntity {
 	public QualityType(String name){
 		super.setName(name);
 	}
 	
 	public QualityType(){}
 	
-	@RelatedToVia(type = LinkType.CLOUD_OFFER_SERVICE_HAS_QUALITY, direction=Direction.INCOMING)
-    @Fetch private Set<QualityValue> qualityProperties;
+//	@RelatedToVia(type = LinkType.CLOUD_OFFER_SERVICE_HAS_QUALITY, direction=Direction.INCOMING)
+//    @Fetch private Set<HasQuality> qualityProperties;
 }

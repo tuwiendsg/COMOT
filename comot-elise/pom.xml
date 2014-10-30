@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.1.7.RELEASE</version>
+        <version>1.1.8.RELEASE</version>
     </parent>
 
 <!--     <parent> -->
@@ -20,7 +20,6 @@
 <!--         <relativePath>../pom.xml</relativePath> -->
 <!--         <version>0.0.1-SNAPSHOT</version> -->
 <!--     </parent> -->
-
 
     <properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -32,19 +31,33 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-rest</artifactId>
+<!--        		<version>1.1.8.RELEASE</version> -->
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>                
+        
+<!--         <dependency> -->
+<!--             <groupId>org.springframework</groupId> -->
+<!--             <artifactId>spring-context</artifactId> -->
+<!--         </dependency> -->
+<!--         <dependency> -->
+<!--             <groupId>org.springframework</groupId> -->
+<!--             <artifactId>spring-tx</artifactId> -->
+<!--         </dependency> -->
+<!--         <dependency> -->
+<!--             <groupId>org.springframework.data</groupId> -->
+<!--             <artifactId>spring-data-neo4j</artifactId> -->
+<!--         </dependency> -->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-neo4j</artifactId>
-        </dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-neo4j</artifactId>
+<!-- 			<version>3.2.0.RELEASE</version> -->
+		</dependency>
+        
+        
+        
         <dependency>
              <groupId>org.hibernate</groupId>
              <artifactId>hibernate-validator</artifactId>
@@ -52,10 +65,11 @@
     </dependencies>
 
     <build>
+    	<finalName>comot-elise</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                
                 <configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>

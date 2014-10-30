@@ -2,7 +2,6 @@ package at.ac.tuwien.dsg.ElasticityInformationService.concepts.salsa.cloudservic
 
 import java.io.StringWriter;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
@@ -10,41 +9,38 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.neo4j.graphdb.Direction;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 import org.springframework.data.neo4j.annotation.RelatedToVia;
-import org.springframework.data.neo4j.fieldaccess.DynamicProperties;
-import org.springframework.data.neo4j.fieldaccess.DynamicPropertiesContainer;
 
-import at.ac.tuwien.dsg.ElasticityInformationService.concepts.Entity;
+import at.ac.tuwien.dsg.ElasticityInformationService.concepts.PrimitiveOperation;
+import at.ac.tuwien.dsg.ElasticityInformationService.concepts.ServiceEntity;
 import at.ac.tuwien.dsg.ElasticityInformationService.concepts.LinkType;
-import at.ac.tuwien.dsg.ElasticityInformationService.concepts.salsa.cloudservicestructure.ServiceUnitRequirement.DependencyRestriction;
-import at.ac.tuwien.dsg.ElasticityInformationService.concepts.salsa.cloudservicestructure.ServiceUnitRequirement.DependencyType;
+import at.ac.tuwien.dsg.ElasticityInformationService.concepts.salsa.cloudservicestructure.Links.ServiceUnitDeploymentDependency;
+import at.ac.tuwien.dsg.ElasticityInformationService.concepts.salsa.cloudservicestructure.Links.ServiceUnitDeploymentDependency.DependencyRestriction;
+import at.ac.tuwien.dsg.ElasticityInformationService.concepts.salsa.cloudservicestructure.Links.ServiceUnitDeploymentDependency.DependencyType;
+import at.ac.tuwien.dsg.ElasticityInformationService.concepts.salsa.cloudservicestructure.configurationTypes.ArtifactDefinition;
+import at.ac.tuwien.dsg.ElasticityInformationService.concepts.salsa.cloudservicestructure.enums.ServiceUnitType;
 import at.ac.tuwien.dsg.ElasticityInformationService.concepts.sybl.elasticityInformation.ElasticityRequirement;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @NodeEntity
-public class ServiceUnit extends Entity{	
-	private static final long serialVersionUID = 1L;
+@TypeAlias("ServiceUnit")
+public class ServiceUnit extends ServiceEntity{	
+	private static final long serialVersionUID = -8767519259218020488L;
 	
-	// artifact definition
-	ArtifactRepoType artifactRepoType = ArtifactRepoType.DIRECT_URL;
-	BuildType artifactBuildMethod = BuildType.NONE;
-	String artifactRetrievingREF = "";
-	
-		
-	public enum ArtifactRepoType{
-		DIRECT_URL, GITHUB, NONE;
+	{
+		this.type="ServiceUnit";
 	}
 	
-	public enum BuildType{
-		MAVEN, MAKE, NONE;
-	}
+	ServiceUnitType serviceUnitType;
 	
+	ArtifactDefinition artifact = new ArtifactDefinition();
 	
-	Set<PrimitiveOperation> primitiveOperations= new HashSet<PrimitiveOperation>();
-	
-	Set<String> deploymentCapabilities = new HashSet<String>();	
+	Set<String> deploymentCapabilities = new HashSet<String>();
 	
 		
 	/** BELOW IS THE LINK DEFINITION **/
@@ -52,26 +48,32 @@ public class ServiceUnit extends Entity{
 	// The set of links
 	@RelatedToVia(type = LinkType.SERVICE_UNIT_DEPLOYMENT_DEPENDENCY, direction = Direction.OUTGOING)
 	@Fetch
-	Set<ServiceUnitRequirement> deploymentRequirements = new HashSet<ServiceUnitRequirement>();	// more complex with type and restriction
+	@JsonIgnore
+	Set<ServiceUnitDeploymentDependency> deploymentRequirements = new HashSet<ServiceUnitDeploymentDependency>();	// more complex with type and restriction
 	
 	// The set of related nodes which this node require
 	@RelatedTo(type = LinkType.SERVICE_UNIT_DEPLOYMENT_DEPENDENCY, direction=Direction.OUTGOING)
 	@Fetch
-	Set<ServiceUnit>  relatedServiceunits = new HashSet<ServiceUnit>();
-	
+	@JsonIgnore
+	Set<ServiceUnit>  requiredServiceunits = new HashSet<ServiceUnit>();
+
 	// The set of related nodes which depend on this node
 	@RelatedTo(type = LinkType.SERVICE_UNIT_DEPLOYMENT_DEPENDENCY, direction=Direction.INCOMING)
 	@Fetch
-	Set<ServiceUnit> dependOnMeDeployment = new HashSet<ServiceUnit>();
-	
+	@JsonIgnore
+	Set<ServiceUnit> dependentDeployment = new HashSet<ServiceUnit>();	
+
 	// for rSYBL
+	@JsonIgnore
 	Set<ElasticityRequirement> elasticityRequirement = new HashSet<ElasticityRequirement>();	// SYBL
 	
-	public ServiceUnitRequirement requireOtherServiceUnit(ServiceUnit su, String name, DependencyType type, DependencyRestriction restriction){
-		ServiceUnitRequirement req = new ServiceUnitRequirement(name, type, restriction);
+	
+	
+	public ServiceUnitDeploymentDependency requireOtherServiceUnit(ServiceUnit su, String name, DependencyType type, DependencyRestriction restriction){
+		ServiceUnitDeploymentDependency req = new ServiceUnitDeploymentDependency(name, type, restriction);
 		req.setSource(this);
 		req.setTarget(su);
-		this.deploymentRequirements.add(req);
+		//this.deploymentRequirements.add(req);
 		return req;
 	}
 	
@@ -99,9 +101,9 @@ public class ServiceUnit extends Entity{
 	
 	
 	
-	public void addRequirement(ServiceUnitRequirement req){
-		this.deploymentRequirements.add(req);		
-	}
+//	public void addRequirement(ServiceUnitRequirement req){
+//		this.deploymentRequirements.add(req);		
+//	}
 	
 	public void addCapability(String capa){		
 		this.deploymentCapabilities.add(capa);
@@ -119,52 +121,30 @@ public class ServiceUnit extends Entity{
 		this.primitiveOperations = primitiveOperations;
 	}
 
-	public void setElasticityRequirement(Set<ElasticityRequirement> elasticityRequirement) {
-		this.elasticityRequirement = elasticityRequirement;
-	}
+//	public void setElasticityRequirement(Set<ElasticityRequirement> elasticityRequirement) {
+//		this.elasticityRequirement = elasticityRequirement;
+//	}
 
 	public void setDeploymentCapabilities(Set<String> deploymentCapabilities) {
 		this.deploymentCapabilities = deploymentCapabilities;
 	}
 
-	public Set<ServiceUnitRequirement> getDeploymentRequirements() {
-		return deploymentRequirements;
-	}
+//	public Set<ServiceUnitRequirement> getDeploymentRequirements() {
+//		return deploymentRequirements;
+//	}
+//
+//	public void setDeploymentRequirements(Set<ServiceUnitRequirement> deploymentRequirements) {
+//		this.deploymentRequirements = deploymentRequirements;
+//	}
 
-	public void setDeploymentRequirements(Set<ServiceUnitRequirement> deploymentRequirements) {
-		this.deploymentRequirements = deploymentRequirements;
-	}
-
-	public Set<ServiceUnit> getRelatedServiceunits() {
-		return relatedServiceunits;
-	}
-
-	public void setRelatedServiceunits(Set<ServiceUnit> relatedServiceunits) {
-		this.relatedServiceunits = relatedServiceunits;
-	}
+//	public Set<ServiceUnit> getRelatedServiceunits() {
+//		return relatedServiceunits;
+//	}
+//
+//	public void setRelatedServiceunits(Set<ServiceUnit> relatedServiceunits) {
+//		this.relatedServiceunits = relatedServiceunits;
+//	}
 	
-	public ArtifactRepoType getArtifactRepoType() {
-		return artifactRepoType;
-	}
-
-	public void setArtifactRepoType(ArtifactRepoType artifactRepoType) {
-		this.artifactRepoType = artifactRepoType;
-	}
-
-	public BuildType getArtifactBuildMethod() {
-		return artifactBuildMethod;
-	}
-
-	public void setArtifactBuildMethod(BuildType artifactBuildMethod) {
-		this.artifactBuildMethod = artifactBuildMethod;
-	}
-
-	public String getArtifactRetrievingREF() {
-		return artifactRetrievingREF;
-	}
-
-	public void setArtifactRetrievingREF(String artifactRetrievingREF) {
-		this.artifactRetrievingREF = artifactRetrievingREF;
-	}
+	
 		
 }

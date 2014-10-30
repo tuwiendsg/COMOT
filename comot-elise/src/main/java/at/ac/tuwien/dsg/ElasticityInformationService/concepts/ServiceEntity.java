@@ -18,78 +18,80 @@ package at.ac.tuwien.dsg.ElasticityInformationService.concepts;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.HashSet;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.neo4j.graphdb.Direction;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
-import org.springframework.data.neo4j.annotation.RelatedTo;
-import org.springframework.data.neo4j.support.index.IndexType;
 
 @NodeEntity
-public class Entity implements Serializable {
+@TypeAlias("Entity")
+public class ServiceEntity implements Serializable {
+	private static final long serialVersionUID = 1350185319207049973L;
 
-    @GraphId
+	@GraphId
     public Long id;
    
     @Indexed(unique=true)
     public String name;
     
+    @Indexed
     public String type;
     
-    @RelatedTo(type="RelatedEntity", direction=Direction.BOTH)
-    public Set<Entity> relatedNodes;
+    public Set<PrimitiveOperation> primitiveOperations= new HashSet<PrimitiveOperation>();
+    
+
+//    @RelatedTo(type=LinkType.ENTITY_LINK, direction=Direction.BOTH)
+//    @Fetch
+//    @JsonIgnore
+//    public Set<Entity> relatedNodes;
 
    
 
-    public Entity() {
+    public ServiceEntity() {
     }
    
-    public Entity(String name) {
+    public ServiceEntity(String name) {
         this.name = name;
     }
 
-    public Entity(long id, String name) {
+    public ServiceEntity(long id, String name) {
         this.id = id;
         this.name = name;
     }
     
-    
-    public Long getId() {
-		return id;
-	}
+//    
+//    public Long getId() {
+//		return id;
+//	}
+//
+//	public void setId(Long id) {
+//		this.id = id;
+//	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public final String getName() {
-        return name;
-    }
+//	public final String getName() {
+//        return name;
+//    }
 
     public final void setName(String name) {
         this.name = name;
     }
-    
-    public String getType() {
-    	if (type==null){
-    		type = "Entity";
-    	}
-		return type;
-	}
+   
+//    public String getType() {
+//    	if (type==null){
+//    		type = "Entity";
+//    	}
+//		return type;
+//	}
 
-	public void setType(String type) {
-		this.type = type;
-	}
+//	public void setType(String type) {
+//		this.type = type;
+//	}
 
-	public Entity clone() {
-        return new Entity(id, name);
+	public ServiceEntity clone() {
+        return new ServiceEntity(id, name);
     }
 
     @Override
@@ -107,7 +109,7 @@ public class Entity implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Entity other = (Entity) obj;
+        final ServiceEntity other = (ServiceEntity) obj;
         if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
             return false;
         }

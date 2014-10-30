@@ -9,17 +9,18 @@ import org.springframework.data.neo4j.annotation.RelationshipEntity;
 import org.springframework.data.neo4j.annotation.StartNode;
 
 
-@RelationshipEntity
+@RelationshipEntity(type=LinkType.ENTITY_LINK)
 public class Link implements Serializable{
-    @GraphId
+	private static final long serialVersionUID = -5023121915046141976L;
+	@GraphId
     public Long id;
     public String name;
    
-	@StartNode Entity source;
-	@EndNode Entity target;
+	@StartNode ServiceEntity source;
+	@EndNode ServiceEntity target;
 	//protected String type;
 
-	public Link(Entity source, Entity target) throws URISyntaxException {
+	public Link(ServiceEntity source, ServiceEntity target) {
 		this.source = source;
 		this.target = target;
 	}
@@ -28,20 +29,20 @@ public class Link implements Serializable{
 	public Link(String name){
 		this.name = name;
 	}
+	
+//	public Entity getSource() {
+//		return source;
+//	}
 
-	public Entity getSource() {
-		return source;
-	}
-
-	public void setSource(Entity source) {
+	public void setSource(ServiceEntity source) {
 		this.source = source;
 	}
 
-	public Entity getTarget() {
-		return target;
-	}
+//	public Entity getTarget() {
+//		return target;
+//	}
 
-	public void setTarget(Entity target) {
+	public void setTarget(ServiceEntity target) {
 		this.target = target;
 	}
 

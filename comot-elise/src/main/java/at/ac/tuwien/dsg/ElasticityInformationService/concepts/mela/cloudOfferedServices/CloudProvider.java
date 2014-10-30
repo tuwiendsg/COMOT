@@ -16,13 +16,10 @@
  */
 package at.ac.tuwien.dsg.ElasticityInformationService.concepts.mela.cloudOfferedServices;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
-import at.ac.tuwien.dsg.ElasticityInformationService.concepts.Entity;
-import at.ac.tuwien.dsg.ElasticityInformationService.concepts.salsa.cloudservicestructure.ServiceUnit;
+import at.ac.tuwien.dsg.ElasticityInformationService.concepts.ServiceEntity;
 
 /**
  *
@@ -31,15 +28,17 @@ import at.ac.tuwien.dsg.ElasticityInformationService.concepts.salsa.cloudservice
  *
  */
 @NodeEntity
-public class CloudProvider extends Entity {
-
-    private Set<CloudOfferedServiceUnit> serviceUnits;	// e.g m1.small VM, float IP
-	private Set<ServiceUnit> serviceProviding;	// e.g. VM
+@TypeAlias("CloudProvider")
+public class CloudProvider extends ServiceEntity {
+	private static final long serialVersionUID = -1215693843494389485L;
+	
+	//private Set<CloudOfferedServiceUnit> serviceUnits;	// e.g m1.small VM, float IP
+	//private Set<ServiceUnit> serviceProviding;	// e.g. VM
     
-    private String type = Type.IAAS;
+    private String serviceType = Type.IAAS;
 
     {
-        serviceUnits = new HashSet<CloudOfferedServiceUnit>();
+//        serviceUnits = new HashSet<CloudOfferedServiceUnit>();
     }
 
     public CloudProvider() {
@@ -51,49 +50,51 @@ public class CloudProvider extends Entity {
 
     public CloudProvider(String name, String type) {
         super(name);
-        this.type = type;
+        this.serviceType = type;
     }
 
-    public Set<CloudOfferedServiceUnit> getServiceUnits() {
-        return serviceUnits;
-    }
+//    public Set<CloudOfferedServiceUnit> getServiceUnits() {
+//        return serviceUnits;
+//    }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public void addServiceUnit(CloudOfferedServiceUnit u) {
-        this.serviceUnits.add(u);
-    }
-
-    public void removeServiceUnit(CloudOfferedServiceUnit u) {
-        this.serviceUnits.remove(u);
-    }
     
-    public void addServiceProviding(ServiceUnit u){
-    	this.serviceProviding.add(u);
-    }
-    
-    public void removeServiceProviding(ServiceUnit u){
-    	this.serviceProviding.remove(u);
-    }
 
-    public void setServiceUnits(Set<CloudOfferedServiceUnit> serviceUnits) {
-        this.serviceUnits = serviceUnits;
-    }
-    
+//    public void addServiceUnit(CloudOfferedServiceUnit u) {
+//        this.serviceUnits.add(u);
+//    }
+//
+//    public void removeServiceUnit(CloudOfferedServiceUnit u) {
+//        this.serviceUnits.remove(u);
+//    }
+//    
+//    public void addServiceProviding(ServiceUnit u){
+//    	this.serviceProviding.add(u);
+//    }
+//    
+//    public void removeServiceProviding(ServiceUnit u){
+//    	this.serviceProviding.remove(u);
+//    }
+//
+//    public void setServiceUnits(Set<CloudOfferedServiceUnit> serviceUnits) {
+//        this.serviceUnits = serviceUnits;
+//    }
+//    
     
 
     @Override
     public String toString() {
-        return "CloudProvider{" + "name=" + name + ", type=" + type + '}';
+        return "CloudProvider{" + "name=" + name + ", type=" + serviceType + '}';
     }
 
-    public interface Type {
+    public String getServiceType() {
+		return serviceType;
+	}
+
+	public void setServiceType(String serviceType) {
+		this.serviceType = serviceType;
+	}
+
+	public interface Type {
 
         public static final String IAAS = "IAAS";
         public static final String PAAS = "PAAS";

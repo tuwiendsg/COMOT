@@ -1,18 +1,11 @@
-package at.ac.tuwien.dsg.ElasticityInformationService.concepts.salsa.cloudservicestructure;
-
-import javax.xml.bind.annotation.XmlAccessorOrder;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
+package at.ac.tuwien.dsg.ElasticityInformationService.concepts;
 
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
-import at.ac.tuwien.dsg.ElasticityInformationService.concepts.Entity;
-
 @NodeEntity
 public class PrimitiveOperation {
-	@GraphId Long id;
+	@GraphId long id;
 	String name;
 	// for performing the operation
 	ExecutionType executionType = ExecutionType.SCRIPT;
@@ -30,25 +23,28 @@ public class PrimitiveOperation {
 	
 	public static PrimitiveOperation newCommandType(String name, String executionCommand){		
 		PrimitiveOperation po = new PrimitiveOperation();
-		po.executionREF = executionCommand;
-		po.executionType = ExecutionType.SCRIPT;
-		po.name = name;
+		po.setExecutionREF_(executionCommand);
+		po.setExecutionType_(ExecutionType.SCRIPT);
+		po.setName_(name);
+		System.out.println(po.toString());
 		return po;
 	}
 	
 	public static PrimitiveOperation newScriptFromURLType(String name, String scriptRelativePath){
-		PrimitiveOperation po = new PrimitiveOperation();		
-		po.executionType = ExecutionType.SCRIPT;
-		po.executionREF = scriptRelativePath;		
-		po.name = name;
+		PrimitiveOperation po = new PrimitiveOperation();	
+		po.setExecutionREF_(scriptRelativePath);
+		po.setExecutionType_(ExecutionType.SCRIPT);
+		po.setName_(name);
+		System.out.println(po.toString());
 		return po;
 	}
 	
 	public static PrimitiveOperation newSalsaConnector(String name, String connectorName){
-		PrimitiveOperation po = new PrimitiveOperation();		
-		po.executionType = ExecutionType.SALSA_CONNECTOR;
-		po.executionREF = connectorName;
-		po.name = name;
+		PrimitiveOperation po = new PrimitiveOperation();	
+		po.setExecutionREF_(connectorName);
+		po.setExecutionType_(ExecutionType.SALSA_CONNECTOR);
+		po.setName_(name);
+		System.out.println(po.toString());
 		return po;
 	}
 
@@ -75,6 +71,14 @@ public class PrimitiveOperation {
 	public void setExecutionParameter_(String executionParameter) {
 		this.executionParameter = executionParameter;
 	}
-	
+
+	public void setName_(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String toString() {
+		return "PrimitiveOperation [name=" + name + ", executionType=" + executionType + ", executionREF=" + executionREF + "]";
+	}
 	
 }

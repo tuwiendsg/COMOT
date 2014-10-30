@@ -16,20 +16,23 @@
  */
 package at.ac.tuwien.dsg.ElasticityInformationService.concepts.mela.cloudOfferedServices;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.neo4j.graphdb.Direction;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 import org.springframework.data.neo4j.annotation.RelatedToVia;
 
-import at.ac.tuwien.dsg.ElasticityInformationService.concepts.Entity;
+import at.ac.tuwien.dsg.ElasticityInformationService.concepts.ServiceEntity;
 import at.ac.tuwien.dsg.ElasticityInformationService.concepts.LinkType;
+import at.ac.tuwien.dsg.ElasticityInformationService.concepts.mela.cloudOfferedServices.Links.HasQuality;
+import at.ac.tuwien.dsg.ElasticityInformationService.concepts.mela.cloudOfferedServices.Links.HasResource;
 import at.ac.tuwien.dsg.ElasticityInformationService.concepts.salsa.cloudservicestructure.ServiceUnit;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 
@@ -40,217 +43,261 @@ import at.ac.tuwien.dsg.ElasticityInformationService.concepts.salsa.cloudservice
  *
  */
 @NodeEntity
-public class CloudOfferedServiceUnit extends Entity{
-	private static final long serialVersionUID = 1L;
+@TypeAlias("CloudOfferedServiceUnit")
+public class CloudOfferedServiceUnit extends ServiceEntity{
+	private static final long serialVersionUID = 430086387005314892L;
 
 	@RelatedTo(type = LinkType.CLOUD_OFFER_SERVICE_BELONGS_TO_PROVIDER, direction=Direction.OUTGOING)
 	@Fetch
 	CloudProvider provider;
 	
+	String serviceName;
+
+//	@RelatedToVia(type = LinkType.CLOUD_OFFER_SERVICE_BELONGS_TO_PROVIDER, direction=Direction.OUTGOING)
+//	@Fetch
+//	@JsonIgnore
+//	BelongToProvider belongToProvider;
+	
     private String category;
     private String subcategory;
-   
-    private Set<CostFunction> costFunctions;
+    
+    @RelatedTo(type = LinkType.CLOUD_OFFER_SERVICE_HAS_RESOURCE, direction=Direction.OUTGOING)
+    @Fetch
+    @JsonIgnore
+    private Set<ResourceType> resourceType;
     
     @RelatedToVia(type = LinkType.CLOUD_OFFER_SERVICE_HAS_RESOURCE, direction=Direction.OUTGOING)
-    @Fetch private Set<ResourceValue> resourceProperties;
+    @Fetch
+    private Set<HasResource> resourceProperties;
     
-    @RelatedToVia(type = LinkType.CLOUD_OFFER_SERVICE_HAS_QUALITY, direction=Direction.OUTGOING)
-    @Fetch private Set<QualityValue> qualityProperties;
-
-    //holds dynamic properties , i.e. elasticity capabilities, something you can change
-	
+//    @RelatedTo(type = LinkType.CLOUD_OFFER_SERVICE_HAS_COSTFUNCTION, direction=Direction.OUTGOING)
+//    @Fetch
+//    @JsonIgnore
+//    private Set<CostFunction> costFunctions;
+//
+//    @RelatedTo(type = LinkType.CLOUD_OFFER_SERVICE_HAS_QUALITY, direction=Direction.OUTGOING)
+//    @Fetch
+//    @JsonIgnore
+//    private Set<QualityType> qualityType;
+//    
+//    @RelatedToVia(type = LinkType.CLOUD_OFFER_SERVICE_HAS_QUALITY, direction=Direction.OUTGOING)
+//    @Fetch
+//    @JsonIgnore
+//    private Set<HasQuality> qualityProperties;
+//
+    // holds dynamic properties , i.e. elasticity capabilities, something you can change
+    @RelatedTo(type = LinkType.CLOUD_OFFER_SERVICE_HAS_ELASTICICY_CAPA, direction=Direction.OUTGOING)
+    @Fetch
+	@JsonIgnore
     private Set<ElasticityCapability> elasticityCapabilities;
     
     @RelatedTo(type = LinkType.CLOUD_OFFER_SERVICE_DERIVES_SERVICE_UNIT, direction=Direction.OUTGOING)
 	@Fetch
-    private ServiceUnit derivedServiceUnit;
+	@JsonIgnore
+    private Set<ServiceUnit> derivedServiceUnit;
     
-    
-    
-
-//    
-    //from here onwards associations )optional or mandatory) are seen as ElasticityCapabilities
-//    private List<serviceUnit> mandatoryAssociations;
-//    private List<serviceUnit> optionalAssociations;
     {    	
-        costFunctions = new HashSet<CostFunction>();
-        qualityProperties = new HashSet<QualityValue>();
-        resourceProperties = new HashSet<ResourceValue>();
-        elasticityCapabilities = new HashSet<ElasticityCapability>();
+        resourceProperties = new HashSet<HasResource>();
+    	this.type="CloudOfferedService";
+    	
     }
 
-    public CloudOfferedServiceUnit() { }
+    public CloudOfferedServiceUnit() {
+    	super();
+    }
 
     public CloudOfferedServiceUnit(String category, String subcategory, String name) {
+    	super("unknownProvider"+"/"+name);
         this.category = category;
         this.subcategory = subcategory;
-        this.name = name;
+        this.serviceName = name;
     }
-   
-	public ServiceUnit getDerivedServiceUnit() {
-		return derivedServiceUnit;
+    
+	public Long getId() {
+		return id;
 	}
 
-	public void setDerivedServiceUnit(ServiceUnit derivedServiceUnit) {
-		this.derivedServiceUnit = derivedServiceUnit;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
-	public CloudProvider getProvider() {
-		return provider;
+//	@JsonIgnore
+//	public ServiceUnit getDerivedServiceUnit() {
+//		return derivedServiceUnit;
+//	}
+//
+	public void addDerivedServiceUnit(ServiceUnit derivedServiceUnit) {
+		if (this.derivedServiceUnit == null){
+			this.derivedServiceUnit = new HashSet<ServiceUnit>();
+		}		
+		// add node
+		this.derivedServiceUnit.add(derivedServiceUnit);
+		// add link
+//		if (this.hasDerivedServiceUnit == null){
+//			this.hasDerivedServiceUnit = new HashSet<DerivedServiceUnit>();
+//		}
+//		System.out.println("ADDDDDDDDD ");
+//		this.hasDerivedServiceUnit.add(new DerivedServiceUnit(this, derivedServiceUnit));
+		
 	}
+
+//	@JsonIgnore
+//	public CloudProvider getProvider_() {
+//		return provider;
+//	}
 
 	public void setProvider(CloudProvider provider) {
+		this.setName(provider.name+"/"+serviceName);
 		this.provider = provider;
 	}
 
-	public void setCostFunctions(Set<CostFunction> costFunctions) {
-        this.costFunctions = costFunctions;
-    }
 
-    public void setResourceProperties(Set<ResourceValue> resourceProperties) {
+    public void setResourceProperties(Set<HasResource> resourceProperties) {
         this.resourceProperties = resourceProperties;
     }
 
-    public void setQualityProperties(Set<QualityValue> qualityProperties) {
-        this.qualityProperties = qualityProperties;
-    }
+//    public void setQualityProperties(Set<HasQuality> qualityProperties) {
+//        this.qualityProperties = qualityProperties;
+//    }
 
-    public void addCostFunction(CostFunction cf) {
-        costFunctions.add(cf);
-    }
 
-    public void removeCostFunction(CostFunction cf) {
-        costFunctions.remove(cf);
-    }
-
-    public void addResourceProperty(ResourceValue resource) {    	
+    
+    
+    public void addResourceProperty(HasResource resource) {    	
         resourceProperties.add(resource);
-        // link
-        
     }
 
-    public void removeResourceProperty(ResourceValue resource) {
+    public String getCategory() {
+		return category;
+	}
+
+	public String getSubcategory() {
+		return subcategory;
+	}
+
+	public void removeResourceProperty(HasResource resource) {
         resourceProperties.remove(resource);
     }
 
-    public void addQualityProperty(QualityValue quality) {
-        qualityProperties.add(quality);
-    }
-
-    public void removeQualityProperty(QualityValue quality) {
-        qualityProperties.remove(quality);
-    }
-
-    public Set<CostFunction> getCostFunctions() {
-        return costFunctions;
-    }
-
-    public Set<ResourceValue> getResourceProperties() {
+//    public void addQualityProperty(HasQuality quality) {
+//        qualityProperties.add(quality);
+//    }
+//
+//    public void removeQualityProperty(HasQuality quality) {
+//        qualityProperties.remove(quality);
+//    }
+    
+    @JsonIgnore
+    public Set<HasResource> getResourceProperties() {
         return resourceProperties;
     }
 
-    public Set<QualityValue> getQualityProperties() {
-        return qualityProperties;
-    }
+//    @JsonIgnore
+//    public Set<HasQuality> getQualityProperties() {
+//        return qualityProperties;
+//    }
+//
+//    @JsonIgnore
+//    public Set<ElasticityCapability> getElasticityCapabilities() {
+//        return elasticityCapabilities;
+//    }
+//
+//    public void setElasticityCapabilities(Set<ElasticityCapability> elasticityCapabilities) {
+//        this.elasticityCapabilities = elasticityCapabilities;
+//    }
+//
+//    public void addElasticityCapability(ElasticityCapability characteristic) {
+//        this.elasticityCapabilities.add(characteristic);
+//    }
+//
+//    public void removeElasticityCapability(ElasticityCapability characteristic) {
+//        this.elasticityCapabilities.remove(characteristic);
+//    }
 
-    public Set<ElasticityCapability> getElasticityCapabilities() {
-        return elasticityCapabilities;
-    }
-
-    public void setElasticityCapabilities(Set<ElasticityCapability> elasticityCapabilities) {
-        this.elasticityCapabilities = elasticityCapabilities;
-    }
-
-    public void addElasticityCapability(ElasticityCapability characteristic) {
-        this.elasticityCapabilities.add(characteristic);
-    }
-
-    public void removeElasticityCapability(ElasticityCapability characteristic) {
-        this.elasticityCapabilities.remove(characteristic);
-    }
-
-    public List<ElasticityCapability> getServiceUnitAssociations() {
-
-        List<ElasticityCapability> mandatoryAssociations = new ArrayList<ElasticityCapability>();
-
-        for (ElasticityCapability capability : getElasticityCapabilities()) {
-
-            //only optional associations towards ServiceUnit
-            if (!capability.getTargetType().equals(CloudOfferedServiceUnit.class)) {
-                continue;
-            }
-
-            mandatoryAssociations.add(capability);
-        }
-
-        return mandatoryAssociations;
-    }
-
-    public List<ElasticityCapability> getResourceAssociations() {
-
-        List<ElasticityCapability> optionalAssociations = new ArrayList<ElasticityCapability>();
-
-        for (ElasticityCapability capability : getElasticityCapabilities()) {
-
-            //only optional associations towards ServiceUnit
-            if (!capability.getTargetType().equals(ResourceValue.class)) {
-                continue;
-            }
-
-            optionalAssociations.add(capability);
-        }
-
-        return optionalAssociations;
-    }
-
-    public List<ElasticityCapability> getQualityAssociations() {
-
-        List<ElasticityCapability> optionalAssociations = new ArrayList<ElasticityCapability>();
-
-        for (ElasticityCapability capability : getElasticityCapabilities()) {
-
-            //only optional associations towards ServiceUnit
-            if (!capability.getTargetType().equals(QualityValue.class)) {
-                continue;
-            }
-
-            optionalAssociations.add(capability);
-        }
-
-        return optionalAssociations;
-    }
-
-    public List<ElasticityCapability> getCostAssociations() {
-
-        List<ElasticityCapability> optionalAssociations = new ArrayList<ElasticityCapability>();
-
-        for (ElasticityCapability capability : getElasticityCapabilities()) {
-
-            //only optional associations towards ServiceUnit
-            if (!capability.getTargetType().equals(CostFunction.class)) {
-                continue;
-            }
-
-            optionalAssociations.add(capability);
-        }
-
-        return optionalAssociations;
-    }
-
-    public List<ElasticityCapability> getElasticityCapabilities(Class capabilitiesTargetClass) {
-
-        List<ElasticityCapability> optionalAssociations = new ArrayList<ElasticityCapability>();
-
-        for (ElasticityCapability capability : getElasticityCapabilities()) {
-            if (!capability.getTargetType().equals(capabilitiesTargetClass)) {
-                continue;
-            }
-            optionalAssociations.add(capability);
-        }
-
-        return optionalAssociations;
-    }
+//    @JsonIgnore
+//    public List<ElasticityCapability> getServiceUnitAssociations() {
+//
+//        List<ElasticityCapability> mandatoryAssociations = new ArrayList<ElasticityCapability>();
+//
+//        for (ElasticityCapability capability : getElasticityCapabilities()) {
+//          
+//            if (!capability.getTargetType().equals(CloudOfferedServiceUnit.class)) {
+//                continue;
+//            }
+//
+//            mandatoryAssociations.add(capability);
+//        }
+//
+//        return mandatoryAssociations;
+//    }
+//
+//    @JsonIgnore
+//    public List<ElasticityCapability> getResourceAssociations() {
+//
+//        List<ElasticityCapability> optionalAssociations = new ArrayList<ElasticityCapability>();
+//
+//        for (ElasticityCapability capability : getElasticityCapabilities()) {
+//
+//          
+//            if (!capability.getTargetType().equals(HasResource.class)) {
+//                continue;
+//            }
+//
+//            optionalAssociations.add(capability);
+//        }
+//
+//        return optionalAssociations;
+//    }
+//
+//    @JsonIgnore
+//    public List<ElasticityCapability> getQualityAssociations() {
+//
+//        List<ElasticityCapability> optionalAssociations = new ArrayList<ElasticityCapability>();
+//
+//        for (ElasticityCapability capability : getElasticityCapabilities()) {
+//
+//            if (!capability.getTargetType().equals(HasQuality.class)) {
+//                continue;
+//            }
+//
+//            optionalAssociations.add(capability);
+//        }
+//
+//        return optionalAssociations;
+//    }
+//
+//    @JsonIgnore
+//    public List<ElasticityCapability> getCostAssociations() {
+//
+//        List<ElasticityCapability> optionalAssociations = new ArrayList<ElasticityCapability>();
+//
+//        for (ElasticityCapability capability : getElasticityCapabilities()) {
+//
+//            
+//            if (!capability.getTargetType().equals(CostFunction.class)) {
+//                continue;
+//            }
+//
+//            optionalAssociations.add(capability);
+//        }
+//
+//        return optionalAssociations;
+//    }
+//
+//    @JsonIgnore
+//    public List<ElasticityCapability> getElasticityCapabilities(Class capabilitiesTargetClass) {
+//
+//        List<ElasticityCapability> optionalAssociations = new ArrayList<ElasticityCapability>();
+//
+//        for (ElasticityCapability capability : getElasticityCapabilities()) {
+//            if (!capability.getTargetType().equals(capabilitiesTargetClass)) {
+//                continue;
+//            }
+//            optionalAssociations.add(capability);
+//        }
+//
+//        return optionalAssociations;
+//    }
 
     public interface Category {
 
@@ -259,10 +306,6 @@ public class CloudOfferedServiceUnit extends Entity{
         String MAAS = "MaaS";
     }
 
-    @Override
-    public String toString() {
-        return "ServiceUnit{" + "name=" + name + ", costFunctions=" + costFunctions + ", resourceProperties=" + resourceProperties + ", qualityProperties=" + qualityProperties + ", elasticityCapabilities=" + elasticityCapabilities + '}';
-    }
 
     @Override
     public int hashCode() {
@@ -281,9 +324,7 @@ public class CloudOfferedServiceUnit extends Entity{
             return false;
         }
         final CloudOfferedServiceUnit other = (CloudOfferedServiceUnit) obj;
-//        if ((this.provider == null) ? (other.provider != null) : !this.provider.equals(other.provider)) {
-//            return false;
-//        }
+
         if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
             return false;
         }

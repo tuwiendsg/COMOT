@@ -10,13 +10,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
-import at.ac.tuwien.dsg.ElasticityInformationService.concepts.Entity;
+import org.neo4j.graphdb.Direction;
+import org.springframework.data.neo4j.annotation.NodeEntity;
+import org.springframework.data.neo4j.annotation.RelatedTo;
 
-public class ServiceTopology extends Entity {
+import at.ac.tuwien.dsg.ElasticityInformationService.concepts.ServiceEntity;
+import at.ac.tuwien.dsg.ElasticityInformationService.concepts.LinkType;
+
+@NodeEntity
+public class ServiceTopology extends ServiceEntity {
 	private static final long serialVersionUID = 1033006439232497964L;
 
+	@RelatedTo(type=LinkType.SERVICE_TOPOLOGY_CONTAIN_SERVICE_UNIT, direction=Direction.OUTGOING)
 	List<ServiceUnit> serviceUnits = new ArrayList<>();
 	
+	@RelatedTo(type=LinkType.SERVICE_TOPOLOGY_CONTAIN_SERVICE_TOPOLOGY, direction=Direction.OUTGOING)
 	List<ServiceTopology> topologies = new ArrayList<>();
 	
 	public ServiceTopology(){
