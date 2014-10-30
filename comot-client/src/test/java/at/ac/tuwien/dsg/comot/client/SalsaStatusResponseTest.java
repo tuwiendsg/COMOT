@@ -13,10 +13,9 @@ public class SalsaStatusResponseTest {
 
     @Test
     public void marshallSalsaStatusResponse() throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        SalsaServiceStatusResponse response = mapper.reader(SalsaServiceStatusResponse.class)
-                .readValue(new ClassPathResource("salsa-status-response.json").getInputStream());
-
+//        ObjectMapper mapper = new ObjectMapper();
+//        SalsaServiceStatusResponse response = mapper.reader(SalsaServiceStatusResponse.class)
+//                .readValue(new ClassPathResource("salsa-status-response.json").getInputStream());
 
     }
 }

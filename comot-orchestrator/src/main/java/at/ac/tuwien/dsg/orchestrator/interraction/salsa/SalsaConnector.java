@@ -23,6 +23,18 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+//
+//UNDEPLOYED("undeployed"),
+//	ALLOCATING("allocating"),
+//	STAGING("staging"),
+//	STAGING_ACTION("staging_action"),
+//	CONFIGURING("configuring"),
+////	STOPPED("stopped"),	
+//	RUNNING("running"),	// the deployment action is executed
+//	DEPLOYED("deployed"), // deployed
+//	ERROR("error");
+//
+
 /**
  * @author Daniel Moldovan E-Mail: d.moldovan@dsg.tuwien.ac.at
  */
@@ -99,7 +111,7 @@ public class SalsaConnector {
                 allRunning = false;
             } else {
                 for (at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceUnit serviceUnit : service.getAllComponentByType(SalsaEntityType.SOFTWARE)) {
-                    if (!serviceUnit.getState().equals(SalsaEntityState.FINISHED)) {
+                    if (!serviceUnit.getState().equals(SalsaEntityState.DEPLOYED)) {
                         allRunning = false;
                         break;
                     }

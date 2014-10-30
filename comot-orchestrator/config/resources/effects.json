@@ -1,72 +1,92 @@
-
-{"scaleout":{
-		"scaleOutEffectForDataNode": {
-			"targetUnit":"DataNodeUnit",
-			"effects":{
-				"DataNodeUnit": {
-						"cpuUsage":-30.0,
-						"cost":0.12
-						},
-				"DataControllerUnit": {
-						"cpuUsage":-30.0
-						},
-				"DataEndTopology": {
-						"cpuUsage":-30.0
-						}
-					}
-					},
-		"scaleOutEffectForEventProcessingUnit": {
-			"targetUnit":"EventProcessingUnit",
-			"effects":{
-				"EventProcessingUnit": {
-						"cpuUsage":-40.0,
-						"responseTime":-1000.0,
-						"throughput":200,
-						"cost":0.12
-						},
-				"EventProcessingTopology": {
-						"cpuUsage":-20.0,
-						"responseTime":-1000.0,
-						"throughput":200,
-						"cost":0.12
-						}
-					}
-					}
-						
-		},
-	"scalein":{
-		"scaleInEffectForDataNode": {
-			"targetUnit":"DataNodeUnit",
-			"effects":{
-				"DataNodeUnit": {
-						"cpuUsage":30.0,
-						"cost":-0.12
-						},
-				"DataControllerUnit": {
-						"cpuUsage":20.0
-						},
-				"DataEndTopology": {
-						"cpuUsage":20.0
-						}
-					}
-					},
-		"scaleInEffectForEventProcessingUnit": {
-			"targetUnit":"EventProcessingUnit",
-			"effects":{
-				"EventProcessingUnit": {
-						"cpuUsage":40.0,
-						"responseTime":500.0,
-						"throughput":-100,
-						"cost":-0.12
-						},
-				"EventProcessingTopology": {
-						"cpuUsage":40.0,
-						"responseTime":500.0,
-						"throughput":-100,
-						"cost":-0.12
-						}
-					}
-						
-}
-}
+{
+  "scaleout": {
+    "scaleOutEffectForDataNode": {
+      "targetUnit": "DataNodeUnit",
+      "effects": {
+        "DataNodeUnit": {
+          "cpuUsage": -30.0,
+          "cost": 0.12
+        },
+        "DataControllerUnit": {
+          "cpuUsage": -30.0
+        },
+        "DataEndTopology": {
+          "cpuUsage": -30.0
+        }
+      }
+    },
+    "scaleOutEffectForEventProcessingUnit": {
+      "targetUnit": "EventProcessingUnit",
+      "effects": {
+        "EventProcessingUnit": {
+          "cpuUsage": -40.0,
+          "responseTime": -1000.0,
+          "throughput": 200,
+          "cost": 0.12
+        },
+        "EventProcessingTopology": {
+          "cpuUsage": -20.0,
+          "responseTime": -1000.0,
+          "throughput": 200,
+          "cost": 0.12
+        }
+      }
+    },
+    "scaleoutEffectForLocalProcessing": {
+      "targetUnit": "LocalProcessingUnit",
+      "effects": {
+        "LocalProcessingUnit": {
+          "avgBufferSize": -200.0,
+          "bufferSize": 500.0
+        },
+        "LocalSensorTopology": {
+          "avgBufferSize": -200.0,
+          "bufferSize": 500.0
+        }
+      }
+    }
+  },
+  "scalein": {
+    "scaleInEffectForDataNode": {
+      "targetUnit": "DataNodeUnit",
+      "effects": {
+        "DataNodeUnit": {
+          "cpuUsage": 30.0,
+          "cost": -0.12
+        },
+        "DataControllerUnit": {
+          "cpuUsage": 20.0
+        },
+        "DataEndTopology": {
+          "cpuUsage": 20.0
+        }
+      }
+    },
+    "scaleInEffectForEventProcessingUnit": {
+      "targetUnit": "EventProcessingUnit",
+      "effects": {
+        "EventProcessingUnit": {
+          "cpuUsage": 40.0,
+          "responseTime": 500.0,
+          "throughput": -100,
+          "cost": -0.12
+        },
+        "EventProcessingTopology": {
+          "cpuUsage": 40.0,
+          "responseTime": 500.0,
+          "throughput": -100,
+          "cost": -0.12
+        }
+      }
+    },
+    "scaleinEffectForLocalProcessing": {
+      "targetUnit": "LocalProcessingUnit",
+      "effects": {
+        "LocalProcessingUnit": {
+          "avgBufferSize": 90.0,
+          "bufferSize": 200.0
+        }
+      }
+    }
+  }
 }

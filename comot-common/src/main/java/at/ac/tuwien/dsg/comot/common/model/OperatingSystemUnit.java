@@ -9,10 +9,11 @@ public class OperatingSystemUnit extends ServiceUnit {
 
     protected OperatingSystemUnit(String id) {
         super(id);
+        super.andMaxInstances(Integer.MAX_VALUE);
     }
 
     public static OperatingSystemUnit OperatingSystemUnit(String id) {
-        return new OperatingSystemUnit(id).ofType(NodeType.OperatingSystem).andMaxInstances(1);
+        return new OperatingSystemUnit(id).ofType(NodeType.OperatingSystem);
     }
 
     public OperatingSystemUnit providedBy(OperatingSystemSpecification specification) {
@@ -63,7 +64,6 @@ public class OperatingSystemUnit extends ServiceUnit {
     public OperatingSystemUnit withName(String name) {
         return (OperatingSystemUnit) super.withName(name);
     }
-
 
     @Override
     public OperatingSystemUnit ofType(String type) {
