@@ -68,6 +68,25 @@ public class SampleResource {
 			return Response.serverError().build();
 		}
 	}
+	
+	// TODO temporary only
+	@GET
+	@Path("/service/{serviceId}/gui")
+	@Consumes(MediaType.WILDCARD)
+	@Produces({ MediaType.TEXT_PLAIN })
+	public Response getStatusGui(@PathParam("serviceId") String serviceId) {
+
+		log.info("input: " + serviceId);
+
+		try {
+			String service = deploy.getStatusGui(serviceId);
+			return Response.ok(service).build();
+
+		} catch (CoreServiceException e) {
+			e.printStackTrace();
+			return Response.serverError().build();
+		}
+	}
 
 	// @GET
 	// @Path("/cloudservice/json/compact/{serviceId}")

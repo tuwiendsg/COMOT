@@ -57,7 +57,7 @@ public class SalsaClient extends CoreServiceClient {
 		String serviceId = response.readEntity(String.class);
 
 		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "Successfully deployed. Response: '{}'", 
+			log.info(Markers.CLIENT, "Successfully deployed. Response: '{}'",
 					serviceId);
 		}
 
@@ -196,6 +196,32 @@ public class SalsaClient extends CoreServiceClient {
 					serviceId, description);
 		}
 		return description;
+	}
+
+	// TODO only temporary
+	public String getStatusGui(String serviceId) throws CoreServiceException {
+
+		if (log.isDebugEnabled()) {
+			log.debug(Markers.CLIENT, "getStatusGui for serviceId {}", serviceId);
+		}
+
+		Response response = client.target(getBaseUri())
+				.path("/viewgenerator/cloudservice/json/compact/{serviceId}")
+				.resolveTemplate("serviceId", serviceId)
+				.request(MediaType.TEXT_PLAIN)
+				// .header("Accept", MediaType.TEXT_XML)
+				.get();
+
+		processResponseStatus(response);
+
+		String service = response.readEntity(String.class);
+
+		if (log.isInfoEnabled()) {
+			log.info(Markers.CLIENT, "Successfully checked getStatusGui for serviceId '{}'. Response: '{}'",
+					serviceId, service);
+		}
+		return service;
+
 	}
 
 }

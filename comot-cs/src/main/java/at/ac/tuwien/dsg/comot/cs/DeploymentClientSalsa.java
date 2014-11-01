@@ -98,6 +98,12 @@ public class DeploymentClientSalsa implements DeploymentClient {
 
 		return running;
 	}
+	
+	// TODO only temporary
+	@Override
+	public String getStatusGui(String serviceId) throws CoreServiceException {
+		return salsa.getStatusGui(serviceId);
+	}
 
 	@PreDestroy
 	public void cleanup() {

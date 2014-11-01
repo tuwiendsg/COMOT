@@ -34,4 +34,7 @@ public interface DeploymentClient extends CoreServiceClient {
 
 	boolean isRunning(String serviceID) throws CoreServiceException;
 
+	// TODO only temporary
+	String getStatusGui(String serviceId) throws CoreServiceException;
+
 }

@@ -1,4 +1,3 @@
-
 function AppViewModel() {
 
 	var model = this;
@@ -6,6 +5,7 @@ function AppViewModel() {
 	this.tosca = ko.observable();
 	this.serviceId = ko.observable();
 	this.status = ko.observable();
+	this.statusTree = ko.observable();
 
 	this.deploy = function() {
 
@@ -23,23 +23,33 @@ function AppViewModel() {
 			success : function(data) {
 				console.log(data);
 				model.serviceId(data);
+
+				checkStatus();
+				setInterval(function() {
+					checkStatus()
+				}, 5000);
 			}
 		});
 	};
 
 	this.checkStatus = function() {
+		checkStatus()
+	}
+
+	function checkStatus() {
 
 		$.ajax({
 			type : "GET",
-			url : "http://localhost:8380/comot/rest/service/"
-					+ model.serviceId(),
+			url : "http://localhost:8380/comot/rest/service/" + model.serviceId(),
 			dataType : "json",
 			success : function(data) {
-				console.log(data);
-				console.log(data.id);
+
 				model.status(data.state);
+
+				$("#output").html(JsonHuman.format(data));
 			}
 		});
+
 	}
 
 }
