@@ -1,0 +1,12 @@
+<div class="container">
+	<h3>Hello! What is your name?</h3>
+	
+	<a href="http://durandaljs.com/get-started.html">see durandal</a>
+	
+	<form class="form-inline">
+		<fieldset>
+			<label>Name</label> <input type="text" data-bind="value: name, valueUpdate: 'afterkeydown'" />
+			<button type="submit" class="btn" data-bind="click: sayHello, enable: name">Click Me</button>
+		</fieldset>
+	</form>
+</div>

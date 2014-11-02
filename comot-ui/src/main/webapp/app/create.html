@@ -1,0 +1,69 @@
+
+<div class="container">
+
+	<h3>Create new cloud service</h3>
+
+	<form class="form-horizontal" role="form" data-bind="submit: deploy">
+		<fieldset>
+
+			<!-- Form Name
+			<legend>Create new cloud service</legend>
+-->
+			<!-- Multiple Checkboxes -->
+			<div class="form-group">
+				<label class="col-md-2 control-label" for="functions">Elasticity support</label>
+				<div class="col-md-4">
+					<div class="checkbox">
+						<label for="functions-0"> <input type="checkbox" name="functions" id="functions-0" value="1"
+							data-bind="checked: checkboxDepl"> Deployment
+						</label>
+					</div>
+					<div class="checkbox">
+						<label for="functions-1"> <input type="checkbox" name="functions" id="functions-1" value="2"
+							data-bind="checked: checkboxMoni"> Monitoring
+						</label>
+					</div>
+					<div class="checkbox">
+						<label for="functions-2"> <input type="checkbox" name="functions" id="functions-2" value="3"
+							data-bind="checked: checkboxCont"> Control
+						</label>
+					</div>
+				</div>
+			</div>
+
+			<!-- Textarea -->
+			<div class="form-group" data-bind="visible: checkboxDepl()">
+				<label class="col-md-2 control-label" for="tosca">Deployment TOSCA</label>
+				<div class="col-md-10">
+					<textarea class="form-control" id="tosca" rows="20" data-bind="value: tosca"></textarea>
+				</div>
+			</div>
+
+			<div class="form-group" data-bind="visible: checkboxMoni() || checkboxCont()">
+				<label class="col-md-2 control-label" for="mcr">Metric composition rules</label>
+				<div class="col-md-10">
+					<textarea class="form-control" id="mcr" rows="10" data-bind="value: mcr"></textarea>
+				</div>
+			</div>
+
+			<div class="form-group" data-bind="visible: checkboxMoni() || checkboxCont()">
+				<label class="col-md-2 control-label" for="elEffects">Elasticity capabilities effects</label>
+				<div class="col-md-10">
+					<textarea class="form-control" id="elEffects" rows="10" data-bind="value: elEffects"></textarea>
+				</div>
+			</div>
+
+
+			<!-- Submit -->
+			<div class="form-group">
+				<label class="col-md-2 control-label" for="subitForm"></label>
+				<div class="col-md-4">
+					<button id="subitForm" type="submit" class="btn btn-primary">Submit</button>
+				</div>
+			</div>
+		</fieldset>
+	</form>
+
+</div>
+
+<!-- /.container -->

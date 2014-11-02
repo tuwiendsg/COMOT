@@ -10,6 +10,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,14 +36,20 @@ public class SampleResource {
 
 	@POST
 	@Path("/service")
-	@Consumes(MediaType.APPLICATION_XML)
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response deploy(String tosca) {
 
 		log.info("input: " + tosca);
-
+		
+		JSONObject json = new JSONObject(tosca);
+		String extracted = json.getString("tosca");
+		
+		log.info("input: " + extracted);
+		
 		try {
-			String serviceId = deploy.deploy(tosca);
+			String serviceId = "";
+			deploy.deploy(extracted);
 			return Response.ok(serviceId).build();
 
 		} catch (CoreServiceException e) {
