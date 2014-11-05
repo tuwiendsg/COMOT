@@ -25,10 +25,10 @@ import at.ac.tuwien.dsg.comot.common.coreservices.MonitoringClient;
 public abstract class AbstractTest {
 
 	protected final Logger log = LoggerFactory.getLogger(getClass());
-	
+
 	@Resource
 	protected Environment env;
-	
+
 	@Autowired
 	protected DeploymentClient deployment;
 	@Autowired

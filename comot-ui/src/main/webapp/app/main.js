@@ -16,7 +16,7 @@ define(function(require) {
 
 	system.debug(true);
 
-	app.title = 'Durandal Starter Kit';
+	app.title = 'CoMoT';
 
 	app.configurePlugins({
 		router : true,

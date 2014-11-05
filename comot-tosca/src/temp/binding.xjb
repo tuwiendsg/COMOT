@@ -1,0 +1,56 @@
+<jaxb:bindings xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	version="2.1">
+
+	<jaxb:bindings schemaLocation="TOSCA-v1.0.xsd">
+		<jaxb:globalBindings localScoping="toplevel" />
+		<jaxb:bindings
+			node="//xs:complexType[@name='tBoundaryDefinitions']//xs:element[@name='Properties']/xs:complexType">
+			<jaxb:class name="BDProperties" />
+		</jaxb:bindings>
+		<jaxb:bindings
+			node="//xs:complexType[@name='tBoundaryDefinitions']//xs:element[@name='PropertyConstraints']/xs:complexType">
+			<jaxb:class name="BDPropertyConstraints" />
+		</jaxb:bindings>
+		<jaxb:bindings
+			node="//xs:complexType[@name='tBoundaryDefinitions']//xs:element[@name='Requirements']/xs:complexType">
+			<jaxb:class name="BDRequirements" />
+		</jaxb:bindings>
+		<jaxb:bindings
+			node="//xs:complexType[@name='tBoundaryDefinitions']//xs:element[@name='Capabilities']/xs:complexType">
+			<jaxb:class name="BDCapabilities" />
+		</jaxb:bindings>
+		<jaxb:bindings
+			node="//xs:complexType[@name='tBoundaryDefinitions']//xs:element[@name='Policies']/xs:complexType">
+			<jaxb:class name="BDPolicies" />
+		</jaxb:bindings>
+		<jaxb:bindings
+			node="//xs:complexType[@name='tBoundaryDefinitions']//xs:element[@name='Interfaces']/xs:complexType">
+			<jaxb:class name="BDInterfaces" />
+		</jaxb:bindings>
+		
+		<jaxb:bindings
+			node="//xs:complexType[@name='tNodeTypeImplementation']//xs:element[@name='DerivedFrom']/xs:complexType">
+			<jaxb:class name="NodeTypeImplementationDerivedFrom" />
+		</jaxb:bindings>
+		
+		<jaxb:bindings
+			node="//xs:complexType[@name='tEntityType']//xs:element[@name='DerivedFrom']/xs:complexType">
+			<jaxb:class name="EntityTypeDerivedFrom" />
+		</jaxb:bindings>
+		
+		<jaxb:bindings
+			node="//xs:complexType[@name='tRequirementDefinition']//xs:element[@name='Constraints']/xs:complexType">
+			<jaxb:class name="RequirementDefinitionConstraints" />
+		</jaxb:bindings>
+		
+		<jaxb:bindings
+			node="//xs:complexType[@name='tPlan']//xs:element[@name='InputParameters']/xs:complexType">
+			<jaxb:class name="PlanInputParameters" />
+		</jaxb:bindings>
+		<jaxb:bindings
+			node="//xs:complexType[@name='tPlan']//xs:element[@name='OutputParameters']/xs:complexType">
+			<jaxb:class name="PlanOutputParameter" />
+		</jaxb:bindings>
+		
+	</jaxb:bindings>
+</jaxb:bindings>

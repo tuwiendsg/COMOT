@@ -1,12 +1,12 @@
 package at.ac.tuwien.dsg.comot.common.test.samples;
 
-import static at.ac.tuwien.dsg.comot.common.model.CloudService.ServiceTemplate;
-import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackMicro;
-import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingSystemUnit;
-import static at.ac.tuwien.dsg.comot.common.model.ServiceTopology.ServiceTopology;
-import at.ac.tuwien.dsg.comot.common.model.CloudService;
-import at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit;
-import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
+import static at.ac.tuwien.dsg.comot.common.fluent.CloudService.ServiceTemplate;
+import static at.ac.tuwien.dsg.comot.common.fluent.CommonOperatingSystemSpecification.OpenstackMicro;
+import static at.ac.tuwien.dsg.comot.common.fluent.OperatingSystemUnit.OperatingSystemUnit;
+import static at.ac.tuwien.dsg.comot.common.fluent.ServiceTopology.ServiceTopology;
+import at.ac.tuwien.dsg.comot.common.fluent.CloudService;
+import at.ac.tuwien.dsg.comot.common.fluent.OperatingSystemUnit;
+import at.ac.tuwien.dsg.comot.common.fluent.ServiceTopology;
 
 public class ExampleDeployOneVM {
 
@@ -28,7 +28,7 @@ public class ExampleDeployOneVM {
 				.consistsOfTopologies(topology)
 				.withDefaultMetrics()
 				.withDefaultActionEffects();
-		
+
 		return serviceTemplate;
 	}
 }

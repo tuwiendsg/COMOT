@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.comot.client.test.TestUtils;
 import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
-import at.ac.tuwien.dsg.comot.common.model.CloudService;
+import at.ac.tuwien.dsg.comot.common.fluent.CloudService;
 import at.ac.tuwien.dsg.comot.common.test.samples.ExampleDeployOneVM;
 import at.ac.tuwien.dsg.comot.common.test.samples.ExampleExecutableOnVM;
 import at.ac.tuwien.dsg.comot.cs.transformer.ToscaDescriptionBuilderImpl;

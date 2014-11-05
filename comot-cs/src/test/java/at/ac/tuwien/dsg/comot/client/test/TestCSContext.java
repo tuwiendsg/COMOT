@@ -15,8 +15,9 @@ import at.ac.tuwien.dsg.comot.cs.DeploymentClientSalsa;
 import at.ac.tuwien.dsg.comot.cs.MonitoringClientMela;
 
 @Configuration
+// @ImportResource({"classpath:spring/dozerBean.xml"})
 // @PropertySource({ "classpath:spring/properties/application.properties" })
-@ComponentScan({ "at.ac.tuwien.dsg.comot.cs" })
+@ComponentScan({ "at.ac.tuwien.dsg.comot" })
 public class TestCSContext {
 
 	@Resource

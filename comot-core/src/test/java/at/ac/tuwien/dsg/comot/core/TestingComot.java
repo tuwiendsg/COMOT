@@ -5,15 +5,15 @@
  */
 package at.ac.tuwien.dsg.comot.core;
 
-import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifactTemplate;
-import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackMicro;
-import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackSmall;
-import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.ConnectToRelation;
-import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.HostedOnRelation;
-import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingSystemUnit;
-import static at.ac.tuwien.dsg.comot.common.model.ServiceTopology.ServiceTopology;
-import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.SingleSoftwareUnit;
-import static at.ac.tuwien.dsg.comot.common.model.Strategy.Strategy;
+import static at.ac.tuwien.dsg.comot.common.fluent.ArtifactTemplate.SingleScriptArtifactTemplate;
+import static at.ac.tuwien.dsg.comot.common.fluent.CommonOperatingSystemSpecification.OpenstackMicro;
+import static at.ac.tuwien.dsg.comot.common.fluent.CommonOperatingSystemSpecification.OpenstackSmall;
+import static at.ac.tuwien.dsg.comot.common.fluent.EntityRelationship.ConnectToRelation;
+import static at.ac.tuwien.dsg.comot.common.fluent.EntityRelationship.HostedOnRelation;
+import static at.ac.tuwien.dsg.comot.common.fluent.OperatingSystemUnit.OperatingSystemUnit;
+import static at.ac.tuwien.dsg.comot.common.fluent.ServiceTopology.ServiceTopology;
+import static at.ac.tuwien.dsg.comot.common.fluent.SoftwareNode.SingleSoftwareUnit;
+import static at.ac.tuwien.dsg.comot.common.fluent.Strategy.Strategy;
 
 import java.io.IOException;
 
@@ -23,15 +23,15 @@ import org.junit.Test;
 
 import at.ac.tuwien.dsg.comot.client.test.TestUtils;
 import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
-import at.ac.tuwien.dsg.comot.common.model.Capability;
-import at.ac.tuwien.dsg.comot.common.model.CloudService;
-import at.ac.tuwien.dsg.comot.common.model.Constraint;
-import at.ac.tuwien.dsg.comot.common.model.Constraint.Metric;
-import at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit;
-import at.ac.tuwien.dsg.comot.common.model.Requirement;
-import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
-import at.ac.tuwien.dsg.comot.common.model.ServiceUnit;
-import at.ac.tuwien.dsg.comot.common.model.Strategy;
+import at.ac.tuwien.dsg.comot.common.fluent.Capability;
+import at.ac.tuwien.dsg.comot.common.fluent.CloudService;
+import at.ac.tuwien.dsg.comot.common.fluent.Constraint;
+import at.ac.tuwien.dsg.comot.common.fluent.OperatingSystemUnit;
+import at.ac.tuwien.dsg.comot.common.fluent.Requirement;
+import at.ac.tuwien.dsg.comot.common.fluent.ServiceTopology;
+import at.ac.tuwien.dsg.comot.common.fluent.ServiceUnit;
+import at.ac.tuwien.dsg.comot.common.fluent.Strategy;
+import at.ac.tuwien.dsg.comot.common.fluent.Constraint.Metric;
 import at.ac.tuwien.dsg.comot.core.test.AbstractTest;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 

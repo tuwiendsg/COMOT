@@ -11,7 +11,7 @@ import org.junit.Test;
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityState;
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityType;
 import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
-import at.ac.tuwien.dsg.comot.common.model.CloudService;
+import at.ac.tuwien.dsg.comot.common.fluent.CloudService;
 import at.ac.tuwien.dsg.comot.common.test.samples.ExampleDeployOneVM;
 import at.ac.tuwien.dsg.comot.cs.connector.SalsaClient;
 import at.ac.tuwien.dsg.comot.cs.transformer.ToscaDescriptionBuilder;
@@ -20,7 +20,7 @@ import at.ac.tuwien.dsg.comot.cs.transformer.ToscaDescriptionBuilderImpl;
 public class SalsaClientTest {
 
 	private static final String SALSA_IP = "128.130.172.215";
-	
+
 	private SalsaClient salsa;
 	private CloudService serviceTemplate;
 	protected ToscaDescriptionBuilder toscaBuilder;
@@ -28,12 +28,12 @@ public class SalsaClientTest {
 	@Before
 	public void setup() {
 		salsa = new SalsaClient(SALSA_IP);
-		
+
 		serviceTemplate = ExampleDeployOneVM.build();
 	}
-	
+
 	@After
-	public void cleanUp(){
+	public void cleanUp() {
 		salsa.close();
 	}
 
@@ -55,7 +55,7 @@ public class SalsaClientTest {
 				countIter = 0;
 				break;
 			}
-			
+
 		} while (!(service.getState().equals(SalsaEntityState.DEPLOYED)
 		|| service.getState().equals(SalsaEntityState.RUNNING)));
 

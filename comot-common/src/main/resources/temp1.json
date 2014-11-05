@@ -1,0 +1,113 @@
+{
+	"serviceTopologies" : [{
+			"serviceUnits" : [{
+					"minInstances" : 2,
+					"maxInstances" : 5,
+					"deploymentArtifacts" : [{
+							"artifactReferences" : [{
+									"uri" : "http://128.130.172.215/salsa/upload/files/DaasService/deployCassandraSeed.sh",
+									"id" : "XXX should not be copied"
+								}],
+
+							"id" : "deployCassandraNode",
+							"type" : "sh",
+							"name" : "Deployment script"
+						}],
+
+					"directives" : [{
+							"directive" : "ST1: STRATEGY CASE cpuUsage \u0026lt; 40 % : scalein",
+							"strategyConstraintType" : "SYBL",
+							"id" : "str1",
+							"type" : "SYBLConstraint"
+						},{
+							"directive" : "C2: CONSTRAINT CASE cpuUsage \u0026lt; 40 % : scalein",
+							"strategyConstraintType" : "SYBL",
+							"id" : "con1",
+							"type" : "SYBLConstraint"
+						}],
+
+					"requirements" : [{
+							"id" : "req1",
+							"type" : "variable"
+						},{
+							"id" : "req2",
+							"type" : "variable"
+						}],
+
+					"capabilities" : [{
+							"id" : "cap1",
+							"type" : "variable"
+						},{
+							"id" : "cap2",
+							"type" : "variable"
+						}],
+
+					"id" : "unitId",
+					"type" : "type",
+					"name" : "name"
+				},{
+					"minInstances" : 1,
+					"maxInstances" : 2,
+					"deploymentArtifacts" : [],
+
+					"directives" : [{
+							"directive" : "C2: CONSTRAINT CASE cpuUsage \u0026lt; 40 % : scalein",
+							"strategyConstraintType" : "SYBL",
+							"id" : "con3",
+							"type" : "SYBLConstraint"
+						}],
+
+					"requirements" : [],
+
+					"capabilities" : [{
+							"id" : "cap3",
+							"type" : "variable"
+						}],
+
+					"elasticityCapabilities" : [],
+
+					"properties" : {
+						"instanceType" : "000000512",
+						"packages" : "java-jdk, something-something",
+						"provider" : "dsg@openstack",
+						"baseImage" : "8f1428ac-f239-42e0-ab35-137f6e234101"
+					},
+
+					"id" : "osId",
+					"type" : "type",
+					"name" : "name"
+				}],
+
+			"serviceTopologies" : [],
+
+			"directives" : [],
+
+			"requirements" : [],
+
+			"capabilities" : [],
+
+			"elasticityCapabilities" : [],
+
+			"properties" : {
+				
+			},
+
+			"id" : "topologyId"
+		}],
+
+	"relationships" : [],
+
+	"directives" : [],
+
+	"requirements" : [],
+
+	"capabilities" : [],
+
+	"elasticityCapabilities" : [],
+
+	"properties" : {
+		
+	},
+
+	"id" : "serviceId"
+}

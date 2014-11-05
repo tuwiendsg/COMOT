@@ -10,10 +10,10 @@ import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionR
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public class UnifiedConfiguration {
-	
-	 @XmlElement(name = "CompositionRulesConfiguration")
+
+	@XmlElement(name = "CompositionRulesConfiguration")
 	protected CompositionRulesConfiguration mcr;
-	
+
 	protected String effects;
 
 	public CompositionRulesConfiguration getMcr() {
@@ -31,7 +31,5 @@ public class UnifiedConfiguration {
 	public void setEffects(String effects) {
 		this.effects = effects;
 	}
-	
-	
 
 }

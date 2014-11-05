@@ -1,10 +1,9 @@
 package at.ac.tuwien.dsg.comot.bundles.dataends;
 
 import at.ac.tuwien.dsg.comot.bundles.BundleLoaderFactory;
-import at.ac.tuwien.dsg.comot.common.model.*;
-
-import static at.ac.tuwien.dsg.comot.common.model.ArtifactReference.ArtifactReference;
-import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.ScriptArtifactTemplate;
+import at.ac.tuwien.dsg.comot.common.fluent.*;
+import static at.ac.tuwien.dsg.comot.common.fluent.ArtifactReference.ArtifactReference;
+import static at.ac.tuwien.dsg.comot.common.fluent.ArtifactTemplate.ScriptArtifactTemplate;
 
 /**
  * @author omoser

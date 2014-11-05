@@ -5,7 +5,7 @@ package at.ac.tuwien.dsg.comot.cs.transformer;
  */
 public class ToscaDescriptionBuilderException extends RuntimeException {
 
-    public ToscaDescriptionBuilderException(String message, Exception cause) {
-        super(message, cause);
-    }
+	public ToscaDescriptionBuilderException(String message, Exception cause) {
+		super(message, cause);
+	}
 }

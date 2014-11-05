@@ -1,11 +1,10 @@
 package at.ac.tuwien.dsg.comot.bundles.frontends;
 
 import at.ac.tuwien.dsg.comot.bundles.JsonBundleLoader;
-import at.ac.tuwien.dsg.comot.common.model.BundleConfig;
-import at.ac.tuwien.dsg.comot.common.model.SoftwareNode;
-
-import static at.ac.tuwien.dsg.comot.common.model.ArtifactReference.ArtifactReference;
-import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.ScriptArtifactTemplate;
+import at.ac.tuwien.dsg.comot.common.fluent.BundleConfig;
+import at.ac.tuwien.dsg.comot.common.fluent.SoftwareNode;
+import static at.ac.tuwien.dsg.comot.common.fluent.ArtifactReference.ArtifactReference;
+import static at.ac.tuwien.dsg.comot.common.fluent.ArtifactTemplate.ScriptArtifactTemplate;
 
 /**
  * @author omoser

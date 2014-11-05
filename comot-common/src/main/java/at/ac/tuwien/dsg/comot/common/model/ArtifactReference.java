@@ -1,53 +1,32 @@
 package at.ac.tuwien.dsg.comot.common.model;
 
-/**
- * @author omoser
- */
-public class ArtifactReference extends AbstractCloudEntity {
+public class ArtifactReference extends AbstractEntity {
 
-    private String uri;
+	protected String uri;
 
-    ArtifactReference(String id) {
-        super(id);
-    }
+	public ArtifactReference() {
+	}
 
-    public static ArtifactReference ArtifactReference(String id) {
-        return new ArtifactReference(id);
-    }
+	public ArtifactReference(String id) {
+		super(id);
+	}
 
-    public ArtifactReference withUri(String uri) {
-        this.uri = uri;
-        return this;
-    }
+	public ArtifactReference(String id, String uri) {
+		super(id);
+		this.uri = uri;
+	}
 
-    public String getUri() {
-        return uri;
-    }
+	public String getUri() {
+		return uri;
+	}
 
-    public ArtifactReference locatedAt(String uri) {
-        return withUri(uri);
-    }
+	public void setUri(String uri) {
+		this.uri = uri;
+	}
 
-    @Override
-    public ArtifactReference withDescription(String description) {
-        return (ArtifactReference) super.withDescription(description);
-    }
-
-    @Override
-    public ArtifactReference withName(String name) {
-        return (ArtifactReference) super.withName(name);
-    }
-
-    @Override
-    public ArtifactReference ofType(String type) {
-        return (ArtifactReference) super.ofType(type);
-    }
-
-
-    @Override
-    public String toString() {
-        return uri;
-    }
-
+	@Override
+	public String toString() {
+		return uri;
+	}
 
 }

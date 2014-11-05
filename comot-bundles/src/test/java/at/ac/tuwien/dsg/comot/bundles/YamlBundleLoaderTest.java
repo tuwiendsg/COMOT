@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot.bundles;
 
-import at.ac.tuwien.dsg.comot.common.model.BundleConfig;
+import at.ac.tuwien.dsg.comot.common.fluent.BundleConfig;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

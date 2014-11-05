@@ -93,7 +93,7 @@ public class MelaClient extends CoreServiceClient {
 			log.info(Markers.CLIENT, "getServiceDescription '{}'. Response: '{}'", serviceId,
 					result);
 		}
-		
+
 		return result;
 	}
 
@@ -144,7 +144,7 @@ public class MelaClient extends CoreServiceClient {
 		Response response = client.target(getBaseUri())
 				.path(LIST_ALL_SERVICES_PATH)
 				.request(MediaType.APPLICATION_JSON)
-				//.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML)
+				// .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML)
 				.get();
 
 		processResponseStatus(response);
@@ -154,11 +154,11 @@ public class MelaClient extends CoreServiceClient {
 		if (log.isInfoEnabled()) {
 			log.info(Markers.CLIENT, "listAllServices . Response: '{}'", result);
 		}
-		
+
 		// extract IDs from JSON to list
-		List<String> list = new ArrayList<String>(); 
+		List<String> list = new ArrayList<String>();
 		JSONArray array = new JSONArray(result);
-		
+
 		for (int i = 0; i < array.length(); i++) {
 			JSONObject obj = array.getJSONObject(i);
 			list.add(obj.getString("id"));
@@ -347,8 +347,7 @@ public class MelaClient extends CoreServiceClient {
 
 	// METRICS --------------------------------------------------
 
-	
-	// getAvailableMetrics  
+	// getAvailableMetrics
 	// returns Collection<Metric>
 	public String getAvailableMetrics(
 			String serviceId,

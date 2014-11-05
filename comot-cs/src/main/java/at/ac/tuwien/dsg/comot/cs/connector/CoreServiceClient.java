@@ -30,7 +30,7 @@ public abstract class CoreServiceClient {
 		this.port = port;
 		this.basePath = basePath;
 
-		client = ClientBuilder.newClient(); 
+		client = ClientBuilder.newClient();
 	}
 
 	protected String getBaseUri() {

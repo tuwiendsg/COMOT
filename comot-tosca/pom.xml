@@ -12,7 +12,9 @@
 	</parent>
 
 	<build>
+
 		<plugins>
+
 			<plugin>
 				<groupId>org.jvnet.jaxb2.maven2</groupId>
 				<artifactId>maven-jaxb2-plugin</artifactId>
@@ -34,6 +36,7 @@
 					<args>
 						<arg>-Xfluent-api</arg>
 						<arg>-disableXmlSecurity</arg>
+						<arg>-Xsetters</arg>
 					</args>
 				</configuration>
 				<dependencies>

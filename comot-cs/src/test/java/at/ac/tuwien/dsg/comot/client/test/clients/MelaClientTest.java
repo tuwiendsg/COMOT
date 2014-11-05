@@ -12,16 +12,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-
-
-
-
-
 import at.ac.tuwien.dsg.comot.client.test.AbstractTest;
 import at.ac.tuwien.dsg.comot.client.test.TestUtils;
 import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
-import at.ac.tuwien.dsg.comot.common.model.CloudService;
+import at.ac.tuwien.dsg.comot.common.fluent.CloudService;
 import at.ac.tuwien.dsg.comot.common.test.samples.ExampleDeployOneVM;
 import at.ac.tuwien.dsg.comot.common.test.samples.ExampleExecutableOnVM;
 import at.ac.tuwien.dsg.comot.cs.connector.MelaClient;
@@ -80,21 +75,20 @@ public class MelaClientTest extends AbstractTest {
 
 	@Test
 	public void helperDeploy() throws CoreServiceException {
-		
-		
+
 		salsa.deploy(new ToscaDescriptionBuilderImpl().toXml(serviceTemplate));
 	}
 
 	@Test
 	public void testAutomated() throws CoreServiceException, InterruptedException, JAXBException, FileNotFoundException {
 
-		log.info(Utils.xmlObjToString(eService));
+		log.info(Utils.asXmlString(eService));
 
 		// service description
 		mela.sendServiceDescription(eService);
 
 		MonitoredElement returned = mela.getServiceDescription(serviceId);
-		log.info("getServiceDescription " + Utils.xmlObjToString(returned));
+		log.info("getServiceDescription " + Utils.asXmlString(returned));
 		assertEquals(eService.getId(), returned.getId());
 
 		// update
@@ -110,7 +104,7 @@ public class MelaClientTest extends AbstractTest {
 
 		// TODO what are requirements?
 		// sendRequirements
-		
+
 		removeService();
 	}
 
@@ -121,15 +115,15 @@ public class MelaClientTest extends AbstractTest {
 
 		data = mela.getMonitoringData(serviceId);
 		assertNotNull(data);
-		log.info("getMonitoringData(serviceId) \n" + Utils.xmlObjToString(data));
+		log.info("getMonitoringData(serviceId) \n" + Utils.asXmlString(data));
 
 		data = mela.getMonitoringData(serviceId, eVM);
 		assertNotNull(data);
-		log.info("getMonitoringData(serviceId, eVM) \n" + Utils.xmlObjToString(data));
+		log.info("getMonitoringData(serviceId, eVM) \n" + Utils.asXmlString(data));
 
 		MonitoredElementMonitoringSnapshots dataMultiple = mela.getAllAggregatedMonitoringData(serviceId);
 		assertNotNull(dataMultiple);
-		log.info("getAllAggregatedMonitoringData \n" + Utils.xmlObjToString(dataMultiple));
+		log.info("getAllAggregatedMonitoringData \n" + Utils.asXmlString(dataMultiple));
 
 		// TODO resolve timestamp, why int?
 		// dataMultiple = mela.getAllAggregatedMonitoringDataInTimeInterval(serviceId, startTimestamp, endTimestamp);
@@ -138,7 +132,7 @@ public class MelaClientTest extends AbstractTest {
 
 		dataMultiple = mela.getLastXAggregatedMonitoringData(serviceId, 5);
 		assertNotNull(dataMultiple);
-		log.info("getLastXAggregatedMonitoringData \n" + Utils.xmlObjToString(dataMultiple));
+		log.info("getLastXAggregatedMonitoringData \n" + Utils.asXmlString(dataMultiple));
 	}
 
 	@Test
@@ -155,29 +149,29 @@ public class MelaClientTest extends AbstractTest {
 		mela.updateServiceDescription(serviceId, eService);
 
 		MonitoredElement returned = mela.getServiceDescription(serviceId);
-		log.info("updated  " + Utils.xmlObjToString(returned));
+		log.info("updated  " + Utils.asXmlString(returned));
 		assertEquals(2, returned.getContainedElements().size());
 
 		// revert update
 		eService.removeElement(newTopo);
 		mela.updateServiceDescription(serviceId, eService);
-		
+
 		returned = mela.getServiceDescription(serviceId);
-		log.info("reverted  " + Utils.xmlObjToString(returned));
+		log.info("reverted  " + Utils.asXmlString(returned));
 	}
 
 	@Test
 	public void updateMCR() throws CoreServiceException, InterruptedException, JAXBException, FileNotFoundException {
 
 		CompositionRulesConfiguration mcr = mela.getMetricsCompositionRules(serviceId);
-		log.info("old MCR \n" + Utils.xmlObjToString(mcr));
+		log.info("old MCR \n" + Utils.asXmlString(mcr));
 		assertNotNull(mcr);
 
 		mela.sendMetricsCompositionRules(serviceId,
 				TestUtils.loadMetricCompositionRules(serviceId, "./mela/defCompositionRules.xml"));
 
 		mcr = mela.getMetricsCompositionRules(serviceId);
-		log.info("new MCR \n" + Utils.xmlObjToString(mcr));
+		log.info("new MCR \n" + Utils.asXmlString(mcr));
 		assertNotNull(mcr);
 
 	}
@@ -185,7 +179,7 @@ public class MelaClientTest extends AbstractTest {
 	@Test
 	public void removeService() throws CoreServiceException, InterruptedException, JAXBException {
 		mela.removeServiceDescription(serviceId);
-		
+
 		List<String> list = mela.listAllServices();
 		assertEquals(0, list.size());
 	}

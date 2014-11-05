@@ -20,7 +20,6 @@ public class MonitoringClientMela implements MonitoringClient {
 
 	// TODO
 
-
 	@PreDestroy
 	public void cleanup() {
 		log.info("closing mela client");

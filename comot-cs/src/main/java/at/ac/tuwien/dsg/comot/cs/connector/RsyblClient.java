@@ -102,7 +102,8 @@ public class RsyblClient extends CoreServiceClient {
 		}
 	}
 
-	public void sendMetricsCompositionRules(String serviceId, CompositionRulesConfiguration compositionRulesConfiguration)
+	public void sendMetricsCompositionRules(String serviceId,
+			CompositionRulesConfiguration compositionRulesConfiguration)
 			throws CoreServiceException {
 
 		Response response = client.target(getBaseUri())
@@ -216,6 +217,7 @@ public class RsyblClient extends CoreServiceClient {
 
 	/**
 	 * = replaceRequirements
+	 * 
 	 * @param serviceId
 	 * @param cloudServiceXML
 	 * @throws CoreServiceException

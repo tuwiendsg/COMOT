@@ -7,6 +7,7 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService;
 import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.logging.Markers;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
@@ -147,7 +148,7 @@ public class SalsaClient extends CoreServiceClient {
 		}
 	}
 
-	public at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService getStatus(String serviceId)
+	public CloudService getStatus(String serviceId)
 			throws CoreServiceException {
 
 		if (log.isDebugEnabled()) {

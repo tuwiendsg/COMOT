@@ -1,23 +1,24 @@
 package at.ac.tuwien.dsg.comot.common.test.samples;
 
-import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifactTemplate;
-import static at.ac.tuwien.dsg.comot.common.model.CloudService.ServiceTemplate;
-import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackMicro;
-import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.HostedOnRelation;
-import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingSystemUnit;
-import static at.ac.tuwien.dsg.comot.common.model.ServiceTopology.ServiceTopology;
-import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.SingleSoftwareUnit;
-import at.ac.tuwien.dsg.comot.common.model.CloudService;
-import at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit;
-import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
-import at.ac.tuwien.dsg.comot.common.model.ServiceUnit;
+import static at.ac.tuwien.dsg.comot.common.fluent.ArtifactTemplate.SingleScriptArtifactTemplate;
+import static at.ac.tuwien.dsg.comot.common.fluent.CloudService.ServiceTemplate;
+import static at.ac.tuwien.dsg.comot.common.fluent.CommonOperatingSystemSpecification.OpenstackMicro;
+import static at.ac.tuwien.dsg.comot.common.fluent.EntityRelationship.HostedOnRelation;
+import static at.ac.tuwien.dsg.comot.common.fluent.OperatingSystemUnit.OperatingSystemUnit;
+import static at.ac.tuwien.dsg.comot.common.fluent.ServiceTopology.ServiceTopology;
+import static at.ac.tuwien.dsg.comot.common.fluent.SoftwareNode.SingleSoftwareUnit;
+import at.ac.tuwien.dsg.comot.common.fluent.CloudService;
+import at.ac.tuwien.dsg.comot.common.fluent.OperatingSystemUnit;
+import at.ac.tuwien.dsg.comot.common.fluent.ServiceTopology;
+import at.ac.tuwien.dsg.comot.common.fluent.ServiceUnit;
 
 public class ExampleExecutableOnVM {
 
 	public static final String SERVICE_ID = "example_ExecutableOnVM";
 	public static final String TOPOLOGY_ID = "example_topology";
 	public static final String OS_ID = "example_OS_comot";
-	//public static final String ARTIFACT_ID = "example_SW";
+
+	// public static final String ARTIFACT_ID = "example_SW";
 
 	public static CloudService build() {
 
@@ -38,8 +39,8 @@ public class ExampleExecutableOnVM {
 				.consistsOfTopologies(topology)
 				.andRelationships(
 						HostedOnRelation("app_on_os")
-							.from(artifact)
-							.to(os))
+								.from(artifact)
+								.to(os))
 				.withDefaultMetrics()
 				.withDefaultActionEffects();
 

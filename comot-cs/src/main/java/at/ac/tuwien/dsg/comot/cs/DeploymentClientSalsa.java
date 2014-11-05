@@ -9,7 +9,7 @@ import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityS
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityType;
 import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.coreservices.DeploymentClient;
-import at.ac.tuwien.dsg.comot.common.model.CloudService;
+import at.ac.tuwien.dsg.comot.common.fluent.CloudService;
 import at.ac.tuwien.dsg.comot.cs.connector.SalsaClient;
 import at.ac.tuwien.dsg.comot.cs.transformer.ToscaDescriptionBuilder;
 import at.ac.tuwien.dsg.comot.cs.transformer.ToscaDescriptionBuilderImpl;
@@ -24,10 +24,10 @@ public class DeploymentClientSalsa implements DeploymentClient {
 	protected ToscaDescriptionBuilder toscaBuilder;
 
 	public DeploymentClientSalsa() {
-		
+
 		toscaBuilder = new ToscaDescriptionBuilderImpl();
 		// toscaBuilder.setValidating(true); // TODO validation fails
-		
+
 		salsa = new SalsaClient();
 	}
 
@@ -38,7 +38,7 @@ public class DeploymentClientSalsa implements DeploymentClient {
 
 		return salsa.deploy(toscaDescriptionXml);
 	}
-	
+
 	@Override
 	public String deploy(String toscaDescriptionXml) throws CoreServiceException {
 		return salsa.deploy(toscaDescriptionXml);
@@ -98,7 +98,7 @@ public class DeploymentClientSalsa implements DeploymentClient {
 
 		return running;
 	}
-	
+
 	// TODO only temporary
 	@Override
 	public String getStatusGui(String serviceId) throws CoreServiceException {

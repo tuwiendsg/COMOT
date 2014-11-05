@@ -1,16 +1,16 @@
 package at.ac.tuwien.dsg.comot.bundles.test.samples;
 
 import static at.ac.tuwien.dsg.comot.bundles.dataends.ElasticSearchNode.ElasticSearchNode;
-import static at.ac.tuwien.dsg.comot.common.model.CloudService.ServiceTemplate;
-import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackSmall;
-import static at.ac.tuwien.dsg.comot.common.model.Constraint.CostConstraint;
-import static at.ac.tuwien.dsg.comot.common.model.Constraint.LatencyConstraint;
-import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.HostedOnRelation;
-import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingSystemUnit;
-import at.ac.tuwien.dsg.comot.common.model.CloudService;
-import at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit;
-import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
-import at.ac.tuwien.dsg.comot.common.model.ServiceUnit;
+import static at.ac.tuwien.dsg.comot.common.fluent.CloudService.ServiceTemplate;
+import static at.ac.tuwien.dsg.comot.common.fluent.CommonOperatingSystemSpecification.OpenstackSmall;
+import static at.ac.tuwien.dsg.comot.common.fluent.Constraint.CostConstraint;
+import static at.ac.tuwien.dsg.comot.common.fluent.Constraint.LatencyConstraint;
+import static at.ac.tuwien.dsg.comot.common.fluent.EntityRelationship.HostedOnRelation;
+import static at.ac.tuwien.dsg.comot.common.fluent.OperatingSystemUnit.OperatingSystemUnit;
+import at.ac.tuwien.dsg.comot.common.fluent.CloudService;
+import at.ac.tuwien.dsg.comot.common.fluent.OperatingSystemUnit;
+import at.ac.tuwien.dsg.comot.common.fluent.ServiceTopology;
+import at.ac.tuwien.dsg.comot.common.fluent.ServiceUnit;
 
 /**
  * @author omoser

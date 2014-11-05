@@ -1,6 +1,6 @@
 package at.ac.tuwien.dsg.comot.bundles;
 
-import at.ac.tuwien.dsg.comot.common.model.BundleConfig;
+import at.ac.tuwien.dsg.comot.common.fluent.BundleConfig;
 
 /**
  * @author omoser

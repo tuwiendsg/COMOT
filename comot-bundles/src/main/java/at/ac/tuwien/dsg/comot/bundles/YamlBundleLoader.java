@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot.bundles;
 
-import at.ac.tuwien.dsg.comot.common.model.BundleConfig;
+import at.ac.tuwien.dsg.comot.common.fluent.BundleConfig;
+
 import org.springframework.core.io.ClassPathResource;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;

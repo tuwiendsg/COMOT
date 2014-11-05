@@ -68,6 +68,12 @@
 			</dependency>
 
 			<dependency>
+				<groupId>com.google.code.gson</groupId>
+				<artifactId>gson</artifactId>
+				<version>2.3</version>
+			</dependency>
+
+			<dependency>
 				<groupId>org.json</groupId>
 				<artifactId>json</artifactId>
 				<version>20140107</version>
@@ -234,6 +240,10 @@
 					<exclusion>
 						<groupId>org.apache.cxf</groupId>
 						<artifactId>cxf-rt-transports-http-hc</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.google.code.gson</groupId>
+						<artifactId>gson</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>

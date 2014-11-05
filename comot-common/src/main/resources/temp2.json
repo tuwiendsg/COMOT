@@ -1,0 +1,140 @@
+{
+	"serviceTopologies" : [{
+			"serviceUnits" : [{
+					"minInstances" : 2,
+					"maxInstances" : 5,
+					"deploymentArtifacts" : [{
+							"artifactReferences" : [],
+
+							"id" : "deployCassandraNode",
+							"type" : "sh",
+							"name" : "Deployment script"
+						}],
+
+					"directives" : [{
+							"directive" : "ST1: STRATEGY CASE cpuUsage \u0026lt; 40 % : scalein",
+							"strategyConstraintType" : "SYBL",
+							"type" : "SYBLConstraint"
+						},{
+							"directive" : "C2: CONSTRAINT CASE cpuUsage \u0026lt; 40 % : scalein",
+							"strategyConstraintType" : "SYBL",
+							"type" : "SYBLConstraint"
+						}],
+
+					"requirements" : [{
+							"id" : "req1",
+							"type" : "variable"
+						},{
+							"id" : "req2",
+							"type" : "variable"
+						}],
+
+					"capabilities" : [{
+							"id" : "cap1",
+							"type" : "variable"
+						},{
+							"id" : "cap2",
+							"type" : "variable"
+						}],
+
+					"elasticityCapabilities" : [],
+
+					"properties" : {
+						
+					},
+
+					"id" : "unitId",
+					"type" : "type",
+					"name" : "name"
+				},{
+					"minInstances" : 1,
+					"maxInstances" : 2,
+					"deploymentArtifacts" : [],
+
+					"directives" : [{
+							"directive" : "C2: CONSTRAINT CASE cpuUsage \u0026lt; 40 % : scalein",
+							"strategyConstraintType" : "SYBL",
+							"type" : "SYBLConstraint"
+						}],
+
+					"requirements" : [],
+
+					"capabilities" : [{
+							"id" : "cap3",
+							"type" : "variable"
+						}],
+
+					"elasticityCapabilities" : [],
+
+					"properties" : {
+						
+					},
+
+					"id" : "osId",
+					"type" : "type",
+					"name" : "name"
+				}],
+
+			"serviceTopologies" : [],
+
+			"directives" : [],
+
+			"requirements" : [],
+
+			"capabilities" : [],
+
+			"elasticityCapabilities" : [],
+
+			"properties" : {
+				
+			},
+
+			"id" : "topologyId"
+		},{
+			"serviceUnits" : [],
+
+			"serviceTopologies" : [],
+
+			"directives" : [],
+
+			"requirements" : [],
+
+			"capabilities" : [],
+
+			"elasticityCapabilities" : [],
+
+			"id" : "deployCassandraNode",
+			"type" : "sh"
+		},{
+			"serviceUnits" : [],
+
+			"serviceTopologies" : [],
+
+			"directives" : [],
+
+			"requirements" : [],
+
+			"capabilities" : [],
+
+			"elasticityCapabilities" : [],
+
+			"id" : "deployCassandraNode",
+			"type" : "sh"
+		}],
+
+	"relationships" : [],
+
+	"directives" : [],
+
+	"requirements" : [],
+
+	"capabilities" : [],
+
+	"elasticityCapabilities" : [],
+
+	"properties" : {
+		
+	},
+
+	"id" : "serviceId"
+}

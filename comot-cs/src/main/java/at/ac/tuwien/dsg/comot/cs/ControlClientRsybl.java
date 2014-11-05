@@ -13,15 +13,15 @@ import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.comot.common.coreservices.ControlClient;
 import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
-import at.ac.tuwien.dsg.comot.common.model.Capability;
-import at.ac.tuwien.dsg.comot.common.model.CloudService;
-import at.ac.tuwien.dsg.comot.common.model.Constraint;
-import at.ac.tuwien.dsg.comot.common.model.ElasticityCapability;
-import at.ac.tuwien.dsg.comot.common.model.EntityRelationship;
-import at.ac.tuwien.dsg.comot.common.model.Requirement;
-import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
-import at.ac.tuwien.dsg.comot.common.model.ServiceUnit;
-import at.ac.tuwien.dsg.comot.common.model.Strategy;
+import at.ac.tuwien.dsg.comot.common.fluent.Capability;
+import at.ac.tuwien.dsg.comot.common.fluent.CloudService;
+import at.ac.tuwien.dsg.comot.common.fluent.Constraint;
+import at.ac.tuwien.dsg.comot.common.fluent.ElasticityCapability;
+import at.ac.tuwien.dsg.comot.common.fluent.EntityRelationship;
+import at.ac.tuwien.dsg.comot.common.fluent.Requirement;
+import at.ac.tuwien.dsg.comot.common.fluent.ServiceTopology;
+import at.ac.tuwien.dsg.comot.common.fluent.ServiceUnit;
+import at.ac.tuwien.dsg.comot.common.fluent.Strategy;
 import at.ac.tuwien.dsg.comot.cs.connector.RsyblClient;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.abstractModelXML.CloudServiceXML;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.abstractModelXML.RelationshipXML;
@@ -32,8 +32,7 @@ import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescripti
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentUnit;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
-
-public class ControlClientRsybl implements ControlClient{
+public class ControlClientRsybl implements ControlClient {
 
 	private final Logger log = LoggerFactory.getLogger(ControlClientRsybl.class);
 
@@ -60,11 +59,11 @@ public class ControlClientRsybl implements ControlClient{
 
 		rsybl.serviceDeployment(serviceId, deploymentDescription);
 
-		if (compositionRulesConfiguration != null) {//optional
+		if (compositionRulesConfiguration != null) {// optional
 			rsybl.sendMetricsCompositionRules(serviceId, compositionRulesConfiguration);
 		}
-		
-		if (effectsJSON != null) {//optional
+
+		if (effectsJSON != null) {// optional
 			rsybl.sendElasticityCapabilitiesEffects(serviceId, effectsJSON);
 		}
 
@@ -75,14 +74,14 @@ public class ControlClientRsybl implements ControlClient{
 			CloudService service,
 			CompositionRulesConfiguration compositionRulesConfiguration,
 			String effectsJSON) throws CoreServiceException {
-		
+
 		String serviceId = service.getId();
 		CloudServiceXML cloudServiceXML = toRSYBLRepresentation(service);
-		
+
 		rsybl.updateMetricsCompositionRules(serviceId, compositionRulesConfiguration);
-		
+
 		rsybl.updateElasticityCapabilitiesEffects(serviceId, effectsJSON);
-		
+
 		rsybl.updateElasticityRequirements(serviceId, cloudServiceXML);
 
 	}
@@ -96,7 +95,6 @@ public class ControlClientRsybl implements ControlClient{
 	public void stopControl(String serviceId) throws CoreServiceException {
 		rsybl.stopControl(serviceId);
 	}
-
 
 	// ////////////
 
@@ -320,7 +318,7 @@ public class ControlClientRsybl implements ControlClient{
 		return deploymentDescription;
 
 	}
-	
+
 	@PreDestroy
 	public void cleanup() {
 		log.info("closing rsybl client");
@@ -336,7 +334,5 @@ public class ControlClientRsybl implements ControlClient{
 	public void setPort(int port) {
 		rsybl.setPort(port);
 	}
-	
-	
 
 }
