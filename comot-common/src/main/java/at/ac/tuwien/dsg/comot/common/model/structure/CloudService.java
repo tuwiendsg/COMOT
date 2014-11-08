@@ -31,6 +31,15 @@ public class CloudService extends ServicePart {
 		relationships.add(relationship);
 	}
 
+	public boolean containsRelationship(String newRelId) {
+		for (EntityRelationship rel : relationships) {
+			if (rel.getId().equals(newRelId)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	// GENERATED METHODS
 
 	public List<ServiceTopology> getServiceTopologies() {
@@ -47,37 +56,6 @@ public class CloudService extends ServicePart {
 
 	public void setRelationships(List<EntityRelationship> relationships) {
 		this.relationships = relationships;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((relationships == null) ? 0 : relationships.hashCode());
-		result = prime * result + ((serviceTopologies == null) ? 0 : serviceTopologies.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		CloudService other = (CloudService) obj;
-		if (relationships == null) {
-			if (other.relationships != null)
-				return false;
-		} else if (!relationships.equals(other.relationships))
-			return false;
-		if (serviceTopologies == null) {
-			if (other.serviceTopologies != null)
-				return false;
-		} else if (!serviceTopologies.equals(other.serviceTopologies))
-			return false;
-		return true;
 	}
 
 }

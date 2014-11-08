@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:Definitions id="serviceId" xmlns:ns2="http://docs.oasis-open.org/tosca/ns/2011/12">
+	<ns2:ServiceTemplate id="topologyId">
+		<ns2:TopologyTemplate>
+			<ns2:NodeTemplate name="name" minInstances="2" maxInstances="5" id="unitId" type="type">
+				<ns2:Requirements>
+					<ns2:Requirement id="req1" type="variable" />
+					<ns2:Requirement id="req2" type="variable" />
+				</ns2:Requirements>
+				<ns2:Capabilities>
+					<ns2:Capability id="cap1" type="variable" />
+					<ns2:Capability id="cap2" type="variable" />
+				</ns2:Capabilities>
+				<ns2:Policies>
+					<ns2:Policy name="ST1: STRATEGY CASE cpuUsage &amp;lt; 40 % : scalein" policyType="SYBLConstraint" />
+					<ns2:Policy name="C2: CONSTRAINT CASE cpuUsage &amp;lt; 40 % : scalein" policyType="SYBLConstraint" />
+				</ns2:Policies>
+				<ns2:DeploymentArtifacts>
+					<ns2:DeploymentArtifact name="Deployment script" artifactType="sh" artifactRef="deployCassandraNode" />
+				</ns2:DeploymentArtifacts>
+			</ns2:NodeTemplate>
+			<ns2:NodeTemplate name="name" minInstances="1" maxInstances="2" id="osId" type="type">
+				<ns2:Properties>
+					<MappingProperties>
+						<MappingProperty type="os">
+							<property name="instanceType">000000512</property>
+							<property name="packages">java-jdk, something-something</property>
+							<property name="provider">dsg@openstack</property>
+							<property name="baseImage">8f1428ac-f239-42e0-ab35-137f6e234101</property>
+						</MappingProperty>
+					</MappingProperties>
+				</ns2:Properties>
+				<ns2:Requirements />
+				<ns2:Capabilities>
+					<ns2:Capability id="cap3" type="variable" />
+				</ns2:Capabilities>
+				<ns2:Policies>
+					<ns2:Policy name="C2: CONSTRAINT CASE cpuUsage &amp;lt; 40 % : scalein" policyType="SYBLConstraint" />
+				</ns2:Policies>
+				<ns2:DeploymentArtifacts />
+			</ns2:NodeTemplate>
+			<ns2:RelationshipTemplate id="rela1" type="mytype">
+				<ns2:SourceElement ref="unitId" />
+				<ns2:TargetElement ref="osId" />
+			</ns2:RelationshipTemplate>
+		</ns2:TopologyTemplate>
+	</ns2:ServiceTemplate>
+	<ns2:ArtifactTemplate id="deployCassandraNode" type="sh">
+		<ns2:ArtifactReferences>
+			<ns2:ArtifactReference reference="http://128.130.172.215/salsa/upload/files/DaasService/deployCassandraSeed.sh" />
+		</ns2:ArtifactReferences>
+	</ns2:ArtifactTemplate>
+</ns2:Definitions>

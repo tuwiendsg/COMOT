@@ -1,12 +1,14 @@
 package at.ac.tuwien.dsg.comot.common.coreservices;
 
-import at.ac.tuwien.dsg.comot.common.fluent.CloudService;
+import at.ac.tuwien.dsg.comot.common.exception.ComotException;
+import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 
 public interface DeploymentClient extends CoreServiceClient {
 
 	public String deploy(
-			CloudService CloudService) throws CoreServiceException;
+			CloudService CloudService) throws CoreServiceException, ComotException;
 
 	public String deploy(
 			String toscaDescriptionXml) throws CoreServiceException;

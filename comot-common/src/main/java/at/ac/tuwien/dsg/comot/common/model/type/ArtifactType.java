@@ -1,7 +1,11 @@
 package at.ac.tuwien.dsg.comot.common.model.type;
 
 public enum ArtifactType {
-	Script("sh");
+	SCRIPT("sh"),
+	WAR_FILE("war"),
+	CHEF("chef"),
+	CHEF_SOLO("chef-solo"),
+	APT_GET_COMMAND("apt");
 
 	private final String type;
 
@@ -12,5 +16,16 @@ public enum ArtifactType {
 	@Override
 	public String toString() {
 		return type;
+	}
+
+	public static ArtifactType fromString(String type) {
+		if (type != null) {
+			for (ArtifactType b : ArtifactType.values()) {
+				if (type.equalsIgnoreCase(b.type)) {
+					return b;
+				}
+			}
+		}
+		return null;
 	}
 }

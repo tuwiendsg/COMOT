@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tosca:Definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:tosca="http://docs.oasis-open.org/tosca/ns/2011/12" xmlns:salsa="http://example.com"
+	xsi:schemaLocation="http://docs.oasis-open.org/tosca/ns/2011/12 TOSCA-v1.0.xsd" targetNamespace="http://tempuri.org"
+	id="example_executableOnVM" name="example_executableOnVM">
+
+	<tosca:ServiceTemplate id="example_topology">
+		
+		<tosca:TopologyTemplate>
+			<tosca:NodeTemplate id="example_SW_comot" name="Hello World" type="salsa:software">
+				<tosca:DeploymentArtifacts>
+					<tosca:DeploymentArtifact artifactType="salsa:sh" name="Deployment script" artifactRef="deployScript" />
+				</tosca:DeploymentArtifacts>
+			</tosca:NodeTemplate>
+
+			<tosca:NodeTemplate type="salsa:os" id="example_OS_comot" minInstances="1" maxInstances="1">
+				<tosca:Properties>
+					<MappingProperties>
+						<MappingProperty type="os">
+							<property name="instanceType">000000960</property>
+							<property name="provider">dsg@openstack</property>
+							<property name="baseImage">8f1428ac-f239-42e0-ab35-137f6e234101</property>
+							<property name="packages">openjdk-7-jre</property>
+						</MappingProperty>
+					</MappingProperties>
+				</tosca:Properties>
+			</tosca:NodeTemplate>
+			
+			<tosca:RelationshipTemplate type="salsa:HOSTON" id="app_on_os">
+				<tosca:SourceElement ref="example_SW_comot" />
+				<tosca:TargetElement ref="example_OS_comot" />
+			</tosca:RelationshipTemplate>
+		</tosca:TopologyTemplate>
+		
+	</tosca:ServiceTemplate>
+
+	<tosca:ArtifactTemplate id="deployScript" type="salsa:sh">
+		<tosca:ArtifactReferences>
+			<tosca:ArtifactReference reference="http://128.130.172.215/salsa/upload/files/comot/run.sh" />
+		</tosca:ArtifactReferences>
+	</tosca:ArtifactTemplate>
+	
+</tosca:Definitions>

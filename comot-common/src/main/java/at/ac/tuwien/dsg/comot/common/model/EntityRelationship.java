@@ -1,39 +1,45 @@
 package at.ac.tuwien.dsg.comot.common.model;
 
-import at.ac.tuwien.dsg.comot.common.model.structure.ServicePart;
+import at.ac.tuwien.dsg.comot.common.model.type.RelationshipType;
 
-public class EntityRelationship extends AbstractEntity {
+public class EntityRelationship extends AbstractEntity implements ReferencableEntity {
 
-	protected ServicePart from;
-	protected ServicePart to;
+	protected RelationshipType type;
+	protected ReferencableEntity from;
+	protected ReferencableEntity to;
 
 	public EntityRelationship() {
 	}
 
-	public EntityRelationship(String id) {
+	public EntityRelationship(String id, RelationshipType type, ReferencableEntity from, ReferencableEntity to) {
 		super(id);
-	}
-
-	public EntityRelationship(String id, String type, ServicePart from, ServicePart to) {
-		super(id, type);
 		this.from = from;
 		this.to = to;
+		this.type = type;
 	}
 
-	public ServicePart getFrom() {
+	public ReferencableEntity getFrom() {
 		return from;
 	}
 
-	public void setFrom(ServicePart from) {
+	public void setFrom(ReferencableEntity from) {
 		this.from = from;
 	}
 
-	public ServicePart getTo() {
+	public ReferencableEntity getTo() {
 		return to;
 	}
 
-	public void setTo(ServicePart to) {
+	public void setTo(ReferencableEntity to) {
 		this.to = to;
+	}
+
+	public RelationshipType getType() {
+		return type;
+	}
+
+	public void setType(RelationshipType type) {
+		this.type = type;
 	}
 
 }

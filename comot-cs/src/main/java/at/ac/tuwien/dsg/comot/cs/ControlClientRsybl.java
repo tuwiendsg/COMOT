@@ -12,16 +12,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.comot.common.coreservices.ControlClient;
-import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
-import at.ac.tuwien.dsg.comot.common.fluent.Capability;
-import at.ac.tuwien.dsg.comot.common.fluent.CloudService;
-import at.ac.tuwien.dsg.comot.common.fluent.Constraint;
-import at.ac.tuwien.dsg.comot.common.fluent.ElasticityCapability;
-import at.ac.tuwien.dsg.comot.common.fluent.EntityRelationship;
-import at.ac.tuwien.dsg.comot.common.fluent.Requirement;
-import at.ac.tuwien.dsg.comot.common.fluent.ServiceTopology;
-import at.ac.tuwien.dsg.comot.common.fluent.ServiceUnit;
-import at.ac.tuwien.dsg.comot.common.fluent.Strategy;
+import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.common.model.EntityRelationship;
+import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.common.model.structure.ServiceTopology;
+import at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.common.model.type.ServiceUnitType;
+import at.ac.tuwien.dsg.comot.common.model.unit.Capability;
+import at.ac.tuwien.dsg.comot.common.model.unit.Requirement;
 import at.ac.tuwien.dsg.comot.cs.connector.RsyblClient;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.abstractModelXML.CloudServiceXML;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.abstractModelXML.RelationshipXML;
@@ -112,13 +110,7 @@ public class ControlClientRsybl implements ControlClient {
 		for (ServiceTopology serviceTopology : serviceTemplate.getServiceTopologies()) {
 			for (ServiceUnit serviceUnit : serviceTopology.getServiceUnits()) {
 				for (Capability c : serviceUnit.getCapabilities()) {
-					// if (capabilitiesPerUnit.containsKey(c.getId())) {
-					// capabilitiesPerUnit.get(c.getId()).add(serviceUnit);
-					// } else {
-					// ArrayList<ServiceUnit> sus = new ArrayList<>();
-					// sus.add(serviceUnit);
 					capabilitiesPerUnit.put(c.getId(), serviceUnit);
-					// }
 				}
 
 				for (Requirement requirement : serviceUnit.getRequirements()) {
@@ -127,7 +119,7 @@ public class ControlClientRsybl implements ControlClient {
 			}
 		}
 
-		Set<EntityRelationship> entityRelationships = serviceTemplate.getRelationships();
+		List<EntityRelationship> entityRelationships = serviceTemplate.getRelationships();
 
 		for (EntityRelationship entityRelationship : entityRelationships) {
 			if (entityRelationship.getFrom() instanceof Capability
@@ -159,7 +151,7 @@ public class ControlClientRsybl implements ControlClient {
 			serviceTopologyXML.setServiceUnits(serviceUnitXMLs);
 
 			for (ServiceUnit serviceUnit : serviceTopology.getServiceUnits()) {
-				if (!serviceUnit.getType().equals(ServiceUnit.NodeType.Software.toString())) {
+				if (!serviceUnit.getType().equals(ServiceUnitType.SOFTWARE)) {
 					// only gather Software type nodes
 					continue;
 				}
@@ -178,106 +170,27 @@ public class ControlClientRsybl implements ControlClient {
 					serviceTopologyXML.addRelationship(relationshipXML);
 				}
 
-				if (serviceUnit.hasConstraints()) {
-
-					String costraints = "";
-
-					for (Constraint constraint : serviceUnit.getConstraints()) {
-
-						costraints += constraint.getId() + ":CONSTRAINT " + constraint.getMetric().getName()
-								+ " " + constraint.getOperator().toString() + " "
-								+ constraint.getValue() + " " + constraint.getMetric().getUnit() + ";";
-
-					}
+				if (serviceUnit.get) {
 					SYBLAnnotationXML annotationXML = new SYBLAnnotationXML();
-
-					costraints = costraints.replaceAll("  ", " ");
-					annotationXML.setConstraints(costraints.trim());
-
+					annotationXML.setConstraints(); //
 					serviceUnitXML.setXMLAnnotation(annotationXML);
 				}
-
 				if (serviceUnit.hasStrategies()) {
-					String strategies = "";
-
-					for (Strategy strategy : serviceUnit.getStrategies()) {
-
-						String costraints = "";
-						for (Constraint constraint : strategy.getConstraints()) {
-
-							costraints += constraint.getMetric().getName() + " "
-									+ constraint.getOperator().toString()
-									+ " " + constraint.getValue() + " "
-									+ constraint.getMetric().getUnit() + " " + strategy.getOperator().toString() + " ";
-						}
-
-						if (costraints.lastIndexOf("AND") > 0) {
-							costraints = costraints.substring(0, costraints.lastIndexOf("AND")).trim();
-						}
-
-						costraints = costraints.trim();
-						strategies = strategy.getId() + ":STRATEGY CASE " + costraints + ":"
-								+ strategy.getAction().toString() + ";";
-
-					}
 					SYBLAnnotationXML annotationXML = new SYBLAnnotationXML();
-					strategies = strategies.replaceAll("  ", " ");
+					strategies = // put all strategies into one annotation
 					annotationXML.setStrategies(strategies);
-
 					serviceUnitXML.setXMLAnnotation(annotationXML);
 				}
-
 			}
 
 			if (serviceTopology.hasConstraints()) {
-
-				String costraints = "";
-
-				for (Constraint constraint : serviceTopology.getConstraints()) {
-					costraints += constraint.getId() + ":CONSTRAINT " + constraint.getMetric().getName()
-							+ " " + constraint.getOperator().toString() + " " + constraint.getValue() + " "
-							+ constraint.getMetric().getUnit() + ";";
-				}
-				SYBLAnnotationXML annotationXML = new SYBLAnnotationXML();
-
-				costraints = costraints.replaceAll("  ", " ");
-				annotationXML.setConstraints(costraints.trim());
-
+				//
 				serviceTopologyXML.setXMLAnnotation(annotationXML);
 			}
-
 			if (serviceTopology.hasStrategies()) {
-				String strategies = "";
-
-				for (Strategy strategy : serviceTopology.getStrategies()) {
-
-					String costraints = "";
-					for (Constraint constraint : strategy.getConstraints()) {
-						costraints += constraint.getMetric().getName() + " "
-								+ constraint.getOperator().toString()
-								+ " " + constraint.getValue() + " " + constraint.getMetric().getUnit() + " "
-								+ strategy.getOperator().toString() + " ";
-					}
-
-					// remove last operator in strategy
-					if (costraints.lastIndexOf("AND") > 0) {
-						costraints = costraints.substring(0, costraints.lastIndexOf("AND")).trim();
-					}
-
-					costraints = costraints.trim();
-					strategies += strategy.getId() + ":STRATEGY CASE " + costraints + ":"
-							+ strategy.getAction().toString() + ";";
-
-				}
-				SYBLAnnotationXML annotationXML = new SYBLAnnotationXML();
-
-				strategies = strategies.replaceAll("  ", " ");
-
-				annotationXML.setStrategies(strategies.trim());
-
+				//
 				serviceTopologyXML.setXMLAnnotation(annotationXML);
 			}
-
 		}
 
 		return cloudServiceXML;

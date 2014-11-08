@@ -29,6 +29,18 @@ public class Utils {
 		return w.toString();
 	}
 
+	public static String asXmlString(Object obj, String contextPath) throws JAXBException {
+
+		StringWriter w = new StringWriter();
+		JAXBContext context = JAXBContext.newInstance(contextPath);
+
+		Marshaller m = context.createMarshaller();
+		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		m.marshal(obj, w);
+
+		return w.toString();
+	}
+
 	public static String asJsonString(Object obj) {
 
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();

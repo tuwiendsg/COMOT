@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<tosca:Definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tosca="http://docs.oasis-open.org/tosca/ns/2011/12"
+	xmlns:salsa="https://github.com/tuwiendsg/SALSA" xsi:schemaLocation="http://docs.oasis-open.org/tosca/ns/2011/12 TOSCA-v1.0.xsd"
+	targetNamespace="http://tempuri.org" id="example_deployOneVM" name="example_deployOneVM">
+
+	<tosca:ServiceTemplate id="example_topology">
+		<tosca:TopologyTemplate>
+			<tosca:NodeTemplate type="salsa:os" id="example_OS_comot" minInstances="1" maxInstances="5">
+				<tosca:Properties>
+					<MappingProperties>
+						<MappingProperty type="os">
+							<property name="instanceType">000000960</property>
+							<property name="provider">dsg@openstack</property>
+							<property name="baseImage">8f1428ac-f239-42e0-ab35-137f6e234101</property>
+							<property name="packages">openjdk-7-jre</property>
+						</MappingProperty>
+					</MappingProperties>
+				</tosca:Properties>
+			</tosca:NodeTemplate>
+		</tosca:TopologyTemplate>
+	</tosca:ServiceTemplate>
+</tosca:Definitions>

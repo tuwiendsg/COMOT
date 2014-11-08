@@ -2,67 +2,56 @@ package at.ac.tuwien.dsg.comot.common.model.structure;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate;
-import at.ac.tuwien.dsg.comot.common.model.elastic.Capability;
-import at.ac.tuwien.dsg.comot.common.model.elastic.ElasticityCapability;
-import at.ac.tuwien.dsg.comot.common.model.elastic.Requirement;
-import at.ac.tuwien.dsg.comot.common.model.elastic.SyblDirective;
+import at.ac.tuwien.dsg.comot.common.model.ReferencableEntity;
+import at.ac.tuwien.dsg.comot.common.model.SyblDirective;
+import at.ac.tuwien.dsg.comot.common.model.type.ServiceUnitType;
+import at.ac.tuwien.dsg.comot.common.model.unit.ArtifactTemplate;
+import at.ac.tuwien.dsg.comot.common.model.unit.Capability;
+import at.ac.tuwien.dsg.comot.common.model.unit.Properties;
+import at.ac.tuwien.dsg.comot.common.model.unit.Requirement;
 
-public class ServiceUnit extends ServicePart {
+public class ServiceUnit extends ServicePart implements ReferencableEntity {
 
 	public static final int DEFAULT_INSTANCES = 1;
 
 	protected int minInstances = DEFAULT_INSTANCES;
 	protected int maxInstances = DEFAULT_INSTANCES;
+
+	protected ServiceUnitType type;
+
+	protected List<Requirement> requirements = new ArrayList<>();
+	protected List<Capability> capabilities = new ArrayList<>();
 	protected List<ArtifactTemplate> deploymentArtifacts = new ArrayList<>();
+	protected Properties properties;
 
 	public ServiceUnit() {
+
 	}
 
-	public ServiceUnit(String id) {
+	public ServiceUnit(String id, ServiceUnitType type) {
 		super(id);
+		this.type = type;
+
 	}
 
-	public ServiceUnit(String id, String type, String name, int minInstances, int maxInstances) {
-		super(id, type, name);
+	public ServiceUnit(String id, String name, ServiceUnitType type, int minInstances, int maxInstances) {
+		super(id, name);
 		this.minInstances = minInstances;
 		this.maxInstances = maxInstances;
+		this.type = type;
 	}
 
-	public ServiceUnit(
-			String id,
-			String type,
-			List<SyblDirective> directives,
-			List<Requirement> requirements,
-			List<Capability> capabilities,
-			List<ElasticityCapability> elasticityCapabilities,
-			Map<String, Object> properties,
-			int minInstances,
-			int maxInstances,
-			List<ArtifactTemplate> deploymentArtifacts) {
-		super(id, type, directives, requirements, capabilities, elasticityCapabilities, properties);
+	public ServiceUnit(String id, String name, ServiceUnitType type, int minInstances, int maxInstances,
+			List<SyblDirective> directives, List<Requirement> requirements, List<Capability> capabilities,
+			Properties properties, List<ArtifactTemplate> deploymentArtifacts) {
+		super(id, name, directives);
 		this.minInstances = minInstances;
 		this.maxInstances = maxInstances;
-		this.deploymentArtifacts = deploymentArtifacts;
-	}
-
-	public ServiceUnit(
-			String id,
-			String type,
-			String name,
-			List<SyblDirective> directives,
-			List<Requirement> requirements,
-			List<Capability> capabilities,
-			List<ElasticityCapability> elasticityCapabilities,
-			Map<String, Object> properties,
-			int minInstances,
-			int maxInstances,
-			List<ArtifactTemplate> deploymentArtifacts) {
-		super(id, type, name, directives, requirements, capabilities, elasticityCapabilities, properties);
-		this.minInstances = minInstances;
-		this.maxInstances = maxInstances;
+		this.type = type;
+		this.requirements = requirements;
+		this.capabilities = capabilities;
+		this.properties = properties;
 		this.deploymentArtifacts = deploymentArtifacts;
 	}
 
@@ -73,10 +62,32 @@ public class ServiceUnit extends ServicePart {
 		deploymentArtifacts.add(template);
 	}
 
+	public void addRequirement(Requirement requirement) {
+		if (requirements == null) {
+			requirements = new ArrayList<>();
+		}
+		requirements.add(requirement);
+	}
+
+	public void addCapability(Capability capability) {
+		if (capabilities == null) {
+			capabilities = new ArrayList<>();
+		}
+		capabilities.add(capability);
+	}
+
 	// GENERATED METHODS
 
 	public int getMinInstances() {
 		return minInstances;
+	}
+
+	public ServiceUnitType getType() {
+		return type;
+	}
+
+	public void setType(ServiceUnitType type) {
+		this.type = type;
 	}
 
 	public void setMinInstances(int minInstances) {
@@ -99,35 +110,28 @@ public class ServiceUnit extends ServicePart {
 		this.deploymentArtifacts = deploymentArtifacts;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((deploymentArtifacts == null) ? 0 : deploymentArtifacts.hashCode());
-		result = prime * result + maxInstances;
-		result = prime * result + minInstances;
-		return result;
+	public List<Requirement> getRequirements() {
+		return requirements;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ServiceUnit other = (ServiceUnit) obj;
-		if (deploymentArtifacts == null) {
-			if (other.deploymentArtifacts != null)
-				return false;
-		} else if (!deploymentArtifacts.equals(other.deploymentArtifacts))
-			return false;
-		if (maxInstances != other.maxInstances)
-			return false;
-		if (minInstances != other.minInstances)
-			return false;
-		return true;
+	public void setRequirements(List<Requirement> requirements) {
+		this.requirements = requirements;
+	}
+
+	public List<Capability> getCapabilities() {
+		return capabilities;
+	}
+
+	public void setCapabilities(List<Capability> capabilities) {
+		this.capabilities = capabilities;
+	}
+
+	public Properties getProperties() {
+		return properties;
+	}
+
+	public void setProperties(Properties properties) {
+		this.properties = properties;
 	}
 
 }

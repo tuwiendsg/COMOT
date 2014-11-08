@@ -1,18 +1,21 @@
 package at.ac.tuwien.dsg.comot.cs;
 
 import javax.annotation.PreDestroy;
+import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityState;
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityType;
-import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.coreservices.DeploymentClient;
-import at.ac.tuwien.dsg.comot.common.fluent.CloudService;
+import at.ac.tuwien.dsg.comot.common.exception.ComotException;
+import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.cs.connector.SalsaClient;
-import at.ac.tuwien.dsg.comot.cs.transformer.ToscaDescriptionBuilder;
-import at.ac.tuwien.dsg.comot.cs.transformer.ToscaDescriptionBuilderImpl;
+import at.ac.tuwien.dsg.comot.cs.mapper.ToscaMapper;
+import at.ac.tuwien.dsg.comot.cs.mapper.UtilsMapper;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 
 public class DeploymentClientSalsa implements DeploymentClient {
@@ -20,21 +23,24 @@ public class DeploymentClientSalsa implements DeploymentClient {
 	private final Logger log = LoggerFactory.getLogger(DeploymentClientSalsa.class);
 
 	protected SalsaClient salsa;
-	// @Autowired
-	protected ToscaDescriptionBuilder toscaBuilder;
+
+	@Autowired
+	protected ToscaMapper mapper;
 
 	public DeploymentClientSalsa() {
-
-		toscaBuilder = new ToscaDescriptionBuilderImpl();
-		// toscaBuilder.setValidating(true); // TODO validation fails
-
 		salsa = new SalsaClient();
 	}
 
 	@Override
-	public String deploy(CloudService CloudService) throws CoreServiceException {
+	public String deploy(CloudService cloudService) throws CoreServiceException, ComotException {
 
-		String toscaDescriptionXml = toscaBuilder.toXml(CloudService);
+		String toscaDescriptionXml;
+
+		try {
+			toscaDescriptionXml = UtilsMapper.asString(mapper.toTosca(cloudService));
+		} catch (JAXBException e) {
+			throw new ComotException("Failed to marshall TOSCA into XML ", e);
+		}
 
 		return salsa.deploy(toscaDescriptionXml);
 	}

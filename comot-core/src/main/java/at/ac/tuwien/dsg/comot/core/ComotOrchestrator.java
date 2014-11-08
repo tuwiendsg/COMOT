@@ -11,9 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.common.coreservices.ControlClient;
-import at.ac.tuwien.dsg.comot.common.coreservices.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.coreservices.DeploymentClient;
-import at.ac.tuwien.dsg.comot.common.fluent.CloudService;
+import at.ac.tuwien.dsg.comot.common.exception.ComotException;
+import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
@@ -56,7 +57,7 @@ public class ComotOrchestrator {
 
 	// /////////////////////
 
-	public void deploy(CloudService serviceTemplate) throws CoreServiceException {
+	public void deploy(CloudService serviceTemplate) throws CoreServiceException, ComotException {
 
 		deployment.deploy(serviceTemplate);
 
@@ -86,7 +87,7 @@ public class ComotOrchestrator {
 	public void deployAndControl(
 			CloudService serviceTemplate,
 			CompositionRulesConfiguration compositionRulesConfiguration,
-			String effectsJSON) throws CoreServiceException {
+			String effectsJSON) throws CoreServiceException, ComotException {
 
 		deploy(serviceTemplate);
 

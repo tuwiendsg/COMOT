@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.1.6" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true">  
+  <enumeration id="1" language="java" name="at.ac.tuwien.dsg.comot.common.model.type.ServiceUnitType" 
+    project="comot-common" 
+    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/type/ServiceUnitType.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="96" width="196" x="41" y="37"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </enumeration>  
+  <class id="2" language="java" name="at.ac.tuwien.dsg.comot.common.model.unit.ArtifactReference" project="comot-common" 
+    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/unit/ArtifactReference.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="60" width="192" x="1511" y="583"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="3" language="java" name="at.ac.tuwien.dsg.comot.common.model.structure.ServiceTopology" 
+    project="comot-common" 
+    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/structure/ServiceTopology.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="42" width="214" x="1089" y="273"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="4" language="java" name="at.ac.tuwien.dsg.comot.common.model.SyblDirective" project="comot-common" 
+    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/SyblDirective.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="60" width="174" x="772" y="173"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="5" language="java" name="at.ac.tuwien.dsg.comot.common.model.structure.ServicePart" project="comot-common" 
+    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/structure/ServicePart.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="60" width="214" x="1221" y="37"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="6" language="java" name="at.ac.tuwien.dsg.comot.common.model.unit.ArtifactTemplate" project="comot-common" 
+    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/unit/ArtifactTemplate.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="42" width="192" x="1511" y="501"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="7" language="java" name="at.ac.tuwien.dsg.comot.common.model.unit.Requirement" project="comot-common" 
+    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/unit/Requirement.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="42" width="192" x="1258" y="501"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <enumeration id="8" language="java" name="at.ac.tuwien.dsg.comot.common.model.type.RelationshipType" 
+    project="comot-common" 
+    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/type/RelationshipType.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="96" width="196" x="985" y="37"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </enumeration>  
+  <enumeration id="9" language="java" name="at.ac.tuwien.dsg.comot.common.model.type.CapabilityType" 
+    project="comot-common" 
+    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/type/CapabilityType.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="78" width="196" x="513" y="37"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </enumeration>  
+  <class id="10" language="java" name="at.ac.tuwien.dsg.comot.common.model.unit.Capability" project="comot-common" 
+    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/unit/Capability.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="42" width="192" x="1026" y="501"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="11" language="java" name="at.ac.tuwien.dsg.comot.common.model.structure.CloudService" 
+    project="comot-common" 
+    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/structure/CloudService.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="42" width="214" x="986" y="173"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="12" language="java" name="at.ac.tuwien.dsg.comot.common.model.EntityRelationship" project="comot-common" 
+    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/EntityRelationship.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="42" width="174" x="812" y="501"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <interface id="13" language="java" name="at.ac.tuwien.dsg.comot.common.model.ReferencableEntity" 
+    project="comot-common" 
+    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/ReferencableEntity.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="42" width="174" x="1026" y="583"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </interface>  
+  <enumeration id="14" language="java" name="at.ac.tuwien.dsg.comot.common.model.type.ArtifactType" 
+    project="comot-common" file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/type/ArtifactType.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="78" width="196" x="749" y="37"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </enumeration>  
+  <class id="15" language="java" name="at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit" project="comot-common" 
+    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/structure/ServiceUnit.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="96" width="214" x="1334" y="365"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <enumeration id="16" language="java" name="at.ac.tuwien.dsg.comot.common.model.type.RequirementType" 
+    project="comot-common" 
+    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/type/RequirementType.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="78" width="196" x="277" y="37"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </enumeration>  
+  <generalization id="17">    
+    <bendpoint x="1343" y="273"/>    
+    <bendpoint x="1343" y="173"/>    
+    <end type="SOURCE" refId="15"/>    
+    <end type="TARGET" refId="5"/>  
+  </generalization>  
+  <association id="18">    
+    <end type="SOURCE" refId="15" navigable="false">      
+      <attribute id="19" name="deploymentArtifacts"/>      
+      <multiplicity id="20" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="6" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <realization id="21">    
+    <bendpoint x="1480" y="501"/>    
+    <end type="SOURCE" refId="15"/>    
+    <end type="TARGET" refId="13"/>  
+  </realization>  
+  <association id="22">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="23" name="directives"/>      
+      <multiplicity id="24" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <realization id="25">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="13"/>  
+  </realization>  
+  <generalization id="26">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="5"/>  
+  </generalization>  
+  <association id="27">    
+    <end type="SOURCE" refId="15" navigable="false">      
+      <attribute id="28" name="capabilities"/>      
+      <multiplicity id="29" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="10" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <realization id="30">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="13"/>  
+  </realization>  
+  <realization id="31">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="13"/>  
+  </realization>  
+  <realization id="32">    
+    <bendpoint x="781" y="273"/>    
+    <bendpoint x="781" y="365"/>    
+    <bendpoint x="781" y="501"/>    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="13"/>  
+  </realization>  
+  <realization id="33">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="13"/>  
+  </realization>  
+  <association id="34">    
+    <end type="SOURCE" refId="12" navigable="false">      
+      <attribute id="35" name="from"/>      
+      <multiplicity id="36" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="13" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="37">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="38" name="serviceTopologies"/>      
+      <multiplicity id="39" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="40">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="41" name="serviceUnits"/>      
+      <multiplicity id="42" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="15" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="43">    
+    <end type="SOURCE" refId="11" navigable="false">      
+      <attribute id="44" name="serviceTopologies"/>      
+      <multiplicity id="45" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="46">    
+    <bendpoint x="1230" y="173"/>    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="5"/>  
+  </generalization>  
+  <association id="47">    
+    <end type="SOURCE" refId="12" navigable="false">      
+      <attribute id="48" name="to"/>      
+      <multiplicity id="49" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="13" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="50">    
+    <bendpoint x="908" y="273"/>    
+    <bendpoint x="908" y="365"/>    
+    <end type="SOURCE" refId="11" navigable="false">      
+      <attribute id="51" name="relationships"/>      
+      <multiplicity id="52" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="12" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="53">    
+    <end type="SOURCE" refId="15" navigable="false">      
+      <attribute id="54" name="requirements"/>      
+      <multiplicity id="55" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="56">    
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="57" name="artifactReferences"/>      
+      <multiplicity id="58" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <classifier-display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" 
+    accessors="true" visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true" static="true"/>    
+    <operations public="false" package="false" protected="false" private="false" static="false"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>

@@ -3,138 +3,178 @@
 			"serviceUnits" : [{
 					"minInstances" : 2,
 					"maxInstances" : 5,
+					"type" : "SOFTWARE",
+					"requirements" : [{
+							"type" : "VARIABLE",
+							"id" : "req1"
+						},{
+							"type" : "VARIABLE",
+							"id" : "req2"
+						}],
+
+					"capabilities" : [{
+							"type" : "VARIABLE",
+							"id" : "cap1"
+						},{
+							"type" : "VARIABLE",
+							"id" : "cap2"
+						}],
+
 					"deploymentArtifacts" : [{
-							"artifactReferences" : [],
+							"type" : "SCRIPT",
+							"artifactReferences" : [{
+									"uri" : "http://128.130.172.215/salsa/upload/files/DaasService/deployCassandraSeed.sh"
+								}],
 
 							"id" : "deployCassandraNode",
-							"type" : "sh",
 							"name" : "Deployment script"
 						}],
 
 					"directives" : [{
 							"directive" : "ST1: STRATEGY CASE cpuUsage \u0026lt; 40 % : scalein",
-							"strategyConstraintType" : "SYBL",
-							"type" : "SYBLConstraint"
+							"type" : "STRATEGY"
 						},{
 							"directive" : "C2: CONSTRAINT CASE cpuUsage \u0026lt; 40 % : scalein",
-							"strategyConstraintType" : "SYBL",
-							"type" : "SYBLConstraint"
+							"type" : "CONSTRAINT"
 						}],
-
-					"requirements" : [{
-							"id" : "req1",
-							"type" : "variable"
-						},{
-							"id" : "req2",
-							"type" : "variable"
-						}],
-
-					"capabilities" : [{
-							"id" : "cap1",
-							"type" : "variable"
-						},{
-							"id" : "cap2",
-							"type" : "variable"
-						}],
-
-					"elasticityCapabilities" : [],
-
-					"properties" : {
-						
-					},
 
 					"id" : "unitId",
-					"type" : "type",
 					"name" : "name"
 				},{
 					"minInstances" : 1,
 					"maxInstances" : 2,
-					"deploymentArtifacts" : [],
-
-					"directives" : [{
-							"directive" : "C2: CONSTRAINT CASE cpuUsage \u0026lt; 40 % : scalein",
-							"strategyConstraintType" : "SYBL",
-							"type" : "SYBLConstraint"
-						}],
-
+					"type" : "OS",
 					"requirements" : [],
 
 					"capabilities" : [{
-							"id" : "cap3",
-							"type" : "variable"
+							"type" : "VARIABLE",
+							"id" : "cap3"
 						}],
 
-					"elasticityCapabilities" : [],
+					"deploymentArtifacts" : [],
 
 					"properties" : {
-						
+						"propertiesType" : "OS",
+						"properties" : {
+							"instanceType" : "000000512",
+							"packages" : "java-jdk, something-something",
+							"provider" : "dsg@openstack",
+							"baseImage" : "8f1428ac-f239-42e0-ab35-137f6e234101"
+						}
 					},
 
+					"directives" : [{
+							"directive" : "C2: CONSTRAINT CASE cpuUsage \u0026lt; 40 % : scalein",
+							"type" : "CONSTRAINT"
+						}],
+
 					"id" : "osId",
-					"type" : "type",
 					"name" : "name"
 				}],
 
 			"serviceTopologies" : [],
 
-			"directives" : [],
-
-			"requirements" : [],
-
-			"capabilities" : [],
-
-			"elasticityCapabilities" : [],
-
-			"properties" : {
-				
-			},
+			"directives" : [{
+					"directive" : "C2: CONSTRAINT CASE cpuUsage \u0026lt; 40 % : scalein",
+					"type" : "CONSTRAINT"
+				}],
 
 			"id" : "topologyId"
-		},{
-			"serviceUnits" : [],
-
-			"serviceTopologies" : [],
-
-			"directives" : [],
-
-			"requirements" : [],
-
-			"capabilities" : [],
-
-			"elasticityCapabilities" : [],
-
-			"id" : "deployCassandraNode",
-			"type" : "sh"
-		},{
-			"serviceUnits" : [],
-
-			"serviceTopologies" : [],
-
-			"directives" : [],
-
-			"requirements" : [],
-
-			"capabilities" : [],
-
-			"elasticityCapabilities" : [],
-
-			"id" : "deployCassandraNode",
-			"type" : "sh"
 		}],
 
-	"relationships" : [],
+	"relationships" : [{
+			"type" : "CONNECT_TO",
+			"from" : {
+				"minInstances" : 2,
+				"maxInstances" : 5,
+				"type" : "SOFTWARE",
+				"requirements" : [{
+						"type" : "VARIABLE",
+						"id" : "req1"
+					},{
+						"type" : "VARIABLE",
+						"id" : "req2"
+					}],
+
+				"capabilities" : [{
+						"type" : "VARIABLE",
+						"id" : "cap1"
+					},{
+						"type" : "VARIABLE",
+						"id" : "cap2"
+					}],
+
+				"deploymentArtifacts" : [{
+						"type" : "SCRIPT",
+						"artifactReferences" : [{
+								"uri" : "http://128.130.172.215/salsa/upload/files/DaasService/deployCassandraSeed.sh"
+							}],
+
+						"id" : "deployCassandraNode",
+						"name" : "Deployment script"
+					}],
+
+				"directives" : [{
+						"directive" : "ST1: STRATEGY CASE cpuUsage \u0026lt; 40 % : scalein",
+						"type" : "STRATEGY"
+					},{
+						"directive" : "C2: CONSTRAINT CASE cpuUsage \u0026lt; 40 % : scalein",
+						"type" : "CONSTRAINT"
+					}],
+
+				"id" : "unitId",
+				"name" : "name"
+			},
+
+			"to" : {
+				"minInstances" : 1,
+				"maxInstances" : 2,
+				"type" : "OS",
+				"requirements" : [],
+
+				"capabilities" : [{
+						"type" : "VARIABLE",
+						"id" : "cap3"
+					}],
+
+				"deploymentArtifacts" : [],
+
+				"properties" : {
+					"propertiesType" : "OS",
+					"properties" : {
+						"instanceType" : "000000512",
+						"packages" : "java-jdk, something-something",
+						"provider" : "dsg@openstack",
+						"baseImage" : "8f1428ac-f239-42e0-ab35-137f6e234101"
+					}
+				},
+
+				"directives" : [{
+						"directive" : "C2: CONSTRAINT CASE cpuUsage \u0026lt; 40 % : scalein",
+						"type" : "CONSTRAINT"
+					}],
+
+				"id" : "osId",
+				"name" : "name"
+			},
+
+			"id" : "rela1"
+		},{
+			"type" : "CONNECT_TO",
+			"from" : {
+				"type" : "VARIABLE",
+				"id" : "req2"
+			},
+
+			"to" : {
+				"type" : "VARIABLE",
+				"id" : "cap3"
+			},
+
+			"id" : "rela2"
+		}],
 
 	"directives" : [],
-
-	"requirements" : [],
-
-	"capabilities" : [],
-
-	"elasticityCapabilities" : [],
-
-	"properties" : {
-		
-	},
 
 	"id" : "serviceId"
 }

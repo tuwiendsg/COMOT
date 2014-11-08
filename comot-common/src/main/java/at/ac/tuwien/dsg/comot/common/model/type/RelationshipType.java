@@ -2,8 +2,9 @@ package at.ac.tuwien.dsg.comot.common.model.type;
 
 public enum RelationshipType {
 
-	ConnectedTo("CONNECTTO"),
-	HostedOn("HOSTON");
+	CONNECT_TO("CONNECTTO"),
+	HOST_ON("HOSTON"),
+	LOCAL("LOCAL");
 
 	private String type;
 
@@ -14,5 +15,16 @@ public enum RelationshipType {
 	@Override
 	public String toString() {
 		return type;
+	}
+
+	public static RelationshipType fromString(String type) {
+		if (type != null) {
+			for (RelationshipType b : RelationshipType.values()) {
+				if (type.equalsIgnoreCase(b.type)) {
+					return b;
+				}
+			}
+		}
+		return null;
 	}
 }
