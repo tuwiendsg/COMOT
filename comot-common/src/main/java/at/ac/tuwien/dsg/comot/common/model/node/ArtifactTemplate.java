@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.common.model.unit;
+package at.ac.tuwien.dsg.comot.common.model.node;
 
 import java.util.ArrayList;
 import java.util.List;

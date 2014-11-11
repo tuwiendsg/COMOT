@@ -15,60 +15,22 @@
 
 		<plugins>
 
-			<!-- only one execution per generateDirectory https://java.net/jira/browse/MAVEN_JAXB2_PLUGIN-86 -->
 			<plugin>
 				<groupId>org.jvnet.jaxb2.maven2</groupId>
 				<artifactId>maven-jaxb2-plugin</artifactId>
 				<version>0.11.0</version>
 				<executions>
-				
 					<execution>
-						<id>TOSCA</id>
 						<goals>
 							<goal>generate</goal>
 						</goals>
-						<configuration>
-							<schemaIncludes>
-								<include>TOSCA-v1.0.xsd</include>
-							</schemaIncludes>
-							<generatePackage>org.oasis.tosca</generatePackage>
-							<generateDirectory>${basedir}/target/generated-sources/xjc_first</generateDirectory>
-						</configuration>
 					</execution>
-			
-					<execution>
-						<id>SALSA</id>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-						<configuration>
-							<schemaIncludes>
-								<include>salsa.xsd</include>
-							</schemaIncludes>
-							<generatePackage>at.ac.tuwien.dsg.comot.salsa</generatePackage>
-							<generateDirectory>${basedir}/target/generated-sources/xjc_second</generateDirectory>
-						</configuration>
-					</execution>
-					
-					<execution>
-						<id>rSYBL</id>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-						<configuration>
-							<schemaIncludes>
-								<include>rsybl.xsd</include>
-							</schemaIncludes>
-							<generatePackage>at.ac.tuwien.dsg.comot.rsybl</generatePackage>
-							<generateDirectory>${basedir}/target/generated-sources/xjc_third</generateDirectory>
-						</configuration>
-					</execution>
-					
 				</executions>
 				<configuration>
 					<verbose>true</verbose>
-					<schemaDirectory>${basedir}/src/main/resources</schemaDirectory>
 					<extension>true</extension>
+					<schemaDirectory>${basedir}/src/main/resources</schemaDirectory>
+					<generateDirectory>${basedir}/target/generated-sources/xjc</generateDirectory>
 					<args>
 						<arg>-Xfluent-api</arg>
 						<arg>-disableXmlSecurity</arg>

@@ -7,6 +7,7 @@ import at.ac.tuwien.dsg.comot.common.model.SyblDirective;
 
 public class ServiceTopology extends ServicePart {
 
+	protected List<StackNode> nodes = new ArrayList<>();
 	protected List<ServiceUnit> serviceUnits = new ArrayList<>();
 	protected List<ServiceTopology> serviceTopologies = new ArrayList<>();
 
@@ -20,18 +21,25 @@ public class ServiceTopology extends ServicePart {
 	public ServiceTopology(
 			String id,
 			List<SyblDirective> directives,
-			List<ServiceUnit> serviceUnits,
+			List<StackNode> nodes,
 			List<ServiceTopology> serviceTopologies) {
 		super(id, directives);
-		this.serviceUnits = serviceUnits;
+		this.nodes = nodes;
 		this.serviceTopologies = serviceTopologies;
 	}
 
-	public void addUnit(ServiceUnit serviceUnit) {
+	public void addServiceUnit(ServiceUnit serviceUnit) {
 		if (serviceUnits == null) {
-			serviceUnits = new ArrayList<ServiceUnit>();
+			serviceUnits = new ArrayList<>();
 		}
 		serviceUnits.add(serviceUnit);
+	}
+
+	public void addNode(StackNode node) {
+		if (nodes == null) {
+			nodes = new ArrayList<>();
+		}
+		nodes.add(node);
 	}
 
 	public void addTopology(ServiceTopology serviceTopology) {
@@ -43,6 +51,10 @@ public class ServiceTopology extends ServicePart {
 
 	// GENERATED METHODS
 
+	public List<ServiceTopology> getServiceTopologies() {
+		return serviceTopologies;
+	}
+
 	public List<ServiceUnit> getServiceUnits() {
 		return serviceUnits;
 	}
@@ -51,8 +63,12 @@ public class ServiceTopology extends ServicePart {
 		this.serviceUnits = serviceUnits;
 	}
 
-	public List<ServiceTopology> getServiceTopologies() {
-		return serviceTopologies;
+	public List<StackNode> getNodes() {
+		return nodes;
+	}
+
+	public void setNodes(List<StackNode> nodes) {
+		this.nodes = nodes;
 	}
 
 	public void setServiceTopologies(List<ServiceTopology> serviceTopologies) {

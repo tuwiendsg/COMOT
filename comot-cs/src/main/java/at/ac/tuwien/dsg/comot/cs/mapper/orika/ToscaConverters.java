@@ -7,20 +7,24 @@ import ma.glasnost.orika.metadata.Type;
 import at.ac.tuwien.dsg.comot.common.model.type.ArtifactType;
 import at.ac.tuwien.dsg.comot.common.model.type.CapabilityType;
 import at.ac.tuwien.dsg.comot.common.model.type.DirectiveType;
+import at.ac.tuwien.dsg.comot.common.model.type.NodeType;
 import at.ac.tuwien.dsg.comot.common.model.type.RelationshipType;
 import at.ac.tuwien.dsg.comot.common.model.type.RequirementType;
-import at.ac.tuwien.dsg.comot.common.model.type.ServiceUnitType;
 
 public class ToscaConverters {
 
 	public static final String NS_SALSA = "https://github.com/tuwiendsg/SALSA";
 	public static final String PREFIX_SALSA = "salsa";
 
+	public static QName toSalsaQName(String name) {
+		return new QName(NS_SALSA, name, PREFIX_SALSA);
+	}
+
 	public static class CapabilityTypeConverter extends BidirectionalConverter<CapabilityType, QName> {
 
 		@Override
 		public QName convertTo(CapabilityType source, Type<QName> destinationType) {
-			return new QName(NS_SALSA, source.toString(), PREFIX_SALSA);
+			return toSalsaQName(source.toString());
 		}
 
 		@Override
@@ -29,16 +33,16 @@ public class ToscaConverters {
 		}
 	}
 
-	public static class ServiceUnitTypeConverter extends BidirectionalConverter<ServiceUnitType, QName> {
+	public static class NodeTypeConverter extends BidirectionalConverter<NodeType, QName> {
 
 		@Override
-		public QName convertTo(ServiceUnitType source, Type<QName> destinationType) {
-			return new QName(NS_SALSA, source.toString(), PREFIX_SALSA);
+		public QName convertTo(NodeType source, Type<QName> destinationType) {
+			return toSalsaQName(source.toString());
 		}
 
 		@Override
-		public ServiceUnitType convertFrom(QName source, Type<ServiceUnitType> destinationType) {
-			return ServiceUnitType.fromString(source.getLocalPart());
+		public NodeType convertFrom(QName source, Type<NodeType> destinationType) {
+			return NodeType.fromString(source.getLocalPart());
 		}
 	}
 
@@ -46,7 +50,7 @@ public class ToscaConverters {
 
 		@Override
 		public QName convertTo(DirectiveType source, Type<QName> destinationType) {
-			return new QName(NS_SALSA, source.toString(), PREFIX_SALSA);
+			return toSalsaQName(source.toString());
 		}
 
 		@Override
@@ -59,7 +63,7 @@ public class ToscaConverters {
 
 		@Override
 		public QName convertTo(ArtifactType source, Type<QName> destinationType) {
-			return new QName(NS_SALSA, source.toString(), PREFIX_SALSA);
+			return toSalsaQName(source.toString());
 		}
 
 		@Override
@@ -72,7 +76,7 @@ public class ToscaConverters {
 
 		@Override
 		public QName convertTo(RequirementType source, Type<QName> destinationType) {
-			return new QName(NS_SALSA, source.toString(), PREFIX_SALSA);
+			return toSalsaQName(source.toString());
 		}
 
 		@Override
@@ -85,7 +89,7 @@ public class ToscaConverters {
 
 		@Override
 		public QName convertTo(RelationshipType source, Type<QName> destinationType) {
-			return new QName(NS_SALSA, source.toString(), PREFIX_SALSA);
+			return toSalsaQName(source.toString());
 		}
 
 		@Override

@@ -131,7 +131,6 @@ public class MelaClientTest extends AbstractTest {
 		assertNotNull(dataMultiple);
 		log.info("getAllAggregatedMonitoringData \n" + Utils.asXmlString(dataMultiple));
 
-		// TODO resolve timestamp, why int?
 		// dataMultiple = mela.getAllAggregatedMonitoringDataInTimeInterval(SERVICE_ID, startTimestamp, endTimestamp);
 		// assertNotNull(dataMultiple);
 		// log.info("getAllAggregatedMonitoringDataInTimeInterval \n" + Utils.xmlObjToString(dataMultiple));

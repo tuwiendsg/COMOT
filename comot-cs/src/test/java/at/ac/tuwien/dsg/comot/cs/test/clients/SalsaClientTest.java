@@ -6,17 +6,22 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
+import javax.xml.bind.JAXBException;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.DependencyDescriptor;
 
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityState;
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityType;
+import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.test.TestUtils;
 import at.ac.tuwien.dsg.comot.cs.connector.SalsaClient;
+import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 
 public class SalsaClientTest {
 
@@ -140,8 +145,10 @@ public class SalsaClientTest {
 	}
 
 	@Test
-	public void testDeploymentDescription() throws CoreServiceException {
-		salsa.getServiceDeploymentInfo(SERVICE_ID);
+	public void testDeploymentDescription() throws CoreServiceException, JAXBException {
+		DeploymentDescription descr = salsa.getServiceDeploymentInfo("example_deployOneVM");
+		
+		log.info(Utils.asXmlString(descr));
 	}
 
 	@Test

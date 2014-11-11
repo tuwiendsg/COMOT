@@ -9,10 +9,24 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class Utils {
+
+	protected static final Logger log = LoggerFactory.getLogger(Utils.class);
+
+	public static String asXmlStringLog(Object obj, Class... clazz) {
+		try {
+			return asXmlString(obj, clazz);
+		} catch (JAXBException e) {
+			log.error("Fail to marshall to XML", e);
+			return null;
+		}
+	}
 
 	public static String asXmlString(Object obj, Class... clazz) throws JAXBException {
 

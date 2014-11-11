@@ -1,6 +1,5 @@
 package at.ac.tuwien.dsg.comot.common.model.type;
 
-// TODO: check with Hung if there are also other types
 public enum CapabilityType {
 	VARIABLE("variable");
 

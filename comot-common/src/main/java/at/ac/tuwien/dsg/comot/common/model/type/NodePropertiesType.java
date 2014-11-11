@@ -1,13 +1,13 @@
 package at.ac.tuwien.dsg.comot.common.model.type;
 
-public enum ServiceUnitPropertiesType {
+public enum NodePropertiesType {
 
 	OS("os"),
 	ACTION("action");
 
 	final String type;
 
-	ServiceUnitPropertiesType(String type) {
+	NodePropertiesType(String type) {
 		this.type = type;
 	}
 
@@ -16,9 +16,9 @@ public enum ServiceUnitPropertiesType {
 		return type;
 	}
 
-	public static ServiceUnitPropertiesType fromString(String type) {
+	public static NodePropertiesType fromString(String type) {
 		if (type != null) {
-			for (ServiceUnitPropertiesType b : ServiceUnitPropertiesType.values()) {
+			for (NodePropertiesType b : NodePropertiesType.values()) {
 				if (type.equalsIgnoreCase(b.type)) {
 					return b;
 				}

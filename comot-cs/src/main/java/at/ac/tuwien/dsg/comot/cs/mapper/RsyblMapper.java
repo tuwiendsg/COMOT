@@ -1,13 +1,16 @@
 package at.ac.tuwien.dsg.comot.cs.mapper;
 
-import javax.xml.bind.JAXBException;
+import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.common.Navigator;
+import at.ac.tuwien.dsg.comot.common.Utils;
+import at.ac.tuwien.dsg.comot.common.model.Navigator;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.common.model.structure.StackNode;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.RsyblOrika;
 import at.ac.tuwien.dsg.comot.rsybl.CloudServiceXML;
 
@@ -16,22 +19,28 @@ public class RsyblMapper {
 
 	protected final Logger log = LoggerFactory.getLogger(RsyblMapper.class);
 
+	@Autowired
 	protected RsyblOrika mapper;
 
-	public RsyblMapper() {
-		mapper = new RsyblOrika();
-	}
+	public CloudServiceXML extractRsybl(CloudService cloudService) throws ClassNotFoundException, IOException {
 
-	public CloudServiceXML toRsybl(CloudService cloudService) throws JAXBException {
+		Navigator navigator;
+
+		cloudService = (CloudService) UtilsMapper.deepCopy(cloudService);
+		navigator = new Navigator(cloudService);
+
+		// TODO check with Georgiana if SW units should really be removed
+		// ignore SOFTWARE nodes
+		for (StackNode unit : navigator.getAllNodes()) {
+			// if (unit.getType().equals(SwType.SOFTWARE)) {
+			// navigator.getParentTopology(unit.getId()).getServiceUnits().remove(unit);
+			// }
+		}
 
 		CloudServiceXML serviceXml = mapper.get().map(cloudService, CloudServiceXML.class);
-		Navigator navigator = new Navigator(cloudService);
 
-		log.trace("Mapping by dozer: {}");
-
-		log.trace("Final mapping: {}");
+		log.trace("Final mapping: {}", Utils.asXmlStringLog(obj, contextPath));
 
 		return serviceXml;
 	}
-
 }

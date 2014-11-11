@@ -9,6 +9,7 @@ public class CloudService extends ServicePart {
 
 	protected List<ServiceTopology> serviceTopologies = new ArrayList<>();
 	protected List<EntityRelationship> relationships = new ArrayList<>();
+	protected String accessIp;
 
 	public CloudService() {
 	}
@@ -57,5 +58,14 @@ public class CloudService extends ServicePart {
 	public void setRelationships(List<EntityRelationship> relationships) {
 		this.relationships = relationships;
 	}
+
+	public String getAccessIp() {
+		return accessIp;
+	}
+
+	public void setAccessIp(String accessIp) {
+		this.accessIp = accessIp;
+	}
+	
 
 }

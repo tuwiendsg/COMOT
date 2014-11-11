@@ -37,7 +37,7 @@ public class DeploymentClientSalsa implements DeploymentClient {
 		String toscaDescriptionXml;
 
 		try {
-			toscaDescriptionXml = UtilsMapper.asString(mapper.toTosca(cloudService));
+			toscaDescriptionXml = UtilsMapper.asString(mapper.extractTosca(cloudService));
 		} catch (JAXBException e) {
 			throw new ComotException("Failed to marshall TOSCA into XML ", e);
 		}

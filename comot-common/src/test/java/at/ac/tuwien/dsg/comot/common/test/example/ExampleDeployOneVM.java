@@ -1,11 +1,12 @@
 package at.ac.tuwien.dsg.comot.common.test.example;
 
+import at.ac.tuwien.dsg.comot.common.model.node.Properties;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.common.model.structure.ServiceTopology;
+import at.ac.tuwien.dsg.comot.common.model.structure.StackNode;
 import at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.common.model.type.ServiceUnitPropertiesType;
-import at.ac.tuwien.dsg.comot.common.model.type.ServiceUnitType;
-import at.ac.tuwien.dsg.comot.common.model.unit.Properties;
+import at.ac.tuwien.dsg.comot.common.model.type.NodePropertiesType;
+import at.ac.tuwien.dsg.comot.common.model.type.NodeType;
 
 public class ExampleDeployOneVM {
 
@@ -16,17 +17,17 @@ public class ExampleDeployOneVM {
 	
 	public static CloudService build(){
 		
-		Properties properties = new Properties(ServiceUnitPropertiesType.OS);
+		Properties properties = new Properties(NodePropertiesType.OS);
 		properties.addProperty("instanceType", "000000512");
 		properties.addProperty("provider", "dsg@openstack");
 		properties.addProperty("baseImage", "8f1428ac-f239-42e0-ab35-137f6e234101");
 		properties.addProperty("packages", "openjdk-7-jre");
 		
-		ServiceUnit unit = new ServiceUnit(NODE_ID, ServiceUnitType.OS);
+		StackNode unit = new StackNode(NODE_ID, NodeType.OS);
 		unit.setProperties(properties);
 
 		ServiceTopology topology = new ServiceTopology(TOPOLOGY_ID);
-		topology.addUnit(unit);
+		topology.addNode(unit);
 		
 		CloudService service = new CloudService(SERVICE_ID);
 		service.addServiceTopology(topology);

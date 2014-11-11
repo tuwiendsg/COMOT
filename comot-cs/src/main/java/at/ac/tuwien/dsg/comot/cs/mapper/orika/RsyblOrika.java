@@ -35,6 +35,9 @@ public class RsyblOrika {
 	public void build() {
 
 		MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+		ConverterFactory converterFactory = mapperFactory.getConverterFactory();
+
+		converterFactory.registerConverter(new SyblConverter());
 
 		mapperFactory.classMap(CloudService.class, CloudServiceXML.class)
 				.field("serviceTopologies", "serviceTopology")
@@ -46,24 +49,23 @@ public class RsyblOrika {
 				.field("serviceTopologies", "serviceTopology")
 				.field("serviceUnits", "serviceUnit")
 				.fieldAToB("directives", "SYBLDirective")
-				.customize(new CustomMapper<ServiceTopology, at.ac.tuwien.dsg.comot.rsybl.ServiceTopology>() {
-					@Override
-					public void mapAtoB(ServiceTopology modelTopo,
-							at.ac.tuwien.dsg.comot.rsybl.ServiceTopology rsyblTopo, MappingContext context) {
-						log.info("aaaaaaaaaa {}", rsyblTopo.getProperties());
-					}
-				})
 				.byDefault()
+				.customize(
+						new CustomMapper<ServiceTopology, at.ac.tuwien.dsg.comot.rsybl.ServiceTopology>() {
+							@Override
+							public void mapAtoB(ServiceTopology topology,
+									at.ac.tuwien.dsg.comot.rsybl.ServiceTopology rTopology, MappingContext context) {
+
+								// TODO how to mapp relationships
+							}
+						})
 				.register();
 
 		mapperFactory.classMap(ServiceUnit.class, at.ac.tuwien.dsg.comot.rsybl.ServiceUnit.class)
-				.fieldAToB("directives", "SYBLDirective")
+				// .fieldAToB("directives", "SYBLDirective")
 				.exclude("properties")
 				.byDefault()
 				.register();
-
-		ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-		converterFactory.registerConverter(new SyblConverter());
 
 		facade = mapperFactory.getMapperFacade();
 	}

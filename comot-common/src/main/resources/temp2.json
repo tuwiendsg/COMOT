@@ -23,7 +23,8 @@
 					"deploymentArtifacts" : [{
 							"type" : "SCRIPT",
 							"artifactReferences" : [{
-									"uri" : "http://128.130.172.215/salsa/upload/files/DaasService/deployCassandraSeed.sh"
+									"uri" : "http://128.130.172.215/salsa/upload/files/DaasService/deployCassandraSeed.sh",
+									"id" : "XXX should not be copied"
 								}],
 
 							"id" : "deployCassandraNode",
@@ -32,10 +33,12 @@
 
 					"directives" : [{
 							"directive" : "ST1: STRATEGY CASE cpuUsage \u0026lt; 40 % : scalein",
-							"type" : "STRATEGY"
+							"type" : "STRATEGY",
+							"id" : "str1"
 						},{
 							"directive" : "C2: CONSTRAINT CASE cpuUsage \u0026lt; 40 % : scalein",
-							"type" : "CONSTRAINT"
+							"type" : "CONSTRAINT",
+							"id" : "con1"
 						}],
 
 					"id" : "unitId",
@@ -57,15 +60,16 @@
 						"propertiesType" : "OS",
 						"properties" : {
 							"instanceType" : "000000512",
-							"packages" : "java-jdk, something-something",
 							"provider" : "dsg@openstack",
+							"packages" : "java-jdk, something-something",
 							"baseImage" : "8f1428ac-f239-42e0-ab35-137f6e234101"
 						}
 					},
 
 					"directives" : [{
 							"directive" : "C2: CONSTRAINT CASE cpuUsage \u0026lt; 40 % : scalein",
-							"type" : "CONSTRAINT"
+							"type" : "CONSTRAINT",
+							"id" : "con3"
 						}],
 
 					"id" : "osId",
@@ -76,7 +80,8 @@
 
 			"directives" : [{
 					"directive" : "C2: CONSTRAINT CASE cpuUsage \u0026lt; 40 % : scalein",
-					"type" : "CONSTRAINT"
+					"type" : "CONSTRAINT",
+					"id" : "con4"
 				}],
 
 			"id" : "topologyId"
@@ -107,7 +112,8 @@
 				"deploymentArtifacts" : [{
 						"type" : "SCRIPT",
 						"artifactReferences" : [{
-								"uri" : "http://128.130.172.215/salsa/upload/files/DaasService/deployCassandraSeed.sh"
+								"uri" : "http://128.130.172.215/salsa/upload/files/DaasService/deployCassandraSeed.sh",
+								"id" : "XXX should not be copied"
 							}],
 
 						"id" : "deployCassandraNode",
@@ -116,10 +122,12 @@
 
 				"directives" : [{
 						"directive" : "ST1: STRATEGY CASE cpuUsage \u0026lt; 40 % : scalein",
-						"type" : "STRATEGY"
+						"type" : "STRATEGY",
+						"id" : "str1"
 					},{
 						"directive" : "C2: CONSTRAINT CASE cpuUsage \u0026lt; 40 % : scalein",
-						"type" : "CONSTRAINT"
+						"type" : "CONSTRAINT",
+						"id" : "con1"
 					}],
 
 				"id" : "unitId",
@@ -143,15 +151,16 @@
 					"propertiesType" : "OS",
 					"properties" : {
 						"instanceType" : "000000512",
-						"packages" : "java-jdk, something-something",
 						"provider" : "dsg@openstack",
+						"packages" : "java-jdk, something-something",
 						"baseImage" : "8f1428ac-f239-42e0-ab35-137f6e234101"
 					}
 				},
 
 				"directives" : [{
 						"directive" : "C2: CONSTRAINT CASE cpuUsage \u0026lt; 40 % : scalein",
-						"type" : "CONSTRAINT"
+						"type" : "CONSTRAINT",
+						"id" : "con3"
 					}],
 
 				"id" : "osId",

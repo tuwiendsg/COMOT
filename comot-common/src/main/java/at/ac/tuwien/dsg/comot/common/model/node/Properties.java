@@ -1,25 +1,26 @@
-package at.ac.tuwien.dsg.comot.common.model.unit;
+package at.ac.tuwien.dsg.comot.common.model.node;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import at.ac.tuwien.dsg.comot.common.model.type.ServiceUnitPropertiesType;
+import at.ac.tuwien.dsg.comot.common.model.type.NodePropertiesType;
 
-public class Properties {
+public class Properties implements Serializable {
 
-	protected ServiceUnitPropertiesType propertiesType;
+	protected NodePropertiesType propertiesType;
 	protected Map<String, String> properties = new HashMap<>();
 
 	public Properties() {
 
 	}
 
-	public Properties(ServiceUnitPropertiesType propertiesType) {
+	public Properties(NodePropertiesType propertiesType) {
 		super();
 		this.propertiesType = propertiesType;
 	}
 
-	public Properties(ServiceUnitPropertiesType propertiesType, Map<String, String> properties) {
+	public Properties(NodePropertiesType propertiesType, Map<String, String> properties) {
 		super();
 		this.propertiesType = propertiesType;
 		this.properties = properties;
@@ -40,11 +41,11 @@ public class Properties {
 		this.properties = properties;
 	}
 
-	public ServiceUnitPropertiesType getPropertiesType() {
+	public NodePropertiesType getPropertiesType() {
 		return propertiesType;
 	}
 
-	public void setPropertiesType(ServiceUnitPropertiesType propertiesType) {
+	public void setPropertiesType(NodePropertiesType propertiesType) {
 		this.propertiesType = propertiesType;
 	}
 

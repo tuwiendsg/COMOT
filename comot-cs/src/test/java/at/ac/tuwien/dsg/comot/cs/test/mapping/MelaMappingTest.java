@@ -8,27 +8,30 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.comot.common.Utils;
+import at.ac.tuwien.dsg.comot.cs.mapper.MelaMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.RsyblMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.UtilsMapper;
+import at.ac.tuwien.dsg.comot.cs.mapper.orika.MelaOrika;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.RsyblOrika;
 import at.ac.tuwien.dsg.comot.cs.test.AbstractTest;
 import at.ac.tuwien.dsg.comot.rsybl.CloudServiceXML;
 import at.ac.tuwien.dsg.comot.rsybl.ObjectFactory;
+import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement;
 
-public class RsyblMappingTest extends AbstractTest {
+public class MelaMappingTest extends AbstractTest {
 
 	@Autowired
-	protected RsyblOrika orika;
+	protected MelaOrika orika;
 	@Autowired
-	protected RsyblMapper mapper;
+	protected MelaMapper mapper;
 
 	@Test
 	public void mapperTest() throws JAXBException, ClassNotFoundException, IOException {
 
 		 log.info("original {}", Utils.asJsonString(serviceForMapping));
 		
-		 CloudServiceXML tosca1 = mapper.extractRsybl(serviceForMapping);
-		 log.info("rsybl {}", UtilsMapper.asString(tosca1));
+		 MonitoredElement element = mapper.extractMela(serviceForMapping);
+		 log.info("mela {}", UtilsMapper.asString(element));
 		
 	}
 
@@ -37,20 +40,10 @@ public class RsyblMappingTest extends AbstractTest {
 
 		log.info("original {}", Utils.asJsonString(serviceForMapping));
 
-		CloudServiceXML xml = orika.get().map(serviceForMapping, CloudServiceXML.class);
-		log.info("tosca1 {}", UtilsMapper.asString(xml));
+		MonitoredElement element = orika.get().map(serviceForMapping, MonitoredElement.class);
+		log.info("element {}", UtilsMapper.asString(element));
 		
 
 	}
 
-	@Test
-	public void testProvidedClasses() throws JAXBException {
-
-		CloudServiceXML cloudServiceXML = new CloudServiceXML();
-		ObjectFactory factory = new ObjectFactory();
-
-		factory.createCloudService(cloudServiceXML);
-		log.info("cloudServiceXML: {}", UtilsMapper.asString(cloudServiceXML));
-
-	}
 }

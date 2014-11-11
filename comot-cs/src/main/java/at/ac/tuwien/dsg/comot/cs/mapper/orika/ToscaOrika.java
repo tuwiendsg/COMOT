@@ -26,20 +26,22 @@ import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties;
 import at.ac.tuwien.dsg.comot.common.model.SyblDirective;
+import at.ac.tuwien.dsg.comot.common.model.node.ArtifactReference;
+import at.ac.tuwien.dsg.comot.common.model.node.ArtifactTemplate;
+import at.ac.tuwien.dsg.comot.common.model.node.Capability;
+import at.ac.tuwien.dsg.comot.common.model.node.Properties;
+import at.ac.tuwien.dsg.comot.common.model.node.Requirement;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.common.model.structure.ServiceTopology;
 import at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.common.model.type.ServiceUnitPropertiesType;
-import at.ac.tuwien.dsg.comot.common.model.unit.ArtifactReference;
-import at.ac.tuwien.dsg.comot.common.model.unit.ArtifactTemplate;
-import at.ac.tuwien.dsg.comot.common.model.unit.Capability;
-import at.ac.tuwien.dsg.comot.common.model.unit.Properties;
-import at.ac.tuwien.dsg.comot.common.model.unit.Requirement;
+import at.ac.tuwien.dsg.comot.common.model.structure.StackNode;
+import at.ac.tuwien.dsg.comot.common.model.type.NodePropertiesType;
 
 @Component
 public class ToscaOrika {
 
 	protected final Logger log = LoggerFactory.getLogger(ToscaOrika.class);
+	public static final String OS = "os";
 
 	protected MapperFacade facade;
 
@@ -52,9 +54,19 @@ public class ToscaOrika {
 				.byDefault()
 				.register();
 
+		mapperFactory.classMap(ServiceUnit.class, TNodeTemplate.Policies.class)
+				.field("directives", "policy")
+				.byDefault()
+				.register();
+
 		mapperFactory.classMap(SyblDirective.class, TPolicy.class)
 				.field("directive", "name")
 				.field("type", "policyType")
+				.register();
+
+		mapperFactory.classMap(ArtifactTemplate.class, TDeploymentArtifact.class)
+				.field("type", "artifactType")
+				.field("id", "artifactRef")
 				.byDefault()
 				.register();
 
@@ -70,71 +82,61 @@ public class ToscaOrika {
 				.byDefault()
 				.register();
 
-		mapperFactory.classMap(ServiceUnit.class, TNodeTemplate.class)
-				.field("maxInstances", "maxInstances")
+		mapperFactory.classMap(StackNode.class, TNodeTemplate.class)
 				.field("capabilities", "capabilities.capability")
 				.field("requirements", "requirements.requirement")
-				.field("directives", "policies.policy")
 				.field("deploymentArtifacts", "deploymentArtifacts.deploymentArtifact")
+				.customize(new NodeMapper())
 				.byDefault()
-				.customize(
-						new CustomMapper<ServiceUnit, TNodeTemplate>() {
-							@Override
-							public void mapAtoB(ServiceUnit unit, TNodeTemplate node, MappingContext context) {
-								// do this manually because of mismatch of JAXB generated getter/setter int/Integer
-								node.setMinInstances(unit.getMinInstances());
-
-								// inserting SalsaMappingProperties into Object
-								Properties props = unit.getProperties();
-								if (props != null) {
-									SalsaMappingProperties salsaProps = new SalsaMappingProperties();
-									// TODO tell Hung about inconsistent types. Here it is just String, but in
-									// documentation as QName
-									salsaProps.put(props.getPropertiesType().toString(),
-											props.getProperties());
-
-									node.setProperties(new TEntityTemplate.Properties().withAny(salsaProps));
-								}
-							}
-
-							@Override
-							public void mapBtoA(TNodeTemplate node, ServiceUnit unit, MappingContext context) {
-
-								if (node.getProperties() != null
-										&& node.getProperties().getAny() != null
-										&& node.getProperties().getAny() instanceof SalsaMappingProperties) {
-
-									SalsaMappingProperties salsaProps = (SalsaMappingProperties) node.getProperties()
-											.getAny();
-
-									// TODO: change model properties to list so that it fits all from tosca
-									unit.setProperties(new Properties(
-											ServiceUnitPropertiesType.fromString(salsaProps.getProperties().get(0)
-													.getType()),
-											salsaProps.getProperties().get(0).getMapData())
-											);
-								}
-							}
-						})
 				.register();
 
 		mapperFactory.classMap(ServiceTopology.class, TServiceTemplate.class)
-				.fieldAToB("serviceUnits", "topologyTemplate.nodeTemplateOrRelationshipTemplate")
+				.field("directives", "boundaryDefinitions.policies.policy")
+				.fieldAToB("nodes", "topologyTemplate.nodeTemplateOrRelationshipTemplate")
 				.customize(// custom mapper because of inheritance of TNodeTemplate
 						new CustomMapper<ServiceTopology, TServiceTemplate>() {
+
+							@Override
+							public void mapAtoB(ServiceTopology topology, TServiceTemplate tServiceTemplate,
+									MappingContext context) {
+
+								for (ServiceUnit unit : topology.getServiceUnits()) {
+									for (TEntityTemplate entity : tServiceTemplate.getTopologyTemplate()
+											.getNodeTemplateOrRelationshipTemplate()) {
+										if (entity instanceof TNodeTemplate) {
+											if (entity.getId().equals(unit.getId())) {
+
+												((TNodeTemplate) entity).setPolicies(facade.map(unit,
+														TNodeTemplate.Policies.class));
+											}
+										}
+									}
+								}
+
+							}
+
 							@Override
 							public void mapBtoA(TServiceTemplate tServiceTemplate, ServiceTopology topology,
 									MappingContext context) {
-
 								for (TExtensibleElements element : tServiceTemplate.getTopologyTemplate()
 										.getNodeTemplateOrRelationshipTemplate()) {
 									if (element instanceof TNodeTemplate) {
-										topology.addUnit(facade.map(element, ServiceUnit.class));
+										TNodeTemplate tNode = (TNodeTemplate) element;
+
+										StackNode node = facade.map(element, StackNode.class);
+										topology.addNode(node);
+
+										if (tNode.getPolicies() == null || tNode.getPolicies().getPolicy() == null) {
+											continue;
+										}
+										ServiceUnit unit = new ServiceUnit(node);
+										facade.map(tNode.getPolicies(), unit);
+
+										topology.addServiceUnit(unit);
 									}
 								}
 							}
 						})
-				.field("directives", "boundaryDefinitions.policies.policy")
 				.byDefault()
 				.register();
 
@@ -144,7 +146,6 @@ public class ToscaOrika {
 						new CustomMapper<CloudService, Definitions>() {
 							@Override
 							public void mapBtoA(Definitions definition, CloudService service, MappingContext context) {
-
 								for (TExtensibleElements element : definition
 										.getServiceTemplateOrNodeTypeOrNodeTypeImplementation()) {
 									if (element instanceof TServiceTemplate) {
@@ -153,7 +154,6 @@ public class ToscaOrika {
 								}
 							}
 						})
-
 				.byDefault()
 				.register();
 
@@ -171,7 +171,7 @@ public class ToscaOrika {
 
 		ConverterFactory converterFactory = mapperFactory.getConverterFactory();
 		converterFactory.registerConverter(new ToscaConverters.CapabilityTypeConverter());
-		converterFactory.registerConverter(new ToscaConverters.ServiceUnitTypeConverter());
+		converterFactory.registerConverter(new ToscaConverters.NodeTypeConverter());
 		converterFactory.registerConverter(new ToscaConverters.DirectiveTypeConverter());
 		converterFactory.registerConverter(new ToscaConverters.ArtifactTypeConverter());
 		converterFactory.registerConverter(new ToscaConverters.RequirementTypeConverter());
@@ -182,6 +182,45 @@ public class ToscaOrika {
 
 	public MapperFacade get() {
 		return facade;
+	}
+
+	class NodeMapper extends CustomMapper<StackNode, TNodeTemplate> {
+		@Override
+		public void mapAtoB(StackNode unit, TNodeTemplate node, MappingContext context) {
+			// do this manually because of mismatch of JAXB generated getter/setter int/Integer
+			node.setMinInstances(unit.getMinInstances());
+
+			// inserting SalsaMappingProperties into Object
+			Properties props = unit.getProperties();
+			if (props != null) {
+				SalsaMappingProperties salsaProps = new SalsaMappingProperties();
+				salsaProps.put(props.getPropertiesType().toString(),
+						props.getProperties());
+
+				node.setProperties(new TEntityTemplate.Properties().withAny(salsaProps));
+			}
+
+			// map type
+			node.setType(ToscaConverters.toSalsaQName(((StackNode) unit).getType().toString()));
+		}
+
+		@Override
+		public void mapBtoA(TNodeTemplate node, StackNode unit, MappingContext context) {
+			if (node.getProperties() != null
+					&& node.getProperties().getAny() != null
+					&& node.getProperties().getAny() instanceof SalsaMappingProperties) {
+
+				SalsaMappingProperties salsaProps = (SalsaMappingProperties) node.getProperties()
+						.getAny();
+
+				// TODO: change model properties to list so that it fits all from tosca
+				unit.setProperties(new Properties(
+						NodePropertiesType.fromString(salsaProps.getProperties().get(0)
+								.getType()),
+						salsaProps.getProperties().get(0).getMapData())
+						);
+			}
+		}
 	}
 
 }

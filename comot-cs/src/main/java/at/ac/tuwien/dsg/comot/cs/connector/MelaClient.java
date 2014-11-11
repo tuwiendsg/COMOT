@@ -297,16 +297,20 @@ public class MelaClient extends CoreServiceClient {
 		return result;
 	}
 
+	/**
+	 * Ad-hoc functionality
+	 */
+	@Deprecated
 	public MonitoredElementMonitoringSnapshots getAllAggregatedMonitoringDataInTimeInterval(
 			String serviceId,
-			int startTimestamp,
-			int endTimestamp) throws CoreServiceException {
+			int startTimestampId,
+			int endTimestampId) throws CoreServiceException {
 
 		Response response = client.target(getBaseUri())
 				.path(GET_DATA_INTERVAL_PATH)
 				.resolveTemplate("serviceId", serviceId)
-				.queryParam("startTimestamp", startTimestamp)
-				.queryParam("endTimestamp", endTimestamp)
+				.queryParam("startTimestamp", startTimestampId)
+				.queryParam("endTimestamp", endTimestampId)
 				.request(MediaType.APPLICATION_XML)
 				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML)
 				.get();

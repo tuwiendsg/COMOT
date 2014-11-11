@@ -1,6 +1,8 @@
 package at.ac.tuwien.dsg.comot.common.model;
 
-public abstract class AbstractEntity {
+import java.io.Serializable;
+
+public abstract class AbstractEntity implements Serializable {
 
 	protected String id;
 	protected String name;
@@ -15,12 +17,6 @@ public abstract class AbstractEntity {
 
 	public AbstractEntity(String id, String name) {
 		this.id = id;
-		this.name = name;
-	}
-
-	public AbstractEntity(String id, String name, String description) {
-		this.id = id;
-		this.description = description;
 		this.name = name;
 	}
 

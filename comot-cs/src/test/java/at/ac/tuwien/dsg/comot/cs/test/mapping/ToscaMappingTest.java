@@ -23,16 +23,16 @@ public class ToscaMappingTest extends AbstractTest {
 
 		log.info("original {}", Utils.asJsonString(serviceForMapping));
 
-		Definitions tosca1 = myMapper.toTosca(serviceForMapping);
+		Definitions tosca1 = myMapper.extractTosca(serviceForMapping);
 		log.info("tosca1 {}", UtilsMapper.asString(tosca1));
 
-		CloudService service2 = myMapper.toModel(tosca1);
+		CloudService service2 = myMapper.createModel(tosca1);
 		log.info("service2 {}", Utils.asJsonString(service2));
 
-		Definitions tosca2 = myMapper.toTosca(service2);
+		Definitions tosca2 = myMapper.extractTosca(service2);
 		log.info("tosca2 {}", UtilsMapper.asString(tosca2));
 
-		CloudService service3 = myMapper.toModel(tosca1);
+		CloudService service3 = myMapper.createModel(tosca1);
 		log.info("service3 {}", Utils.asJsonString(service3));
 
 	}

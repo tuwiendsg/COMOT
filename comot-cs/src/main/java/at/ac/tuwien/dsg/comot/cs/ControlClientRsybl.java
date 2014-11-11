@@ -14,12 +14,12 @@ import org.slf4j.LoggerFactory;
 import at.ac.tuwien.dsg.comot.common.coreservices.ControlClient;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.EntityRelationship;
+import at.ac.tuwien.dsg.comot.common.model.node.Capability;
+import at.ac.tuwien.dsg.comot.common.model.node.Requirement;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.common.model.structure.ServiceTopology;
-import at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.common.model.type.ServiceUnitType;
-import at.ac.tuwien.dsg.comot.common.model.unit.Capability;
-import at.ac.tuwien.dsg.comot.common.model.unit.Requirement;
+import at.ac.tuwien.dsg.comot.common.model.structure.StackNode;
+import at.ac.tuwien.dsg.comot.common.model.type.NodeType;
 import at.ac.tuwien.dsg.comot.cs.connector.RsyblClient;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.abstractModelXML.CloudServiceXML;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.abstractModelXML.RelationshipXML;
@@ -101,14 +101,14 @@ public class ControlClientRsybl implements ControlClient {
 		cloudServiceXML.setId(serviceTemplate.getId());
 
 		// Capability ID
-		Map<String, ServiceUnit> capabilitiesPerUnit = new HashMap<>();
-		Map<String, ServiceUnit> requirementsPerUnit = new HashMap<>();
+		Map<String, StackNode> capabilitiesPerUnit = new HashMap<>();
+		Map<String, StackNode> requirementsPerUnit = new HashMap<>();
 
 		Map<String, String> toFromRelationships = new HashMap<>();
 
 		// build map connecting capabilities to units
 		for (ServiceTopology serviceTopology : serviceTemplate.getServiceTopologies()) {
-			for (ServiceUnit serviceUnit : serviceTopology.getServiceUnits()) {
+			for (StackNode serviceUnit : serviceTopology.getServiceUnits()) {
 				for (Capability c : serviceUnit.getCapabilities()) {
 					capabilitiesPerUnit.put(c.getId(), serviceUnit);
 				}
@@ -127,8 +127,8 @@ public class ControlClientRsybl implements ControlClient {
 				Capability from = (Capability) entityRelationship.getFrom();
 				Requirement to = (Requirement) entityRelationship.getTo();
 
-				ServiceUnit fromUnit = capabilitiesPerUnit.get(from.getId());
-				ServiceUnit toUnit = requirementsPerUnit.get(to.getId());
+				StackNode fromUnit = capabilitiesPerUnit.get(from.getId());
+				StackNode toUnit = requirementsPerUnit.get(to.getId());
 				if (fromUnit != null && toUnit != null) {
 					toFromRelationships.put(fromUnit.getId(), toUnit.getId());
 				} else {
@@ -150,8 +150,8 @@ public class ControlClientRsybl implements ControlClient {
 			List<ServiceUnitXML> serviceUnitXMLs = new ArrayList<>();
 			serviceTopologyXML.setServiceUnits(serviceUnitXMLs);
 
-			for (ServiceUnit serviceUnit : serviceTopology.getServiceUnits()) {
-				if (!serviceUnit.getType().equals(ServiceUnitType.SOFTWARE)) {
+			for (StackNode serviceUnit : serviceTopology.getServiceUnits()) {
+				if (!serviceUnit.getType().equals(NodeType.SOFTWARE)) {
 					// only gather Software type nodes
 					continue;
 				}
@@ -207,17 +207,17 @@ public class ControlClientRsybl implements ControlClient {
 	protected DeploymentDescription enrichWithElasticityCapabilities(DeploymentDescription deploymentDescription,
 			CloudService serviceTemplate) {
 		// get a Map of Deployment Units and a map of SoftwareUnits, and match capabilities
-		Map<String, ServiceUnit> softwareUnits = new HashMap<>();
+		Map<String, StackNode> units = new HashMap<>();
 
 		for (ServiceTopology serviceTopology : serviceTemplate.getServiceTopologies()) {
-			for (ServiceUnit serviceUnit : serviceTopology.getServiceUnits()) {
-				softwareUnits.put(serviceUnit.getId(), serviceUnit);
+			for (StackNode serviceUnit : serviceTopology.getServiceUnits()) {
+				units.put(serviceUnit.getId(), serviceUnit);
 			}
 		}
 
 		for (DeploymentUnit deploymentUnit : deploymentDescription.getDeployments()) {
-			if (softwareUnits.containsKey(deploymentUnit.getServiceUnitID())) {
-				Set<ElasticityCapability> capabilities = softwareUnits.get(deploymentUnit.getServiceUnitID())
+			if (units.containsKey(deploymentUnit.getServiceUnitID())) {
+				Set<ElasticityCapability> capabilities = units.get(deploymentUnit.getServiceUnitID())
 						.getElasticityCapabilities();
 				for (ElasticityCapability capability : capabilities) {
 					at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.ElasticityCapability ec = new at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.ElasticityCapability();

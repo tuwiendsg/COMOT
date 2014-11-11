@@ -19,13 +19,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties;
-import at.ac.tuwien.dsg.comot.common.Navigator;
 import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.model.EntityRelationship;
+import at.ac.tuwien.dsg.comot.common.model.Navigator;
+import at.ac.tuwien.dsg.comot.common.model.ReferencableEntity;
+import at.ac.tuwien.dsg.comot.common.model.node.ArtifactTemplate;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.common.model.structure.StackNode;
 import at.ac.tuwien.dsg.comot.common.model.type.RelationshipType;
-import at.ac.tuwien.dsg.comot.common.model.unit.ArtifactTemplate;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.ToscaOrika;
 
 @Component
@@ -36,7 +37,7 @@ public class ToscaMapper {
 	@Autowired
 	protected ToscaOrika mapper;
 
-	public Definitions toTosca(CloudService cloudService) throws JAXBException {
+	public Definitions extractTosca(CloudService cloudService) throws JAXBException {
 
 		Definitions definition = mapper.get().map(cloudService, Definitions.class);
 		Navigator navigator = new Navigator(cloudService);
@@ -46,7 +47,7 @@ public class ToscaMapper {
 		TArtifactTemplate tArtifact;
 
 		// inject TArtifactTemplates
-		for (ServiceUnit unit : navigator.getAllUnits()) {
+		for (StackNode unit : navigator.getAllNodes()) {
 			for (ArtifactTemplate artifact : unit.getDeploymentArtifacts()) {
 
 				tArtifact = mapper.get().map(artifact, TArtifactTemplate.class);
@@ -68,10 +69,12 @@ public class ToscaMapper {
 							oneRel.getId(), oneRel.getType(), oneRel.getSourceElement().getRef(), oneRel
 									.getTargetElement().getRef());
 
-					sourceTopoId = navigator.getParentTopologyId(((TEntityTemplate) oneRel.getSourceElement().getRef())
-							.getId());
-					targetTopoId = navigator.getParentTopologyId(((TEntityTemplate) oneRel.getTargetElement().getRef())
-							.getId());
+					sourceTopoId = navigator.getParentTopologyFor(
+							((TEntityTemplate) oneRel.getSourceElement().getRef())
+									.getId()).getId();
+					targetTopoId = navigator.getParentTopologyFor(
+							((TEntityTemplate) oneRel.getTargetElement().getRef())
+									.getId()).getId();
 
 					log.trace("Inserted relationship id={}, from={}, to={}", oneRel.getId(), sourceTopoId, targetTopoId);
 
@@ -83,16 +86,16 @@ public class ToscaMapper {
 			}
 		}
 
-		log.info("{}", definition);
-
 		log.trace("Final mapping: {}", Utils.asXmlString(definition, SalsaMappingProperties.class));
 
 		return definition;
 	}
 
-	public CloudService toModel(Definitions definitions) {
+	public CloudService createModel(Definitions definitions) {
 
 		ArtifactTemplate artifact;
+		ReferencableEntity from;
+		ReferencableEntity to;
 
 		CloudService cloudService = mapper.get().map(definitions, CloudService.class);
 		log.trace("Mapping by dozer: {}", Utils.asJsonString(cloudService));
@@ -105,7 +108,7 @@ public class ToscaMapper {
 
 				artifact = mapper.get().map((TArtifactTemplate) element, ArtifactTemplate.class);
 
-				for (ServiceUnit unit : navigator.getAllUnits()) {
+				for (StackNode unit : navigator.getAllNodes()) {
 					for (ArtifactTemplate currentArt : unit.getDeploymentArtifacts()) {
 						if (currentArt.getId().equals(artifact.getId())) {
 							currentArt.setArtifactReferences(artifact.getArtifactReferences());
@@ -122,13 +125,19 @@ public class ToscaMapper {
 						TRelationshipTemplate rel = (TRelationshipTemplate) element2;
 
 						if (!cloudService.containsRelationship(rel.getId())) {
-							cloudService.addEntityRelationship(new EntityRelationship(
-									rel.getId(), RelationshipType.fromString(rel.getType().getLocalPart()),
-									navigator.getReferencableEntity(((TEntityTemplate) rel.getSourceElement().getRef())
-											.getId()),
-									navigator.getReferencableEntity(((TEntityTemplate) rel.getTargetElement().getRef())
-											.getId())
-									));
+							from = navigator.getReferencableEntity(((TEntityTemplate) rel.getSourceElement().getRef())
+									.getId());
+							to = navigator.getReferencableEntity(((TEntityTemplate) rel.getTargetElement()
+									.getRef())
+									.getId());
+
+							cloudService
+									.addEntityRelationship(new EntityRelationship(
+											rel.getId(), RelationshipType.fromString(rel.getType().getLocalPart()),
+											from, to, navigator.resolveToServicePart(from), navigator
+													.resolveToServicePart(to)));
+							// navigator.resolveServicePart(from),
+							// navigator.resolveServicePart(to)));
 						}
 					}
 				}
