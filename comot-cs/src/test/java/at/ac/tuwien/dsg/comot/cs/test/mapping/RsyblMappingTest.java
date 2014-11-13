@@ -27,8 +27,8 @@ public class RsyblMappingTest extends AbstractTest {
 
 		 log.info("original {}", Utils.asJsonString(serviceForMapping));
 		
-		 CloudServiceXML tosca1 = mapper.extractRsybl(serviceForMapping);
-		 log.info("rsybl {}", UtilsMapper.asString(tosca1));
+		 CloudServiceXML rsybl = mapper.extractRsybl(serviceForMapping);
+		 log.info("rsybl {}", UtilsMapper.asString(rsybl));
 		
 	}
 
@@ -43,14 +43,5 @@ public class RsyblMappingTest extends AbstractTest {
 
 	}
 
-	@Test
-	public void testProvidedClasses() throws JAXBException {
 
-		CloudServiceXML cloudServiceXML = new CloudServiceXML();
-		ObjectFactory factory = new ObjectFactory();
-
-		factory.createCloudService(cloudServiceXML);
-		log.info("cloudServiceXML: {}", UtilsMapper.asString(cloudServiceXML));
-
-	}
 }

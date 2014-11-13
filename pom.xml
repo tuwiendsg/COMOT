@@ -24,7 +24,6 @@
 		<module>comot-cs</module>
 		<module>comot-tosca</module>
 		<module>comot-common</module>
-		<module>comot-bundles</module>
 		<module>comot-ui</module>
 		<module>comot-visualization-service</module>
 		<module>comot-fluent</module>

@@ -38,8 +38,8 @@ public class DeploymentOrika {
 		mapperFactory.classMap(ServiceUnit.class, DeploymentUnit.class)
 				.field("deploymentInfo.defaultImage", "defaultImage")
 				.field("deploymentInfo.defaultFlavor", "defaultFlavor")
-				.field("deploymentInfo.elasticityCapabilities", "elasticityCapabilities")
 				.field("deploymentInfo.associatedVMs", "associatedVM")
+				.field("elasticityCapabilities", "elasticityCapabilities")
 				.fieldAToB("id", "serviceUnitID")
 				.register();
 

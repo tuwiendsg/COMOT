@@ -94,7 +94,7 @@ public class MelaOrika {
 		return facade;
 	}
 
-	protected static MonitoredElementLevel decideLevel(ServicePart part) {
+	public static MonitoredElementLevel decideLevel(ServicePart part) {
 
 		if (part instanceof CloudService) {
 			return MonitoredElementLevel.SERVICE;

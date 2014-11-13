@@ -6,6 +6,7 @@ import at.ac.tuwien.dsg.comot.common.model.type.RelationshipType;
 public class EntityRelationship extends AbstractEntity implements ReferencableEntity {
 
 	protected RelationshipType type;
+
 	protected ReferencableEntity from;
 	protected ReferencableEntity to;
 
@@ -25,6 +26,13 @@ public class EntityRelationship extends AbstractEntity implements ReferencableEn
 		this.toPart = toPart;
 	}
 
+	public boolean isServicePartRelationship() {
+		if (fromPart != null && toPart != null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	// GENERATED METHODS
 

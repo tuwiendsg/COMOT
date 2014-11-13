@@ -2,15 +2,13 @@ package at.ac.tuwien.dsg.comot.common.model.unit;
 
 import java.util.List;
 
-
 public class DeploymentInfo {
 	
 	protected String defaultImage;
 	protected String defaultFlavor;
 	protected String serviceUnitID;
 	protected List<AssociatedVM> associatedVMs;
-	protected List<ElasticityCapability> elasticityCapabilities;
-	
+	// TODO ask Georgiana about List<Artifact> artifacts 
 	
 	
 	public String getDefaultImage() {
@@ -37,14 +35,6 @@ public class DeploymentInfo {
 	public void setAssociatedVMs(List<AssociatedVM> associatedVMs) {
 		this.associatedVMs = associatedVMs;
 	}
-	public List<ElasticityCapability> getElasticityCapabilities() {
-		return elasticityCapabilities;
-	}
-	public void setElasticityCapabilities(List<ElasticityCapability> elasticityCapabilities) {
-		this.elasticityCapabilities = elasticityCapabilities;
-	}
-	
-	
-	
+		
 
 }

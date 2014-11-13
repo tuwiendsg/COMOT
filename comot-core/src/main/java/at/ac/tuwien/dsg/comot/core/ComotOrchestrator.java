@@ -77,8 +77,9 @@ public class ComotOrchestrator {
 			String effectsJSON) throws CoreServiceException {
 
 		DeploymentDescription deploymentDescription = deployment.getServiceDeploymentInfo(serviceTemplate.getId());
-
-		control.sendInitialConfig(serviceTemplate, deploymentDescription, compositionRulesConfiguration,
+		// add deployment to service 
+		
+		control.sendInitialConfig(serviceTemplate, compositionRulesConfiguration,
 				effectsJSON);
 		
 		control.startControl(serviceTemplate.getId());

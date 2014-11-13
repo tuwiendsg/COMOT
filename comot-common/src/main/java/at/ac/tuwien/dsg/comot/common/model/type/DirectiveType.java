@@ -6,7 +6,7 @@ public enum DirectiveType {
 	CONSTRAINT("SYBLConstraint"),
 	STRATEGY("SYBLStrategy"),
 	MONITORING("SYBLMonitoring"),
-	PROPERTIES("SYBLProperty");
+	PRIORIIES("SYBLPriority");
 
 	private final String type;
 

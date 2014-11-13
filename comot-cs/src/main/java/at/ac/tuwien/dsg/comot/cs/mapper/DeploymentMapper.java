@@ -20,8 +20,7 @@ public class DeploymentMapper {
 	@Autowired
 	protected DeploymentOrika mapper;
 
-	public DeploymentDescription extractDeployment(CloudService cloudService) throws ClassNotFoundException,
-			IOException {
+	public DeploymentDescription extractDeployment(CloudService cloudService){
 
 		DeploymentDescription descr = mapper.get().map(cloudService, DeploymentDescription.class);
 

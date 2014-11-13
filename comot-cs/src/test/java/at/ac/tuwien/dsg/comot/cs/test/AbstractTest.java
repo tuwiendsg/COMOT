@@ -77,9 +77,12 @@ public abstract class AbstractTest {
 
 		List<SyblDirective> directives = new ArrayList<>();
 		directives.add(new SyblDirective("str1", DirectiveType.STRATEGY,
-				"ST1: STRATEGY CASE cpuUsage &lt; 40 % : scalein"));
-		directives.add(new SyblDirective("con1", DirectiveType.CONSTRAINT,
-				"C2: CONSTRAINT CASE cpuUsage &lt; 40 % : scalein"));
+				"ST1: STRATEGY CASE cpuUsage < 40 % : scalein"));
+		directives
+				.add(new SyblDirective(
+						"con1",
+						DirectiveType.CONSTRAINT,
+						"Co2: CONSTRAINT dataAccuracy > 95 % WHEN total_cost > 400 ;"));
 
 		StackNode swNode = new StackNode(swNodeId, "Test node unit",
 				2, 5, NodeType.SOFTWARE, requirements, capabilities, null, null);
@@ -110,7 +113,7 @@ public abstract class AbstractTest {
 		topology.addNode(osNode);
 		topology.addServiceUnit(unit);
 		topology.addSyblDirective(new SyblDirective("con4", DirectiveType.CONSTRAINT,
-				"C2: CONSTRAINT CASE cpuUsage &lt; 40 % : scalein"));
+				"Co4: CONSTRAINT total_cost < 800"));
 
 		serviceForMapping = new CloudService(serviceId);
 		serviceForMapping.addServiceTopology(topology);

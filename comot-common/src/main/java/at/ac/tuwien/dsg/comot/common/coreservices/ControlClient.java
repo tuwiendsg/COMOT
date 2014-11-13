@@ -9,7 +9,6 @@ public interface ControlClient extends CoreServiceClient {
 
 	public void sendInitialConfig(
 			CloudService service,
-			DeploymentDescription deploymentDescription,
 			CompositionRulesConfiguration compositionRulesConfiguration,
 			String effectsJSON) throws CoreServiceException;
 

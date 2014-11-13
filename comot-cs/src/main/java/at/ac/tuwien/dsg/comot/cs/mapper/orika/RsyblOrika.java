@@ -62,7 +62,7 @@ public class RsyblOrika {
 				.register();
 
 		mapperFactory.classMap(ServiceUnit.class, at.ac.tuwien.dsg.comot.rsybl.ServiceUnit.class)
-				// .fieldAToB("directives", "SYBLDirective")
+				.fieldAToB("directives", "SYBLDirective")
 				.exclude("properties")
 				.byDefault()
 				.register();
@@ -90,7 +90,7 @@ public class RsyblOrika {
 				case MONITORING:
 					rDirecitve.setMonitoring(directive.getDirective());
 					break;
-				case PROPERTIES:
+				case PRIORIIES:
 					rDirecitve.setPriorities(directive.getDirective());
 					break;
 				default:

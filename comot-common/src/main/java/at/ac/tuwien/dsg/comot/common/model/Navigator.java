@@ -32,17 +32,19 @@ public class Navigator {
 
 	public ServicePart resolveToServicePart(ReferencableEntity entity) {
 
+		ServiceUnit unit;
+
 		if (entity instanceof StackNode) {
-			return getServiceUnit(entity.getId());
+			unit = getServiceUnit(entity.getId());
 
 		} else if (entity instanceof Capability) {
-			return getServiceUnit(getNodeFor(entity.getId()).getId());
+			unit = getServiceUnit(getNodeFor(entity.getId()).getId());
 
 		} else if (entity instanceof Requirement) {
-			return getServiceUnit(getNodeFor(entity.getId()).getId());
+			unit = getServiceUnit(getNodeFor(entity.getId()).getId());
 
 		} else if (entity instanceof ArtifactTemplate) {
-			return getServiceUnit(getNodeFor(entity.getId()).getId());
+			unit = getServiceUnit(getNodeFor(entity.getId()).getId());
 
 		} else if (entity instanceof EntityRelationship) {
 			throw new UnsupportedOperationException();
@@ -53,6 +55,9 @@ public class Navigator {
 		} else {
 			throw new UnsupportedOperationException();
 		}
+		log.debug("resolveToServicePart(entityId={} ): servicePartId={}", entity.getId(),
+				(unit == null) ? null : unit.getId());
+		return unit;
 	}
 
 	public ServiceUnit getServiceUnit(String id) {
@@ -119,6 +124,14 @@ public class Navigator {
 		}
 
 		return null;
+	}
+
+	public List<ServicePart> getAllServiceParts() {
+		List<ServicePart> list = new ArrayList<>();
+		list.add(service);
+		list.addAll(getAllServiceUnits());
+		list.addAll(getAllTopologies());
+		return list;
 	}
 
 	public List<ServiceUnit> getAllServiceUnits() {

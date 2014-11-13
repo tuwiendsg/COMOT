@@ -2,16 +2,17 @@ package at.ac.tuwien.dsg.comot.common.model.structure;
 
 import java.util.List;
 
-import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.rSYBL.deploymentDescription.AssociatedVM;
-import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.rSYBL.deploymentDescription.ElasticityCapability;
+
+
 import at.ac.tuwien.dsg.comot.common.model.SyblDirective;
 import at.ac.tuwien.dsg.comot.common.model.unit.DeploymentInfo;
+import at.ac.tuwien.dsg.comot.common.model.unit.ElasticityCapability;
 
 public class ServiceUnit extends ServicePart {
 
-
 	protected DeploymentInfo deploymentInfo;
-	
+	protected List<ElasticityCapability> elasticityCapabilities;
+
 	public ServiceUnit() {
 		super();
 	}
@@ -36,7 +37,13 @@ public class ServiceUnit extends ServicePart {
 	public void setDeploymentInfo(DeploymentInfo deploymentInfo) {
 		this.deploymentInfo = deploymentInfo;
 	}
-	
-	
+
+	public List<ElasticityCapability> getElasticityCapabilities() {
+		return elasticityCapabilities;
+	}
+
+	public void setElasticityCapabilities(List<ElasticityCapability> elasticityCapabilities) {
+		this.elasticityCapabilities = elasticityCapabilities;
+	}
 
 }
