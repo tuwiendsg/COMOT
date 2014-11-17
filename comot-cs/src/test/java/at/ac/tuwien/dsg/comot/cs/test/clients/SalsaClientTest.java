@@ -140,13 +140,15 @@ public class SalsaClientTest {
 	}
 
 	@Test
-	public void testStatus() throws CoreServiceException {
-		salsa.getStatus(SERVICE_ID);
+	public void testStatus() throws CoreServiceException, JAXBException {
+		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService serviceInfo = salsa.getStatus("aaaa");
+		
+		log.info(Utils.asXmlString(serviceInfo));
 	}
 
 	@Test
 	public void testDeploymentDescription() throws CoreServiceException, JAXBException {
-		DeploymentDescription descr = salsa.getServiceDeploymentInfo("example_deployOneVM");
+		DeploymentDescription descr = salsa.getServiceDeploymentInfo("HelloElasticity");
 		
 		log.info(Utils.asXmlString(descr));
 	}

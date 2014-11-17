@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.comot.common.Utils;
+import at.ac.tuwien.dsg.comot.cs.mapper.DeploymentMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.MelaMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.RsyblMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.UtilsMapper;
@@ -25,11 +26,17 @@ public class MelaMappingTest extends AbstractTest {
 	protected MelaOrika orika;
 	@Autowired
 	protected MelaMapper mapper;
+	@Autowired
+	protected DeploymentMapper dMapper;
 
 	@Test
 	public void mapperTest() throws JAXBException, ClassNotFoundException, IOException {
 
 		 //log.info("original {}", Utils.asJsonString(serviceForMapping));
+		
+		dMapper.enrichModel(serviceForMapping, deploymentDescription);
+		
+		log.info("enriched {}", Utils.asJsonString(serviceForMapping));
 		
 		 MonitoredElement element = mapper.extractMela(serviceForMapping);
 		 log.info("mela {}", UtilsMapper.asString(element));

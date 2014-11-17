@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.cs.test;
+package at.as.tuwien.dsg.comot.ui.test;
 
 import generated.oasis.tosca.TDefinitions;
 import generated.oasis.tosca.TNodeTemplate;
@@ -8,12 +8,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.eclipse.persistence.jaxb.JAXBContextProperties;
 import org.junit.Test;
 
 import at.ac.tuwien.dsg.comot.common.Utils;
@@ -21,6 +24,8 @@ import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.test.TestUtils;
 import at.ac.tuwien.dsg.comot.common.test.example.ExampleDeployOneVM;
+import at.ac.tuwien.dsg.comot.cs.test.AbstractTest;
+import at.ac.tuwien.dsg.comot.ui.input.UnifiedConfiguration;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
 public class ControlClientTest extends AbstractTest {
@@ -42,6 +47,10 @@ public class ControlClientTest extends AbstractTest {
 		unified.setMcr(mcr);
 
 		try {
+
+			Map<String, Object> properties = new HashMap<>();
+	        properties.put(JAXBContextProperties.MEDIA_TYPE, "application/json");
+	        properties.put(JAXBContextProperties.JSON_INCLUDE_ROOT, false);
 
 			StringWriter sw = new StringWriter();
 

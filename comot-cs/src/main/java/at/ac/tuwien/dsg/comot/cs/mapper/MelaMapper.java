@@ -50,10 +50,6 @@ public class MelaMapper {
 
 		Map<String, MonitoredElement> map = extractAllElements(root);
 
-		for (MonitoredElement me : map.values()) {
-			log.info(me.getId());
-		}
-
 		for (EntityRelationship rel : cloudService.getRelationships()) {
 
 			log.info("original from={} to={}", rel.getFrom().getId(), rel.getTo().getId());
@@ -113,9 +109,9 @@ public class MelaMapper {
 	public Requirements extractRequirements(CloudService cloudService) {
 
 		Navigator navigator = new Navigator(cloudService);
-		
+
 		List<Requirement> requirementList = new ArrayList<>();
-		
+
 		Requirements requirements = new Requirements();
 		requirements.setTargetServiceID(cloudService.getId());
 		requirements.setRequirements(requirementList);
@@ -140,11 +136,10 @@ public class MelaMapper {
 		List<Requirement> requirements = new ArrayList<>();
 		Constraint rConstraint = SYBLDirectiveMappingFromXML.mapSYBLAnnotationToXMLConstraint(constraint);
 
-		log.info("Constraint parsed from the string '{}' {}", constraint,  Utils.asJsonString(rConstraint));
-		
+		log.trace("Constraint parsed from the string '{}' {}", constraint, Utils.asJsonString(rConstraint));
+
 		for (BinaryRestrictionsConjunction binaryRestrictions : rConstraint.getToEnforce().getBinaryRestriction()) {
 			for (BinaryRestriction binaryRestriction : binaryRestrictions.getBinaryRestrictions()) {
-
 
 				ArrayList<String> targetedEls = new ArrayList<String>();
 				targetedEls.add(servicePart.getId());
@@ -163,8 +158,6 @@ public class MelaMapper {
 				MetricValue metricValue = new MetricValue();
 
 				if (binaryRestriction.getLeftHandSide().getMetric() != null) {
-					
-					log.info("aaaa");
 
 					metricName = binaryRestriction.getLeftHandSide().getMetric();
 					metricValue.setValue(Double.parseDouble(binaryRestriction.getRightHandSide().getNumber()));
@@ -194,9 +187,6 @@ public class MelaMapper {
 
 				} else if (binaryRestriction.getRightHandSide().getMetric() != null) {
 
-					
-					log.info("bbb");
-					
 					metricName = binaryRestriction.getRightHandSide().getMetric();
 					metricValue.setValue(Double.parseDouble(binaryRestriction.getLeftHandSide().getNumber()));
 
@@ -236,9 +226,7 @@ public class MelaMapper {
 				requirements.add(req);
 			}
 		}
-		
-		log.info(""+requirements.size());
-		
+
 		return requirements;
 	}
 

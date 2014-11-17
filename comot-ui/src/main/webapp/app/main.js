@@ -7,7 +7,8 @@ requirejs.config({
 		'knockout' : '../lib/knockout/knockout-3.1.0',
 		'jquery' : '../lib/jquery/jquery-1.9.1',
 		'crel' : '../lib/json-human/crel',
-		'json-human' : '../lib/json-human/json.human'
+		'json-human' : '../lib/json-human/json.human',
+		'd3' : '../lib/d3/d3.min'
 	}
 });
 

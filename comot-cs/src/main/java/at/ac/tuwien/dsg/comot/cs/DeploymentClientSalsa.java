@@ -46,11 +46,6 @@ public class DeploymentClientSalsa implements DeploymentClient {
 	}
 
 	@Override
-	public String deploy(String toscaDescriptionXml) throws CoreServiceException {
-		return salsa.deploy(toscaDescriptionXml);
-	}
-
-	@Override
 	public void undeploy(String serviceId) throws CoreServiceException {
 		salsa.undeploy(serviceId);
 	}

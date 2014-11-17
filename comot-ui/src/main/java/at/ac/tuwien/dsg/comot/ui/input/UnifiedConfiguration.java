@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.cs.test;
+package at.ac.tuwien.dsg.comot.ui.input;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

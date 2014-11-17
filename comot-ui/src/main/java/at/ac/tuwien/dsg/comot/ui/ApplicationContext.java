@@ -18,7 +18,7 @@ import at.ac.tuwien.dsg.comot.cs.MonitoringClientMela;
 //@PropertySource({ "classpath:spring/properties/application.properties" })
 //@Import()
 //@ImportResource({"classpath:WEB-INF/beans.xml"})
-@ComponentScan({ "at.ac.tuwien.dsg.comot.ui" })
+@ComponentScan({ "at.ac.tuwien.dsg.comot" })
 public class ApplicationContext {
 
 	@Resource

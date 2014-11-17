@@ -8,10 +8,7 @@ import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescripti
 public interface DeploymentClient extends CoreServiceClient {
 
 	public String deploy(
-			CloudService CloudService) throws CoreServiceException, ComotException;
-
-	public String deploy(
-			String toscaDescriptionXml) throws CoreServiceException;
+			CloudService cloudService) throws CoreServiceException, ComotException;
 
 	public void undeploy(
 			String serviceId) throws CoreServiceException;

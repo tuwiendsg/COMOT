@@ -47,15 +47,17 @@ public class SampleResource {
 		
 		log.info("input: " + extracted);
 		
-		try {
-			String serviceId = "";
-			deploy.deploy(extracted);
-			return Response.ok(serviceId).build();
-
-		} catch (CoreServiceException e) {
-			e.printStackTrace();
-			return Response.serverError().build();
-		}
+//		try {
+//			String serviceId = "";
+//			deploy.deploy(extracted);
+//			return Response.ok(serviceId).build();
+//
+//		} catch (CoreServiceException e) {
+//			e.printStackTrace();
+//			return Response.serverError().build();
+//		}
+		
+		return Response.ok().build();
 	}
 
 	@GET

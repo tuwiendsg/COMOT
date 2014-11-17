@@ -38,6 +38,9 @@ import at.ac.tuwien.dsg.comot.common.model.type.RelationshipType;
 import at.ac.tuwien.dsg.comot.common.model.type.RequirementType;
 import at.ac.tuwien.dsg.comot.common.model.type.NodePropertiesType;
 import at.ac.tuwien.dsg.comot.common.model.type.NodeType;
+import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.AssociatedVM;
+import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
+import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentUnit;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { TestCSContext.class })
@@ -62,6 +65,8 @@ public abstract class AbstractTest {
 	protected CloudService serviceForMapping;
 	protected String swNodeId = "nodeId";
 	protected String serviceId = "serviceId";
+	
+	protected DeploymentDescription deploymentDescription ;
 
 	@Before
 	public void startup() {
@@ -129,6 +134,27 @@ public abstract class AbstractTest {
 						req2, cap3,
 						navigator.resolveToServicePart(req2),
 						navigator.resolveToServicePart(cap3)));
+		
+		// Deployment description
+		
+		AssociatedVM vm = new AssociatedVM();
+		vm.setIp("10.99.0.85");
+		vm.setUuid("93d785cc-f915-4127-81eb-0797b75de1a6");
+
+		List<AssociatedVM> list = new ArrayList<>();
+		list.add(vm);
+
+		DeploymentUnit dUnit = new DeploymentUnit();
+		dUnit.setServiceUnitID(swNodeId);
+		dUnit.setAssociatedVM(list);
+
+		List<DeploymentUnit> deployments = new ArrayList<>();
+		deployments.add(dUnit);
+
+		deploymentDescription = new DeploymentDescription();
+		deploymentDescription.setAccessIP("localhost");
+		deploymentDescription.setCloudServiceID(serviceId);
+		deploymentDescription.setDeployments(deployments);
 	}
 
 }

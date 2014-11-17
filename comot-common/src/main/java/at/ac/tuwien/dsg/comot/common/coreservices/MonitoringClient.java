@@ -8,20 +8,29 @@ import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitorin
 public interface MonitoringClient extends CoreServiceClient {
 
 	// start
-	public void startMonitoring(CloudService sevice, CompositionRulesConfiguration mcr) throws CoreServiceException;
+	public void startMonitoring(
+			CloudService sevice, 
+			CompositionRulesConfiguration mcr) throws CoreServiceException;
 
 	// stop
-	public void stopMonitoring(String serviceId) throws CoreServiceException;
+	public void stopMonitoring(
+			String serviceId) throws CoreServiceException;
 
 	// update
-	public void updateService(String serviceId, CloudService sevice) throws CoreServiceException;
+	public void updateService(
+			String serviceId, 
+			CloudService sevice) throws CoreServiceException;
 
-	public void updateMcr(String serviceId, CompositionRulesConfiguration mcr) throws CoreServiceException;
+	public void updateMcr(
+			String serviceId, 
+			CompositionRulesConfiguration mcr) throws CoreServiceException;
 
 	// get
-	public MonitoredElementMonitoringSnapshot getMonitoringData(String serviceId) throws CoreServiceException;
+	public MonitoredElementMonitoringSnapshot getMonitoringData(
+			String serviceId) throws CoreServiceException;
 
-	public CompositionRulesConfiguration getMetricsCompositionRules(String serviceId) throws CoreServiceException;
+	public CompositionRulesConfiguration getMetricsCompositionRules(
+			String serviceId) throws CoreServiceException;
 
 	//public void getServiceDescription(String serviceId) throws CoreServiceException;
 }

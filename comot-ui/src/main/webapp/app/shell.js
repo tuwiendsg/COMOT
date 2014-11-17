@@ -19,6 +19,11 @@ define(function(require) {
 				title : 'View',
 				moduleId : 'view',
 				nav : true
+			}, {
+				route : 'tree',
+				title : 'd3',
+				moduleId : 'tree',
+				nav : true
 			}]).buildNavigationModel();
 
 			return router.activate();

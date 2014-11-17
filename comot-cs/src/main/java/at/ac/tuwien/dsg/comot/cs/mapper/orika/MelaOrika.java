@@ -20,6 +20,7 @@ import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.common.model.structure.ServicePart;
 import at.ac.tuwien.dsg.comot.common.model.structure.ServiceTopology;
 import at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.common.model.unit.AssociatedVM;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement.MonitoredElementLevel;
 
@@ -76,12 +77,25 @@ public class MelaOrika {
 				.register();
 
 		mapperFactory.classMap(ServiceUnit.class, MonitoredElement.class)
+				.fieldAToB("deploymentInfo.associatedVMs", "containedElements")
 				.customize(
 						new CustomMapper<ServiceUnit, MonitoredElement>() {
 							@Override
 							public void mapAtoB(ServiceUnit unit, MonitoredElement element, MappingContext context) {
 								// set level
 								element.setLevel(decideLevel(unit));
+							}
+						})
+				.byDefault()
+				.register();
+
+		mapperFactory.classMap(AssociatedVM.class, MonitoredElement.class)
+				.fieldAToB("ip", "id")
+				.customize(
+						new CustomMapper<AssociatedVM, MonitoredElement>() {
+							@Override
+							public void mapAtoB(AssociatedVM vm, MonitoredElement element, MappingContext context) {
+								element.setLevel(MonitoredElementLevel.VM);
 							}
 						})
 				.byDefault()
