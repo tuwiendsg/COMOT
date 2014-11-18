@@ -13,11 +13,8 @@ import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.cs.mapper.DeploymentMapper;
-
 import at.ac.tuwien.dsg.comot.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.UtilsMapper;
-import at.ac.tuwien.dsg.comot.cs.mapper.orika.DeploymentOrika;
-import at.ac.tuwien.dsg.comot.cs.mapper.orika.StateOrika;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.ToscaOrika;
 import at.ac.tuwien.dsg.comot.cs.test.AbstractTest;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
@@ -89,9 +86,10 @@ public class ToscaMappingTest extends AbstractTest {
 		log.info("service enriched{}", Utils.asJsonString(service));
 
 	}
-	
+
 	@Test
-	public void deploymentTest() throws JAXBException, ClassNotFoundException, IOException, CoreServiceException, ComotException {
+	public void deploymentTest() throws JAXBException, ClassNotFoundException, IOException, CoreServiceException,
+			ComotException {
 
 		Definitions def = salsaClient.getTosca(TEST_SERVICE_ID);
 		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService serviceState;

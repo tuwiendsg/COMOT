@@ -9,9 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.comot.common.model.AbstractEntity;
-import at.ac.tuwien.dsg.comot.common.model.EntityRelationship;
 import at.ac.tuwien.dsg.comot.common.model.ReferencableEntity;
-import at.ac.tuwien.dsg.comot.common.model.SyblDirective;
 import at.ac.tuwien.dsg.comot.common.model.node.ArtifactTemplate;
 import at.ac.tuwien.dsg.comot.common.model.node.Capability;
 import at.ac.tuwien.dsg.comot.common.model.node.Requirement;
@@ -32,8 +30,6 @@ public class Navigator {
 		this.service = service;
 		map.put(service.getId(), new Node(service, null));
 	}
-
-	
 
 	public ServiceUnit getServiceUnit(String id) {
 		for (ServiceUnit unit : getParentTopologyFor(id).getServiceUnits()) {
@@ -104,7 +100,7 @@ public class Navigator {
 	public ServiceTopology getTopology(String id) {
 		return (ServiceTopology) map.get(id).entity;
 	}
-	
+
 	// GET ALL
 
 	public List<ServicePart> getAllServiceParts() {

@@ -19,8 +19,6 @@ import at.ac.tuwien.dsg.comot.cs.connector.SalsaClient;
 import at.ac.tuwien.dsg.comot.cs.mapper.DeploymentMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.UtilsMapper;
-import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
-
 
 public class DeploymentClientSalsa implements DeploymentClient {
 
@@ -66,18 +64,18 @@ public class DeploymentClientSalsa implements DeploymentClient {
 	@Override
 	public CloudService getStatus(CloudService service)
 			throws CoreServiceException, ComotException {
-		
+
 		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService status = salsa.getStatus(service.getId());
-		
+
 		CloudService copy;
 		try {
 			copy = (CloudService) UtilsMapper.deepCopy(service);
 		} catch (ClassNotFoundException | IOException e) {
-			throw new ComotException("Failed to deep-copy CloudService id="+service.getId(), e);
+			throw new ComotException("Failed to deep-copy CloudService id=" + service.getId(), e);
 		}
-		
+
 		mapperDepl.enrichModel(copy, status);
-		
+
 		return copy;
 	}
 

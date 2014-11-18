@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.model.logic.Navigator;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.common.model.structure.StackNode;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.DeploymentOrika;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.StateOrika;

@@ -18,24 +18,24 @@ public class RsyblMapper {
 	@Autowired
 	protected RsyblOrika mapper;
 
-	public CloudServiceXML extractRsybl(CloudService cloudService)  {
+	public CloudServiceXML extractRsybl(CloudService cloudService) {
 
 		Navigator navigator;
 
-//		cloudService = (CloudService) UtilsMapper.deepCopy(cloudService);
+		// cloudService = (CloudService) UtilsMapper.deepCopy(cloudService);
 		navigator = new Navigator(cloudService);
 
 		// TODO check with Georgiana if SW units should really be removed
 		// ignore SOFTWARE nodes
-//		for (StackNode unit : navigator.getAllNodes()) {
-//			 if (unit.getType().equals(SwType.SOFTWARE)) {
-//			 navigator.getParentTopology(unit.getId()).getServiceUnits().remove(unit);
-//			 }
-//		}
+		// for (StackNode unit : navigator.getAllNodes()) {
+		// if (unit.getType().equals(SwType.SOFTWARE)) {
+		// navigator.getParentTopology(unit.getId()).getServiceUnits().remove(unit);
+		// }
+		// }
 
 		CloudServiceXML serviceXml = mapper.get().map(cloudService, CloudServiceXML.class);
 
-//		log.trace("Final mapping: {}", );
+		// log.trace("Final mapping: {}", );
 
 		return serviceXml;
 	}

@@ -87,7 +87,7 @@ public class StateOrika {
 						new CustomMapper<NodeInstanceOs, ServiceInstance>() {
 							@Override
 							public void mapBtoA(ServiceInstance inst, NodeInstanceOs nodeInst, MappingContext context) {
-								facade.map(((SalsaInstanceDescription_VM)inst.getProperties().getAny()), nodeInst);
+								facade.map(((SalsaInstanceDescription_VM) inst.getProperties().getAny()), nodeInst);
 							}
 						})
 				.register();

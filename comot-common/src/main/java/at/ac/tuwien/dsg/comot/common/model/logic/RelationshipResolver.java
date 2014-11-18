@@ -77,19 +77,18 @@ public class RelationshipResolver {
 		return null;
 	}
 
-	public boolean isServicePartRelationship(EntityRelationship rel){
-	
+	public boolean isServicePartRelationship(EntityRelationship rel) {
+
 		ServicePart from = resolveToServicePart(rel.getFrom());
 		ServicePart to = resolveToServicePart(rel.getTo());
-		
-		if(from != null && to != null){
+
+		if (from != null && to != null) {
 			return true;
 		}
-		
+
 		return false;
 	}
 
-	
 	public ServicePart resolveToServicePart(ReferencableEntity entity) {
 
 		ServiceUnit unit;

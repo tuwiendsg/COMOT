@@ -47,12 +47,10 @@ public class MelaMapper {
 
 	public MonitoredElement extractMela(CloudService cloudService) {
 
-
 		Relationship tempRel;
 		MonitoredElement vmElement;
 		StackNode node;
 		RelationshipResolver resolver = new RelationshipResolver(cloudService);
-
 
 		MonitoredElement root = mapper.get().map(cloudService, MonitoredElement.class);
 		Map<String, MonitoredElement> map = extractAllElements(root);
@@ -61,7 +59,7 @@ public class MelaMapper {
 		for (MonitoredElement element : map.values()) {
 			if (element.getLevel().equals(MonitoredElementLevel.SERVICE_UNIT)) {
 				node = resolver.getOsForServiceUnit(element.getId());
-				
+
 				for (NodeInstance instance : node.getInstances()) {
 					vmElement = new MonitoredElement();
 					vmElement.setLevel(MonitoredElementLevel.VM);

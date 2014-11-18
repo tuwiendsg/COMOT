@@ -26,7 +26,7 @@ public class StackNode extends AbstractEntity implements ReferencableEntity {
 	protected List<Capability> capabilities = new ArrayList<>();
 	protected List<ArtifactTemplate> deploymentArtifacts = new ArrayList<>();
 	protected List<Properties> properties = new ArrayList<>();
-	
+
 	protected List<NodeInstance> instances = new ArrayList<>();
 	protected State state;
 
@@ -80,14 +80,14 @@ public class StackNode extends AbstractEntity implements ReferencableEntity {
 		}
 		capabilities.add(capability);
 	}
-	
+
 	public void addNodeInstance(NodeInstance instance) {
 		if (instances == null) {
 			instances = new ArrayList<>();
 		}
 		instances.add(instance);
 	}
-	
+
 	public void addProperties(Properties property) {
 		if (properties == null) {
 			properties = new ArrayList<>();
@@ -145,7 +145,6 @@ public class StackNode extends AbstractEntity implements ReferencableEntity {
 		this.capabilities = capabilities;
 	}
 
-
 	public List<Properties> getProperties() {
 		return properties;
 	}
@@ -170,5 +169,4 @@ public class StackNode extends AbstractEntity implements ReferencableEntity {
 		this.state = state;
 	}
 
-	
 }

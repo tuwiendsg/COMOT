@@ -7,7 +7,6 @@ import at.ac.tuwien.dsg.comot.common.model.unit.ElasticityCapability;
 
 public class ServiceUnit extends ServicePart {
 
-
 	protected List<ElasticityCapability> elasticityCapabilities;
 
 	public ServiceUnit() {
@@ -26,7 +25,6 @@ public class ServiceUnit extends ServicePart {
 	public ServiceUnit(StackNode node, List<SyblDirective> directives) {
 		super(node.getId(), directives);
 	}
-
 
 	public List<ElasticityCapability> getElasticityCapabilities() {
 		return elasticityCapabilities;

@@ -9,31 +9,31 @@ public class EntityRelationship extends AbstractEntity implements ReferencableEn
 	protected ReferencableEntity from;
 	protected ReferencableEntity to;
 
-//	protected ServicePart fromPart;
-//	protected ServicePart toPart;
+	// protected ServicePart fromPart;
+	// protected ServicePart toPart;
 
 	public EntityRelationship() {
 	}
 
 	public EntityRelationship(String id, RelationshipType type, ReferencableEntity from, ReferencableEntity to
-//			,
-//			ServicePart fromPart, ServicePart toPart
-			) {
+	// ,
+	// ServicePart fromPart, ServicePart toPart
+	) {
 		super(id);
 		this.type = type;
 		this.from = from;
 		this.to = to;
-//		this.fromPart = fromPart;
-//		this.toPart = toPart;
+		// this.fromPart = fromPart;
+		// this.toPart = toPart;
 	}
 
-//	public boolean isServicePartRelationship() {
-//		if (fromPart != null && toPart != null) {
-//			return true;
-//		} else {
-//			return false;
-//		}
-//	}
+	// public boolean isServicePartRelationship() {
+	// if (fromPart != null && toPart != null) {
+	// return true;
+	// } else {
+	// return false;
+	// }
+	// }
 
 	// GENERATED METHODS
 

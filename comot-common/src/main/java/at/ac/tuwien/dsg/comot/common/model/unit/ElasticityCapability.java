@@ -1,6 +1,5 @@
 package at.ac.tuwien.dsg.comot.common.model.unit;
 
-
 public class ElasticityCapability {
 
 	protected String name;

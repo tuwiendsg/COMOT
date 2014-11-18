@@ -27,7 +27,6 @@ public class ControlClientRsybl implements ControlClient {
 	@Autowired
 	protected DeploymentMapper deploymentMapper;
 
-
 	@Override
 	public void sendInitialConfig(
 			CloudService service,

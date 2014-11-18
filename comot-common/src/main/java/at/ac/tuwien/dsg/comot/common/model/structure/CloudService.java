@@ -66,6 +66,5 @@ public class CloudService extends ServicePart {
 	public void setAccessIp(String accessIp) {
 		this.accessIp = accessIp;
 	}
-	
 
 }

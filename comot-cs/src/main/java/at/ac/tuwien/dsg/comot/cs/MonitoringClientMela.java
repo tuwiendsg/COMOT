@@ -25,8 +25,6 @@ public class MonitoringClientMela implements MonitoringClient {
 	@Autowired
 	protected MelaMapper melaMapper;
 
-	
-
 	@Override
 	public void startMonitoring(CloudService sevice, CompositionRulesConfiguration mcr) throws CoreServiceException {
 
@@ -34,9 +32,9 @@ public class MonitoringClientMela implements MonitoringClient {
 		Requirements requirements = melaMapper.extractRequirements(sevice);
 
 		mela.sendServiceDescription(element);
-		//TODO check not to send reqs when it has not sense
+		// TODO check not to send reqs when it has not sense
 		mela.sendRequirements(sevice.getId(), requirements);
-		//TODO check not to send MCR when it has not sense
+		// TODO check not to send MCR when it has not sense
 		mela.sendMetricsCompositionRules(sevice.getId(), mcr);
 	}
 
@@ -61,7 +59,7 @@ public class MonitoringClientMela implements MonitoringClient {
 
 	@Override
 	public MonitoredElementMonitoringSnapshot getMonitoringData(String serviceId) throws CoreServiceException {
-		
+
 		MonitoredElementMonitoringSnapshot snapshot = mela.getMonitoringData(serviceId);
 		return snapshot;
 
@@ -69,7 +67,7 @@ public class MonitoringClientMela implements MonitoringClient {
 
 	@Override
 	public CompositionRulesConfiguration getMetricsCompositionRules(String serviceId) throws CoreServiceException {
-		
+
 		CompositionRulesConfiguration mcr = mela.getMetricsCompositionRules(serviceId);
 		return mcr;
 	}

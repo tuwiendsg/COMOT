@@ -187,7 +187,7 @@ public class SalsaClient extends CoreServiceClient {
 						serviceId, service);
 			}
 			return service;
-			
+
 		} catch (JAXBException e) {
 			throw new ComotException("Failed to unmarshall response into JAXB status CloudService", e);
 		}
@@ -228,9 +228,10 @@ public class SalsaClient extends CoreServiceClient {
 		}
 
 	}
-	
+
 	/**
 	 * Use {@link #getStatus(String) getStatus} instead
+	 * 
 	 * @param serviceId
 	 * @return
 	 * @throws CoreServiceException
@@ -259,8 +260,6 @@ public class SalsaClient extends CoreServiceClient {
 		}
 		return description;
 	}
-
-
 
 	// TODO only temporary
 	public String getStatusGui(String serviceId) throws CoreServiceException {

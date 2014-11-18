@@ -8,9 +8,9 @@ import javax.annotation.PostConstruct;
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
+import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
-import ma.glasnost.orika.MappingContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,6 @@ import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.common.model.structure.ServicePart;
 import at.ac.tuwien.dsg.comot.common.model.structure.ServiceTopology;
 import at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.common.model.unit.NodeInstanceOs;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement.MonitoredElementLevel;
 
@@ -87,9 +86,9 @@ public class MelaOrika {
 							public void mapAtoB(ServiceUnit unit, MonitoredElement element, MappingContext context) {
 								// set level
 								element.setLevel(decideLevel(unit));
-								
+
 								// set VMs
-								
+
 							}
 						})
 

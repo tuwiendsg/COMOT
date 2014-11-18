@@ -57,7 +57,5 @@ public abstract class ServicePart extends AbstractEntity {
 	public void setState(State state) {
 		this.state = state;
 	}
-	
-	
 
 }

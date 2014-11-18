@@ -9,7 +9,7 @@ public interface MonitoringClient extends CoreServiceClient {
 
 	// start
 	public void startMonitoring(
-			CloudService sevice, 
+			CloudService sevice,
 			CompositionRulesConfiguration mcr) throws CoreServiceException;
 
 	// stop
@@ -18,11 +18,11 @@ public interface MonitoringClient extends CoreServiceClient {
 
 	// update
 	public void updateService(
-			String serviceId, 
+			String serviceId,
 			CloudService sevice) throws CoreServiceException;
 
 	public void updateMcr(
-			String serviceId, 
+			String serviceId,
 			CompositionRulesConfiguration mcr) throws CoreServiceException;
 
 	// get
@@ -32,5 +32,5 @@ public interface MonitoringClient extends CoreServiceClient {
 	public CompositionRulesConfiguration getMetricsCompositionRules(
 			String serviceId) throws CoreServiceException;
 
-	//public void getServiceDescription(String serviceId) throws CoreServiceException;
+	// public void getServiceDescription(String serviceId) throws CoreServiceException;
 }

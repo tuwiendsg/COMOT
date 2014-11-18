@@ -24,10 +24,9 @@ public interface DeploymentClient extends CoreServiceClient {
 			String nodeId,
 			int instanceId) throws CoreServiceException;
 
-	public CloudService getStatus( 
+	public CloudService getStatus(
 			CloudService cloudService) throws CoreServiceException, ComotException;
 
-	
 	boolean isRunning(String serviceID) throws CoreServiceException, ComotException;
 
 	// TODO only temporary
