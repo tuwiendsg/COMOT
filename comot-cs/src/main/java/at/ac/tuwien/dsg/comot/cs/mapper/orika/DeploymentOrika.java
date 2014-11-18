@@ -8,18 +8,22 @@ import javax.annotation.PostConstruct;
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
-import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
+import ma.glasnost.orika.MappingContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.common.model.Navigator;
+import at.ac.tuwien.dsg.comot.common.model.logic.Navigator;
+import at.ac.tuwien.dsg.comot.common.model.logic.RelationshipResolver;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.common.model.unit.AssociatedVM;
+import at.ac.tuwien.dsg.comot.common.model.structure.StackNode;
 import at.ac.tuwien.dsg.comot.common.model.unit.ElasticityCapability;
+import at.ac.tuwien.dsg.comot.common.model.unit.NodeInstance;
+import at.ac.tuwien.dsg.comot.common.model.unit.NodeInstanceOs;
+import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.AssociatedVM;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentUnit;
 
@@ -36,25 +40,26 @@ public class DeploymentOrika {
 		MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
 		mapperFactory.classMap(ServiceUnit.class, DeploymentUnit.class)
-				.field("deploymentInfo.defaultImage", "defaultImage")
-				.field("deploymentInfo.defaultFlavor", "defaultFlavor")
-				.field("deploymentInfo.associatedVMs", "associatedVM")
 				.field("elasticityCapabilities", "elasticityCapabilities")
-				.fieldAToB("id", "serviceUnitID")
+				.field("id", "serviceUnitID")
 				.register();
 
-		mapperFactory
-				.classMap(
-						AssociatedVM.class,
-						at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.rSYBL.deploymentDescription.AssociatedVM.class)
-				.byDefault()
+		mapperFactory.classMap(StackNode.class, DeploymentUnit.class)
+				// .field("deploymentInfo.defaultImage", "defaultImage")
+				// .field("deploymentInfo.defaultFlavor", "defaultFlavor")
+				.field("instances", "associatedVM")
 				.register();
 
-		mapperFactory
-				.classMap(
+		mapperFactory.classMap(NodeInstanceOs.class, AssociatedVM.class)
+				.field("ip", "ip")
+				.field("uuid", "uuid")
+				.register();
+
+		mapperFactory				.classMap(
 						ElasticityCapability.class,
 						at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.rSYBL.deploymentDescription.ElasticityCapability.class)
-				.byDefault()
+				.field("name", "name")
+				.field("script", "script")
 				.register();
 
 		mapperFactory.classMap(CloudService.class, DeploymentDescription.class)
@@ -68,38 +73,20 @@ public class DeploymentOrika {
 									MappingContext context) {
 
 								Navigator navigator = new Navigator(service);
-								List<DeploymentUnit> deployments = new ArrayList<>();
+								RelationshipResolver resolver = new RelationshipResolver(service);
+
 								DeploymentUnit depl;
 
 								for (ServiceUnit unit : navigator.getAllServiceUnits()) {
-									if (unit.getDeploymentInfo() != null) {
-										depl = facade.map(unit, DeploymentUnit.class);
-										deployments.add(depl);
-									}
+
+									StackNode os = resolver.getOsForServiceUnit(unit.getId());
+
+									depl = facade.map(unit, DeploymentUnit.class);
+									facade.map(os, depl);
+
+									description.getDeployments().add(depl);
 								}
-								description.setDeployments(deployments);
 							}
-
-							@Override
-							public void mapBtoA(DeploymentDescription description, CloudService service,
-									MappingContext context) {
-
-								Navigator navigator = new Navigator(service);
-								List<DeploymentUnit> deployments = new ArrayList<>();
-								ServiceUnit unit;
-
-								for (DeploymentUnit depl : description.getDeployments()) {
-									unit = navigator.getServiceUnit(depl.getServiceUnitID());
-									if (unit != null) {
-										facade.map(depl, unit);
-									} else {
-										log.error("There is no ServiceUnit for DeploymentUnit id={}",
-												depl.getServiceUnitID());
-									}
-								}
-								description.setDeployments(deployments);
-							}
-
 						})
 				.byDefault()
 				.register();

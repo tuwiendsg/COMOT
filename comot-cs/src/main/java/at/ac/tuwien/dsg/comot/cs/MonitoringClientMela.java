@@ -11,24 +11,21 @@ import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.cs.connector.MelaClient;
 import at.ac.tuwien.dsg.comot.cs.mapper.MelaMapper;
-import at.ac.tuwien.dsg.comot.cs.mapper.orika.MelaOrika;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitoringSnapshot;
-import at.ac.tuwien.dsg.mela.common.requirements.Requirement;
 import at.ac.tuwien.dsg.mela.common.requirements.Requirements;
 
 public class MonitoringClientMela implements MonitoringClient {
 
 	private final Logger log = LoggerFactory.getLogger(MonitoringClientMela.class);
 
+	@Autowired
 	protected MelaClient mela;
 	@Autowired
 	protected MelaMapper melaMapper;
 
-	public MonitoringClientMela() {
-		this.mela = new MelaClient();
-	}
+	
 
 	@Override
 	public void startMonitoring(CloudService sevice, CompositionRulesConfiguration mcr) throws CoreServiceException {

@@ -1,16 +1,12 @@
 package at.ac.tuwien.dsg.comot.cs.mapper;
 
-import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.common.Utils;
-import at.ac.tuwien.dsg.comot.common.model.Navigator;
+import at.ac.tuwien.dsg.comot.common.model.logic.Navigator;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.common.model.structure.StackNode;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.RsyblOrika;
 import at.ac.tuwien.dsg.comot.rsybl.CloudServiceXML;
 

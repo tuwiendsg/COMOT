@@ -10,6 +10,8 @@ import at.ac.tuwien.dsg.comot.common.model.node.Capability;
 import at.ac.tuwien.dsg.comot.common.model.node.Properties;
 import at.ac.tuwien.dsg.comot.common.model.node.Requirement;
 import at.ac.tuwien.dsg.comot.common.model.type.NodeType;
+import at.ac.tuwien.dsg.comot.common.model.type.State;
+import at.ac.tuwien.dsg.comot.common.model.unit.NodeInstance;
 
 public class StackNode extends AbstractEntity implements ReferencableEntity {
 
@@ -23,7 +25,10 @@ public class StackNode extends AbstractEntity implements ReferencableEntity {
 	protected List<Requirement> requirements = new ArrayList<>();
 	protected List<Capability> capabilities = new ArrayList<>();
 	protected List<ArtifactTemplate> deploymentArtifacts = new ArrayList<>();
-	protected Properties properties;
+	protected List<Properties> properties = new ArrayList<>();
+	
+	protected List<NodeInstance> instances = new ArrayList<>();
+	protected State state;
 
 	public StackNode() {
 
@@ -44,7 +49,7 @@ public class StackNode extends AbstractEntity implements ReferencableEntity {
 
 	public StackNode(String id, String name, int minInstances, int maxInstances, NodeType type,
 			List<Requirement> requirements, List<Capability> capabilities,
-			Properties properties, List<ArtifactTemplate> deploymentArtifacts) {
+			List<Properties> properties, List<ArtifactTemplate> deploymentArtifacts) {
 		super(id, name);
 		this.minInstances = minInstances;
 		this.maxInstances = maxInstances;
@@ -74,6 +79,20 @@ public class StackNode extends AbstractEntity implements ReferencableEntity {
 			capabilities = new ArrayList<>();
 		}
 		capabilities.add(capability);
+	}
+	
+	public void addNodeInstance(NodeInstance instance) {
+		if (instances == null) {
+			instances = new ArrayList<>();
+		}
+		instances.add(instance);
+	}
+	
+	public void addProperties(Properties property) {
+		if (properties == null) {
+			properties = new ArrayList<>();
+		}
+		properties.add(property);
 	}
 
 	// GENERATED METHODS
@@ -126,12 +145,30 @@ public class StackNode extends AbstractEntity implements ReferencableEntity {
 		this.capabilities = capabilities;
 	}
 
-	public Properties getProperties() {
+
+	public List<Properties> getProperties() {
 		return properties;
 	}
 
-	public void setProperties(Properties properties) {
+	public void setProperties(List<Properties> properties) {
 		this.properties = properties;
 	}
 
+	public List<NodeInstance> getInstances() {
+		return instances;
+	}
+
+	public void setInstances(List<NodeInstance> instances) {
+		this.instances = instances;
+	}
+
+	public State getState() {
+		return state;
+	}
+
+	public void setState(State state) {
+		this.state = state;
+	}
+
+	
 }

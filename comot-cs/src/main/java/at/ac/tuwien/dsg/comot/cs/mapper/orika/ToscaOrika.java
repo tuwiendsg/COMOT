@@ -1,5 +1,7 @@
 package at.ac.tuwien.dsg.comot.cs.mapper.orika;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 
 import ma.glasnost.orika.CustomMapper;
@@ -25,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties;
+import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties.SalsaMappingProperty;
 import at.ac.tuwien.dsg.comot.common.model.SyblDirective;
 import at.ac.tuwien.dsg.comot.common.model.node.ArtifactReference;
 import at.ac.tuwien.dsg.comot.common.model.node.ArtifactTemplate;
@@ -83,11 +86,13 @@ public class ToscaOrika {
 				.register();
 
 		mapperFactory.classMap(StackNode.class, TNodeTemplate.class)
+				.field("id", "id")
+				.field("name", "name")
+				.field("type", "type")
 				.field("capabilities", "capabilities.capability")
 				.field("requirements", "requirements.requirement")
 				.field("deploymentArtifacts", "deploymentArtifacts.deploymentArtifact")
 				.customize(new NodeMapper())
-				.byDefault()
 				.register();
 
 		mapperFactory.classMap(ServiceTopology.class, TServiceTemplate.class)
@@ -123,9 +128,11 @@ public class ToscaOrika {
 									if (element instanceof TNodeTemplate) {
 										TNodeTemplate tNode = (TNodeTemplate) element;
 
+										// create StackNode
 										StackNode node = facade.map(element, StackNode.class);
 										topology.addNode(node);
 
+										// create ServiceUnit to store policies
 										if (tNode.getPolicies() == null || tNode.getPolicies().getPolicy() == null) {
 											continue;
 										}
@@ -187,16 +194,22 @@ public class ToscaOrika {
 	class NodeMapper extends CustomMapper<StackNode, TNodeTemplate> {
 		@Override
 		public void mapAtoB(StackNode unit, TNodeTemplate node, MappingContext context) {
+
+			if (unit.getMaxInstances() == Integer.MAX_VALUE) {
+				node.setMaxInstances("unbounded");
+			} else {
+				node.setMaxInstances(new Integer(unit.getMaxInstances()).toString());
+			}
 			// do this manually because of mismatch of JAXB generated getter/setter int/Integer
 			node.setMinInstances(unit.getMinInstances());
 
 			// inserting SalsaMappingProperties into Object
-			Properties props = unit.getProperties();
+			List<Properties> props = unit.getProperties();
+			SalsaMappingProperties salsaProps = new SalsaMappingProperties();
 			if (props != null) {
-				SalsaMappingProperties salsaProps = new SalsaMappingProperties();
-				salsaProps.put(props.getPropertiesType().toString(),
-						props.getProperties());
-
+				for (Properties oneProps : props) {
+					salsaProps.put(oneProps.getPropertiesType().toString(), oneProps.getProperties());
+				}
 				node.setProperties(new TEntityTemplate.Properties().withAny(salsaProps));
 			}
 
@@ -206,19 +219,30 @@ public class ToscaOrika {
 
 		@Override
 		public void mapBtoA(TNodeTemplate node, StackNode unit, MappingContext context) {
+
+			// min / max
+			if (("unbounded").equals(node.getMaxInstances())) {
+				unit.setMaxInstances(Integer.MAX_VALUE);
+			} else {
+				unit.setMaxInstances(new Integer(node.getMaxInstances()));
+			}
+			unit.setMinInstances(node.getMinInstances());
+
+			// properties
 			if (node.getProperties() != null
 					&& node.getProperties().getAny() != null
 					&& node.getProperties().getAny() instanceof SalsaMappingProperties) {
 
-				SalsaMappingProperties salsaProps = (SalsaMappingProperties) node.getProperties()
-						.getAny();
+				List<SalsaMappingProperty> list = ((SalsaMappingProperties) node.getProperties()
+						.getAny()).getProperties();
 
-				// TODO: change model properties to list so that it fits all from tosca
-				unit.setProperties(new Properties(
-						NodePropertiesType.fromString(salsaProps.getProperties().get(0)
-								.getType()),
-						salsaProps.getProperties().get(0).getMapData())
-						);
+				if (list != null) {
+					for (SalsaMappingProperty property : list) {
+						unit.addProperties(new Properties(
+								NodePropertiesType.fromString(property.getType()),
+								property.getMapData()));
+					}
+				}
 			}
 		}
 	}

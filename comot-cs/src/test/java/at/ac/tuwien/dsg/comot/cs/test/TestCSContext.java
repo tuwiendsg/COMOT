@@ -13,6 +13,9 @@ import at.ac.tuwien.dsg.comot.common.coreservices.MonitoringClient;
 import at.ac.tuwien.dsg.comot.cs.ControlClientRsybl;
 import at.ac.tuwien.dsg.comot.cs.DeploymentClientSalsa;
 import at.ac.tuwien.dsg.comot.cs.MonitoringClientMela;
+import at.ac.tuwien.dsg.comot.cs.connector.MelaClient;
+import at.ac.tuwien.dsg.comot.cs.connector.RsyblClient;
+import at.ac.tuwien.dsg.comot.cs.connector.SalsaClient;
 
 @Configuration
 // @ImportResource({"classpath:spring/dozerBean.xml"})
@@ -20,34 +23,42 @@ import at.ac.tuwien.dsg.comot.cs.MonitoringClientMela;
 @ComponentScan({ "at.ac.tuwien.dsg.comot" })
 public class TestCSContext {
 
+	public static final String SALSA_IP = "128.130.172.215";
+	public static final String MELA_IP = "128.130.172.216";
+	public static final int MELA_PORT = 8180;
+	public static final int SALSA_PORT = 8080;
+
 	@Resource
 	public Environment env;
 
 	@Bean
-	public DeploymentClient deploymentClient() {
-		DeploymentClient client = new DeploymentClientSalsa();
-		client.setHost("128.130.172.215");
-		client.setPort(8080);
+	public SalsaClient salsaClient() {
+		return new SalsaClient(SALSA_IP, SALSA_PORT);
+	}
 
-		return client;
+	@Bean
+	public MelaClient melaClient() {
+		return new MelaClient(MELA_IP, MELA_PORT);
+	}
+
+	@Bean
+	public RsyblClient rsyblClient() {
+		return new RsyblClient("128.130.172.216", 8280);
+	}
+
+	@Bean
+	public DeploymentClient deploymentClient() {
+		return new DeploymentClientSalsa();
 	}
 
 	@Bean
 	public MonitoringClient monitoringClient() {
-		MonitoringClient client = new MonitoringClientMela();
-		client.setHost("128.130.172.216");
-		client.setPort(8180);
-
-		return client;
+		return new MonitoringClientMela();
 	}
 
 	@Bean
 	public ControlClient controlClient() {
-		ControlClient client = new ControlClientRsybl();
-		client.setHost("128.130.172.216");
-		client.setPort(8280);
-
-		return client;
+		return new ControlClientRsybl();
 	}
 
 }

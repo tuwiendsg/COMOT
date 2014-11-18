@@ -20,15 +20,13 @@ public class ControlClientRsybl implements ControlClient {
 
 	private final Logger log = LoggerFactory.getLogger(ControlClientRsybl.class);
 
+	@Autowired
 	protected RsyblClient rsybl;
 	@Autowired
 	protected RsyblMapper rsyblMapper;
 	@Autowired
 	protected DeploymentMapper deploymentMapper;
 
-	public ControlClientRsybl() {
-		rsybl = new RsyblClient();
-	}
 
 	@Override
 	public void sendInitialConfig(

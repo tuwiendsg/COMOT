@@ -20,8 +20,8 @@ import at.ac.tuwien.dsg.comot.common.coreservices.ControlClient;
 import at.ac.tuwien.dsg.comot.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.common.coreservices.MonitoringClient;
 import at.ac.tuwien.dsg.comot.common.model.EntityRelationship;
-import at.ac.tuwien.dsg.comot.common.model.Navigator;
 import at.ac.tuwien.dsg.comot.common.model.SyblDirective;
+import at.ac.tuwien.dsg.comot.common.model.logic.Navigator;
 import at.ac.tuwien.dsg.comot.common.model.node.ArtifactReference;
 import at.ac.tuwien.dsg.comot.common.model.node.ArtifactTemplate;
 import at.ac.tuwien.dsg.comot.common.model.node.Capability;
@@ -29,15 +29,16 @@ import at.ac.tuwien.dsg.comot.common.model.node.Properties;
 import at.ac.tuwien.dsg.comot.common.model.node.Requirement;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.common.model.structure.ServiceTopology;
-import at.ac.tuwien.dsg.comot.common.model.structure.StackNode;
 import at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.common.model.structure.StackNode;
 import at.ac.tuwien.dsg.comot.common.model.type.ArtifactType;
 import at.ac.tuwien.dsg.comot.common.model.type.CapabilityType;
 import at.ac.tuwien.dsg.comot.common.model.type.DirectiveType;
-import at.ac.tuwien.dsg.comot.common.model.type.RelationshipType;
-import at.ac.tuwien.dsg.comot.common.model.type.RequirementType;
 import at.ac.tuwien.dsg.comot.common.model.type.NodePropertiesType;
 import at.ac.tuwien.dsg.comot.common.model.type.NodeType;
+import at.ac.tuwien.dsg.comot.common.model.type.RelationshipType;
+import at.ac.tuwien.dsg.comot.common.model.type.RequirementType;
+import at.ac.tuwien.dsg.comot.cs.connector.SalsaClient;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.AssociatedVM;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentUnit;
@@ -56,6 +57,9 @@ public abstract class AbstractTest {
 	protected Environment env;
 
 	@Autowired
+	protected SalsaClient salsaClient;
+
+	@Autowired
 	protected DeploymentClient deployment;
 	@Autowired
 	protected ControlClient control;
@@ -65,8 +69,8 @@ public abstract class AbstractTest {
 	protected CloudService serviceForMapping;
 	protected String swNodeId = "nodeId";
 	protected String serviceId = "serviceId";
-	
-	protected DeploymentDescription deploymentDescription ;
+
+	protected DeploymentDescription deploymentDescription;
 
 	@Before
 	public void startup() {
@@ -110,7 +114,7 @@ public abstract class AbstractTest {
 		StackNode osNode = new StackNode("osId", "Test os", 1, 2, NodeType.OS);
 
 		Capability cap3 = new Capability("cap3", CapabilityType.VARIABLE);
-		osNode.setProperties(properties);
+		osNode.addProperties(properties);
 		osNode.addCapability(cap3);
 
 		ServiceTopology topology = new ServiceTopology("topologyId");
@@ -126,17 +130,13 @@ public abstract class AbstractTest {
 		Navigator navigator = new Navigator(serviceForMapping);
 
 		serviceForMapping.addEntityRelationship(new EntityRelationship("rela1", RelationshipType.HOST_ON,
-				swNode, osNode,
-				navigator.resolveToServicePart(swNode),
-				navigator.resolveToServicePart(osNode)));
+				swNode, osNode));
 		serviceForMapping
 				.addEntityRelationship(new EntityRelationship("rela2", RelationshipType.CONNECT_TO,
-						req2, cap3,
-						navigator.resolveToServicePart(req2),
-						navigator.resolveToServicePart(cap3)));
-		
+						req2, cap3));
+
 		// Deployment description
-		
+
 		AssociatedVM vm = new AssociatedVM();
 		vm.setIp("10.99.0.85");
 		vm.setUuid("93d785cc-f915-4127-81eb-0797b75de1a6");

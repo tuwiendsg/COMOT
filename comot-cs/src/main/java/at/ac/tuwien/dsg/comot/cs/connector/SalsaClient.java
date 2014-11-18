@@ -1,13 +1,22 @@
 package at.ac.tuwien.dsg.comot.cs.connector;
 
+import java.io.StringReader;
+
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
+import org.oasis.tosca.Definitions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService;
+import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaInstanceDescription_VM;
+import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties;
+import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.logging.Markers;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
@@ -23,6 +32,7 @@ public class SalsaClient extends CoreServiceClient {
 	protected static final String SPAWN_PATH = "services/{serviceId}/topologies/{topologyId}/nodes/{nodeId}/instance-count/{instanceCount}";
 	protected static final String DESTROY_PATH = "services/{serviceId}/topologies/{topologyId}/nodes/{nodeId}/instances/{instanceId}";
 	protected static final String STATUS_PATH = "services/{serviceId}";
+	protected static final String TOSCA_PATH = "services/tosca/{serviceId}";
 	protected static final String DEPLOYMENT_INFO_PATH = "services/tosca/{serviceId}/sybl";
 
 	public SalsaClient() {
@@ -149,7 +159,7 @@ public class SalsaClient extends CoreServiceClient {
 	}
 
 	public CloudService getStatus(String serviceId)
-			throws CoreServiceException {
+			throws CoreServiceException, ComotException {
 
 		if (log.isDebugEnabled()) {
 			log.debug(Markers.CLIENT, "Checking status for serviceId {}", serviceId);
@@ -164,17 +174,68 @@ public class SalsaClient extends CoreServiceClient {
 
 		processResponseStatus(response);
 
-		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService service = response
-				.readEntity(at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService.class);
+		String msg = response.readEntity(String.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "Successfully checked status for serviceId '{}'. Response: '{}'",
-					serviceId, service);
+		try (StringReader reader = new StringReader(msg)) {
+
+			JAXBContext jaxbContext = JAXBContext.newInstance(CloudService.class, SalsaInstanceDescription_VM.class);
+			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+			CloudService service = (CloudService) jaxbUnmarshaller.unmarshal(reader);
+
+			if (log.isInfoEnabled()) {
+				log.info(Markers.CLIENT, "Successfully checked status for serviceId '{}'. Response: '{}'",
+						serviceId, service);
+			}
+			return service;
+			
+		} catch (JAXBException e) {
+			throw new ComotException("Failed to unmarshall response into JAXB status CloudService", e);
 		}
-		return service;
 
 	}
 
+	public Definitions getTosca(String serviceId)
+			throws CoreServiceException, ComotException {
+
+		if (log.isDebugEnabled()) {
+			log.debug(Markers.CLIENT, "Getting tosca for serviceId {}", serviceId);
+		}
+
+		Response response = client.target(getBaseUri())
+				.path(TOSCA_PATH)
+				.resolveTemplate("serviceId", serviceId)
+				.request(MediaType.TEXT_XML)
+				.get();
+
+		processResponseStatus(response);
+
+		String msg = response.readEntity(String.class);
+
+		try (StringReader reader = new StringReader(msg)) {
+
+			JAXBContext jaxbContext = JAXBContext.newInstance(Definitions.class, SalsaMappingProperties.class);
+			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+			Definitions service = (Definitions) jaxbUnmarshaller.unmarshal(reader);
+
+			if (log.isInfoEnabled()) {
+				log.info(Markers.CLIENT, "Successfully got tosca for serviceId '{}'. Response: '{}'",
+						serviceId, service);
+			}
+			return service;
+
+		} catch (JAXBException e) {
+			throw new ComotException("Failed to unmarshall response into JAXB TOSCA", e);
+		}
+
+	}
+	
+	/**
+	 * Use {@link #getStatus(String) getStatus} instead
+	 * @param serviceId
+	 * @return
+	 * @throws CoreServiceException
+	 */
+	@Deprecated
 	public DeploymentDescription getServiceDeploymentInfo(String serviceId) throws CoreServiceException {
 
 		if (log.isDebugEnabled()) {
@@ -198,6 +259,8 @@ public class SalsaClient extends CoreServiceClient {
 		}
 		return description;
 	}
+
+
 
 	// TODO only temporary
 	public String getStatusGui(String serviceId) throws CoreServiceException {

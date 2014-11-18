@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.common.model;
+package at.ac.tuwien.dsg.comot.common.model.logic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,6 +8,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.ac.tuwien.dsg.comot.common.model.AbstractEntity;
+import at.ac.tuwien.dsg.comot.common.model.EntityRelationship;
+import at.ac.tuwien.dsg.comot.common.model.ReferencableEntity;
+import at.ac.tuwien.dsg.comot.common.model.SyblDirective;
 import at.ac.tuwien.dsg.comot.common.model.node.ArtifactTemplate;
 import at.ac.tuwien.dsg.comot.common.model.node.Capability;
 import at.ac.tuwien.dsg.comot.common.model.node.Requirement;
@@ -26,39 +30,10 @@ public class Navigator {
 
 	public Navigator(CloudService service) {
 		this.service = service;
-
 		map.put(service.getId(), new Node(service, null));
 	}
 
-	public ServicePart resolveToServicePart(ReferencableEntity entity) {
-
-		ServiceUnit unit;
-
-		if (entity instanceof StackNode) {
-			unit = getServiceUnit(entity.getId());
-
-		} else if (entity instanceof Capability) {
-			unit = getServiceUnit(getNodeFor(entity.getId()).getId());
-
-		} else if (entity instanceof Requirement) {
-			unit = getServiceUnit(getNodeFor(entity.getId()).getId());
-
-		} else if (entity instanceof ArtifactTemplate) {
-			unit = getServiceUnit(getNodeFor(entity.getId()).getId());
-
-		} else if (entity instanceof EntityRelationship) {
-			throw new UnsupportedOperationException();
-
-		} else if (entity instanceof SyblDirective) {
-			throw new UnsupportedOperationException();
-
-		} else {
-			throw new UnsupportedOperationException();
-		}
-		log.debug("resolveToServicePart(entityId={} ): servicePartId={}", entity.getId(),
-				(unit == null) ? null : unit.getId());
-		return unit;
-	}
+	
 
 	public ServiceUnit getServiceUnit(String id) {
 		for (ServiceUnit unit : getParentTopologyFor(id).getServiceUnits()) {
@@ -126,6 +101,12 @@ public class Navigator {
 		return null;
 	}
 
+	public ServiceTopology getTopology(String id) {
+		return (ServiceTopology) map.get(id).entity;
+	}
+	
+	// GET ALL
+
 	public List<ServicePart> getAllServiceParts() {
 		List<ServicePart> list = new ArrayList<>();
 		list.add(service);
@@ -151,6 +132,12 @@ public class Navigator {
 		return getAllNodes(service.getServiceTopologies());
 	}
 
+	public List<ServiceTopology> getAllTopologies() {
+		return getAllTopologies(service);
+	}
+
+	// STATIC
+
 	public static List<StackNode> getAllNodes(CloudService cloudService) {
 		return getAllNodes(cloudService.getServiceTopologies());
 	}
@@ -172,10 +159,6 @@ public class Navigator {
 		return units;
 	}
 
-	public List<ServiceTopology> getAllTopologies() {
-		return getAllTopologies(service);
-	}
-
 	public static List<ServiceTopology> getAllTopologies(CloudService cloudService) {
 		List<ServiceTopology> all = getAllTopologies(cloudService.getServiceTopologies());
 		all.addAll(cloudService.getServiceTopologies());
@@ -189,6 +172,8 @@ public class Navigator {
 		}
 		return all;
 	}
+
+	// NODE
 
 	private class Node {
 

@@ -8,9 +8,9 @@ import javax.annotation.PostConstruct;
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
-import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
+import ma.glasnost.orika.MappingContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,7 @@ import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.common.model.structure.ServicePart;
 import at.ac.tuwien.dsg.comot.common.model.structure.ServiceTopology;
 import at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.common.model.unit.AssociatedVM;
+import at.ac.tuwien.dsg.comot.common.model.unit.NodeInstanceOs;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement.MonitoredElementLevel;
 
@@ -38,6 +38,8 @@ public class MelaOrika {
 		ConverterFactory converterFactory = mapperFactory.getConverterFactory();
 
 		mapperFactory.classMap(CloudService.class, MonitoredElement.class)
+				.field("id", "id")
+				.field("name", "name")
 				.field("serviceTopologies", "containedElements")
 				.exclude("relationships")
 				.customize(
@@ -48,10 +50,11 @@ public class MelaOrika {
 								element.setLevel(decideLevel(service));
 							}
 						})
-				.byDefault()
 				.register();
 
 		mapperFactory.classMap(ServiceTopology.class, MonitoredElement.class)
+				.field("id", "id")
+				.field("name", "name")
 				.customize(
 						new CustomMapper<ServiceTopology, MonitoredElement>() {
 							@Override
@@ -73,32 +76,23 @@ public class MelaOrika {
 								}
 							}
 						})
-				.byDefault()
 				.register();
 
 		mapperFactory.classMap(ServiceUnit.class, MonitoredElement.class)
-				.fieldAToB("deploymentInfo.associatedVMs", "containedElements")
+				.field("id", "id")
+				.field("name", "name")
 				.customize(
 						new CustomMapper<ServiceUnit, MonitoredElement>() {
 							@Override
 							public void mapAtoB(ServiceUnit unit, MonitoredElement element, MappingContext context) {
 								// set level
 								element.setLevel(decideLevel(unit));
+								
+								// set VMs
+								
 							}
 						})
-				.byDefault()
-				.register();
 
-		mapperFactory.classMap(AssociatedVM.class, MonitoredElement.class)
-				.fieldAToB("ip", "id")
-				.customize(
-						new CustomMapper<AssociatedVM, MonitoredElement>() {
-							@Override
-							public void mapAtoB(AssociatedVM vm, MonitoredElement element, MappingContext context) {
-								element.setLevel(MonitoredElementLevel.VM);
-							}
-						})
-				.byDefault()
 				.register();
 
 		facade = mapperFactory.getMapperFacade();

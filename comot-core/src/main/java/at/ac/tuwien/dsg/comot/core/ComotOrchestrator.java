@@ -74,12 +74,11 @@ public class ComotOrchestrator {
 	public void controlExisting(
 			CloudService serviceTemplate,
 			CompositionRulesConfiguration compositionRulesConfiguration,
-			String effectsJSON) throws CoreServiceException {
+			String effectsJSON) throws CoreServiceException, ComotException {
 
-		DeploymentDescription deploymentDescription = deployment.getServiceDeploymentInfo(serviceTemplate.getId());
-		// add deployment to service 
+		CloudService withStatus = deployment.getStatus(serviceTemplate);
 		
-		control.sendInitialConfig(serviceTemplate, compositionRulesConfiguration,
+		control.sendInitialConfig(withStatus, compositionRulesConfiguration,
 				effectsJSON);
 		
 		control.startControl(serviceTemplate.getId());

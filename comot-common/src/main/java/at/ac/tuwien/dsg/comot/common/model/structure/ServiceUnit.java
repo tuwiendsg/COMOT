@@ -2,15 +2,12 @@ package at.ac.tuwien.dsg.comot.common.model.structure;
 
 import java.util.List;
 
-
-
 import at.ac.tuwien.dsg.comot.common.model.SyblDirective;
-import at.ac.tuwien.dsg.comot.common.model.unit.DeploymentInfo;
 import at.ac.tuwien.dsg.comot.common.model.unit.ElasticityCapability;
 
 public class ServiceUnit extends ServicePart {
 
-	protected DeploymentInfo deploymentInfo;
+
 	protected List<ElasticityCapability> elasticityCapabilities;
 
 	public ServiceUnit() {
@@ -30,13 +27,6 @@ public class ServiceUnit extends ServicePart {
 		super(node.getId(), directives);
 	}
 
-	public DeploymentInfo getDeploymentInfo() {
-		return deploymentInfo;
-	}
-
-	public void setDeploymentInfo(DeploymentInfo deploymentInfo) {
-		this.deploymentInfo = deploymentInfo;
-	}
 
 	public List<ElasticityCapability> getElasticityCapabilities() {
 		return elasticityCapabilities;

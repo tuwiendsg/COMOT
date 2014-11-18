@@ -10,6 +10,8 @@ import javax.xml.bind.JAXBException;
 
 import org.oasis.tosca.Definitions;
 
+
+import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaInstanceDescription_VM;
 import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties;
 import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.rsybl.CloudServiceXML;
@@ -23,6 +25,10 @@ public class UtilsMapper {
 
 	public static String asString(Definitions definition) throws JAXBException {
 		return Utils.asXmlString(definition, SalsaMappingProperties.class);
+	}
+	
+	public static String asString(at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService cloudService) throws JAXBException {
+		return Utils.asXmlString(cloudService, SalsaInstanceDescription_VM.class);
 	}
 
 	public static String asString(MonitoredElement element) throws JAXBException {

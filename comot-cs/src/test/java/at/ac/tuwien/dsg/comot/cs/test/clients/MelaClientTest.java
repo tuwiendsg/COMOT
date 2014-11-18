@@ -9,9 +9,9 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
@@ -26,16 +26,15 @@ import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitorin
 
 public class MelaClientTest extends AbstractTest {
 
-	public static final String MELA_IP = "128.130.172.216";
-	public static final int MELA_PORT = 8180;
-
 	public static final String SERVICE_ID = "example_executableOnVM";
 	public static final String TOPOLOGY_ID = "example_topology";
 	public static final String NODE_ID = "example_OS_comot";
 
 	private static final String NODE_IP = "10.99.0.25"; // <== check this
 
+	@Autowired
 	private MelaClient mela;
+	@Autowired
 	private SalsaClient salsa;
 
 	private String xmlTosca;
@@ -47,9 +46,6 @@ public class MelaClientTest extends AbstractTest {
 
 	@Before
 	public void setup() throws IOException {
-
-		salsa = new SalsaClient(SalsaClientTest.SALSA_IP, SalsaClientTest.SALSA_PORT);
-		mela = new MelaClient(MELA_IP, MELA_PORT);
 
 		xmlTosca = TestUtils.loadFile("./xml/ExampleExecutableOnVM.xml");
 
@@ -68,12 +64,6 @@ public class MelaClientTest extends AbstractTest {
 		eService = new MonitoredElement(SERVICE_ID);
 		eService.setLevel(MonitoredElement.MonitoredElementLevel.SERVICE);
 		eService.addElement(eTopo);
-	}
-
-	@After
-	public void cleanUp() {
-		mela.close();
-		salsa.close();
 	}
 
 	@Test

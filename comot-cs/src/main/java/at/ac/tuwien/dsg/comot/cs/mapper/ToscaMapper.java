@@ -21,10 +21,12 @@ import org.springframework.stereotype.Component;
 import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties;
 import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.model.EntityRelationship;
-import at.ac.tuwien.dsg.comot.common.model.Navigator;
 import at.ac.tuwien.dsg.comot.common.model.ReferencableEntity;
+import at.ac.tuwien.dsg.comot.common.model.logic.Navigator;
+import at.ac.tuwien.dsg.comot.common.model.logic.RelationshipResolver;
 import at.ac.tuwien.dsg.comot.common.model.node.ArtifactTemplate;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.common.model.structure.StackNode;
 import at.ac.tuwien.dsg.comot.common.model.type.RelationshipType;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.ToscaOrika;
@@ -70,11 +72,9 @@ public class ToscaMapper {
 									.getTargetElement().getRef());
 
 					sourceTopoId = navigator.getParentTopologyFor(
-							((TEntityTemplate) oneRel.getSourceElement().getRef())
-									.getId()).getId();
+							((TEntityTemplate) oneRel.getSourceElement().getRef()).getId()).getId();
 					targetTopoId = navigator.getParentTopologyFor(
-							((TEntityTemplate) oneRel.getTargetElement().getRef())
-									.getId()).getId();
+							((TEntityTemplate) oneRel.getTargetElement().getRef()).getId()).getId();
 
 					log.trace("Inserted relationship id={}, from={}, to={}", oneRel.getId(), sourceTopoId, targetTopoId);
 
@@ -96,6 +96,7 @@ public class ToscaMapper {
 		ArtifactTemplate artifact;
 		ReferencableEntity from;
 		ReferencableEntity to;
+		ServiceUnit unit;
 
 		CloudService cloudService = mapper.get().map(definitions, CloudService.class);
 		log.trace("Mapping by dozer: {}", Utils.asJsonString(cloudService));
@@ -108,17 +109,16 @@ public class ToscaMapper {
 
 				artifact = mapper.get().map((TArtifactTemplate) element, ArtifactTemplate.class);
 
-				for (StackNode unit : navigator.getAllNodes()) {
-					for (ArtifactTemplate currentArt : unit.getDeploymentArtifacts()) {
+				for (StackNode node : navigator.getAllNodes()) {
+					for (ArtifactTemplate currentArt : node.getDeploymentArtifacts()) {
 						if (currentArt.getId().equals(artifact.getId())) {
 							currentArt.setArtifactReferences(artifact.getArtifactReferences());
 						}
 					}
 				}
 
-			} else if (element instanceof TServiceTemplate) {
-
 				// inject relationships
+			} else if (element instanceof TServiceTemplate) {
 				for (TExtensibleElements element2 : ((TServiceTemplate) element).getTopologyTemplate()
 						.getNodeTemplateOrRelationshipTemplate()) {
 					if (element2 instanceof TRelationshipTemplate) {
@@ -127,21 +127,33 @@ public class ToscaMapper {
 						if (!cloudService.containsRelationship(rel.getId())) {
 							from = navigator.getReferencableEntity(((TEntityTemplate) rel.getSourceElement().getRef())
 									.getId());
-							to = navigator.getReferencableEntity(((TEntityTemplate) rel.getTargetElement()
-									.getRef())
+							to = navigator.getReferencableEntity(((TEntityTemplate) rel.getTargetElement().getRef())
 									.getId());
 
-							cloudService
-									.addEntityRelationship(new EntityRelationship(
-											rel.getId(), RelationshipType.fromString(rel.getType().getLocalPart()),
-											from, to, navigator.resolveToServicePart(from), navigator
-													.resolveToServicePart(to)));
-							// navigator.resolveServicePart(from),
-							// navigator.resolveServicePart(to)));
+							cloudService.addEntityRelationship(new EntityRelationship(rel.getId(),
+									RelationshipType.fromString(rel.getType().getLocalPart()), from, to));
 						}
 					}
 				}
+			}
+		}
 
+		navigator = new Navigator(cloudService); // recreate with new elements
+		RelationshipResolver resolver = new RelationshipResolver(cloudService);
+
+		// remove and add ServiceUnits
+		for (StackNode node : navigator.getAllNodes()) {
+			unit = navigator.getServiceUnit(node.getId());
+
+			if (resolver.isServiceUnit(node)) {
+				if (unit == null) {
+					unit = new ServiceUnit(node);
+					navigator.getParentTopologyFor(node.getId()).getServiceUnits().add(unit);
+				}
+			} else {
+				if (unit != null) {
+					navigator.getParentTopologyFor(node.getId()).getServiceUnits().remove(unit);
+				}
 			}
 		}
 

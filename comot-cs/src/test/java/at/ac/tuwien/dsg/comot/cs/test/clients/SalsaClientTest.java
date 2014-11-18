@@ -8,48 +8,38 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.DependencyDescriptor;
+import org.oasis.tosca.Definitions;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityState;
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityType;
 import at.ac.tuwien.dsg.comot.common.Utils;
+import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.test.TestUtils;
 import at.ac.tuwien.dsg.comot.cs.connector.SalsaClient;
+import at.ac.tuwien.dsg.comot.cs.test.AbstractTest;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 
-public class SalsaClientTest {
-
-	private final static Logger log = LoggerFactory.getLogger(SalsaClientTest.class);
-
-	public static final String SALSA_IP = "128.130.172.215";
-	public static final int SALSA_PORT = 8080;
+public class SalsaClientTest extends AbstractTest {
 
 	public static final String SERVICE_ID = "example_deployOneVM";
 	public static final String TOPOLOGY_ID = "example_topology";
 	public static final String NODE_ID = "example_OS_comot";
 
+	@Autowired
 	private SalsaClient salsa;
 	private String xmlTosca;
 
 	@Before
 	public void setup() throws IOException {
-		salsa = new SalsaClient(SALSA_IP, SALSA_PORT);
 		xmlTosca = TestUtils.loadFile("./xml/ExampleDeployOneVM.xml");
 	}
 
-	@After
-	public void cleanUp() {
-		salsa.close();
-	}
-
 	@Test
-	public void testAutomated() throws CoreServiceException, InterruptedException {
+	public void testAutomated() throws CoreServiceException, InterruptedException, ComotException {
 
 		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService service;
 		int countIter = 0;
@@ -140,17 +130,24 @@ public class SalsaClientTest {
 	}
 
 	@Test
-	public void testStatus() throws CoreServiceException, JAXBException {
+	public void testStatus() throws CoreServiceException, JAXBException, ComotException {
 		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService serviceInfo = salsa.getStatus("aaaa");
-		
+
 		log.info(Utils.asXmlString(serviceInfo));
 	}
 
 	@Test
 	public void testDeploymentDescription() throws CoreServiceException, JAXBException {
-		DeploymentDescription descr = salsa.getServiceDeploymentInfo("HelloElasticity");
-		
+		DeploymentDescription descr = salsa.getServiceDeploymentInfo("aaaa");
+
 		log.info(Utils.asXmlString(descr));
+	}
+
+	@Test
+	public void testGetTosca() throws CoreServiceException, JAXBException, ComotException {
+		Definitions def = salsa.getTosca("aaaa");
+
+		log.info(Utils.asXmlString(def));
 	}
 
 	@Test

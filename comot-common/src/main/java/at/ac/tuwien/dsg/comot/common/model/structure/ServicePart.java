@@ -5,10 +5,12 @@ import java.util.List;
 
 import at.ac.tuwien.dsg.comot.common.model.AbstractEntity;
 import at.ac.tuwien.dsg.comot.common.model.SyblDirective;
+import at.ac.tuwien.dsg.comot.common.model.type.State;
 
 public abstract class ServicePart extends AbstractEntity {
 
 	protected List<SyblDirective> directives = new ArrayList<>();
+	protected State state;
 
 	public ServicePart() {
 	}
@@ -47,5 +49,15 @@ public abstract class ServicePart extends AbstractEntity {
 	public void setDirectives(List<SyblDirective> directives) {
 		this.directives = directives;
 	}
+
+	public State getState() {
+		return state;
+	}
+
+	public void setState(State state) {
+		this.state = state;
+	}
+	
+	
 
 }

@@ -4,7 +4,6 @@ import at.ac.tuwien.dsg.comot.common.model.node.Properties;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.common.model.structure.ServiceTopology;
 import at.ac.tuwien.dsg.comot.common.model.structure.StackNode;
-import at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.common.model.type.NodePropertiesType;
 import at.ac.tuwien.dsg.comot.common.model.type.NodeType;
 
@@ -24,7 +23,7 @@ public class ExampleDeployOneVM {
 		properties.addProperty("packages", "openjdk-7-jre");
 		
 		StackNode unit = new StackNode(NODE_ID, NodeType.OS);
-		unit.setProperties(properties);
+		unit.addProperties(properties);
 
 		ServiceTopology topology = new ServiceTopology(TOPOLOGY_ID);
 		topology.addNode(unit);

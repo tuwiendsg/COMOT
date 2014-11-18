@@ -12,12 +12,16 @@ import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.model.EntityRelationship;
-import at.ac.tuwien.dsg.comot.common.model.Navigator;
 import at.ac.tuwien.dsg.comot.common.model.SyblDirective;
+import at.ac.tuwien.dsg.comot.common.model.logic.Navigator;
+import at.ac.tuwien.dsg.comot.common.model.logic.RelationshipResolver;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.common.model.structure.ServicePart;
+import at.ac.tuwien.dsg.comot.common.model.structure.StackNode;
 import at.ac.tuwien.dsg.comot.common.model.type.DirectiveType;
 import at.ac.tuwien.dsg.comot.common.model.type.RelationshipType;
+import at.ac.tuwien.dsg.comot.common.model.unit.NodeInstance;
+import at.ac.tuwien.dsg.comot.common.model.unit.NodeInstanceOs;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.MelaOrika;
 import at.ac.tuwien.dsg.csdg.elasticityInformation.elasticityRequirements.BinaryRestriction;
 import at.ac.tuwien.dsg.csdg.elasticityInformation.elasticityRequirements.BinaryRestrictionsConjunction;
@@ -26,11 +30,12 @@ import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.abstractModelXML.SY
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.Metric;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MetricValue;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement;
+import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement.MonitoredElementLevel;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.Relationship;
 import at.ac.tuwien.dsg.mela.common.requirements.Condition;
-import at.ac.tuwien.dsg.mela.common.requirements.Requirements;
 import at.ac.tuwien.dsg.mela.common.requirements.Condition.Type;
 import at.ac.tuwien.dsg.mela.common.requirements.Requirement;
+import at.ac.tuwien.dsg.mela.common.requirements.Requirements;
 
 @Component
 public class MelaMapper {
@@ -42,22 +47,40 @@ public class MelaMapper {
 
 	public MonitoredElement extractMela(CloudService cloudService) {
 
-		MonitoredElement element;
+
 		Relationship tempRel;
+		MonitoredElement vmElement;
+		StackNode node;
+		RelationshipResolver resolver = new RelationshipResolver(cloudService);
 
-		// Navigator navigator = new Navigator(cloudService);
+
 		MonitoredElement root = mapper.get().map(cloudService, MonitoredElement.class);
-
 		Map<String, MonitoredElement> map = extractAllElements(root);
 
+		// add VMs
+		for (MonitoredElement element : map.values()) {
+			if (element.getLevel().equals(MonitoredElementLevel.SERVICE_UNIT)) {
+				node = resolver.getOsForServiceUnit(element.getId());
+				
+				for (NodeInstance instance : node.getInstances()) {
+					vmElement = new MonitoredElement();
+					vmElement.setLevel(MonitoredElementLevel.VM);
+					vmElement.setId(((NodeInstanceOs) instance).getIp());
+
+					element.addElement(vmElement);
+				}
+			}
+		}
+
+		// add relationships
 		for (EntityRelationship rel : cloudService.getRelationships()) {
 
 			log.info("original from={} to={}", rel.getFrom().getId(), rel.getTo().getId());
 
-			if (rel.isServicePartRelationship()) {
+			if (resolver.isServicePartRelationship(rel)) {
 
-				String fromPartId = rel.getFromPart().getId();
-				String toPartId = rel.getToPart().getId();
+				String fromPartId = resolver.resolveToServicePart(rel.getFrom()).getId();
+				String toPartId = resolver.resolveToServicePart(rel.getTo()).getId();
 
 				log.info("part from={} to={}", fromPartId, toPartId);
 

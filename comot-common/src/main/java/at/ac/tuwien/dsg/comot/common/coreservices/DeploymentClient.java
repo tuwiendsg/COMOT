@@ -3,7 +3,6 @@ package at.ac.tuwien.dsg.comot.common.coreservices;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
-import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 
 public interface DeploymentClient extends CoreServiceClient {
 
@@ -25,13 +24,11 @@ public interface DeploymentClient extends CoreServiceClient {
 			String nodeId,
 			int instanceId) throws CoreServiceException;
 
-	public at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService getStatus(
-			String serviceId) throws CoreServiceException;
+	public CloudService getStatus( 
+			CloudService cloudService) throws CoreServiceException, ComotException;
 
-	public DeploymentDescription getServiceDeploymentInfo(
-			String serviceId) throws CoreServiceException;
-
-	boolean isRunning(String serviceID) throws CoreServiceException;
+	
+	boolean isRunning(String serviceID) throws CoreServiceException, ComotException;
 
 	// TODO only temporary
 	String getStatusGui(String serviceId) throws CoreServiceException;

@@ -68,14 +68,14 @@ public class SampleResource {
 
 		log.info("input: " + serviceId);
 
-		try {
-			CloudService service = deploy.getStatus(serviceId);
+//		try {
+			CloudService service = null;//= deploy.getStatus(serviceId);
 			return Response.ok(service).build();
 
-		} catch (CoreServiceException e) {
-			e.printStackTrace();
-			return Response.serverError().build();
-		}
+//		} catch (CoreServiceException e) {
+//			e.printStackTrace();
+//			return Response.serverError().build();
+//		}
 	}
 	
 	// TODO temporary only
