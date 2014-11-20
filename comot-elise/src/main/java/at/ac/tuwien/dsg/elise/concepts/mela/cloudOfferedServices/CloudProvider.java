@@ -19,7 +19,7 @@ package at.ac.tuwien.dsg.elise.concepts.mela.cloudOfferedServices;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
-import at.ac.tuwien.dsg.elise.concepts.ServiceEntity;
+import at.ac.tuwien.dsg.elise.concepts.salsa.cloudservicestructure.ServiceUnit;
 
 /**
  *
@@ -29,7 +29,7 @@ import at.ac.tuwien.dsg.elise.concepts.ServiceEntity;
  */
 @NodeEntity
 @TypeAlias("CloudProvider")
-public class CloudProvider extends ServiceEntity {
+public class CloudProvider extends ServiceUnit {
 	private static final long serialVersionUID = -1215693843494389485L;
 	
 	//private Set<CloudOfferedServiceUnit> serviceUnits;	// e.g m1.small VM, float IP

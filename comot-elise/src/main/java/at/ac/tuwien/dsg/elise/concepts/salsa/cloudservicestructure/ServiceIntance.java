@@ -29,5 +29,7 @@ public class ServiceIntance {
 	public void setRuntimeProperties(Map<Metric, MetricValue> runtimeProperties) {
 		this.runtimeProperties = runtimeProperties;
 	}
+	
+	
 
 }

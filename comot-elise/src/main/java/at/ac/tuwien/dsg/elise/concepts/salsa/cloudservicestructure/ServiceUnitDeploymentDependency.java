@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.elise.concepts.salsa.cloudservicestructure.Links;
+package at.ac.tuwien.dsg.elise.concepts.salsa.cloudservicestructure;
 
 import org.springframework.data.neo4j.annotation.RelationshipEntity;
 

@@ -38,4 +38,11 @@ public class CloudService extends ServiceEntity {
 	public void removeTopology(ServiceTopology topo){
 		this.topologies.remove(topo);
 	}
+
+	@Override
+	public String toString() {
+		return "CloudService {"+ topologies + name +  type + primitiveOperations + "}";
+	}
+	
+	
 }

@@ -165,6 +165,10 @@ public class Metric implements Serializable, Comparable<Metric> {
 	public String toString() {
 		return this.name + "|" + this.measurementUnit + "|" + this.type.toString();
 	}
+//	@Override
+//	public String toString() {
+//		return this.name;
+//	}
 	
 	public static Metric fromString(String str){
 		Metric m = new Metric();

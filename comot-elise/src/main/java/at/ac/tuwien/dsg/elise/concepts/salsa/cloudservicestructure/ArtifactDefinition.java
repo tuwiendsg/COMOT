@@ -1,14 +1,9 @@
-package at.ac.tuwien.dsg.elise.concepts.salsa.cloudservicestructure.configurationTypes;
+package at.ac.tuwien.dsg.elise.concepts.salsa.cloudservicestructure;
 
-import org.springframework.data.annotation.TypeAlias;
-import org.springframework.data.neo4j.annotation.GraphId;
-import org.springframework.data.neo4j.annotation.NodeEntity;
+import at.ac.tuwien.dsg.elise.concepts.ResourceQualityOrCostEntity;
 
-@NodeEntity
-@TypeAlias("ArtifactDefinition")
-public class ArtifactDefinition {
-		@GraphId Long id;
-		// artifact definition
+public class ArtifactDefinition extends ResourceQualityOrCostEntity {
+		
 		ArtifactRepoType artifactRepoType = ArtifactRepoType.DIRECT_URL;
 		BuildType artifactBuildMethod = BuildType.NONE;
 		String artifactRetrievingREF = "";

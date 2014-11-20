@@ -21,14 +21,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
-import at.ac.tuwien.dsg.elise.concepts.Link;
+import at.ac.tuwien.dsg.elise.concepts.ResourceQualityOrCostEntity;
 import at.ac.tuwien.dsg.elise.concepts.ServiceEntity;
 
 /**
@@ -37,38 +33,35 @@ import at.ac.tuwien.dsg.elise.concepts.ServiceEntity;
  * @E-mail: d.moldovan@dsg.tuwien.ac.at
  *
  */
-@NodeEntity
-@TypeAlias("CostFunction")
-public class CostFunction extends ServiceEntity {
+public class CostFunction extends ResourceQualityOrCostEntity {
 
     //utility for which cost is applied
 //    private serviceUnit utility;
     //if we apply the "utility" together with the entities in this LIST, then the cost
     //is the one specified by this function
     //Is Entity to support ServiceUnit, or Resource and Quality options (you pay separately per I/O performance, etc)
-
     
-    private Set<ServiceEntity> appliedInConjunctionWith;
+    private Set<Object> appliedInConjunctionWith;
     
     private Set<CostElement> costElements;
 
     {
         costElements = new HashSet<CostElement>();
-        appliedInConjunctionWith = new HashSet<ServiceEntity>();
+        appliedInConjunctionWith = new HashSet<Object>();
     }
 
     public CostFunction() {
     }
 
     public CostFunction(String name) {
-        super(name);
+        this.name = name;
     }
 
-    public Set<ServiceEntity> getAppliedInConjunctionWith() {
+    public Set<Object> getAppliedInConjunctionWith() {
         return appliedInConjunctionWith;
     }
 
-    public void setAppliedInConjunctionWith(Set<ServiceEntity> appliedInConjunctionWith) {
+    public void setAppliedInConjunctionWith(Set<Object> appliedInConjunctionWith) {
         this.appliedInConjunctionWith = appliedInConjunctionWith;
     }
 
@@ -76,21 +69,21 @@ public class CostFunction extends ServiceEntity {
         this.costElements = costElements;
     }
 
-    public List<QualityType> getAppliedInConjunctionWithQuality() {
-        List<QualityType> list = new ArrayList<QualityType>();
-        for (ServiceEntity e : appliedInConjunctionWith) {
-            if (e instanceof QualityType) {
-                list.add((QualityType) e);
+    public List<Quality> getAppliedInConjunctionWithQuality() {
+        List<Quality> list = new ArrayList<Quality>();
+        for (Object e : appliedInConjunctionWith) {
+            if (e instanceof Quality) {
+                list.add((Quality) e);
             }
         }
         return list;
     }
 
-    public List<ResourceType> getAppliedInConjunctionWithResource() {
-        List<ResourceType> list = new ArrayList<ResourceType>();
-        for (ServiceEntity e : appliedInConjunctionWith) {
-            if (e instanceof ResourceType) {
-                list.add((ResourceType) e);
+    public List<Resource> getAppliedInConjunctionWithResource() {
+        List<Resource> list = new ArrayList<Resource>();
+        for (Object e : appliedInConjunctionWith) {
+            if (e instanceof Resource) {
+                list.add((Resource) e);
             }
         }
         return list;
@@ -98,7 +91,7 @@ public class CostFunction extends ServiceEntity {
 
     public List<CloudOfferedServiceUnit> getAppliedInConjunctionWithServiceUnit() {
         List<CloudOfferedServiceUnit> list = new ArrayList<CloudOfferedServiceUnit>();
-        for (ServiceEntity e : appliedInConjunctionWith) {
+        for (Object e : appliedInConjunctionWith) {
             if (e instanceof CloudOfferedServiceUnit) {
                 list.add((CloudOfferedServiceUnit) e);
             }
@@ -131,9 +124,9 @@ public class CostFunction extends ServiceEntity {
         costElements.remove(ce);
     }
 
-    public void addUtilityAppliedInConjunctionWith(ServiceEntity u) {
+    public void addUtilityAppliedInConjunctionWith(ResourceQualityOrCostEntity u) {
         if (u instanceof CostFunction) {
-            System.err.println("Adding " + u.name + " as in conjunction with for " + this.name);
+            System.err.println("Adding " + u.getName() + " as in conjunction with for " + this.name);
             new Exception().printStackTrace();
         }
         this.appliedInConjunctionWith.add(u);
@@ -161,4 +154,6 @@ public class CostFunction extends ServiceEntity {
     public boolean equals(Object obj) {
         return super.equals(obj);
     }
+    
+    
 }

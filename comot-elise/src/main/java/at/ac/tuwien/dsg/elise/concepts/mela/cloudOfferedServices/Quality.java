@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package at.ac.tuwien.dsg.elise.concepts.mela.cloudOfferedServices.Links;
+package at.ac.tuwien.dsg.elise.concepts.mela.cloudOfferedServices;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,8 +23,8 @@ import org.springframework.data.neo4j.annotation.RelationshipEntity;
 import org.springframework.data.neo4j.fieldaccess.DynamicProperties;
 import org.springframework.data.neo4j.fieldaccess.DynamicPropertiesContainer;
 
-import at.ac.tuwien.dsg.elise.concepts.Link;
 import at.ac.tuwien.dsg.elise.concepts.LinkType;
+import at.ac.tuwien.dsg.elise.concepts.ResourceQualityOrCostEntity;
 import at.ac.tuwien.dsg.elise.concepts.mela.monitoringConcepts.Metric;
 import at.ac.tuwien.dsg.elise.concepts.mela.monitoringConcepts.MetricValue;
 
@@ -34,10 +34,9 @@ import at.ac.tuwien.dsg.elise.concepts.mela.monitoringConcepts.MetricValue;
  * @E-mail: d.moldovan@dsg.tuwien.ac.at
  *
  */
-@RelationshipEntity(type = LinkType.CLOUD_OFFER_SERVICE_HAS_QUALITY)
-public class HasQuality extends Link implements Cloneable {
-	private static final long serialVersionUID = 5680592213196655998L;
-	
+
+public class Quality extends ResourceQualityOrCostEntity implements Cloneable {
+
 	//    private Map<Metric, MetricValue> properties;
 	 private DynamicProperties metrics = new DynamicPropertiesContainer();
 	 private DynamicProperties metricValue = new DynamicPropertiesContainer();
@@ -46,10 +45,10 @@ public class HasQuality extends Link implements Cloneable {
 //        properties = new LinkedHashMap<Metric, MetricValue>();
 //    }
 
-    public HasQuality() {
+    public Quality() {
     }
 
-    public HasQuality(String name) {
+    public Quality(String name) {
         super(name);
     }
 
@@ -101,8 +100,8 @@ public class HasQuality extends Link implements Cloneable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof HasQuality) {
-        	HasQuality their = (HasQuality) obj;
+        if (obj instanceof Quality) {
+        	Quality their = (Quality) obj;
              Map<Metric, MetricValue> theirProperties = their.getProperties();
              Map<Metric, MetricValue> properties = this.getProperties();
 
@@ -126,9 +125,14 @@ public class HasQuality extends Link implements Cloneable {
         return true;
     }
 
-	@Override
+    @Override
 	public String toString() {
-		return "QualityValue [metrics=" + metrics + ", metricValue=" + metricValue + "]";
+		String str="";
+		Map<Metric, MetricValue> map =  getProperties();
+		for (Map.Entry<Metric, MetricValue> entry : map.entrySet()) {
+		    str += "Key = " + entry.getKey().getName() + "(" +entry.getKey().getMeasurementUnit() +")" + ", Value = " + entry.getValue().getValue() + " \n ";
+		}
+		return "Quality("+this.name+") [\n" + str + "\n]";
 	}
 
 }

@@ -1,10 +1,9 @@
-package at.ac.tuwien.dsg.elise.concepts.mela.cloudOfferedServices.Links;
+package at.ac.tuwien.dsg.elise.concepts.mela.cloudOfferedServices;
 
 import org.springframework.data.neo4j.annotation.RelationshipEntity;
 
 import at.ac.tuwien.dsg.elise.concepts.Link;
 import at.ac.tuwien.dsg.elise.concepts.LinkType;
-import at.ac.tuwien.dsg.elise.concepts.mela.cloudOfferedServices.CloudOfferedServiceUnit;
 import at.ac.tuwien.dsg.elise.concepts.salsa.cloudservicestructure.ServiceUnit;
 
 @RelationshipEntity(type = LinkType.CLOUD_OFFER_SERVICE_DERIVES_SERVICE_UNIT)

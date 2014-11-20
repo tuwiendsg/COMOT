@@ -183,6 +183,11 @@ public class MetricValue implements Comparable<MetricValue>, Serializable {
 	public String toString() {
 		return this.value + "|" + this.valueType.toString();
 	}
+    
+//    @Override
+//	public String toString() {
+//		return this.value.toString();
+//	}
 	
 	public static MetricValue fromString(String str){
 		MetricValue m = new MetricValue();

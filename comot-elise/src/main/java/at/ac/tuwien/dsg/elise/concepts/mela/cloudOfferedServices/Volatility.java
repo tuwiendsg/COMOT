@@ -30,8 +30,6 @@ import at.ac.tuwien.dsg.elise.concepts.ServiceEntity;
  *
  * @author Daniel Moldovan E-Mail: d.moldovan@dsg.tuwien.ac.at
  */
-@NodeEntity
-@TypeAlias("Volatility")
 public class Volatility extends ServiceEntity implements Cloneable {
 
     private int minimumLifetimeInHours;

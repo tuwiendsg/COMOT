@@ -20,6 +20,10 @@ public interface CloudOfferredServiceRepository extends GraphRepository<CloudOff
 	@Query("match (n:CloudOfferedServiceUnit)-[:"+LinkType.CLOUD_OFFER_SERVICE_BELONGS_TO_PROVIDER+"]->(p:CloudProvider) where p.name={name} return n")
     Set<CloudOfferedServiceUnit> findByProvider(@Param(value = "name") String name);
 	
+	@Query("match (n:CloudOfferedServiceUnit) where n.subcategory={name} return n")
+	Set<CloudOfferedServiceUnit> findBySubcategory(@Param(value = "name") String name);
 	
+	@Query("match (n) optional match (n)-[r]-() delete n,r")
+	void cleanDataBase();
 }
 	

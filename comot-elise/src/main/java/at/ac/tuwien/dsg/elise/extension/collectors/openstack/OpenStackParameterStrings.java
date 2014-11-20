@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.elise.extension.collectors;
+package at.ac.tuwien.dsg.elise.extension.collectors.openstack;
 
 public enum OpenStackParameterStrings {
 	PORT("port"),

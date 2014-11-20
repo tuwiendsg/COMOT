@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import at.ac.tuwien.dsg.elise.Application.repositories.CloudOfferredServiceRepository;
-import at.ac.tuwien.dsg.elise.Application.repositories.EntityRepository;
 import at.ac.tuwien.dsg.elise.Application.repositories.ServiceUnitRepository;
-import at.ac.tuwien.dsg.elise.extension.collectors.OpenStackCollector;
+import at.ac.tuwien.dsg.elise.concepts.mela.cloudOfferedServices.CloudOfferedServiceUnit;
+import at.ac.tuwien.dsg.elise.concepts.mela.cloudOfferedServices.Resource;
+import at.ac.tuwien.dsg.elise.extension.collectors.flexiant.FlexiantConnector;
+import at.ac.tuwien.dsg.elise.extension.collectors.openstack.OpenStackCollector;
 
 @RestController
 @Controller
@@ -28,22 +30,42 @@ public class EliseServices {
 	
 	@RequestMapping(method=RequestMethod.GET, value="/generate")
 	public String generateData(){
-		DataGeneration gen = new DataGeneration(enRepo, suRepo, cloudRepo);
+		DataGeneration gen = new DataGeneration(suRepo, cloudRepo);
 		gen.generateAll();
 		return "done";
 	}
 	
-	@RequestMapping(method=RequestMethod.GET, value="/updateCloudProvider/DSGOpenStack")
+	@RequestMapping(method=RequestMethod.POST, value="/cloudprovider/DSGOpenStack/update")
 	public String updateDSGOpenstack(){
-		
 		//logger.debug("dsg" +" - " + prop.getProperty(OpenStackParameterStrings.END_POINT.getString())+" - " + OpenStackParameterStrings.TENANT.getString() +" - " + OpenStackParameterStrings.USERNAME.getString() +" - " + OpenStackParameterStrings.PASSWORD.getString() +" - " + OpenStackParameterStrings.SSH_KEY_NAME.getString());
-		OpenStackCollector openstack = new OpenStackCollector("dsg", enRepo, suRepo, cloudRepo);
+		OpenStackCollector openstack = new OpenStackCollector("dsg", suRepo, cloudRepo);
 		openstack.updateAllService();
 		return "done";
 	}
 	
-	@Autowired
-	EntityRepository enRepo;
+//	@RequestMapping(method=RequestMethod.POST, value="/cloudprovider/CelarFlexiant/update")
+//	public String updateCelarFlexiant(){
+//		FlexiantConnector flexiant = new FlexiantConnector("celar", suRepo, cloudRepo);
+//		flexiant.updateAllService();		
+//		return "done";
+//	}
+	
+
+	
+	@RequestMapping(method=RequestMethod.POST, value="/servicedefinition")
+	public void addServiceDefinitionByTOSCA(String tosca){
+		
+	}
+	
+	@RequestMapping(method=RequestMethod.POST, value="/servicetemplate")
+	public void addServiceTemplate(){
+		
+	}
+	
+	@RequestMapping(method=RequestMethod.POST, value="/serviceinstance")
+	public void addServiceInstance(){
+		
+	}
 	
 	@Autowired
 	ServiceUnitRepository suRepo;
@@ -53,9 +75,25 @@ public class EliseServices {
 	
 	@RequestMapping(method=RequestMethod.GET, value="/count")
 	public String getEntity(){
-		long l = enRepo.count();
+		long l = suRepo.count();
 		return "done: [" + l + "]---";
 	}
 	
+	
+	@RequestMapping(method=RequestMethod.GET, value="/testyo")
+	public String testyo(){
+		String str = "";
+		CloudOfferedServiceUnit vm = cloudRepo.findByName("dsg@openstack/w1.xlarge");
+		str+= vm.getName() +"-\n-";
+		str+= vm.getCategory() +"-\n-";
+		str+= vm.getSubcategory() +"-\n-";
+		str+= vm.getType() +"-\n-";
+		str+= vm.getResourceProperties() +"-\n-";
+		for (Resource re : vm.getResourceProperties()) {
+			str += re.toString() + "\n";
+		}
+		
+		return str;		
+	}
 	
 }

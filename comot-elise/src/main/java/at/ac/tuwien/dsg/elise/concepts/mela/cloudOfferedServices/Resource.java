@@ -14,18 +14,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package at.ac.tuwien.dsg.elise.concepts.mela.cloudOfferedServices.Links;
+package at.ac.tuwien.dsg.elise.concepts.mela.cloudOfferedServices;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.data.neo4j.annotation.RelationshipEntity;
 import org.springframework.data.neo4j.fieldaccess.DynamicProperties;
 import org.springframework.data.neo4j.fieldaccess.DynamicPropertiesContainer;
 
-import at.ac.tuwien.dsg.elise.concepts.Link;
-import at.ac.tuwien.dsg.elise.concepts.LinkType;
-import at.ac.tuwien.dsg.elise.concepts.ServiceEntity;
+import at.ac.tuwien.dsg.elise.concepts.ResourceQualityOrCostEntity;
 import at.ac.tuwien.dsg.elise.concepts.mela.monitoringConcepts.Metric;
 import at.ac.tuwien.dsg.elise.concepts.mela.monitoringConcepts.MetricValue;
 
@@ -35,9 +32,8 @@ import at.ac.tuwien.dsg.elise.concepts.mela.monitoringConcepts.MetricValue;
  * @E-mail: d.moldovan@dsg.tuwien.ac.at
  *
  */
-@RelationshipEntity(type = LinkType.CLOUD_OFFER_SERVICE_HAS_RESOURCE)
-public class HasResource extends Link implements Cloneable {
-   
+
+public class Resource extends ResourceQualityOrCostEntity implements Cloneable {
 //    private Map<Metric, MetricValue> properties;	
 	private static final long serialVersionUID = -8960026477565015538L;
 	private DynamicProperties metrics = new DynamicPropertiesContainer();
@@ -63,11 +59,11 @@ public class HasResource extends Link implements Cloneable {
 //        this.properties = properties;
 //    }
     
-    public HasResource() {
+    public Resource() {
     }
 
-    public HasResource(String name) {
-        this.name = name;
+    public Resource(String name) {
+        super(name);
     }
 
     public Map<Metric, MetricValue> getProperties() {
@@ -101,8 +97,8 @@ public class HasResource extends Link implements Cloneable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof HasResource) {
-            HasResource their = (HasResource) obj;
+        if (obj instanceof Resource) {
+            Resource their = (Resource) obj;
             Map<Metric, MetricValue> theirProperties = their.getProperties();
             Map<Metric, MetricValue> properties = this.getProperties();
 
@@ -129,7 +125,13 @@ public class HasResource extends Link implements Cloneable {
 
 	@Override
 	public String toString() {
-		return "Resource [metrics=" + metrics + ", metricValue=" + metricValue + "]";
+		String str="";
+		Map<Metric, MetricValue> map =  getProperties();
+		for (Map.Entry<Metric, MetricValue> entry : map.entrySet()) {
+		    //str += "Key = " + entry.getKey().getName() + "(" +entry.getKey().getMeasurementUnit() +")" + ", Value = " + entry.getValue().getValue() + " \n ";
+		    str += entry.getKey().toString()+ ":" + entry.getValue().toString() +",";
+		}
+		return "--"+this.name+"--"+"{" + str + "}";
 	}
 
 	

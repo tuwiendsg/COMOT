@@ -19,15 +19,20 @@ package at.ac.tuwien.dsg.elise.concepts;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
+import org.springframework.data.neo4j.fieldaccess.DynamicProperties;
+import org.springframework.data.neo4j.fieldaccess.DynamicPropertiesContainer;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @NodeEntity
-@TypeAlias("Entity")
+@TypeAlias("ServiceEntity")
 public class ServiceEntity implements Serializable {
 	private static final long serialVersionUID = 1350185319207049973L;
 
@@ -40,16 +45,17 @@ public class ServiceEntity implements Serializable {
     @Indexed
     public String type;
     
+    @Indexed
+    public ServiceContext context;
+    
     public Set<PrimitiveOperation> primitiveOperations= new HashSet<PrimitiveOperation>();
     
-
-//    @RelatedTo(type=LinkType.ENTITY_LINK, direction=Direction.BOTH)
-//    @Fetch
-//    @JsonIgnore
-//    public Set<Entity> relatedNodes;
-
-   
-
+    public DynamicProperties metaData = new DynamicPropertiesContainer();
+    
+    public enum ServiceContext{
+    	DEFINITION, TEMPLATE, INSTANCE
+    }
+    
     public ServiceEntity() {
     }
    
@@ -62,6 +68,18 @@ public class ServiceEntity implements Serializable {
         this.name = name;
     }
     
+    public void addMetaData(String key, Object value){
+    	metaData.setProperty(key, value);
+    }
+    
+    public void getMetaData(String key, Object value){
+    	metaData.getProperty(key, value);
+    }
+    
+    @JsonIgnore
+    public Map<String, Object> getMetaDataAsMap(){
+    	return metaData.asMap();
+    }
 //    
 //    public Long getId() {
 //		return id;
@@ -71,20 +89,20 @@ public class ServiceEntity implements Serializable {
 //		this.id = id;
 //	}
 
-//	public final String getName() {
-//        return name;
-//    }
+	public final String getName() {
+        return name;
+    }
 
     public final void setName(String name) {
         this.name = name;
     }
    
-//    public String getType() {
-//    	if (type==null){
-//    		type = "Entity";
-//    	}
-//		return type;
-//	}
+    public String getType() {
+    	if (type==null){
+    		type = "Entity";
+    	}
+		return type;
+	}
 
 //	public void setType(String type) {
 //		this.type = type;

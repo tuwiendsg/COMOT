@@ -8,6 +8,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
+import org.neo4j.cypher.internal.compiler.v2_0.functions.Has;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.neo4j.annotation.Fetch;
@@ -18,10 +19,8 @@ import org.springframework.data.neo4j.annotation.RelatedToVia;
 import at.ac.tuwien.dsg.elise.concepts.LinkType;
 import at.ac.tuwien.dsg.elise.concepts.PrimitiveOperation;
 import at.ac.tuwien.dsg.elise.concepts.ServiceEntity;
-import at.ac.tuwien.dsg.elise.concepts.salsa.cloudservicestructure.Links.ServiceUnitDeploymentDependency;
-import at.ac.tuwien.dsg.elise.concepts.salsa.cloudservicestructure.Links.ServiceUnitDeploymentDependency.DependencyRestriction;
-import at.ac.tuwien.dsg.elise.concepts.salsa.cloudservicestructure.Links.ServiceUnitDeploymentDependency.DependencyType;
-import at.ac.tuwien.dsg.elise.concepts.salsa.cloudservicestructure.configurationTypes.ArtifactDefinition;
+import at.ac.tuwien.dsg.elise.concepts.salsa.cloudservicestructure.ServiceUnitDeploymentDependency.DependencyRestriction;
+import at.ac.tuwien.dsg.elise.concepts.salsa.cloudservicestructure.ServiceUnitDeploymentDependency.DependencyType;
 import at.ac.tuwien.dsg.elise.concepts.salsa.cloudservicestructure.enums.ServiceUnitType;
 import at.ac.tuwien.dsg.elise.concepts.sybl.elasticityInformation.ElasticityRequirement;
 
@@ -34,21 +33,24 @@ public class ServiceUnit extends ServiceEntity{
 	
 	{
 		this.type="ServiceUnit";
+		this.context=ServiceEntity.ServiceContext.DEFINITION;
 	}
 	
 	ServiceUnitType serviceUnitType;
-	
-	ArtifactDefinition artifact = new ArtifactDefinition();
-	
+	ArtifactDefinition artifact = new ArtifactDefinition();	
 	Set<String> deploymentCapabilities = new HashSet<String>();
 	
+	// the configuration posible of the service unit.
+	// Context = DEFINITION => set of all possible, TEMPLATE and INITIATION => has only 1 element
+	@RelatedTo(type = LinkType.CLOUD_OFFER_SERVICE_DERIVES_SERVICE_UNIT, direction = Direction.INCOMING)
+	@Fetch
+	Set<ServiceEntity> conjunctionWithCloudConfiguration = new HashSet<ServiceEntity>();
 		
 	/** BELOW IS THE LINK DEFINITION **/
 	
 	// The set of links
 	@RelatedToVia(type = LinkType.SERVICE_UNIT_DEPLOYMENT_DEPENDENCY, direction = Direction.OUTGOING)
 	@Fetch
-	@JsonIgnore
 	Set<ServiceUnitDeploymentDependency> deploymentRequirements = new HashSet<ServiceUnitDeploymentDependency>();	// more complex with type and restriction
 	
 	// The set of related nodes which this node require
@@ -78,6 +80,10 @@ public class ServiceUnit extends ServiceEntity{
 	}
 	
 	public ServiceUnit(){}
+	
+	public ServiceUnit(String name){
+		super(name);
+	}
 	
 	
 	@Deprecated
@@ -129,6 +135,11 @@ public class ServiceUnit extends ServiceEntity{
 		this.deploymentCapabilities = deploymentCapabilities;
 	}
 
+	@Override
+	public String toString() {
+		return "ServiceUnit [serviceUnitType=" + serviceUnitType + ", artifact=" + artifact + ", deploymentCapabilities=" + deploymentCapabilities + ", deploymentRequirements=" + deploymentRequirements + ", requiredServiceunits=" + requiredServiceunits + ", dependentDeployment=" + dependentDeployment + ", elasticityRequirement=" + elasticityRequirement + "]";
+	}
+
 //	public Set<ServiceUnitRequirement> getDeploymentRequirements() {
 //		return deploymentRequirements;
 //	}
@@ -144,6 +155,9 @@ public class ServiceUnit extends ServiceEntity{
 //	public void setRelatedServiceunits(Set<ServiceUnit> relatedServiceunits) {
 //		this.relatedServiceunits = relatedServiceunits;
 //	}
+	
+	
+	
 	
 	
 		

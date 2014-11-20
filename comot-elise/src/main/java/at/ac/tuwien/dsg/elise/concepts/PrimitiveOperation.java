@@ -1,20 +1,21 @@
 package at.ac.tuwien.dsg.elise.concepts;
 
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
 @NodeEntity
+@TypeAlias("PrimitiveOperation")
 public class PrimitiveOperation {
 	@GraphId Long id;
-	String name;
+	@Indexed String name;
 	// for performing the operation
 	ExecutionType executionType = ExecutionType.SCRIPT;
 	String executionREF = "/bin/date";
 	String executionParameter = "";
 	String executionOutput = "";
-	
-	
-		
+			
 	public enum ExecutionType{
 		SCRIPT, RESTful, SALSA_CONNECTOR;
 	}

@@ -22,17 +22,13 @@ import java.util.Set;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.neo4j.annotation.Fetch;
+import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
-import org.springframework.data.neo4j.annotation.RelatedToVia;
 
 import at.ac.tuwien.dsg.elise.concepts.LinkType;
 import at.ac.tuwien.dsg.elise.concepts.ServiceEntity;
-import at.ac.tuwien.dsg.elise.concepts.mela.cloudOfferedServices.Links.HasQuality;
-import at.ac.tuwien.dsg.elise.concepts.mela.cloudOfferedServices.Links.HasResource;
 import at.ac.tuwien.dsg.elise.concepts.salsa.cloudservicestructure.ServiceUnit;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 
@@ -49,55 +45,26 @@ public class CloudOfferedServiceUnit extends ServiceEntity{
 
 	@RelatedTo(type = LinkType.CLOUD_OFFER_SERVICE_BELONGS_TO_PROVIDER, direction=Direction.OUTGOING)
 	@Fetch
+	@Indexed
 	CloudProvider provider;
 	
-	String serviceName;
-
-//	@RelatedToVia(type = LinkType.CLOUD_OFFER_SERVICE_BELONGS_TO_PROVIDER, direction=Direction.OUTGOING)
-//	@Fetch
-//	@JsonIgnore
-//	BelongToProvider belongToProvider;
 	
+	String serviceName;
+	@Indexed
     private String category;
+	@Indexed
     private String subcategory;
+    private Set<Resource> resources;
     
-    @RelatedTo(type = LinkType.CLOUD_OFFER_SERVICE_HAS_RESOURCE, direction=Direction.OUTGOING)
-    @Fetch
-    @JsonIgnore
-    private Set<ResourceType> resourceType;
-    
-    @RelatedToVia(type = LinkType.CLOUD_OFFER_SERVICE_HAS_RESOURCE, direction=Direction.OUTGOING)
-    @Fetch
-    private Set<HasResource> resourceProperties;
-    
-//    @RelatedTo(type = LinkType.CLOUD_OFFER_SERVICE_HAS_COSTFUNCTION, direction=Direction.OUTGOING)
-//    @Fetch
-//    @JsonIgnore
-//    private Set<CostFunction> costFunctions;
-//
-//    @RelatedTo(type = LinkType.CLOUD_OFFER_SERVICE_HAS_QUALITY, direction=Direction.OUTGOING)
-//    @Fetch
-//    @JsonIgnore
-//    private Set<QualityType> qualityType;
-//    
-//    @RelatedToVia(type = LinkType.CLOUD_OFFER_SERVICE_HAS_QUALITY, direction=Direction.OUTGOING)
-//    @Fetch
-//    @JsonIgnore
-//    private Set<HasQuality> qualityProperties;
-//
     // holds dynamic properties , i.e. elasticity capabilities, something you can change
-    @RelatedTo(type = LinkType.CLOUD_OFFER_SERVICE_HAS_ELASTICICY_CAPA, direction=Direction.OUTGOING)
-    @Fetch
-	@JsonIgnore
     private Set<ElasticityCapability> elasticityCapabilities;
     
     @RelatedTo(type = LinkType.CLOUD_OFFER_SERVICE_DERIVES_SERVICE_UNIT, direction=Direction.OUTGOING)
 	@Fetch
-	@JsonIgnore
     private Set<ServiceUnit> derivedServiceUnit;
     
     {    	
-        resourceProperties = new HashSet<HasResource>();
+        resources = new HashSet<Resource>();
     	this.type="CloudOfferedService";
     	
     }
@@ -152,8 +119,8 @@ public class CloudOfferedServiceUnit extends ServiceEntity{
 	}
 
 
-    public void setResourceProperties(Set<HasResource> resourceProperties) {
-        this.resourceProperties = resourceProperties;
+    public void setResourceProperties(Set<Resource> resourceProperties) {
+        this.resources = resourceProperties;
     }
 
 //    public void setQualityProperties(Set<HasQuality> qualityProperties) {
@@ -163,8 +130,8 @@ public class CloudOfferedServiceUnit extends ServiceEntity{
 
     
     
-    public void addResourceProperty(HasResource resource) {    	
-        resourceProperties.add(resource);
+    public void addResourceProperty(Resource resource) {    	
+        resources.add(resource);
     }
 
     public String getCategory() {
@@ -175,8 +142,8 @@ public class CloudOfferedServiceUnit extends ServiceEntity{
 		return subcategory;
 	}
 
-	public void removeResourceProperty(HasResource resource) {
-        resourceProperties.remove(resource);
+	public void removeResourceProperty(Resource resource) {
+        resources.remove(resource);
     }
 
 //    public void addQualityProperty(HasQuality quality) {
@@ -187,9 +154,9 @@ public class CloudOfferedServiceUnit extends ServiceEntity{
 //        qualityProperties.remove(quality);
 //    }
     
-    @JsonIgnore
-    public Set<HasResource> getResourceProperties() {
-        return resourceProperties;
+
+    public Set<Resource> getResourceProperties() {
+        return resources;
     }
 
 //    @JsonIgnore
