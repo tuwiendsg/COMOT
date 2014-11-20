@@ -170,15 +170,15 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
         ServiceTopology localProcessinTopology = ServiceTopology("Gateway")
                 .withServiceUnits(mqttQueueVM, mqttUnit, localProcessingUnit, localProcessingVM
                 );
-        localProcessinTopology.
+        localProcessingUnit.
                 controlledBy(Strategy("LPT_ST1").when(Constraint.MetricConstraint("LPT_ST1_CO1", new Metric("avgBufferSize", "#")).lessThan("50"))
                         .then(Strategy.Action.ScaleIn));
 
-        localProcessingUnit.constrainedBy(Constraint.MetricConstraint("LPT_CO1", new Metric("avgBufferSize", "#")).lessThan("100"));
+        localProcessingUnit.constrainedBy(Constraint.MetricConstraint("LPT_CO1", new Metric("avgBufferSize", "#")).lessThan("200"));
 
         //TODO: de verificat de ce nu converteste ok daca pun si constraints si strategies pe topology
         eventProcessingTopology.constrainedBy(
-                Constraint.MetricConstraint("EPT_CO1", new Metric("responseTime", "ms")).lessThan("30"));
+                Constraint.MetricConstraint("EPT_CO1", new Metric("responseTime", "ms")).lessThan("20"));
 
         // elasticity capabilities
         dataNodeUnit.provides(
@@ -286,7 +286,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
         );
 
         //describe the service template which will hold more topologies
-        CloudService serviceTemplate = ServiceTemplate("ElasticIoT")
+        CloudService serviceTemplate = ServiceTemplate("ElasticIoTPlatform")
                 .consistsOfTopologies(dataEndTopology)
                 .consistsOfTopologies(eventProcessingTopology)
                 .consistsOfTopologies(localProcessinTopology)
@@ -359,20 +359,16 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 //                .withRsyblIP("109.231.121.26")
                 //                .withRsyblIP("localhost")
                 //                                .withRsyblIP("109.231.121.104")
-                //                .withRsyblIP("128.130.172.214")
-                .withRsyblIP("128.131.172.4118")
-                //                .withRsyblPort(8280);
-                .withRsyblPort(8080);
+                                .withRsyblIP("128.130.172.214")
+//                .withRsyblIP("128.131.172.4118")
+                                .withRsyblPort(8280);
+//                .withRsyblPort(8080);
 
         //deploy, monitor and control
-//        orchestrator.deployAndControl(serviceTemplate);
+        orchestrator.deployAndControl(serviceTemplate);
 //        orchestrator.deploy(serviceTemplate);
 //        orchestrator.controlExisting(serviceTemplate);
-//        orchestrator.controlExisting(serviceTemplate);
         
-        rSYBLInterraction i = new rSYBLInterraction();
-        String cap = i.capabilitiesToJSON(serviceTemplate);
-        System.out.println(cap);
 
     }
 }

@@ -12,6 +12,27 @@
             </Operation>
         </CompositionRule>
         <CompositionRule TargetMonitoredElementLevel="SERVICE_UNIT">
+            <ResultingMetric type="RESOURCE" measurementUnit="#" name="avgPendingRequests"/>
+            <Operation MetricSourceMonitoredElementLevel="VM" type="AVG">
+                <ReferenceMetric type="RESOURCE" name="pendingRequests"/>
+            </Operation>
+        </CompositionRule>
+        
+        <CompositionRule TargetMonitoredElementLevel="SERVICE_UNIT">
+            <ResultingMetric type="RESOURCE" measurementUnit="#" name="connectionRate"/>
+            <Operation MetricSourceMonitoredElementLevel="VM" type="KEEP">
+                <ReferenceMetric type="RESOURCE" name="connectionRate"/>
+            </Operation>
+        </CompositionRule>
+        
+        <CompositionRule TargetMonitoredElementLevel="SERVICE_UNIT">
+            <ResultingMetric type="RESOURCE" measurementUnit="#" name="totalPendingRequests"/>
+            <Operation MetricSourceMonitoredElementLevel="VM" type="SUM">
+                <ReferenceMetric type="RESOURCE" name="pendingRequests"/>
+            </Operation>
+        </CompositionRule>
+        
+        <CompositionRule TargetMonitoredElementLevel="SERVICE_UNIT">
             <TargetMonitoredElementID>LocalProcessingUnit</TargetMonitoredElementID>
             <ResultingMetric type="RESOURCE" measurementUnit="#" name="avgBufferSize"/>
             <Operation MetricSourceMonitoredElementLevel="VM" type="AVG">
@@ -32,6 +53,13 @@
             <Operation MetricSourceMonitoredElementLevel="SERVICE_UNIT" type="KEEP">
                 <ReferenceMetric type="RESOURCE" measurementUnit="no" name="avgBufferSize"/>
                 <SourceMonitoredElementID>LocalProcessingUnit</SourceMonitoredElementID>
+            </Operation>
+        </CompositionRule>
+        
+        <CompositionRule TargetMonitoredElementLevel="SERVICE_TOPOLOGY">
+            <ResultingMetric type="RESOURCE" measurementUnit="#" name="avgPendingRequests"/>
+            <Operation MetricSourceMonitoredElementLevel="SERVICE_UNIT" type="KEEP">
+                <ReferenceMetric type="RESOURCE" measurementUnit="no" name="avgPendingRequests"/>
             </Operation>
         </CompositionRule>
         
@@ -197,13 +225,13 @@
         </CompositionRule>
 
         <CompositionRule TargetMonitoredElementLevel="VM">
-            <ResultingMetric type="RESOURCE" measurementUnit="ms" name="numberOfVMs"/>
+            <ResultingMetric type="RESOURCE" measurementUnit="#" name="numberOfVMs"/>
             <Operation value="1" type="SET_VALUE"/>
         </CompositionRule>
 
  
         <CompositionRule TargetMonitoredElementLevel="SERVICE_UNIT">
-            <ResultingMetric type="RESOURCE" measurementUnit="ms" name="numberOfVMs"/>
+            <ResultingMetric type="RESOURCE" measurementUnit="#" name="numberOfVMs"/>
             <Operation MetricSourceMonitoredElementLevel="VM" type="SUM">
                 <ReferenceMetric type="RESOURCE" name="numberOfVMs"/>
             </Operation>

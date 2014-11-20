@@ -540,6 +540,7 @@ public class rSYBLInterraction {
 
             List<ServiceUnitXML> serviceUnitXMLs = new ArrayList<>();
             serviceTopologyXML.setServiceUnits(serviceUnitXMLs);
+            SYBLAnnotationXML topologyAnnotationXML = new SYBLAnnotationXML();
 
             for (ServiceUnit serviceUnit : serviceTopology.getServiceUnits()) {
                 if (!serviceUnit.getType().equals(ServiceUnit.NodeType.Software.toString())) {
@@ -551,6 +552,9 @@ public class rSYBLInterraction {
                 serviceUnitXML.setId(serviceUnitID);
 
                 serviceUnitXMLs.add(serviceUnitXML);
+
+                SYBLAnnotationXML annotationXML = new SYBLAnnotationXML();
+
 //
 //                if (toFromRelationships.containsKey(serviceUnitID)) {
 //                    RelationshipXML relationshipXML = new RelationshipXML();
@@ -560,7 +564,6 @@ public class rSYBLInterraction {
 //
 //                    serviceTopologyXML.addRelationship(relationshipXML);
 //                }
-
                 if (serviceUnit.hasConstraints()) {
 
                     String costraints = "";
@@ -572,12 +575,10 @@ public class rSYBLInterraction {
                                 + constraint.getValue() + " " + constraint.getMetric().getUnit() + ";";
 
                     }
-                    SYBLAnnotationXML annotationXML = new SYBLAnnotationXML();
 
                     costraints = costraints.replaceAll("  ", " ");
-                    annotationXML.setConstraints(costraints.trim());
+                    annotationXML.setConstraints(annotationXML.getConstraints() + costraints.trim());
 
-                    serviceUnitXML.setXMLAnnotation(annotationXML);
                 }
 
                 if (serviceUnit.hasStrategies()) {
@@ -599,13 +600,17 @@ public class rSYBLInterraction {
                         }
 
                         costraints = costraints.trim();
-                        strategies = strategy.getId() + ":STRATEGY CASE " + costraints + ":" + strategy.getAction().toString() + ";";
+                        strategies += strategy.getId() + ":STRATEGY CASE " + costraints + ":" + strategy.getAction().toString() + ";";
 
                     }
-                    SYBLAnnotationXML annotationXML = new SYBLAnnotationXML();
-                    strategies = strategies.replaceAll("  ", " ");
-                    annotationXML.setStrategies(strategies);
 
+                    strategies = strategies.replaceAll("  ", " ");
+
+                    annotationXML.setStrategies(annotationXML.getStrategies() + strategies.trim());
+
+                }
+
+                if (!annotationXML.getConstraints().isEmpty() || !annotationXML.getStrategies().isEmpty()) {
                     serviceUnitXML.setXMLAnnotation(annotationXML);
                 }
 
@@ -619,12 +624,10 @@ public class rSYBLInterraction {
                     costraints += constraint.getId() + ":CONSTRAINT " + constraint.getMetric().getName()
                             + " " + constraint.getOperator().toString() + " " + constraint.getValue() + " " + constraint.getMetric().getUnit() + ";";
                 }
-                SYBLAnnotationXML annotationXML = new SYBLAnnotationXML();
 
                 costraints = costraints.replaceAll("  ", " ");
-                annotationXML.setConstraints(costraints.trim());
+                topologyAnnotationXML.setConstraints(topologyAnnotationXML.getConstraints() + costraints.trim());
 
-                serviceTopologyXML.setXMLAnnotation(annotationXML);
             }
 
             if (serviceTopology.hasStrategies()) {
@@ -648,13 +651,14 @@ public class rSYBLInterraction {
                     strategies += strategy.getId() + ":STRATEGY CASE " + costraints + ":" + strategy.getAction().toString() + ";";
 
                 }
-                SYBLAnnotationXML annotationXML = new SYBLAnnotationXML();
 
                 strategies = strategies.replaceAll("  ", " ");
 
-                annotationXML.setStrategies(strategies.trim());
+                topologyAnnotationXML.setStrategies(topologyAnnotationXML.getStrategies() + strategies.trim());
+            }
 
-                serviceTopologyXML.setXMLAnnotation(annotationXML);
+            if (!topologyAnnotationXML.getConstraints().isEmpty() || !topologyAnnotationXML.getStrategies().isEmpty()) {
+                serviceTopologyXML.setXMLAnnotation(topologyAnnotationXML);
             }
 
         }
