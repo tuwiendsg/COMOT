@@ -18,6 +18,12 @@ public final class CommonOperatingSystemSpecification {
 //900003750 w1.medium
 //900007680 w1.large
 //900015360 w1.xlarge
+    public static OperatingSystemSpecification DockerDefault(String id) {
+        return new OperatingSystemSpecification(id)
+                .withProvider("localhost")
+                .withInstanceType("000000512") //.withInstanceType("m1.small")
+                .withBaseImage("8f1428ac-f239-42e0-ab35-137f6e234101"); //.withBaseImage("ami-00000163");
+    }
     public static OperatingSystemSpecification OpenstackTiny(String id) {
         return new OperatingSystemSpecification(id)
                 .withProvider("dsg@openstack")

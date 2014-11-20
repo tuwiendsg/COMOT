@@ -19,7 +19,9 @@ public class ServiceUnit extends AbstractServiceDescriptionEntity {
 
     public enum NodeType {
 
-        OperatingSystem("os"), Software("software");
+        OperatingSystem("os"), 
+        Docker("docker"),
+        Software("software");
 
         final String type;
 
