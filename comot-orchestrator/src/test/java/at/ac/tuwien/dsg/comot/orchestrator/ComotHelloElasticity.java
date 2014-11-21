@@ -1,27 +1,30 @@
 package at.ac.tuwien.dsg.comot.orchestrator;
 
 import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifactTemplate;
-import at.ac.tuwien.dsg.comot.common.model.Capability;
 import static at.ac.tuwien.dsg.comot.common.model.CapabilityEffect.CapabilityEffect;
-import static at.ac.tuwien.dsg.comot.common.model.MetricEffect.MetricEffect;
-import at.ac.tuwien.dsg.comot.common.model.Constraint;
-import at.ac.tuwien.dsg.comot.common.model.Constraint.Metric;
-import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.ConnectToRelation;
-import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.HostedOnRelation;
-import at.ac.tuwien.dsg.comot.common.model.Requirement;
-import at.ac.tuwien.dsg.comot.common.model.CloudService;
 import static at.ac.tuwien.dsg.comot.common.model.CloudService.ServiceTemplate;
 import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.DockerDefault;
-import at.ac.tuwien.dsg.comot.common.model.DockerUnit;
 import static at.ac.tuwien.dsg.comot.common.model.DockerUnit.DockerUnit;
+import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.ConnectToRelation;
+import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.HostedOnRelation;
+import static at.ac.tuwien.dsg.comot.common.model.MetricEffect.MetricEffect;
+import static at.ac.tuwien.dsg.comot.common.model.ServiceTopology.ServiceTopology;
+import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.SingleSoftwareUnit;
+import static at.ac.tuwien.dsg.comot.common.model.Strategy.Strategy;
+import at.ac.tuwien.dsg.comot.common.model.Capability;
+import at.ac.tuwien.dsg.comot.common.model.CloudService;
+import at.ac.tuwien.dsg.comot.common.model.Constraint;
+import at.ac.tuwien.dsg.comot.common.model.Constraint.Metric;
+import at.ac.tuwien.dsg.comot.common.model.DockerUnit;
 import at.ac.tuwien.dsg.comot.common.model.ElasticityCapability;
 import at.ac.tuwien.dsg.comot.common.model.MetricEffect;
+import at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit;
+import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingSystemUnit;
+import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackSmall;
+import at.ac.tuwien.dsg.comot.common.model.Requirement;
 import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
-import static at.ac.tuwien.dsg.comot.common.model.ServiceTopology.ServiceTopology;
 import at.ac.tuwien.dsg.comot.common.model.ServiceUnit;
-import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.SingleSoftwareUnit;
 import at.ac.tuwien.dsg.comot.common.model.Strategy;
-import static at.ac.tuwien.dsg.comot.common.model.Strategy.Strategy;
 import at.ac.tuwien.dsg.orchestrator.interraction.COMOTOrchestrator;
 
 /**
@@ -36,17 +39,23 @@ public class ComotHelloElasticity {
         String salsaRepo = "http://128.130.172.215/repository/files/HelloElasticity/";
          
 
-        //finally, we define Vm types for event processing
-        DockerUnit loadbalancerVM = DockerUnit("LoadBalancerUnitVM")
-                .providedBy(DockerDefault("OpenStackSmall_OS_LB")
-                        .addSoftwarePackage("openjdk-7-jre")
-                        .addSoftwarePackage("ganglia-monitor")
-                        .addSoftwarePackage("gmetad")
-                );
+        //then, we define Docker types for event processing
+        DockerUnit loadbalancerDocker = DockerUnit("LoadBalancerUnitDocker")
+                .providedBy(DockerDefault("DockerDefault_LB")
+        		.addSoftwarePackage("ganglia-monitor")
+                .addSoftwarePackage("gmetad")
+                ).withMaxInstances(Integer.MAX_VALUE);
 
-        DockerUnit eventProcessingVM = DockerUnit("EventProcessingUnitVM")
-                .providedBy(DockerDefault("OpenStackMicro_OS_EP")
-                        .withBaseImage("be6ae07b-7deb-4926-bfd7-b11afe228d6a")
+        DockerUnit eventProcessingDocker = DockerUnit("EventProcessingUnitDocker")
+                .providedBy(DockerDefault("DockerDefault_EP")
+        		.addSoftwarePackage("ganglia-monitor")
+                .addSoftwarePackage("gmetad")
+                ).withMaxInstances(Integer.MAX_VALUE);
+        
+        //finally, we define Vm types for docker of event processing
+        OperatingSystemUnit eventProcessingVM = OperatingSystemUnit("EventProcessingUnitVM")
+                .providedBy(OpenstackSmall("OpenStackMicro_OS_EP")
+                        .withBaseImage("7ac2cc53-2301-40d7-a030-910d72f552ff")
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
                         .addSoftwarePackage("gmetad")
@@ -69,7 +78,8 @@ public class ComotHelloElasticity {
                         .when(Constraint.MetricConstraint("EP_ST1_CO1", new Metric("responseTime", "ms")).greaterThan("1000"))
                         .and(Constraint.MetricConstraint("EP_ST1_CO2", new Metric("totalPendingRequests", "#")).greaterThan("10"))
                         .then(Strategy.Action.ScaleOut)
-                ).withMinInstances(2);
+                ).withMinInstances(2)
+                .withMaxInstances(1);
 
         //add the service units belonging to the event processing topology
         ServiceUnit loadbalancerUnit = SingleSoftwareUnit("LoadBalancerUnit")
@@ -85,7 +95,8 @@ public class ComotHelloElasticity {
         //define event processing unit topology
         ServiceTopology eventProcessingTopology = ServiceTopology("EventProcessingTopology")
                 .withServiceUnits(loadbalancerUnit, eventProcessingUnit //add vm types to topology
-                        , loadbalancerVM, eventProcessingVM
+                		, loadbalancerDocker, eventProcessingDocker
+                        , eventProcessingVM
                 );
 
         //TODO: de verificat de ce nu converteste ok daca pun si constraints si strategies pe topology
@@ -146,14 +157,20 @@ public class ComotHelloElasticity {
                 .andRelationships(
                         //event processing gets IP from load balancer
                         ConnectToRelation("eventProcessingToLoadBalancer")
-                        .from(loadbalancerUnit.getContext().get("LoadBalancer_IP_information"))
-                        .to(eventProcessingUnit.getContext().get("EventProcessingUnit_LoadBalancer_IP_Req")) //specify which software unit goes to which VM
-                        , HostedOnRelation("loadbalancerToVM")
-                        .from(loadbalancerUnit)
-                        .to(loadbalancerVM),
-                        HostedOnRelation("eventProcessingToVM")
-                        .from(eventProcessingUnit)
-                        .to(eventProcessingVM)
+                        	.from(loadbalancerUnit.getContext().get("LoadBalancer_IP_information"))
+                        	.to(eventProcessingUnit.getContext().get("EventProcessingUnit_LoadBalancer_IP_Req")), //specify which software unit goes to which VM
+                        HostedOnRelation("loadbalancerToDocker")
+	                        .from(loadbalancerUnit)
+	                        .to(loadbalancerDocker),
+                        HostedOnRelation("loadbalancerDockerToVM")
+                        	.from(loadbalancerDocker)
+                        	.to(eventProcessingVM),
+                        HostedOnRelation("eventProcessingToDocker")
+                        	.from(eventProcessingUnit)
+                        	.to(eventProcessingDocker),
+                        HostedOnRelation("eventProcessingDockerToVM")
+                        	.from(eventProcessingDocker)
+                        	.to(eventProcessingVM)
                 )
                 // as we have horizontally scalable distributed systems (one service unit can have more instances)
                 //metrics must be aggregated among VMs
@@ -179,7 +196,8 @@ public class ComotHelloElasticity {
 //                .withRsyblPort(8080);
 
         //deploy, monitor and control
-//        orchestrator.deployAndControl(serviceTemplate);
+//        orchestrator.deployAndControl(serviceTemplate);       
+        
         orchestrator.deploy(serviceTemplate);
 //        orchestrator.controlExisting(serviceTemplate);
 

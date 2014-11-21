@@ -115,11 +115,12 @@
             </exclusions>
             <type>jar</type>
         </dependency>
-        <dependency>   
-       
+        <dependency>       
             <groupId>at.ac.tuwien.rSYBL.control-service</groupId>
             <artifactId>rSYBL-cloud-application-dependency-graph</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <scope>system</scope>
+			<systemPath>${project.basedir}/lib/rSYBL-cloud-application-dependency-graph-1.0-SNAPSHOT.jar</systemPath>
         </dependency>
 
 
