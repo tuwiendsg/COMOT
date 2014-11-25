@@ -18,7 +18,8 @@ import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityT
 import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
-import at.ac.tuwien.dsg.comot.common.test.TestUtils;
+import at.ac.tuwien.dsg.comot.common.test.UtilsTest;
+import at.ac.tuwien.dsg.comot.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.cs.connector.SalsaClient;
 import at.ac.tuwien.dsg.comot.cs.test.AbstractTest;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
@@ -35,7 +36,7 @@ public class SalsaClientTest extends AbstractTest {
 
 	@Before
 	public void setup() throws IOException {
-		xmlTosca = TestUtils.loadFile("./xml/ExampleDeployOneVM.xml");
+		xmlTosca = UtilsTest.loadFile("./xml/ExampleDeployOneVM.xml");
 	}
 
 	@Test
@@ -131,23 +132,23 @@ public class SalsaClientTest extends AbstractTest {
 
 	@Test
 	public void testStatus() throws CoreServiceException, JAXBException, ComotException {
-		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService serviceInfo = salsa.getStatus("aaaa");
+		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService serviceInfo = salsa.getStatus("tomcat_comot_id");
 
-		log.info(Utils.asXmlString(serviceInfo));
+		log.info(UtilsCs.asString(serviceInfo));
 	}
 
 	@Test
 	public void testDeploymentDescription() throws CoreServiceException, JAXBException {
 		DeploymentDescription descr = salsa.getServiceDeploymentInfo("aaaa");
 
-		log.info(Utils.asXmlString(descr));
+		log.info(UtilsCs.asString(descr));
 	}
 
 	@Test
 	public void testGetTosca() throws CoreServiceException, JAXBException, ComotException {
 		Definitions def = salsa.getTosca("aaaa");
 
-		log.info(Utils.asXmlString(def));
+		log.info(UtilsCs.asString(def));
 	}
 
 	@Test
@@ -165,4 +166,9 @@ public class SalsaClientTest extends AbstractTest {
 		salsa.destroy(SERVICE_ID, TOPOLOGY_ID, NODE_ID, 1);
 	}
 
+	@Test
+	public void testGetAllServices() throws CoreServiceException, JAXBException, ComotException {
+		String def = salsa.getServices();
+		log.info(def);
+	}
 }

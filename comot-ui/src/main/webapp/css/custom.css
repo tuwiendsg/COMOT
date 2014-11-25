@@ -1,11 +1,33 @@
 .node circle {
 	fill: #fff;
+	stroke: #00ff80;
+	stroke-width: 10px;
+}
+
+.node rect {
+	fill: #fff;
 	stroke: steelblue;
-	stroke-width: 3px;
+	stroke-width: 2px;
 }
 
 .node text {
-	font: 12px sans-serif;
+	font-size: 10px;
+}
+
+.bold {
+	font-weight: bold
+}
+
+.svg_ok {
+	fill: #287021;
+}
+
+.svg_warn {
+	fill: #f0ad4e;
+}
+
+.svg_error {
+	fill: #d9534f;
 }
 
 .link {

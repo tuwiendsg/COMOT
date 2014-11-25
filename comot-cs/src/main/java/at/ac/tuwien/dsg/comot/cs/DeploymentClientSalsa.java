@@ -5,12 +5,14 @@ import java.io.IOException;
 import javax.annotation.PreDestroy;
 import javax.xml.bind.JAXBException;
 
+import org.oasis.tosca.Definitions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityState;
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityType;
+import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
@@ -18,7 +20,6 @@ import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.cs.connector.SalsaClient;
 import at.ac.tuwien.dsg.comot.cs.mapper.DeploymentMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.ToscaMapper;
-import at.ac.tuwien.dsg.comot.cs.mapper.UtilsMapper;
 
 public class DeploymentClientSalsa implements DeploymentClient {
 
@@ -32,17 +33,27 @@ public class DeploymentClientSalsa implements DeploymentClient {
 	protected DeploymentMapper mapperDepl;
 
 	@Override
-	public String deploy(CloudService cloudService) throws CoreServiceException, ComotException {
+	public CloudService deploy(CloudService service) throws CoreServiceException, ComotException {
 
 		String toscaDescriptionXml;
+		
+		if (service == null) {
+			log.warn("deploy(service=null )");
+			return null;
+		}
 
 		try {
-			toscaDescriptionXml = UtilsMapper.asString(mapperTosca.extractTosca(cloudService));
+			toscaDescriptionXml = UtilsCs.asString(mapperTosca.extractTosca(service));
 		} catch (JAXBException e) {
 			throw new ComotException("Failed to marshall TOSCA into XML ", e);
 		}
 
-		return salsa.deploy(toscaDescriptionXml);
+		salsa.deploy(toscaDescriptionXml);
+
+		Definitions def = salsa.getTosca(service.getId());
+		CloudService deployedService = mapperTosca.createModel(def);
+		
+		return deployedService;
 	}
 
 	@Override
@@ -62,14 +73,22 @@ public class DeploymentClientSalsa implements DeploymentClient {
 	}
 
 	@Override
-	public CloudService getStatus(CloudService service)
+	public CloudService getService(String serviceId) throws CoreServiceException, ComotException {
+
+		Definitions definitions = salsa.getTosca(serviceId);
+
+		return mapperTosca.createModel(definitions);
+	}
+
+	@Override
+	public CloudService refreshStatus(CloudService service)
 			throws CoreServiceException, ComotException {
 
 		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService status = salsa.getStatus(service.getId());
 
 		CloudService copy;
 		try {
-			copy = (CloudService) UtilsMapper.deepCopy(service);
+			copy = (CloudService) Utils.deepCopy(service);
 		} catch (ClassNotFoundException | IOException e) {
 			throw new ComotException("Failed to deep-copy CloudService id=" + service.getId(), e);
 		}
@@ -107,11 +126,6 @@ public class DeploymentClientSalsa implements DeploymentClient {
 		return running;
 	}
 
-	// TODO only temporary
-	@Override
-	public String getStatusGui(String serviceId) throws CoreServiceException {
-		return salsa.getStatusGui(serviceId);
-	}
 
 	@PreDestroy
 	public void cleanup() {

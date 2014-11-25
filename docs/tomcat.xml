@@ -11,9 +11,7 @@
 
 	<tosca:ServiceTemplate id="SampleService_test">
 		<tosca:TopologyTemplate>
-			<tosca:NodeTemplate id="policeApp"
-				name="policeApp" type="salsa:war"
-				minInstances="1" maxInstances="1">			
+			<tosca:NodeTemplate id="policeApp" name="policeApp" type="salsa:war" minInstances="1" maxInstances="1">			
 
 				<tosca:Properties>
 					<MappingProperties>		

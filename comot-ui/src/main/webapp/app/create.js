@@ -1,5 +1,5 @@
 define(function(require) {
-	var app = require('durandal/app'), ko = require('knockout'), http = require('plugins/http');
+	var app = require('durandal/app'), ko = require('knockout'), http = require('plugins/http'), comot = require('comot_client');
 
 	function AppViewModel() {
 
@@ -15,30 +15,24 @@ define(function(require) {
 
 			var desc = this.tosca();
 
-			console.log("tosca: " + desc);
+			console.log("Tosca: " + desc);
 
-			var req = {
-				tosca : this.tosca(),
-				mcr : this.mcr(),
-				elEffects : this.elEffects()
-			};
+			comot.deploy(this.tosca(), function(data) {
+				console.log("ddddddddddddddddddddddddddddddddddddddddd");
+				console.log(data);
+			});
 
-			console.log(req);
-			
-			http.post("rest/service", req).then(function(response) {
-				console.log("aa "+ data);
-			});
-/*
-			$.ajax({
-				type : "POST",
-				url : "../rest/service",
-				data : req,
-				contentType : "application/json",
-				success : function(data) {
-					console.log(data);
-				}
-			});
-			*/
+			// $.ajax({
+			// type : "POST",
+			// url : "rest/services",
+			// data : this.tosca(),
+			// dataType : "xml",
+			// contentType : "application/xml",
+			// success : function(data) {
+			// console.log(data);
+			// }
+			// });
+
 		};
 	}
 

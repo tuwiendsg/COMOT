@@ -1,0 +1,56 @@
+<div class="container">
+
+	<h3>Managed services</h3>
+	<div>&nbsp;</div>
+	<h4>Overview</h4>
+
+	<table class="table table-hover">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>ID</th>
+				<th>Name</th>
+				<th colspan="2">Structure</th>
+				<th colspan="2">Monitoring</th>
+				<th colspan="2">Control</th>
+			</tr>
+		</thead>
+		<tbody data-bind="foreach: services">
+			<tr
+				data-bind="click: function() { $parent.assignSelected(id()) }, css: {active : $parent.selectedServiceId() == id()}"
+				data-toggle="tooltip" title="Click for details">
+				<td data-bind="text: ($index() + 1)"></td>
+				<td data-bind="text: id"></td>
+				<td data-bind="text: name"></td>
+				<td><button type="button" class="btn btn-default"
+						data-bind="click: $parent.deployment, text: deployment() ? 'On' : 'Off',  css: { active: deployment()}"></button></td>
+				<td></td>
+				<td><button type="button" class="btn btn-default"
+						data-bind="click: $parent.switchMonitoring, text: monitoring() ? 'On' : 'Off',  css: { active: monitoring()}"></button></td>
+				<td></td>
+				<td><button type="button" class="btn btn-default"
+						data-bind="click: $parent.switchControl, text: control() ? 'On' : 'Off',  css: { active: control()}"></button></td>
+				<td></td>
+			</tr>
+		</tbody>
+	</table>
+
+
+	<h4>
+		Details: <span data-bind="text: selectedServiceId()"></span>
+	</h4>
+
+	<div role="tabpanel">
+		<!-- Nav tabs -->
+		<ul class="nav nav-tabs" role="tablist" data-bind="foreach: router.navigationModel()">
+			<li role="presentation" data-bind="css: { active: isActive }"><a role="tab" data-toggle="tab"
+				data-bind="attr: { href: '#manage/'+hash+'/'+$parent.selectedServiceId() }, text: title"></a></li>
+		</ul>
+		<!-- Tab panes -->
+		<div class="tab-content">
+			<div>&nbsp;</div>
+			<div role="tabpanel" class="tab-pane active" data-bind="router: { cacheViews: false }"></div>
+		</div>
+	</div>
+
+</div>

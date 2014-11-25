@@ -1,5 +1,10 @@
 package at.ac.tuwien.dsg.comot.common;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,5 +65,29 @@ public class Utils {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		return gson.toJson(obj);
 
+	}
+
+	static public Object deepCopy(Object oldObj) throws IOException, ClassNotFoundException {
+
+		ObjectOutputStream oos = null;
+		ObjectInputStream ois = null;
+
+		try {
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+			oos = new ObjectOutputStream(bos);
+			oos.writeObject(oldObj);
+			oos.flush();
+
+			ois = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
+
+			return ois.readObject();
+
+		} finally {
+			if (oos != null)
+				oos.close();
+			if (ois != null)
+				ois.close();
+		}
 	}
 }

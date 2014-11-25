@@ -26,16 +26,25 @@ public class MonitoringClientMela implements MonitoringClient {
 	protected MelaMapper melaMapper;
 
 	@Override
-	public void startMonitoring(CloudService sevice, CompositionRulesConfiguration mcr) throws CoreServiceException {
+	public void startMonitoring(CloudService service, CompositionRulesConfiguration mcr) throws CoreServiceException {
 
-		MonitoredElement element = melaMapper.extractMela(sevice);
-		Requirements requirements = melaMapper.extractRequirements(sevice);
-
+		if (service == null) {
+			log.warn("startMonitoring(service=null )");
+			return;
+		}
+		
+		MonitoredElement element = melaMapper.extractMela(service);
+		Requirements requirements = melaMapper.extractRequirements(service);
+		
 		mela.sendServiceDescription(element);
-		// TODO check not to send reqs when it has not sense
-		mela.sendRequirements(sevice.getId(), requirements);
-		// TODO check not to send MCR when it has not sense
-		mela.sendMetricsCompositionRules(sevice.getId(), mcr);
+
+		if (requirements != null && !requirements.getRequirements().isEmpty()) {
+			mela.sendRequirements(service.getId(), requirements);
+		}
+
+		if (mcr != null) {
+			mela.sendMetricsCompositionRules(service.getId(), mcr);
+		}
 	}
 
 	@Override

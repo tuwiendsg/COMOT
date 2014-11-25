@@ -7,6 +7,8 @@ import at.ac.tuwien.dsg.comot.common.model.SyblDirective;
 
 public class ServiceTopology extends ServicePart {
 
+	private static final long serialVersionUID = 7319253967027446687L;
+
 	protected List<StackNode> nodes = new ArrayList<>();
 	protected List<ServiceUnit> serviceUnits = new ArrayList<>();
 	protected List<ServiceTopology> serviceTopologies = new ArrayList<>();
@@ -44,7 +46,7 @@ public class ServiceTopology extends ServicePart {
 
 	public void addTopology(ServiceTopology serviceTopology) {
 		if (serviceTopologies == null) {
-			serviceTopologies = new ArrayList<ServiceTopology>();
+			serviceTopologies = new ArrayList<>();
 		}
 		serviceTopologies.add(serviceTopology);
 	}

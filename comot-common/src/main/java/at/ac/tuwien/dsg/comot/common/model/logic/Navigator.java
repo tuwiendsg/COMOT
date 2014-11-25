@@ -18,6 +18,7 @@ import at.ac.tuwien.dsg.comot.common.model.structure.ServicePart;
 import at.ac.tuwien.dsg.comot.common.model.structure.ServiceTopology;
 import at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.common.model.structure.StackNode;
+import at.ac.tuwien.dsg.comot.common.model.unit.NodeInstance;
 
 public class Navigator {
 
@@ -88,6 +89,24 @@ public class Navigator {
 		return null;
 	}
 
+	public NodeInstance getInstance(String id, int instanceId) {
+		StackNode node = getNode(id);
+		if(node == null){
+			return null;
+		}
+		NodeInstance instance = node.getInstance(instanceId);
+		
+		log.debug("getInstance(id={}, instanceId={}): {}", id, instanceId, (instance == null)? null : instance.getInstanceId());
+		return instance;
+	}
+
+	public StackNode getNode(String id) {
+		if (map.get(id).entity instanceof StackNode) {
+			return (StackNode) map.get(id).entity;
+		}
+		return null;
+	}
+
 	public ReferencableEntity getReferencableEntity(String id) {
 		Node node = map.get(id);
 		if (node != null) {
@@ -98,7 +117,10 @@ public class Navigator {
 	}
 
 	public ServiceTopology getTopology(String id) {
-		return (ServiceTopology) map.get(id).entity;
+		if (map.get(id).entity instanceof ServiceTopology) {
+			return (ServiceTopology) map.get(id).entity;
+		}
+		return null;
 	}
 
 	// GET ALL

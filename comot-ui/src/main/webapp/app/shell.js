@@ -7,7 +7,7 @@ define(function(require) {
 			router.map([ {
 				route : '',
 				title : 'Home',
-				moduleId : 'home',
+				moduleId : 'manage',
 				nav : false
 			}, {
 				route : 'create',
@@ -15,16 +15,23 @@ define(function(require) {
 				moduleId : 'create',
 				nav : true
 			}, {
-				route : 'view',
-				title : 'View',
-				moduleId : 'view',
+//				route : 'manage',
+//				title : 'Manage',
+//				moduleId : 'manage',
+//				// hash: 'manage',
+//				nav : true
+//			}, {
+//				route : 'manage(/:serviceId)*details',
+//				title : 'Manage',
+//				moduleId : 'manage',
+//				hash : '#manage/:serviceId',
+//				nav : false
+				route : 'manage*details',
+				title : 'Manage',
+				moduleId : 'manage',
+				hash : '#manage',
 				nav : true
-			}, {
-				route : 'tree',
-				title : 'd3',
-				moduleId : 'tree',
-				nav : true
-			}]).buildNavigationModel();
+			} ]).buildNavigationModel();
 
 			return router.activate();
 		}

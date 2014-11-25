@@ -7,6 +7,8 @@ import at.ac.tuwien.dsg.comot.common.model.EntityRelationship;
 
 public class CloudService extends ServicePart {
 
+	private static final long serialVersionUID = 4336434946064439267L;
+
 	protected List<ServiceTopology> serviceTopologies = new ArrayList<>();
 	protected List<EntityRelationship> relationships = new ArrayList<>();
 	protected String accessIp;

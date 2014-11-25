@@ -5,6 +5,8 @@
  */
 package at.ac.tuwien.dsg.comot.core;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +14,12 @@ import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.common.coreservices.ControlClient;
 import at.ac.tuwien.dsg.comot.common.coreservices.DeploymentClient;
+import at.ac.tuwien.dsg.comot.common.coreservices.MonitoringClient;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
-import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
+import at.ac.tuwien.dsg.comot.core.dal.ServiceRepo;
+import at.ac.tuwien.dsg.comot.core.model.ServiceEntity;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
 @Component
@@ -28,38 +32,59 @@ public class ComotOrchestrator {
 	@Autowired
 	protected DeploymentClient deployment;
 	@Autowired
-	protected ControlClient control; 
+	protected ControlClient control;
+	@Autowired
+	protected MonitoringClient monitoring;
 
-	public ComotOrchestrator() {
+	@Autowired
+	protected ServiceRepo serviceRepo;
+
+	public List<ServiceEntity> getServices() {
+
+		List<ServiceEntity> list = (List<ServiceEntity>) serviceRepo.findAll();
+
+		return list;
+	}
+
+	public CloudService getStatus(String serviceId) throws CoreServiceException, ComotException {
+
+		CloudService updated = getServiceRefreshedStruxture(serviceId);
+
+		// TODO insert status from mela if monitored
+
+		return updated;
+	}
+
+	public void deployNew(CloudService service) throws CoreServiceException, ComotException {
+
+		CloudService deployedService = deployment.deploy(service);
+
+		ServiceEntity entity = new ServiceEntity(service, deployedService);
+
+		serviceRepo.save(entity);
+
+	}
+
+	public void startMonitoring(String serviceId, CompositionRulesConfiguration mcr) throws CoreServiceException,
+			ComotException {
+
+		monitoring.startMonitoring(getServiceRefreshedStruxture(serviceId), mcr);
+
+	}
+
+	public void startControl(String serviceId, CompositionRulesConfiguration mcr, String effects)
+			throws CoreServiceException,
+			ComotException {
+
+		control.sendInitialConfig(getServiceRefreshedStruxture(serviceId), mcr, effects);
 		
-	}
-
-	public ComotOrchestrator withSalsaIP(String ip) {
-		deployment.setHost(ip);
-		return this;
+		control.startControl(serviceId);
 
 	}
 
-	public ComotOrchestrator withSalsaPort(Integer port) {
-		deployment.setPort(port);
-		return this;
-	}
+	public void deployAndWait(CloudService service) throws CoreServiceException, ComotException {
 
-	public ComotOrchestrator withRsyblIP(String ip) {
-		control.setHost(ip);
-		return this;
-	}
-
-	public ComotOrchestrator withRsyblPort(Integer port) {
-		control.setPort(port);
-		return this;
-	}
-
-	// /////////////////////
-
-	public void deploy(CloudService serviceTemplate) throws CoreServiceException, ComotException {
-
-		deployment.deploy(serviceTemplate);
+		deployment.deploy(service);
 
 		do {
 			try {
@@ -67,39 +92,51 @@ public class ComotOrchestrator {
 			} catch (InterruptedException ex) {
 				log.error(ex.getMessage(), ex);
 			}
-		} while (!deployment.isRunning(serviceTemplate.getId()));
+		} while (!deployment.isRunning(service.getId()));
 
 	}
-	
+
 	public void controlExisting(
-			CloudService serviceTemplate,
+			CloudService service,
 			CompositionRulesConfiguration compositionRulesConfiguration,
 			String effectsJSON) throws CoreServiceException, ComotException {
 
-		CloudService withStatus = deployment.getStatus(serviceTemplate);
-		
+		CloudService withStatus = deployment.refreshStatus(service);
+
 		control.sendInitialConfig(withStatus, compositionRulesConfiguration,
 				effectsJSON);
-		
-		control.startControl(serviceTemplate.getId());
+
+		control.startControl(service.getId());
 	}
 
 	public void deployAndControl(
-			CloudService serviceTemplate,
+			CloudService service,
 			CompositionRulesConfiguration compositionRulesConfiguration,
 			String effectsJSON) throws CoreServiceException, ComotException {
 
-		deploy(serviceTemplate);
+		deployAndWait(service);
 
-		controlExisting(serviceTemplate, compositionRulesConfiguration, effectsJSON);
+		controlExisting(service, compositionRulesConfiguration, effectsJSON);
 	}
 
 	public void updateServiceReqsOrStruct(
-			CloudService serviceTemplate,
+			CloudService service,
 			CompositionRulesConfiguration compositionRulesConfiguration,
 			String effectsJSON) throws CoreServiceException {
 
-		control.sendUpdatedConfig(serviceTemplate, compositionRulesConfiguration, effectsJSON);
+		control.sendUpdatedConfig(service, compositionRulesConfiguration, effectsJSON);
+
+	}
+
+	protected CloudService getServiceRefreshedStruxture(String serviceId) throws CoreServiceException, ComotException {
+
+		ServiceEntity entity = serviceRepo.findOne(serviceId);
+
+		if (entity == null) {
+			return null;
+		}
+
+		return deployment.refreshStatus(entity.getServiceDeployed());
 
 	}
 

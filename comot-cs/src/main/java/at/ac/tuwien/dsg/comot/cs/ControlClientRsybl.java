@@ -33,6 +33,11 @@ public class ControlClientRsybl implements ControlClient {
 			CompositionRulesConfiguration compositionRulesConfiguration,
 			String effectsJSON) throws CoreServiceException {
 
+		if (service == null) {
+			log.warn("sendInitialConfig(service=null )");
+			return;
+		}
+		
 		String serviceId = service.getId();
 		CloudServiceXML cloudServiceXML = rsyblMapper.extractRsybl(service);
 		DeploymentDescription deploymentDescription = deploymentMapper.extractDeployment(service);

@@ -31,7 +31,7 @@ import at.ac.tuwien.dsg.comot.common.fluent.ServiceTopology;
 import at.ac.tuwien.dsg.comot.common.fluent.ServiceUnit;
 import at.ac.tuwien.dsg.comot.common.fluent.Strategy;
 import at.ac.tuwien.dsg.comot.common.fluent.Constraint.Metric;
-import at.ac.tuwien.dsg.comot.common.test.TestUtils;
+import at.ac.tuwien.dsg.comot.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.core.test.AbstractTest;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
@@ -155,10 +155,10 @@ public class TestingComot extends AbstractTest{
         ;
 
        
-    	CompositionRulesConfiguration rules = TestUtils.loadMetricCompositionRules(dataService.getId(),
+    	CompositionRulesConfiguration rules = UtilsTest.loadMetricCompositionRules(dataService.getId(),
     			dataService.getMetricCompositonRulesFile());
 		
-		String effects = TestUtils.loadFile(dataService.getEffectsCompositonRulesFile());
+		String effects = UtilsTest.loadFile(dataService.getEffectsCompositonRulesFile());
 		
 		orchestrator.deployAndControl(dataService, rules, effects);
 

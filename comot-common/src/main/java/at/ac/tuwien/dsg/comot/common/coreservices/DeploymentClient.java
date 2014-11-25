@@ -6,7 +6,7 @@ import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 
 public interface DeploymentClient extends CoreServiceClient {
 
-	public String deploy(
+	public CloudService deploy(
 			CloudService cloudService) throws CoreServiceException, ComotException;
 
 	public void undeploy(
@@ -24,12 +24,11 @@ public interface DeploymentClient extends CoreServiceClient {
 			String nodeId,
 			int instanceId) throws CoreServiceException;
 
-	public CloudService getStatus(
+	public CloudService refreshStatus(
 			CloudService cloudService) throws CoreServiceException, ComotException;
 
-	boolean isRunning(String serviceID) throws CoreServiceException, ComotException;
+	public CloudService getService(String serviceId) throws CoreServiceException, ComotException;
 
-	// TODO only temporary
-	String getStatusGui(String serviceId) throws CoreServiceException;
+	boolean isRunning(String serviceID) throws CoreServiceException, ComotException;
 
 }

@@ -1,5 +1,8 @@
 package at.ac.tuwien.dsg.comot.common.model.logic;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +29,36 @@ public class RelationshipResolver {
 	public RelationshipResolver(CloudService service) {
 		this.service = service;
 		navigator = new Navigator(service);
+	}
+
+	/**
+	 * In inverse direction then in tosca.
+	 * @param id
+	 * @return
+	 */
+	public List<String> getConnectToIds(String id) {
+
+		StackNode node = navigator.getNode(id);
+		List<String> list = new ArrayList<>();
+
+		for (EntityRelationship rel : service.getRelationships()) {
+			if (rel.getType().equals(RelationshipType.CONNECT_TO)) {
+				if (navigator.getNodeFor(rel.getTo().getId()).getId().equals(node.getId())) {
+					list.add(navigator.getNodeFor(rel.getFrom().getId()).getId());
+				}
+			}
+		}
+		
+		return list;
+	}
+
+	public boolean isServiceUnit(String id) {
+		if (navigator.getNode(id) != null) {
+			if (isServiceUnit(navigator.getNode(id))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -77,6 +110,29 @@ public class RelationshipResolver {
 		return null;
 	}
 
+	public StackNode getHost(String id) {
+
+		for (EntityRelationship rel : service.getRelationships()) {
+			if (rel.getType().equals(RelationshipType.HOST_ON)) {
+				if (rel.getFrom().getId().equals(id)) {
+					log.debug("getHost(id={}): {}", id, rel.getTo().getId());
+					return (StackNode) rel.getTo();
+				}
+			}
+		}
+		log.debug("getHost(id={}): {}", id, null);
+		return null;
+	}
+
+	public String getHostId(String id) {
+
+		StackNode node = getHost(id);
+		if (node != null) {
+			return node.getId();
+		}
+		return null;
+	}
+
 	public boolean isServicePartRelationship(EntityRelationship rel) {
 
 		ServicePart from = resolveToServicePart(rel.getFrom());
@@ -117,6 +173,10 @@ public class RelationshipResolver {
 		log.debug("resolveToServicePart(entityId={} ): servicePartId={}", entity.getId(),
 				(unit == null) ? null : unit.getId());
 		return unit;
+	}
+
+	public Navigator navigator() {
+		return navigator;
 	}
 
 }

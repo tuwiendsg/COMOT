@@ -1,0 +1,58 @@
+package at.ac.tuwien.dsg.comot.core.spring;
+
+import java.sql.SQLException;
+import java.util.Properties;
+
+import javax.annotation.Resource;
+import javax.sql.DataSource;
+
+import org.h2.tools.Server;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+
+@Configuration
+@PropertySource({ "classpath:spring/properties/test.properties" })
+@Profile(ApplicationContext.SPRING_PROFILE_TEST)
+public class TestApplicationContext {
+
+	@Resource
+	protected Environment env;
+
+	// this creates a new embedded DB with every new app context (not just data source)
+	@Bean
+	public DataSource dataSource() {
+		return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build();
+	}
+
+	@Bean
+	public Properties jpaProperties() {
+		return new Properties() {
+			private static final long serialVersionUID = -1625799711343021143L;
+			{
+				setProperty(ApplicationContext.HDM2DLL_AUTO, env.getRequiredProperty(ApplicationContext.HDM2DLL_AUTO));
+				setProperty(ApplicationContext.HIBERNATE_DIALECT,
+						env.getRequiredProperty(ApplicationContext.HIBERNATE_DIALECT));
+				setProperty(ApplicationContext.HIBERNATE_SHOW_SQL,
+						env.getRequiredProperty(ApplicationContext.HIBERNATE_SHOW_SQL));
+			}
+		};
+	}
+
+	@Bean
+	public Server hTwoServer() throws SQLException {
+		return Server.createTcpServer().start();
+
+	}
+
+	@Bean
+	public Server hTwoServerWeb() throws SQLException {
+		return Server.createWebServer().start();
+
+	}
+
+}

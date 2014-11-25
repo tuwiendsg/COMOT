@@ -19,15 +19,32 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
-	<modules>
-		<module>comot-core</module>
-		<module>comot-cs</module>
-		<module>comot-tosca</module>
-		<module>comot-common</module>
-		<module>comot-ui</module>
-		<module>comot-visualization-service</module>
-		<module>comot-fluent</module>
-	</modules>
+	<profiles>
+		<profile>
+			<id>noJAXB</id><!-- do not regenerate JAXB binding classes -->
+			<modules>
+				<module>comot-core</module>
+				<module>comot-cs</module>
+				<module>comot-common</module>
+				<module>comot-ui</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>all</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>comot-core</module>
+				<module>comot-cs</module>
+				<module>comot-common</module>
+				<module>comot-ui</module>
+				<module>comot-tosca</module>
+				<module>comot-visualization-service</module>
+				<module>comot-fluent</module>
+			</modules>
+		</profile>
+	</profiles>
 
 	<dependencyManagement>
 		<dependencies>
@@ -59,6 +76,12 @@
 						<artifactId>spring-beans</artifactId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>ma.glasnost.orika</groupId>
+				<artifactId>orika-core</artifactId>
+				<version>1.4.5</version>
 			</dependency>
 
 			<dependency>
@@ -264,6 +287,11 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.3.2</version>
+		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -271,6 +299,7 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -296,11 +325,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.16</version>
-				<configuration>
-					<!--<forkCount>2.0C</forkCount> -->
-					<systemPropertyVariables>
-					</systemPropertyVariables>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -313,6 +337,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
 
 </project>

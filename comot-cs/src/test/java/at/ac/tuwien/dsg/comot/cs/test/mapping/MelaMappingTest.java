@@ -12,10 +12,10 @@ import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.cs.mapper.DeploymentMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.MelaMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.ToscaMapper;
-import at.ac.tuwien.dsg.comot.cs.mapper.UtilsMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.MelaOrika;
 import at.ac.tuwien.dsg.comot.cs.test.AbstractTest;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement;
@@ -51,7 +51,7 @@ public class MelaMappingTest extends AbstractTest {
 		log.info("enriched {}", Utils.asJsonString(service));
 
 		MonitoredElement element = mapper.extractMela(service);
-		log.info("mela {}", UtilsMapper.asString(element));
+		log.info("mela {}", UtilsCs.asString(element));
 
 	}
 
@@ -71,7 +71,7 @@ public class MelaMappingTest extends AbstractTest {
 		log.info("original {}", Utils.asJsonString(serviceForMapping));
 
 		MonitoredElement element = orika.get().map(serviceForMapping, MonitoredElement.class);
-		log.info("element {}", UtilsMapper.asString(element));
+		log.info("element {}", UtilsCs.asString(element));
 
 	}
 

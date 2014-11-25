@@ -17,7 +17,11 @@
 	    at.ac.tuwien.dsg.comot.ui.ApplicationContext
 	    </param-value>
 	</context-param>
-	<!-- <context-param> <param-name>spring.profiles.default</param-name> <param-value>prod,insert_data</param-value> </context-param> -->
+	<context-param>
+		<param-name>spring.profiles.default</param-name>
+		<param-value>test,insert_data</param-value>
+	</context-param>
+
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>

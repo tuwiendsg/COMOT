@@ -27,7 +27,7 @@ import at.ac.tuwien.dsg.comot.common.fluent.ServiceTopology;
 import at.ac.tuwien.dsg.comot.common.fluent.ServiceUnit;
 import at.ac.tuwien.dsg.comot.common.fluent.Strategy;
 import at.ac.tuwien.dsg.comot.common.fluent.Constraint.Metric;
-import at.ac.tuwien.dsg.comot.common.test.TestUtils;
+import at.ac.tuwien.dsg.comot.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.common.test.samples.DataAsAServiceCloudApplication;
 import at.ac.tuwien.dsg.comot.core.test.AbstractTest;
 import at.ac.tuwien.dsg.comot.cs.transformer.ToscaDescriptionBuilderImpl;
@@ -299,10 +299,10 @@ public class ProgrammingAndControllingElasticityWithCOMOT extends AbstractTest{
 
 		// deploy, monitor and control
 		// orchestrator.deployAndControl(serviceTemplate);
-		CompositionRulesConfiguration rules = TestUtils.loadMetricCompositionRules(serviceTemplate.getId(),
+		CompositionRulesConfiguration rules = UtilsTest.loadMetricCompositionRules(serviceTemplate.getId(),
 				serviceTemplate.getMetricCompositonRulesFile());
 
-		String effects = TestUtils.loadFile(serviceTemplate.getEffectsCompositonRulesFile());
+		String effects = UtilsTest.loadFile(serviceTemplate.getEffectsCompositonRulesFile());
 
 		String xml = new ToscaDescriptionBuilderImpl().toXml(serviceTemplate);
 		log.info(xml);

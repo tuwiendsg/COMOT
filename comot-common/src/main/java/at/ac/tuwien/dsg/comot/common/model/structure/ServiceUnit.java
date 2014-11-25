@@ -7,6 +7,8 @@ import at.ac.tuwien.dsg.comot.common.model.unit.ElasticityCapability;
 
 public class ServiceUnit extends ServicePart {
 
+	private static final long serialVersionUID = -1213074714671448573L;
+
 	protected List<ElasticityCapability> elasticityCapabilities;
 
 	public ServiceUnit() {

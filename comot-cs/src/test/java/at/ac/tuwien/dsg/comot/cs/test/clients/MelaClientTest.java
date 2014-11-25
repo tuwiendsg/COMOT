@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
-import at.ac.tuwien.dsg.comot.common.test.TestUtils;
+import at.ac.tuwien.dsg.comot.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.cs.connector.MelaClient;
 import at.ac.tuwien.dsg.comot.cs.connector.SalsaClient;
 import at.ac.tuwien.dsg.comot.cs.test.AbstractTest;
@@ -47,7 +47,7 @@ public class MelaClientTest extends AbstractTest {
 	@Before
 	public void setup() throws IOException {
 
-		xmlTosca = TestUtils.loadFile("./xml/ExampleExecutableOnVM.xml");
+		xmlTosca = UtilsTest.loadFile("./xml/ExampleExecutableOnVM.xml");
 
 		// set up MonitoredElement
 		eVM = new MonitoredElement(NODE_IP);
@@ -163,7 +163,7 @@ public class MelaClientTest extends AbstractTest {
 		assertNotNull(mcr);
 
 		mela.sendMetricsCompositionRules(SERVICE_ID,
-				TestUtils.loadMetricCompositionRules(SERVICE_ID, "./mela/defCompositionRules.xml"));
+				UtilsTest.loadMetricCompositionRules(SERVICE_ID, "./mela/defCompositionRules.xml"));
 
 		mcr = mela.getMetricsCompositionRules(SERVICE_ID);
 		log.info("new MCR \n" + Utils.asXmlString(mcr));

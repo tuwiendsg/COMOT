@@ -34,6 +34,7 @@ public class SalsaClient extends CoreServiceClient {
 	protected static final String STATUS_PATH = "services/{serviceId}";
 	protected static final String TOSCA_PATH = "services/tosca/{serviceId}";
 	protected static final String DEPLOYMENT_INFO_PATH = "services/tosca/{serviceId}/sybl";
+	protected static final String SERVICES_LIST = "viewgenerator/cloudservice/json/list";
 
 	public SalsaClient() {
 		this(DEF_HOST, DEF_PORT);
@@ -260,31 +261,27 @@ public class SalsaClient extends CoreServiceClient {
 		}
 		return description;
 	}
-
-	// TODO only temporary
-	public String getStatusGui(String serviceId) throws CoreServiceException {
+	
+	@Deprecated
+	public String getServices() throws CoreServiceException {
 
 		if (log.isDebugEnabled()) {
-			log.debug(Markers.CLIENT, "getStatusGui for serviceId {}", serviceId);
+			log.debug(Markers.CLIENT, "Getting list of all services {}");
 		}
 
 		Response response = client.target(getBaseUri())
-				.path("/viewgenerator/cloudservice/json/compact/{serviceId}")
-				.resolveTemplate("serviceId", serviceId)
+				.path(SERVICES_LIST)
 				.request(MediaType.TEXT_PLAIN)
-				// .header("Accept", MediaType.TEXT_XML)
 				.get();
 
 		processResponseStatus(response);
 
-		String service = response.readEntity(String.class);
+		String msg = response.readEntity(String.class);
 
 		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "Successfully checked getStatusGui for serviceId '{}'. Response: '{}'",
-					serviceId, service);
+			log.info(Markers.CLIENT, "Successfully got list of all services. Response: '{}'", msg);
 		}
-		return service;
-
+		return msg;
 	}
 
 }

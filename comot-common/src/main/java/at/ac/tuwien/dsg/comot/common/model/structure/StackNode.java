@@ -15,6 +15,8 @@ import at.ac.tuwien.dsg.comot.common.model.unit.NodeInstance;
 
 public class StackNode extends AbstractEntity implements ReferencableEntity {
 
+	private static final long serialVersionUID = 4825578027474573978L;
+
 	public static final int DEFAULT_INSTANCES = 1;
 
 	protected int minInstances = DEFAULT_INSTANCES;
@@ -93,6 +95,15 @@ public class StackNode extends AbstractEntity implements ReferencableEntity {
 			properties = new ArrayList<>();
 		}
 		properties.add(property);
+	}
+
+	public NodeInstance getInstance(int instanceId) {
+		for (NodeInstance one : instances) {
+			if (one.getInstanceId() == instanceId) {
+				return one;
+			}
+		}
+		return null;
 	}
 
 	// GENERATED METHODS

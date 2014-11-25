@@ -1,14 +1,26 @@
 requirejs.config({
 	paths : {
-		'text' : '../lib/require/text',
-		'durandal' : '../lib/durandal/js',
-		'plugins' : '../lib/durandal/js/plugins',
-		'transitions' : '../lib/durandal/js/transitions',
-		'knockout' : '../lib/knockout/knockout-3.1.0',
-		'jquery' : '../lib/jquery/jquery-1.9.1',
-		'crel' : '../lib/json-human/crel',
-		'json-human' : '../lib/json-human/json.human',
-		'd3' : '../lib/d3/d3.min'
+		text : '../lib/require/text',
+		durandal : '../lib/durandal/js',
+		plugins : '../lib/durandal/js/plugins',
+		transitions : '../lib/durandal/js/transitions',
+		knockout : '../lib/knockout/knockout-3.1.0',
+		komapping : '../lib/knockout/knockout.mapping',
+		jquery : '../lib/jquery/jquery-1.9.1',
+		crel : '../lib/json-human/crel',
+		json_human : '../lib/json-human/json.human',
+		d3 : '../lib/d3/d3.min',
+		comot_client : '../js/comot-client',
+		shim : {
+			komapping : {
+				deps : [ 'knockout' ],
+				exports : 'komapping'
+			},
+			comot_client : {
+				deps : [ 'jquery' ],
+				exports : 'comot_client'
+			}
+		}
 	}
 });
 

@@ -3,7 +3,8 @@ package at.ac.tuwien.dsg.comot.ui;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.spring.scope.RequestContextFilter;
 
-import at.ac.tuwien.dsg.comot.ui.service.SampleResource;
+import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties;
+import at.ac.tuwien.dsg.comot.ui.service.ServicesResource;
 
 
 /**
@@ -17,7 +18,8 @@ public class JerseyMoxyConfig extends ResourceConfig {
     public JerseyMoxyConfig(){
     	
         register(RequestContextFilter.class);
-        register(SampleResource.class);     
-       // addProperties(properties);    
+        register(ServicesResource.class);     
+        register(DefinitionsContextResolver.class);
+
     }
 }

@@ -22,7 +22,7 @@ import at.ac.tuwien.dsg.comot.common.fluent.OperatingSystemUnit;
 import at.ac.tuwien.dsg.comot.common.fluent.Requirement;
 import at.ac.tuwien.dsg.comot.common.fluent.ServiceTopology;
 import at.ac.tuwien.dsg.comot.common.fluent.ServiceUnit;
-import at.ac.tuwien.dsg.comot.common.test.TestUtils;
+import at.ac.tuwien.dsg.comot.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.core.test.AbstractTest;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
@@ -146,10 +146,10 @@ public class ProgrammingAndControllingElasticityWithCOMOT_GXG extends AbstractTe
                         .withRsyblPort(8081);
                 
                 //deploy, monitor and control
-        CompositionRulesConfiguration rules = TestUtils.loadMetricCompositionRules(serviceTemplate.getId(),
+        CompositionRulesConfiguration rules = UtilsTest.loadMetricCompositionRules(serviceTemplate.getId(),
 				serviceTemplate.getMetricCompositonRulesFile());
 
-		String effects = TestUtils.loadFile(serviceTemplate.getEffectsCompositonRulesFile());
+		String effects = UtilsTest.loadFile(serviceTemplate.getEffectsCompositonRulesFile());
 
 		orchestrator.deployAndControl(serviceTemplate, rules, effects);
 //                orchestrator.controlExisting(serviceTemplate);

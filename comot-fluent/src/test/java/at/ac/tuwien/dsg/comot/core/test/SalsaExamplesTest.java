@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.fluent.CloudService;
-import at.ac.tuwien.dsg.comot.common.test.TestUtils;
+import at.ac.tuwien.dsg.comot.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.common.test.samples.ExampleDeployOneVM;
 import at.ac.tuwien.dsg.comot.common.test.samples.ExampleExecutableOnVM;
 import at.ac.tuwien.dsg.comot.cs.transformer.ToscaDescriptionBuilderImpl;
@@ -33,10 +33,10 @@ public class SalsaExamplesTest extends AbstractTest {
 
 		CloudService service = ExampleDeployOneVM.build();
 
-		CompositionRulesConfiguration rules = TestUtils.loadMetricCompositionRules(service.getId(),
+		CompositionRulesConfiguration rules = UtilsTest.loadMetricCompositionRules(service.getId(),
 				service.getMetricCompositonRulesFile());
 
-		String effects = TestUtils.loadFile(service.getEffectsCompositonRulesFile());
+		String effects = UtilsTest.loadFile(service.getEffectsCompositonRulesFile());
 
 		log.info(effects);
 
@@ -49,10 +49,10 @@ public class SalsaExamplesTest extends AbstractTest {
 
 		CloudService service = ExampleExecutableOnVM.build();
 
-		CompositionRulesConfiguration rules = TestUtils.loadMetricCompositionRules(service.getId(),
+		CompositionRulesConfiguration rules = UtilsTest.loadMetricCompositionRules(service.getId(),
 				service.getMetricCompositonRulesFile());
 
-		String effects = TestUtils.loadFile(service.getEffectsCompositonRulesFile());
+		String effects = UtilsTest.loadFile(service.getEffectsCompositonRulesFile());
 
 		log.info(effects);
 

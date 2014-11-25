@@ -9,6 +9,8 @@ import at.ac.tuwien.dsg.comot.common.model.type.State;
 
 public abstract class ServicePart extends AbstractEntity {
 
+	private static final long serialVersionUID = -889982124609754463L;
+
 	protected List<SyblDirective> directives = new ArrayList<>();
 	protected State state;
 
