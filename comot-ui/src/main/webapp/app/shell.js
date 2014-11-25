@@ -15,17 +15,6 @@ define(function(require) {
 				moduleId : 'create',
 				nav : true
 			}, {
-//				route : 'manage',
-//				title : 'Manage',
-//				moduleId : 'manage',
-//				// hash: 'manage',
-//				nav : true
-//			}, {
-//				route : 'manage(/:serviceId)*details',
-//				title : 'Manage',
-//				moduleId : 'manage',
-//				hash : '#manage/:serviceId',
-//				nav : false
 				route : 'manage*details',
 				title : 'Manage',
 				moduleId : 'manage',

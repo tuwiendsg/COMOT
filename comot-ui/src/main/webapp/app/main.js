@@ -11,6 +11,7 @@ requirejs.config({
 		json_human : '../lib/json-human/json.human',
 		d3 : '../lib/d3/d3.min',
 		comot_client : '../js/comot-client',
+		pnotify : '../lib/pnotify/pnotify.custom.min',
 		shim : {
 			komapping : {
 				deps : [ 'knockout' ],

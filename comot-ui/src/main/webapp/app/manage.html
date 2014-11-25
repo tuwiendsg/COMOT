@@ -16,12 +16,12 @@
 			</tr>
 		</thead>
 		<tbody data-bind="foreach: services">
-			<tr
-				data-bind="click: function() { $parent.assignSelected(id()) }, css: {active : $parent.selectedServiceId() == id()}"
-				data-toggle="tooltip" title="Click for details">
+			<tr data-bind="css: {active : $parent.selectedServiceId() == id()}">
 				<td data-bind="text: ($index() + 1)"></td>
-				<td data-bind="text: id"></td>
-				<td data-bind="text: name"></td>
+				<td data-bind="text: id, click: function() { $parent.assignSelected(id()) }" data-toggle="tooltip"
+					title="Click for details"></td>
+				<td data-bind="text: name, click: function() { $parent.assignSelected(id()) }" data-toggle="tooltip"
+					title="Click for details"></td>
 				<td><button type="button" class="btn btn-default"
 						data-bind="click: $parent.deployment, text: deployment() ? 'On' : 'Off',  css: { active: deployment()}"></button></td>
 				<td></td>
