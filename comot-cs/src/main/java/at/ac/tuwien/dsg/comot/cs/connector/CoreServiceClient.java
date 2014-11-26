@@ -57,11 +57,11 @@ public abstract class CoreServiceClient {
 			break;
 		case 4:
 			msg = response.readEntity(String.class);
-			log.warn(Markers.CLIENT, "HTTP response status code={} , message='{}' ", code, msg);
+			//log.warn(Markers.CLIENT, "HTTP response status code={} , message='{}' ", code, msg);
 			throw new CoreServiceException(code, msg);
 		case 5:
 			msg = response.readEntity(String.class);
-			log.error(Markers.CLIENT, "HTTP response status code={} , message='{}' ", code, msg);
+			//log.error(Markers.CLIENT, "HTTP response status code={} , message='{}' ", code, msg);
 			throw new CoreServiceException(code, msg);
 		}
 

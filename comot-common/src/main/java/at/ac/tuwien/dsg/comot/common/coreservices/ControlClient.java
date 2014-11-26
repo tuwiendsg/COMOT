@@ -11,15 +11,25 @@ public interface ControlClient extends CoreServiceClient {
 			CompositionRulesConfiguration compositionRulesConfiguration,
 			String effectsJSON) throws CoreServiceException;
 
-	public void sendUpdatedConfig(
-			CloudService service,
-			CompositionRulesConfiguration compositionRulesConfiguration,
-			String effectsJSON) throws CoreServiceException;
+	public void createMcr(String serviceId, CompositionRulesConfiguration compositionRulesConfiguration)
+			throws CoreServiceException;
+
+	public void createEffects(String serviceId, String effectsJSON)
+			throws CoreServiceException;
 
 	public void startControl(
 			String serviceId) throws CoreServiceException;
 
 	public void stopControl(
 			String serviceId) throws CoreServiceException;
+
+	public void updateEffects(String serviceId, String effectsJSON)
+			throws CoreServiceException;
+
+	public void updateMcr(String serviceId, CompositionRulesConfiguration compositionRulesConfiguration)
+			throws CoreServiceException;
+
+	public void updateService(CloudService service)
+			throws CoreServiceException;
 
 }

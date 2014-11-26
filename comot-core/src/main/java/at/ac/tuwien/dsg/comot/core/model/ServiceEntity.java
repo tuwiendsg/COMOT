@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot.core.model;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -11,6 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
+import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
@@ -28,10 +30,16 @@ public class ServiceEntity {
 	@XmlTransient
 	@Lob
 	protected CloudService serviceOriginal;
-
 	@XmlTransient
 	@Lob
 	protected CloudService serviceDeployed;
+
+	@XmlTransient
+	@Lob
+	protected CompositionRulesConfiguration mcr;
+	@XmlTransient
+	@Lob
+	protected String effects;
 
 	public ServiceEntity() {
 	}
@@ -111,6 +119,22 @@ public class ServiceEntity {
 
 	public void setControl(Boolean control) {
 		this.control = control;
+	}
+
+	public CompositionRulesConfiguration getMcr() {
+		return mcr;
+	}
+
+	public void setMcr(CompositionRulesConfiguration mcr) {
+		this.mcr = mcr;
+	}
+
+	public String getEffects() {
+		return effects;
+	}
+
+	public void setEffects(String effects) {
+		this.effects = effects;
 	}
 
 }

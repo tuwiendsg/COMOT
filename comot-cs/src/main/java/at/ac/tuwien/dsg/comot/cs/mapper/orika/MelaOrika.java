@@ -86,9 +86,6 @@ public class MelaOrika {
 							public void mapAtoB(ServiceUnit unit, MonitoredElement element, MappingContext context) {
 								// set level
 								element.setLevel(decideLevel(unit));
-
-								// set VMs
-
 							}
 						})
 

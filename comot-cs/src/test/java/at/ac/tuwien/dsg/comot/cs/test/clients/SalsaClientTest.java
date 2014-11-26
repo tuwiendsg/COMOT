@@ -132,7 +132,7 @@ public class SalsaClientTest extends AbstractTest {
 
 	@Test
 	public void testStatus() throws CoreServiceException, JAXBException, ComotException {
-		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService serviceInfo = salsa.getStatus("tomcat_comot_id");
+		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService serviceInfo = salsa.getStatus("aaaa");
 
 		log.info(UtilsCs.asString(serviceInfo));
 	}

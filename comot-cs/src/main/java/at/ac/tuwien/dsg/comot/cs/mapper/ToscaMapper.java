@@ -99,10 +99,12 @@ public class ToscaMapper {
 		ServiceUnit unit;
 
 		CloudService cloudService = mapper.get().map(definitions, CloudService.class);
-		log.trace("Mapping by dozer: {}", Utils.asJsonString(cloudService));
+		
+//		if(cloudService.getId().equals("ElasticIoTPlatform"))
+//		log.trace("Mapping by orika: {}", Utils.asJsonString(cloudService));
 
 		Navigator navigator = new Navigator(cloudService);
-
+		
 		for (TExtensibleElements element : definitions.getServiceTemplateOrNodeTypeOrNodeTypeImplementation()) {
 			// inject ArtifactTemplates
 			if (element instanceof TArtifactTemplate) {
@@ -141,11 +143,14 @@ public class ToscaMapper {
 		navigator = new Navigator(cloudService); // recreate with new elements
 		RelationshipResolver resolver = new RelationshipResolver(cloudService);
 
+		log.info(navigator.toString());
+		
 		// remove and add ServiceUnits
 		for (StackNode node : navigator.getAllNodes()) {
 			unit = navigator.getServiceUnit(node.getId());
-
+			
 			if (resolver.isServiceUnit(node)) {
+
 				if (unit == null) {
 					unit = new ServiceUnit(node);
 					navigator.getParentTopologyFor(node.getId()).getServiceUnits().add(unit);
@@ -157,8 +162,10 @@ public class ToscaMapper {
 			}
 		}
 
+		if(cloudService.getId().equals("ElasticIoTPlatform"))
 		log.trace("Final mapping: {}", Utils.asJsonString(cloudService));
 
+		
 		return cloudService;
 	}
 

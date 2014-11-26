@@ -1,5 +1,6 @@
 package at.ac.tuwien.dsg.comot.common.coreservices;
 
+import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
@@ -10,7 +11,7 @@ public interface MonitoringClient extends CoreServiceClient {
 	// start
 	public void startMonitoring(
 			CloudService sevice,
-			CompositionRulesConfiguration mcr) throws CoreServiceException;
+			CompositionRulesConfiguration mcr) throws CoreServiceException, ComotException;
 
 	// stop
 	public void stopMonitoring(
@@ -19,9 +20,9 @@ public interface MonitoringClient extends CoreServiceClient {
 	// update
 	public void updateService(
 			String serviceId,
-			CloudService sevice) throws CoreServiceException;
+			CloudService sevice) throws CoreServiceException, ComotException;
 
-	public void updateMcr(
+	public void setMcr(
 			String serviceId,
 			CompositionRulesConfiguration mcr) throws CoreServiceException;
 

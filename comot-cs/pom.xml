@@ -72,6 +72,10 @@
 			<groupId>at.ac.tuwien.dsg.cloud.salsa</groupId>
 			<artifactId>salsa-common</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>at.ac.tuwien.rSYBL.control-service</groupId>
+			<artifactId>rSYBL-cloud-application-dependency-graph</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

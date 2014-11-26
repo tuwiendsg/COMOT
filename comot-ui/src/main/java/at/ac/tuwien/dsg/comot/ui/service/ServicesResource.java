@@ -21,7 +21,9 @@ import org.springframework.stereotype.Service;
 
 import at.ac.tuwien.dsg.comot.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
+import at.ac.tuwien.dsg.comot.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.common.logging.Markers;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.core.ComotOrchestrator;
 import at.ac.tuwien.dsg.comot.core.model.ServiceEntity;
@@ -40,8 +42,6 @@ public class ServicesResource {
 	private static final Logger log = LoggerFactory.getLogger(ServicesResource.class);
 
 	@Autowired
-	protected DeploymentClient deploy;
-	@Autowired
 	protected OutputMapper mapperOutput;
 	@Autowired
 	protected ToscaMapper mapperTosca;
@@ -54,10 +54,11 @@ public class ServicesResource {
 		log.info("REST resource created");
 	}
 
-	// CREATE
+	// CREATE & UPDATE
 
 	@POST
 	@Path("/")
+	@Produces(MediaType.TEXT_PLAIN)
 	public Response createAndDeploy(Definitions def) {
 
 		try {
@@ -65,122 +66,102 @@ public class ServicesResource {
 			orchestrator.deployNew(mapperTosca.createModel(def));
 			return Response.ok().build();
 
-		} catch (CoreServiceException | ComotException e) {
-			e.printStackTrace();
-			return Response.serverError().build();
+		} catch (Exception e) {
+			return handleException(e);
 		}
-
 	}
 
-	@POST
+	@PUT
 	@Path("/{serviceId}/monitoring")
-	public Response startMonitoring(
-			@PathParam("serviceId") String serviceId,
-			CompositionRulesConfiguration mcr) {
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response startMonitoring(@PathParam("serviceId") String serviceId) {
 
 		try {
-			orchestrator.startMonitoring(serviceId, mcr);
-			return Response.ok().build();
-
-		} catch (CoreServiceException | ComotException e) {
-			e.printStackTrace();
-			return Response.serverError().build();
+			boolean result = orchestrator.startMonitoring(serviceId);
+			return Response.ok(result).build();
+			
+		} catch (Exception e) {
+			return handleException(e);
 		}
 	}
 
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
+	@PUT
 	@Path("/{serviceId}/control")
-	public Response startControl(
-			@PathParam("serviceId") String serviceId,
-			String input) { // this must hold MCR as well as effects
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response startControl(@PathParam("serviceId") String serviceId) {
 
 		try {
-			orchestrator.startControl(serviceId, null, null); // TODO extract MCR and efects
-			return Response.ok().build();
-
-		} catch (CoreServiceException | ComotException e) {
-			e.printStackTrace();
-			return Response.serverError().build();
+			boolean result =  orchestrator.startControl(serviceId);
+			return Response.ok(result).build();
+			
+		} catch (Exception e) {
+			return handleException(e);
 		}
-
 	}
 
-	// UPDATE
+	@PUT
+	@Path("/{serviceId}/mcr")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response createMcr(@PathParam("serviceId") String serviceId, CompositionRulesConfiguration mcr) {
+
+		try {
+			orchestrator.setMcr(serviceId, mcr);
+			return Response.ok().build();
+
+		} catch (Exception e) {
+			return handleException(e);
+		}
+	}
+
+	@PUT
+	@Path("/{serviceId}/effects")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response createElasticityEffects(@PathParam("serviceId") String serviceId, String input) {
+
+		try {
+			orchestrator.startMonitoring(serviceId);// todo
+			return Response.ok().build();
+
+		} catch (Exception e) {
+			return handleException(e);
+		}
+	}
 
 	// update structure / requirements for monitoring / SYBL directives
 	@PUT
 	@Path("/{serviceId}")
-	public Response updateService(
-			@PathParam("serviceId") String serviceId,
-			Definitions def) {
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response updateService(@PathParam("serviceId") String serviceId, Definitions def) {
 
-		return null; // TODO
-	}
-
-	@PUT
-	@Path("/{serviceId}/monitoring/mcr")
-	public Response updateMcrForMonitoring(
-			@PathParam("serviceId") String serviceId,
-			CompositionRulesConfiguration mcr) {
-
-		return null; // TODO
-	}
-
-	@PUT
-	@Path("/{serviceId}/control/mcr")
-	public Response updateMcrForControl(
-			@PathParam("serviceId") String serviceId,
-			CompositionRulesConfiguration mcr) {
-
-		return null; // TODO
-	}
-
-	@PUT
-	@Path("/{serviceId}/control/effects")
-	public Response updateEffects(
-			@PathParam("serviceId") String serviceId,
-			String effects) {
-
-		return null; // TODO
+		try {
+			// TODO
+			return null;
+		} catch (Exception e) {
+			return handleException(e);
+		}
 	}
 
 	// READ
 
 	@GET
+	@Consumes(MediaType.WILDCARD)
 	@Path("/")
 	public Response getServices() {
 
-		List<ServiceEntity> list = orchestrator.getServices();
+		try {
+			List<ServiceEntity> list = orchestrator.getServices();
 
-		return Response.ok(list.toArray(new ServiceEntity[list.size()])).build();
+			return Response.ok(list.toArray(new ServiceEntity[list.size()])).build();
+		} catch (Exception e) {
+			return handleException(e);
+		}
 	}
-
+	
 	@GET
+	@Consumes(MediaType.WILDCARD)
 	@Path("/{serviceId}")
-	public Response getService() {
-
-		return null; // TODO
-	}
-
-	@GET
-	@Path("/{serviceId}/tosca_original")
-	public Response getToscaOriginal(@PathParam("serviceId") String serviceId) {
-
-		return null; // TODO
-	}
-
-	@GET
-	@Path("/{serviceId}/tosca_deployed")
-	public Response getToscaDeployed(@PathParam("serviceId") String serviceId) {
-
-		return null; // TODO
-	}
-
-	// return status from salsa & monitoring (depends on what is turned on)
-	@GET
-	@Path("/{serviceId}/status")
-	public Response getStatus(@PathParam("serviceId") String serviceId) {
+	public Response getService(@PathParam("serviceId") String serviceId) {
 
 		try {
 			CloudService service = orchestrator.getStatus(serviceId);
@@ -188,10 +169,54 @@ public class ServicesResource {
 
 			return Response.ok(element).build();
 
-		} catch (CoreServiceException | ComotException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			return handleException(e);
+		}
+	}
+
+	// return status from salsa & monitoring (depends on what is turned on)
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Path("/{serviceId}/state")
+	public Response getState(@PathParam("serviceId") String serviceId) {
+
+		try {
+			CloudService service = orchestrator.getStatus(serviceId);
+			Element element = mapperOutput.extractOutput(service);
+
+			return Response.ok(element).build();
+
+		} catch (Exception e) {
+			return handleException(e);
+		}
+	}
+
+
+	protected Response handleException(Exception e) {
+
+		if (e.getClass().equals(ComotIllegalArgumentException.class)) {
+			log.warn("Wrong user input: {}", e.getMessage());
+			return Response.status(404).entity(e.getMessage()).build();
+
+		} else if (e.getClass().equals(CoreServiceException.class)) {
+			CoreServiceException ce = (CoreServiceException) e;
+
+			if (ce.isClientError()) {
+				log.warn("Core service CLIENT ERROR - {}", e);
+			} else {
+				log.warn("Core service SERVER ERROR - {}", e);
+			}
+			return Response.status(ce.getCode()).entity(ce.getMsg()).build();
+
+		} else if (e.getClass().equals(ComotException.class)) {
+			log.error("Something bad happened: {}", e);
+			return Response.serverError().build();
+
+		} else {
+			log.error("Wut? {}", e);
 			return Response.serverError().build();
 		}
+
 	}
 
 }

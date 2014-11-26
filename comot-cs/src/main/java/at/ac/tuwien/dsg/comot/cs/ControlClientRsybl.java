@@ -37,7 +37,7 @@ public class ControlClientRsybl implements ControlClient {
 			log.warn("sendInitialConfig(service=null )");
 			return;
 		}
-		
+
 		String serviceId = service.getId();
 		CloudServiceXML cloudServiceXML = rsyblMapper.extractRsybl(service);
 		DeploymentDescription deploymentDescription = deploymentMapper.extractDeployment(service);
@@ -57,22 +57,34 @@ public class ControlClientRsybl implements ControlClient {
 		}
 
 	}
+	
+	@Override
+	public void createMcr(String serviceId, CompositionRulesConfiguration compositionRulesConfiguration)
+			throws CoreServiceException {
+		rsybl.sendMetricsCompositionRules(serviceId, compositionRulesConfiguration);
+	}
 
 	@Override
-	public void sendUpdatedConfig(
-			CloudService service,
-			CompositionRulesConfiguration compositionRulesConfiguration,
-			String effectsJSON) throws CoreServiceException {
+	public void createEffects(String serviceId, String effectsJSON) throws CoreServiceException {
+		rsybl.sendElasticityCapabilitiesEffects(serviceId, effectsJSON);
+	}
+	
 
-		String serviceId = service.getId();
+	@Override
+	public void updateService(CloudService service) throws CoreServiceException {
 		CloudServiceXML cloudServiceXML = rsyblMapper.extractRsybl(service);
+		rsybl.updateElasticityRequirements(service.getId(), cloudServiceXML);
+	}
 
+	@Override
+	public void updateMcr(String serviceId, CompositionRulesConfiguration compositionRulesConfiguration)
+			throws CoreServiceException {
 		rsybl.updateMetricsCompositionRules(serviceId, compositionRulesConfiguration);
+	}
 
+	@Override
+	public void updateEffects(String serviceId, String effectsJSON) throws CoreServiceException {
 		rsybl.updateElasticityCapabilitiesEffects(serviceId, effectsJSON);
-
-		rsybl.updateElasticityRequirements(serviceId, cloudServiceXML);
-
 	}
 
 	@Override

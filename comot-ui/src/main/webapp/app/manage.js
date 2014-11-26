@@ -45,8 +45,11 @@ define([ 'durandal/app', 'knockout', 'komapping', 'comot_client','plugins/router
 
 	function switchMonitoring() {
 		this.monitoring(!this.monitoring());
-
-		app.showMessage('This is a message.', 'Title');
+		
+		comot.startMonitoring(this.id(),  notify('success'))
+		
+		
+		//app.showMessage('This is a message.', 'Title');
 	}
 
 	function switchControl() {

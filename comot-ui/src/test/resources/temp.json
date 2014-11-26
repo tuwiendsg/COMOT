@@ -1,0 +1,106 @@
+{
+	"id" : "ElasticIoTPlatform",
+	"children" : [{
+			"id" : "EventProcessingTopology",
+			"children" : [{
+					"id" : "EventProcessingUnitVM",
+					"children" : []
+				},{
+					"id" : "LoadBalancerUnit",
+					"children" : [{
+							"id" : "deployLoadBalancerArtifact",
+							"children" : []
+						},{
+							"id" : "LoadBalancer_IP_information",
+							"children" : []
+						}]
+				},{
+					"id" : "LoadBalancerUnitVM",
+					"children" : []
+				},{
+					"id" : "MoMVM",
+					"children" : []
+				},{
+					"id" : "MOMUnit",
+					"children" : [{
+							"id" : "MOM_IP_information",
+							"children" : []
+						},{
+							"id" : "deployMOMArtifact",
+							"children" : []
+						}]
+				},{
+					"id" : "EventProcessingUnit",
+					"children" : [{
+							"id" : "deployEventProcessingArtifact",
+							"children" : []
+						},{
+							"id" : "EventProcessingUnit_MOM_IP_Req",
+							"children" : []
+						},{
+							"id" : "EventProcessingUnit_LoadBalancer_IP_Req",
+							"children" : []
+						},{
+							"id" : "EventProcessingUnit_DataController_IP_Req",
+							"children" : []
+						}]
+				}]
+		},{
+			"id" : "Gateway",
+			"children" : [{
+					"id" : "LocalProcessingUnitVM",
+					"children" : []
+				},{
+					"id" : "MqttQueueVM",
+					"children" : []
+				},{
+					"id" : "LocalProcessingUnit",
+					"children" : [{
+							"id" : "deployLocalProcessing",
+							"children" : []
+						},{
+							"id" : "loadBalancerIp_Requirement",
+							"children" : []
+						},{
+							"id" : "brokerIp_Requirement",
+							"children" : []
+						}]
+				},{
+					"id" : "QueueUnit",
+					"children" : [{
+							"id" : "deployMQTTBroker",
+							"children" : []
+						},{
+							"id" : "brokerIp_Capability",
+							"children" : []
+						}]
+				}]
+		},{
+			"id" : "DataEndTopology",
+			"children" : [{
+					"id" : "DataControllerUnit",
+					"children" : [{
+							"id" : "deployDataControllerArtifact",
+							"children" : []
+						},{
+							"id" : "DataController_IP_information",
+							"children" : []
+						}]
+				},{
+					"id" : "DataNodeUnit",
+					"children" : [{
+							"id" : "DataController_IP_Data_Node_Req",
+							"children" : []
+						},{
+							"id" : "deployDataNodeArtifact",
+							"children" : []
+						}]
+				},{
+					"id" : "DataControllerUnitVM",
+					"children" : []
+				},{
+					"id" : "DataNodeUnitVM",
+					"children" : []
+				}]
+		}]
+}

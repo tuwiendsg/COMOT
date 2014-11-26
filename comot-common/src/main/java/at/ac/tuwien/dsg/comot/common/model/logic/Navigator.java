@@ -26,14 +26,17 @@ public class Navigator {
 
 	protected CloudService service;
 	protected Map<String, Node> map = new HashMap<>();
+	protected Node root;
 
 	public Navigator(CloudService service) {
 		this.service = service;
-		map.put(service.getId(), new Node(service, null));
+		root = new Node(service, null);
+		map.put(service.getId(), root);
 	}
 
 	public ServiceUnit getServiceUnit(String id) {
 		for (ServiceUnit unit : getParentTopologyFor(id).getServiceUnits()) {
+			//log.info("rrrrrrrrrrrrrrrrrrrrrr  {} ? {}", unit.getId(), id);
 			if (unit.getId().equals(id)) {
 				return unit;
 			}
@@ -50,19 +53,24 @@ public class Navigator {
 	 */
 	public ServiceTopology getParentTopologyFor(String id) {
 
-		for (Node node : map.values()) {
+		ServiceTopology result = null;
+
+		if (map.containsKey(id)) {
+			Node node = map.get(id);
+
 			if (node.entity.getClass().equals(ServiceTopology.class)) {
-				return (ServiceTopology) node.parent.entity;
+				result = (ServiceTopology) node.parent.entity;
 			} else if (node.entity.getClass().equals(StackNode.class)) {
-				return (ServiceTopology) node.parent.entity;
+				result = (ServiceTopology) node.parent.entity;
 			} else if (node.entity.getClass().equals(Capability.class) ||
 					node.entity.getClass().equals(Requirement.class) ||
 					node.entity.getClass().equals(ArtifactTemplate.class)) {
-				return (ServiceTopology) node.parent.parent.entity;
+				result = (ServiceTopology) node.parent.parent.entity;
 			}
-		}
+		} 
 
-		return null;
+		log.debug("getParentTopologyFor(id={} ): {}", id, ((result == null) ? null : result.getId()));
+		return result;
 	}
 
 	/**
@@ -91,12 +99,13 @@ public class Navigator {
 
 	public NodeInstance getInstance(String id, int instanceId) {
 		StackNode node = getNode(id);
-		if(node == null){
+		if (node == null) {
 			return null;
 		}
 		NodeInstance instance = node.getInstance(instanceId);
-		
-		log.debug("getInstance(id={}, instanceId={}): {}", id, instanceId, (instance == null)? null : instance.getInstanceId());
+
+		log.debug("getInstance(id={}, instanceId={}): {}", id, instanceId,
+				(instance == null) ? null : instance.getInstanceId());
 		return instance;
 	}
 
@@ -199,7 +208,7 @@ public class Navigator {
 		private AbstractEntity entity;
 
 		private Node parent;
-		private Map<String, Node> children;
+		private Map<String, Node> children = new HashMap<>();
 
 		private Node(AbstractEntity entity, Node parent) {
 			this.id = entity.getId();
@@ -208,42 +217,49 @@ public class Navigator {
 
 			// set type
 			if (entity instanceof CloudService) {
-				doTopologies(((CloudService) entity).getServiceTopologies(), this);
+				for (ServiceTopology topology : ((CloudService) entity).getServiceTopologies()) {
+					newNode(topology, this);
+				}
 
 			} else if (entity instanceof ServiceTopology) {
-				doNodes(((ServiceTopology) entity).getNodes(), this);
-				doTopologies(((ServiceTopology) entity).getServiceTopologies(), this);
+				for (ServiceTopology topology : ((ServiceTopology) entity).getServiceTopologies()) {
+					newNode(topology, this);
+				}
+				for (StackNode unit : ((ServiceTopology) entity).getNodes()) {
+					newNode(unit, this);
+				}
 
 			} else if (entity instanceof StackNode) {
 				StackNode stackNode = (StackNode) entity;
 
 				for (Capability one : stackNode.getCapabilities()) {
-					map.put(one.getId(), new Node(one, this));
+					newNode(one, this);
 				}
 				for (Requirement one : stackNode.getRequirements()) {
-					map.put(one.getId(), new Node(one, this));
+					newNode(one, this);
 				}
 				for (ArtifactTemplate one : stackNode.getDeploymentArtifacts()) {
-					map.put(one.getId(), new Node(one, this));
+					newNode(one, this);
 				}
-
 			}
 		}
 
-		private void doTopologies(List<ServiceTopology> topologies, Node parent) {
-			for (ServiceTopology topology : topologies) {
-				Node node = new Node(topology, parent);
-				map.put(topology.getId(), node);
-				doNodes(topology.getNodes(), node);
-			}
+		private void newNode(AbstractEntity entity, Node parent) {
+			Node temp = new Node(entity, parent);
+			children.put(temp.id, temp);
+			map.put(temp.id, temp);
 		}
 
-		private void doNodes(List<StackNode> units, Node parent) {
+		@Override
+		public String toString() {
 
-			for (StackNode unit : units) {
-				map.put(unit.getId(), new Node(unit, parent));
-			}
+			return "{ \"id\" : \"" + id + "\", \"children\" : " + children.values() + "}";
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "Navigator: " + root.toString();
 	}
 
 }

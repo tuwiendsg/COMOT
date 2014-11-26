@@ -1,5 +1,7 @@
 package at.ac.tuwien.dsg.comot.cs;
 
+import java.io.IOException;
+
 import javax.annotation.PreDestroy;
 
 import org.slf4j.Logger;
@@ -7,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.comot.common.coreservices.MonitoringClient;
+import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.cs.connector.MelaClient;
@@ -26,24 +29,30 @@ public class MonitoringClientMela implements MonitoringClient {
 	protected MelaMapper melaMapper;
 
 	@Override
-	public void startMonitoring(CloudService service, CompositionRulesConfiguration mcr) throws CoreServiceException {
+	public void startMonitoring(CloudService service, CompositionRulesConfiguration mcr) throws CoreServiceException, ComotException {
 
 		if (service == null) {
 			log.warn("startMonitoring(service=null )");
 			return;
 		}
-		
-		MonitoredElement element = melaMapper.extractMela(service);
-		Requirements requirements = melaMapper.extractRequirements(service);
-		
-		mela.sendServiceDescription(element);
 
-		if (requirements != null && !requirements.getRequirements().isEmpty()) {
-			mela.sendRequirements(service.getId(), requirements);
-		}
+		try {
+			
+			MonitoredElement element = melaMapper.extractMela(service);
+			Requirements requirements = melaMapper.extractRequirements(service);
 
-		if (mcr != null) {
-			mela.sendMetricsCompositionRules(service.getId(), mcr);
+			mela.sendServiceDescription(element);
+
+			if (requirements != null && !requirements.getRequirements().isEmpty()) {
+				mela.sendRequirements(service.getId(), requirements);
+			}
+
+			if (mcr != null) {
+				mela.sendMetricsCompositionRules(service.getId(), mcr);
+			}
+
+		} catch (ClassNotFoundException | IOException e) {
+			throw new ComotException("Mapping from Model to Mela failed ", e);
 		}
 	}
 
@@ -54,15 +63,20 @@ public class MonitoringClientMela implements MonitoringClient {
 	}
 
 	@Override
-	public void updateService(String serviceId, CloudService sevice) throws CoreServiceException {
+	public void updateService(String serviceId, CloudService sevice) throws CoreServiceException, ComotException {
 
-		MonitoredElement element = melaMapper.extractMela(sevice);
+		MonitoredElement element;
+		try {
+			element = melaMapper.extractMela(sevice);
+		} catch (ClassNotFoundException | IOException e) {
+			throw new ComotException("Mapping from model to Mela failed ", e);
+		}
 
 		mela.updateServiceDescription(serviceId, element);
 	}
 
 	@Override
-	public void updateMcr(String serviceId, CompositionRulesConfiguration mcr) throws CoreServiceException {
+	public void setMcr(String serviceId, CompositionRulesConfiguration mcr) throws CoreServiceException {
 		mela.sendMetricsCompositionRules(serviceId, mcr);
 	}
 

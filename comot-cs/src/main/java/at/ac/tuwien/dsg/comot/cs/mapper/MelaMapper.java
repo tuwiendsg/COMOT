@@ -1,5 +1,6 @@
 package at.ac.tuwien.dsg.comot.cs.mapper;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +46,7 @@ public class MelaMapper {
 	@Autowired
 	protected MelaOrika mapper;
 
-	public MonitoredElement extractMela(CloudService cloudService) {
+	public MonitoredElement extractMela(CloudService cloudService) throws ClassNotFoundException, IOException {
 
 		Relationship tempRel;
 		MonitoredElement vmElement;
@@ -55,12 +56,18 @@ public class MelaMapper {
 		MonitoredElement root = mapper.get().map(cloudService, MonitoredElement.class);
 		Map<String, MonitoredElement> map = extractAllElements(root);
 
+		log.trace("Orika mapping: {}", Utils.asXmlStringLog(root));
+		
 		// add VMs
 		for (MonitoredElement element : map.values()) {
 			if (element.getLevel().equals(MonitoredElementLevel.SERVICE_UNIT)) {
 				node = resolver.getOsForServiceUnit(element.getId());
 
+				log.info("eeeeeeeeeeeee "+element.getId());
+				
 				for (NodeInstance instance : node.getInstances()) {
+					log.info("instances "+instance.getInstanceId());
+					
 					vmElement = new MonitoredElement();
 					vmElement.setLevel(MonitoredElementLevel.VM);
 					vmElement.setId(((NodeInstanceOs) instance).getIp());
@@ -69,27 +76,37 @@ public class MelaMapper {
 				}
 			}
 		}
+		
+		log.info("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
 		// add relationships
 		for (EntityRelationship rel : cloudService.getRelationships()) {
 
-			log.info("original from={} to={}", rel.getFrom().getId(), rel.getTo().getId());
+			//log.debug("original from={} to={}", rel.getFrom().getId(), rel.getTo().getId());
 
 			if (resolver.isServicePartRelationship(rel)) {
 
 				String fromPartId = resolver.resolveToServicePart(rel.getFrom()).getId();
 				String toPartId = resolver.resolveToServicePart(rel.getTo()).getId();
 
-				log.info("part from={} to={}", fromPartId, toPartId);
+				//log.debug("part from={} to={}", fromPartId, toPartId);
 
 				if (map.containsKey(fromPartId) && map.containsKey(toPartId)
 						&& !rel.getType().equals(RelationshipType.LOCAL)) {
 
-					tempRel = new Relationship()
-							.withFrom(map.get(fromPartId))
-							.withTo(map.get(toPartId))
-							.withType(resolveType(rel.getType()));
+					//TODO hack, to enable marshaling
+					
+//					MonitoredElement temp1 = new MonitoredElement(fromPartId));
+//					MonitoredElement temp2 = (MonitoredElement) Utils.deepCopy(map.get(toPartId));
 
+					
+					tempRel = new Relationship()
+							.withFrom(new MonitoredElement(fromPartId))
+							.withTo(new MonitoredElement(toPartId))
+							.withType(resolveType(rel.getType()));
+					
+					log.debug("inserted relationship from={} to={}", fromPartId, toPartId);
+					
 					map.get(fromPartId).getRelationships().add(tempRel);
 				}
 			}
@@ -153,6 +170,8 @@ public class MelaMapper {
 	// !!! number must be on the right side, there is a bug in rsybl
 	protected List<Requirement> parseToRequirement(ServicePart servicePart, String constraint) {
 
+		log.debug("parsing constraint: {}", constraint);
+		
 		Requirement req;
 		List<Requirement> requirements = new ArrayList<>();
 		Constraint rConstraint = SYBLDirectiveMappingFromXML.mapSYBLAnnotationToXMLConstraint(constraint);

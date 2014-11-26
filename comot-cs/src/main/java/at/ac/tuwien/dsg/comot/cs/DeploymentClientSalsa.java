@@ -99,13 +99,13 @@ public class DeploymentClientSalsa implements DeploymentClient {
 	}
 
 	@Override
-	public boolean isRunning(String serviceID) throws CoreServiceException, ComotException {
+	public boolean isRunning(String serviceId) throws CoreServiceException, ComotException {
 
 		boolean running = false;
 
-		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService service = salsa.getStatus(serviceID);
+		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService service = salsa.getStatus(serviceId);
 
-		log.info("Service {} is in state={}", serviceID, service.getState());
+		log.info("Service {} is in state={}", serviceId, service.getState());
 
 		if (service.getState().equals(SalsaEntityState.DEPLOYED)
 				|| service.getState().equals(SalsaEntityState.RUNNING)) {

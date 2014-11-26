@@ -12,34 +12,59 @@
 
 }(function($, exports) {
 
+	var base = "rest/";
+	var services = base + "services/";
+
+	exports.deploy = function(tosca, processResult) {
+		$.ajax({
+			type : "POST",
+			url : services,
+			data : tosca,
+			dataType : "xml",
+			contentType : "application/xml",
+			success : processResult
+		});
+	}
+
+	exports.startMonitoring = function(serviceId, processResult) {
+
+		console.log("aaaaa");
+
+		$.ajax({
+			type : "PUT",
+			url : services + serviceId + "/monitoring",
+			success : processResult
+		});
+	}
+
+	exports.startControl = function(serviceId, processResult) {
+
+		console.log(mcr);
+
+		$.ajax({
+			type : "PUT",
+			url : services + serviceId + "/control",
+			success : processResult
+		});
+	}
+
 	exports.getServices = function(processResult) {
 		$.ajax({
 			type : "GET",
-			url : "rest/services",
+			url : services,
 			dataType : "json",
 			success : processResult
 		});
 	}
 
 	exports.checkStatus = function(serviceId, processResult) {
+
 		$.ajax({
 			type : "GET",
-			url : "rest/services/" + serviceId + "/status",
+			url : services + serviceId + "/state",
 			dataType : "json",
 			success : processResult
 		});
 	}
-	
-	
-	exports.deploy = function(tosca, processResult) {
-	$.ajax({
-		type : "POST",
-		url : "rest/services",
-		data : tosca,
-		dataType : "xml",
-		contentType : "application/xml",
-		success : processResult
-	});
-}
 
 }));

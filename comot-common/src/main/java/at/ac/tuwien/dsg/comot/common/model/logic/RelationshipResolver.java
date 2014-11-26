@@ -33,6 +33,7 @@ public class RelationshipResolver {
 
 	/**
 	 * In inverse direction then in tosca.
+	 * 
 	 * @param id
 	 * @return
 	 */
@@ -48,7 +49,7 @@ public class RelationshipResolver {
 				}
 			}
 		}
-		
+
 		return list;
 	}
 
@@ -72,16 +73,20 @@ public class RelationshipResolver {
 		if (node.getType().equals(NodeType.OS) ||
 				node.getType().equals(NodeType.DOCKER) ||
 				node.getType().equals(NodeType.TOMCAT)) {
+			log.debug("isServiceUnit(nodeId={} ): false", node.getId());
 			return false;
 		}
 
 		for (EntityRelationship rel : service.getRelationships()) {
 			if (rel.getType().equals(RelationshipType.HOST_ON)) {
 				if (rel.getTo().getId().equals(node.getId())) {
+					log.debug("isServiceUnit(nodeId={} ): false", node.getId());
 					return false;
 				}
 			}
 		}
+
+		log.debug("isServiceUnit(nodeId={} ): true", node.getId());
 
 		return true;
 	}
