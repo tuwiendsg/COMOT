@@ -15,11 +15,11 @@ public class SoftwareNode extends ServiceUnit {
     }
 
     public static SoftwareNode SingleSoftwareUnit(String id) {
-        return new SoftwareNode(id).ofType(NodeType.Software).withMinInstances(1).withMaxInstances(1);
+        return new SoftwareNode(id).ofType(NodeType.Software).withMinInstances(1).withMaxColocatedInstances(1);
     }
 
     public static SoftwareNode UnboundedSoftwareUnit(String id) {
-        return new SoftwareNode(id).ofType(NodeType.Software).withMinInstances(1).withMaxInstances(Integer.MAX_VALUE)
+        return new SoftwareNode(id).ofType(NodeType.Software).withMinInstances(1).withMaxColocatedInstances(Integer.MAX_VALUE)
                 .provides(ElasticityCapability.ScaleIn(id))
                 .provides(ElasticityCapability.ScaleOut(id))
                 ;
@@ -31,8 +31,8 @@ public class SoftwareNode extends ServiceUnit {
     }
 
     @Override
-    public SoftwareNode withMaxInstances(int maxInstances) {
-        return (SoftwareNode) super.withMaxInstances(maxInstances);
+    public SoftwareNode withMaxColocatedInstances(int maxInstances) {
+        return (SoftwareNode) super.withMaxColocatedInstances(maxInstances);
     }
 
     @Override

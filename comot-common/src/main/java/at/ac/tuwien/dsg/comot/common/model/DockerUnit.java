@@ -31,8 +31,8 @@ public class DockerUnit extends ServiceUnit {
     }
 
     @Override
-    public DockerUnit withMaxInstances(int maxInstances) {
-        return (DockerUnit) super.withMaxInstances(maxInstances);
+    public DockerUnit withMaxColocatedInstances(int maxInstances) {
+        return (DockerUnit) super.withMaxColocatedInstances(maxInstances);
     }
 
     @Override

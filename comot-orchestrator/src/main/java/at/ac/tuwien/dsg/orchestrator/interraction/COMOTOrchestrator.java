@@ -60,13 +60,7 @@ public class COMOTOrchestrator {
 
         defaultSalsaClient.deploy(serviceTemplate);
         salsaInterraction.waitUntilRunning(serviceTemplate.getId());
-//        try {
-//            //wait 30 seconds more
-//            Thread.sleep(30000);
-//        } catch (InterruptedException ex) {
-//            Logger.getLogger(COMOTOrchestrator.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//
+
         DeploymentDescription deploymentDescription = salsaInterraction.getServiceDeploymentInfo(serviceTemplate.getId());
 
         sYBLInterraction.sendInitialConfigToRSYBL(serviceTemplate, deploymentDescription,
@@ -94,7 +88,7 @@ public class COMOTOrchestrator {
 
     public void controlExisting(CloudService serviceTemplate) {
 
-//         salsaInterraction.waitUntilRunning(serviceTemplate.getId());
+        salsaInterraction.waitUntilRunning(serviceTemplate.getId());
         DeploymentDescription deploymentDescription = salsaInterraction.getServiceDeploymentInfo(serviceTemplate.getId());
 
         sYBLInterraction.sendInitialConfigToRSYBL(serviceTemplate, deploymentDescription,

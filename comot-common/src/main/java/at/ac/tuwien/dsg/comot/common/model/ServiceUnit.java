@@ -60,13 +60,13 @@ public class ServiceUnit extends AbstractServiceDescriptionEntity {
         return this;
     }
 
-    public ServiceUnit withMaxInstances(final int maxInstances) {
+    public ServiceUnit withMaxColocatedInstances(final int maxInstances) {
         this.maxInstances = maxInstances;
         return this;
     }
 
     public ServiceUnit andMaxInstances(final int maxInstances) {
-        return withMaxInstances(maxInstances);
+        return withMaxColocatedInstances(maxInstances);
     }
 
     public ServiceUnit andMinInstances(final int minInstances) {

@@ -62,9 +62,26 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
         this.value = value;
         return this;
     }
+    public Constraint equal(String value) {
+        this.operator = Operator.Equals;
+        this.value = value;
+        return this;
+    }
 
     public Constraint greaterThan(String value) {
         this.operator = Operator.GreaterThan;
+        this.value = value;
+        return this;
+    }
+    
+    public Constraint lessEqual(String value) {
+        this.operator = Operator.LessEqual;
+        this.value = value;
+        return this;
+    }
+
+    public Constraint greaterEqual(String value) {
+        this.operator = Operator.GreaterEqual;
         this.value = value;
         return this;
     }

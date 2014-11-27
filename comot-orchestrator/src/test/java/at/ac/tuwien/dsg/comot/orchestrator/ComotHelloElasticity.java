@@ -71,7 +71,7 @@ public class ComotHelloElasticity {
                         .then(Strategy.Action.ScaleOut)
                 )
                 .withMinInstances(2)
-                .withMaxInstances(1); //TODO: needs to be fixed somehow
+                .withMaxColocatedInstances(1); //TODO: needs to be fixed somehow
 
         //add the service units belonging to the event processing topology
         ServiceUnit loadbalancerUnit = SingleSoftwareUnit("LoadBalancerUnit")

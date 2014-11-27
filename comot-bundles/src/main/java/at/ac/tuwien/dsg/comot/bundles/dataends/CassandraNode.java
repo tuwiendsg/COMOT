@@ -29,8 +29,8 @@ public class CassandraNode extends SoftwareNode {
     }
 
     @Override
-    public CassandraNode withMaxInstances(int maxInstances) {
-        return (CassandraNode) super.withMaxInstances(maxInstances);
+    public CassandraNode withMaxColocatedInstances(int maxInstances) {
+        return (CassandraNode) super.withMaxColocatedInstances(maxInstances);
     }
 
     @Override

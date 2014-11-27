@@ -102,11 +102,11 @@ public class SalsaInterraction {
 
             CloudService service = this.getStatus(serviceID);
 
-            if (!service.getState().equals(SalsaEntityState.RUNNING)) {
+            if (service == null || !service.getState().equals(SalsaEntityState.DEPLOYED)) {
                 allRunning = false;
             } else {
                 for (at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceUnit serviceUnit : service.getAllComponentByType(SalsaEntityType.SOFTWARE)) {
-                    if (serviceUnit != null && !serviceUnit.getState().equals(SalsaEntityState.RUNNING)) {
+                    if (serviceUnit != null && !serviceUnit.getState().equals(SalsaEntityState.DEPLOYED)) {
                         allRunning = false;
                         break;
                     }

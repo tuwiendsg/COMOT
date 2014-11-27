@@ -31,8 +31,8 @@ public class OperatingSystemUnit extends ServiceUnit {
     }
 
     @Override
-    public OperatingSystemUnit withMaxInstances(int maxInstances) {
-        return (OperatingSystemUnit) super.withMaxInstances(maxInstances);
+    public OperatingSystemUnit withMaxColocatedInstances(int maxInstances) {
+        return (OperatingSystemUnit) super.withMaxColocatedInstances(maxInstances);
     }
 
     @Override
