@@ -57,7 +57,7 @@ public class DataAsAServiceCloudApplication {
         //
         OperatingSystemUnit cassandraHeadOsNode = OperatingSystemUnit("OS_Headnode")
                 .providedBy(
-                        OpenstackSmall("OS_Headnode_Small")
+                        OpenstackSmall()
                         .withProvider("dsg@openstack")
                         .addSoftwarePackage("openjdk-7-jre")
                 );
@@ -67,7 +67,7 @@ public class DataAsAServiceCloudApplication {
         //
         OperatingSystemUnit cassandraDataOsNode = OperatingSystemUnit("OS_Datanode")
                 .providedBy(
-                        OpenstackSmall("OS_Datanode_Small")
+                        OpenstackSmall()
                         .withProvider("dsg@openstack")
                         .addSoftwarePackage("openjdk-7-jre")
                 );

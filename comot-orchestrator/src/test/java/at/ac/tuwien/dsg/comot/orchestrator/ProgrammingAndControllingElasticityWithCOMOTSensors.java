@@ -34,7 +34,7 @@ public class ProgrammingAndControllingElasticityWithCOMOTSensors {
 
         //need to specify details of VM and operating system to deploy the software servide units on
         OperatingSystemUnit dataControllerVM = OperatingSystemUnit("DataControllerUnitVM")
-                .providedBy(OpenstackSmall("OpenStackSmall_OS_DC")
+                .providedBy(OpenstackSmall()
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
                         .addSoftwarePackage("gmetad")

@@ -42,14 +42,14 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
 
         //need to specify details of VM and operating system to deploy the software servide units on
         OperatingSystemUnit dataControllerVM = OperatingSystemUnit("DataControllerUnitVM")
-                .providedBy(OpenstackSmall("OpenStackSmall_OS_DC")
+                .providedBy(OpenstackSmall()
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
                         .addSoftwarePackage("gmetad")
                 );
 
         OperatingSystemUnit dataNodeVM = OperatingSystemUnit("DataNodeUnitVM")
-                .providedBy(OpenstackMicro("OpenStackMicro_OS_DN")
+                .providedBy(OpenstackMicro()
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
                         .addSoftwarePackage("gmetad")
@@ -57,14 +57,14 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
 
         //finally, we define Vm types for event processing
         OperatingSystemUnit loadbalancerVM = OperatingSystemUnit("LoadBalancerUnitVM")
-                .providedBy(OpenstackSmall("OpenStackSmall_OS_LB")
+                .providedBy(OpenstackSmall()
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
                         .addSoftwarePackage("gmetad")
                 );
 
         OperatingSystemUnit eventProcessingVM = OperatingSystemUnit("EventProcessingUnitVM")
-                .providedBy(OpenstackSmall("OpenStackMicro_OS_EP")
+                .providedBy(OpenstackSmall()
                         .withBaseImage("be6ae07b-7deb-4926-bfd7-b11afe228d6a")
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
@@ -72,7 +72,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 );
 
         OperatingSystemUnit localProcessingVM = OperatingSystemUnit("LocalProcessingUnitVM")
-                .providedBy(OpenstackSmall("OpenStackSmall_OS_LP")
+                .providedBy(OpenstackSmall()
                         .withBaseImage("be6ae07b-7deb-4926-bfd7-b11afe228d6a")
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
@@ -80,7 +80,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 ).andMinInstances(2);
 
         OperatingSystemUnit mqttQueueVM = OperatingSystemUnit("MqttQueueVM")
-                .providedBy(OpenstackSmall("OpenStackSmall_OS_MQTT")
+                .providedBy(OpenstackSmall()
                         .withBaseImage("17ffd200-315f-4ba8-9e77-c294efc772bd")
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
@@ -88,7 +88,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 );
 
         OperatingSystemUnit momVM = OperatingSystemUnit("MoMVM")
-                .providedBy(OpenstackSmall("OpenStackSmall_OS_MOM")
+                .providedBy(OpenstackSmall()
                         .withBaseImage("be6ae07b-7deb-4926-bfd7-b11afe228d6a")
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
@@ -380,8 +380,8 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
 //import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifactTemplate;
 //import at.ac.tuwien.dsg.comot.common.model.Capability;
 //import at.ac.tuwien.dsg.comot.common.model.CloudService;
-//import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackMicro;
-//import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackSmall;
+//import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackMicro()
+//import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackSmall()
 //import at.ac.tuwien.dsg.comot.common.model.Constraint;
 //import at.ac.tuwien.dsg.comot.common.model.Constraint.Metric;
 //import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.ConnectToRelation;
@@ -411,14 +411,14 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
 //
 //        //need to specify details of VM and operating system to deploy the software servide units on
 //        OperatingSystemUnit dataControllerVM = OperatingSystemUnit("DataControllerUnitVM")
-//                .providedBy(OpenstackSmall("OpenStackSmall_OS_DC")
+//                .providedBy(OpenstackSmall()
 //                        .addSoftwarePackage("openjdk-7-jre")
 //                        .addSoftwarePackage("ganglia-monitor")
 //                        .addSoftwarePackage("gmetad")
 //                );
 //        
 //        OperatingSystemUnit dataNodeVM = OperatingSystemUnit("DataNodeUnitVM")
-//                .providedBy(OpenstackMicro("OpenStackMicro_OS_DN")
+//                .providedBy(OpenstackMicro()
 //                        .addSoftwarePackage("openjdk-7-jre")
 //                        .addSoftwarePackage("ganglia-monitor")
 //                        .addSoftwarePackage("gmetad")
@@ -426,14 +426,14 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
 //
 //        //finally, we define Vm types for event processing
 //        OperatingSystemUnit loadbalancerVM = OperatingSystemUnit("LoadBalancerUnitVM")
-//                .providedBy(OpenstackSmall("OpenStackSmall_OS_LB")
+//                .providedBy(OpenstackSmall()
 //                        .addSoftwarePackage("openjdk-7-jre")
 //                        .addSoftwarePackage("ganglia-monitor")
 //                        .addSoftwarePackage("gmetad")
 //                );
 //        
 //        OperatingSystemUnit eventProcessingVM = OperatingSystemUnit("EventProcessingUnitVM")
-//                .providedBy(OpenstackSmall("OpenStackMicro_OS_EP")
+//                .providedBy(OpenstackSmall()
 //                        .withBaseImage("be6ae07b-7deb-4926-bfd7-b11afe228d6a")
 //                        .addSoftwarePackage("openjdk-7-jre")
 //                        .addSoftwarePackage("ganglia-monitor")
@@ -441,7 +441,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
 //                );
 //        
 //        OperatingSystemUnit localProcessingVM = OperatingSystemUnit("LocalProcessingUnitVM")
-//                .providedBy(OpenstackSmall("OpenStackSmall_OS_LP")
+//                .providedBy(OpenstackSmall()
 //                        .withBaseImage("be6ae07b-7deb-4926-bfd7-b11afe228d6a")
 //                        .addSoftwarePackage("openjdk-7-jre")
 //                        .addSoftwarePackage("ganglia-monitor")
@@ -449,7 +449,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
 //                ).andMinInstances(2);
 //        
 //        OperatingSystemUnit mqttQueueVM = OperatingSystemUnit("MqttQueueVM")
-//                .providedBy(OpenstackSmall("OpenStackSmall_OS_MQTT")
+//                .providedBy(OpenstackSmall()
 //                        .withBaseImage("17ffd200-315f-4ba8-9e77-c294efc772bd")
 //                        .addSoftwarePackage("openjdk-7-jre")
 //                        .addSoftwarePackage("ganglia-monitor")
@@ -457,7 +457,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
 //                );
 //        
 //        OperatingSystemUnit momVM = OperatingSystemUnit("MoMVM")
-//                .providedBy(OpenstackSmall("OpenStackSmall_OS_MOM")
+//                .providedBy(OpenstackSmall()
 //                        .withBaseImage("be6ae07b-7deb-4926-bfd7-b11afe228d6a")
 //                        .addSoftwarePackage("openjdk-7-jre")
 //                        .addSoftwarePackage("ganglia-monitor")

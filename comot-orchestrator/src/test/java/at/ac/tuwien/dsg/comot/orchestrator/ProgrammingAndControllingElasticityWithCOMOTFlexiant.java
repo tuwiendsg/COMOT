@@ -37,7 +37,7 @@ public class ProgrammingAndControllingElasticityWithCOMOTFlexiant {
 
         //need to specify details of VM and operating system to deploy the software servide units on
         OperatingSystemUnit dataControllerVM = OperatingSystemUnit("DataControllerUnitVM")
-                .providedBy(FlexiantSmall("FlexiantSmall_OS_DC")
+                .providedBy(FlexiantSmall()
                         .withProvider("celar@flexiant")
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
@@ -45,7 +45,7 @@ public class ProgrammingAndControllingElasticityWithCOMOTFlexiant {
                 );
 
         OperatingSystemUnit dataNodeVM = OperatingSystemUnit("DataNodeUnitVM")
-                .providedBy(FlexiantSmall("FlexiantMicro_OS_DN")
+                .providedBy(FlexiantSmall()
                         .withProvider("celar@flexiant")
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
@@ -54,7 +54,7 @@ public class ProgrammingAndControllingElasticityWithCOMOTFlexiant {
 
         //finally, we define Vm types for event processing
         OperatingSystemUnit loadbalancerVM = OperatingSystemUnit("LoadBalancerUnitVM")
-                .providedBy(FlexiantSmall("FlexiantSmall_OS_LB")
+                .providedBy(FlexiantSmall()
                         .withProvider("celar@flexiant")
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
@@ -62,7 +62,7 @@ public class ProgrammingAndControllingElasticityWithCOMOTFlexiant {
                 );
 
         OperatingSystemUnit eventProcessingVM = OperatingSystemUnit("EventProcessingUnitVM")
-                .providedBy(FlexiantSmall("FlexiantMicro_OS_EP")
+                .providedBy(FlexiantSmall()
                         .withProvider("celar@flexiant")
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
@@ -70,7 +70,7 @@ public class ProgrammingAndControllingElasticityWithCOMOTFlexiant {
                 );
 
         OperatingSystemUnit localProcessingVM = OperatingSystemUnit("LocalProcessingUnitVM")
-                .providedBy(FlexiantSmall("FlexiantSmall_OS_LP")
+                .providedBy(FlexiantSmall()
                         .withProvider("celar@flexiant")
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
@@ -78,14 +78,14 @@ public class ProgrammingAndControllingElasticityWithCOMOTFlexiant {
                 );
 
         OperatingSystemUnit mqttQueueVM = OperatingSystemUnit("MqttQueueVM")
-                .providedBy(FlexiantSmall("FlexiantSmall_OS_MQTT")
+                .providedBy(FlexiantSmall()
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
                         .addSoftwarePackage("gmetad")
                 );
 
         OperatingSystemUnit momVM = OperatingSystemUnit("MoMVM")
-                .providedBy(FlexiantSmall("FlexiantSmall_OS_MOM")
+                .providedBy(FlexiantSmall()
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
                         .addSoftwarePackage("gmetad")

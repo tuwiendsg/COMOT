@@ -3,6 +3,7 @@ package at.ac.tuwien.dsg.comot.common.model;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * @author omoser
@@ -18,6 +19,7 @@ public class ArtifactTemplate extends AbstractCloudEntity {
     }
 
     public enum ArtifactType {
+
         Script("sh");
 
         private final String type;
@@ -32,23 +34,33 @@ public class ArtifactTemplate extends AbstractCloudEntity {
         }
     }
 
+    protected ArtifactTemplate() {
+        super("Artifact_" + UUID.randomUUID());
+    }
+
     protected ArtifactTemplate(String id) {
         super(id);
     }
 
-    public static ArtifactTemplate ArtifactTemplate(String id) {
-        return new ArtifactTemplate(id);
+    public static ArtifactTemplate ArtifactTemplate() {
+        return new ArtifactTemplate();
     }
 
+    public static ArtifactTemplate ScriptArtifactTemplate() {
+        return new ArtifactTemplate().ofType(ArtifactType.Script);
+    }
     public static ArtifactTemplate ScriptArtifactTemplate(String id) {
         return new ArtifactTemplate(id).ofType(ArtifactType.Script);
     }
 
+    public static ArtifactTemplate SingleScriptArtifactTemplate(String scriptUri) {
+        return new ArtifactTemplate().ofType(ArtifactType.Script)
+                .consistsOf(ArtifactReference.ArtifactReference(scriptUri).locatedAt(scriptUri));
+    }
     public static ArtifactTemplate SingleScriptArtifactTemplate(String id, String scriptUri) {
         return new ArtifactTemplate(id).ofType(ArtifactType.Script)
                 .consistsOf(ArtifactReference.ArtifactReference(scriptUri).locatedAt(scriptUri));
     }
-
 
     public ArtifactTemplate consistsOf(ArtifactReference... artifactReferences) {
         this.artifactReferences.addAll(Arrays.asList(artifactReferences));

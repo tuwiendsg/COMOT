@@ -28,7 +28,7 @@ public class ElasticSearchCloudApplication {
         // OS Node for ES deployment
         OperatingSystemUnit operatingSystemNode = OperatingSystemUnit("OS")
                 .providedBy(
-                        OpenstackSmall("OS_Headnode_Small")
+                        OpenstackSmall()
                         .withProvider("dsg@openstack")
                         .addSoftwarePackage("openjdk-7-jre")
                 );
@@ -60,7 +60,7 @@ public class ElasticSearchCloudApplication {
 
         OperatingSystemUnit osNode = OperatingSystemUnit("OS")
                 .providedBy(
-                        OpenstackSmall("OS_Headnode_Small")
+                        OpenstackSmall()
                         .withProvider("dsg@openstack")
                         .addSoftwarePackage("openjdk-7-jre")
                 );

@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.orchestrator;
+package at.ac.tuwien.dsg.cloudcom.elasticitytutorial;
 
 import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifactTemplate;
 import static at.ac.tuwien.dsg.comot.common.model.CapabilityEffect.CapabilityEffect;
@@ -13,6 +13,7 @@ import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.SingleSoftwareUni
 import static at.ac.tuwien.dsg.comot.common.model.Strategy.Strategy;
 import at.ac.tuwien.dsg.comot.common.model.Capability;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;
+import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.LocalDocker;
 import at.ac.tuwien.dsg.comot.common.model.Constraint;
 import at.ac.tuwien.dsg.comot.common.model.Constraint.Metric;
 import at.ac.tuwien.dsg.comot.common.model.DockerUnit;
@@ -37,34 +38,24 @@ public class ComotHelloElasticity {
         //specify service units in terms of software
 
         String salsaRepo = "http://128.130.172.215/repository/files/HelloElasticity/";
-         
 
         //then, we define Docker types for event processing
         DockerUnit loadbalancerDocker = DockerUnit("LoadBalancerUnitDocker")
-                .providedBy(DockerDefault("DockerDefault_LB")
-        		.addSoftwarePackage("ganglia-monitor")
-                .addSoftwarePackage("gmetad")
-                ).withMaxInstances(Integer.MAX_VALUE);
+                .providedBy(DockerDefault()
+                );
 
         DockerUnit eventProcessingDocker = DockerUnit("EventProcessingUnitDocker")
-                .providedBy(DockerDefault("DockerDefault_EP")
-        		.addSoftwarePackage("ganglia-monitor")
-                .addSoftwarePackage("gmetad")
-                ).withMaxInstances(Integer.MAX_VALUE);
-        
+                .providedBy(DockerDefault()
+                );
+
         //finally, we define Vm types for docker of event processing
-        OperatingSystemUnit eventProcessingVM = OperatingSystemUnit("EventProcessingUnitVM")
-                .providedBy(OpenstackSmall("OpenStackMicro_OS_EP")
-                        .withBaseImage("7ac2cc53-2301-40d7-a030-910d72f552ff")
-                        .addSoftwarePackage("openjdk-7-jre")
-                        .addSoftwarePackage("ganglia-monitor")
-                        .addSoftwarePackage("gmetad")
+        OperatingSystemUnit eventProcessingVM = OperatingSystemUnit("MyPC")
+                .providedBy(LocalDocker()
                 );
 
         //add the service units belonging to the event processing topology
         ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
-                .deployedBy(SingleScriptArtifactTemplate("deployEventProcessingArtifact", salsaRepo + "deployEventProcessing.sh"))
-                //                .andMinInstances(2)
+                .deployedBy(SingleScriptArtifactTemplate(salsaRepo + "deployEventProcessing.sh"))
                 //event processing must register in Load Balancer, so it needs the IP
                 .requires(Requirement.Variable("EventProcessingUnit_LoadBalancer_IP_Req"))
                 //event processing also needs to querry the Data Controller to access data
@@ -78,28 +69,22 @@ public class ComotHelloElasticity {
                         .when(Constraint.MetricConstraint("EP_ST1_CO1", new Metric("responseTime", "ms")).greaterThan("1000"))
                         .and(Constraint.MetricConstraint("EP_ST1_CO2", new Metric("totalPendingRequests", "#")).greaterThan("10"))
                         .then(Strategy.Action.ScaleOut)
-                ).withMinInstances(2)
-                .withMaxInstances(1);
+                )
+                .withMinInstances(2)
+                .withMaxInstances(1); //TODO: needs to be fixed somehow
 
         //add the service units belonging to the event processing topology
         ServiceUnit loadbalancerUnit = SingleSoftwareUnit("LoadBalancerUnit")
                 //load balancer must provide IP
                 .exposes(Capability.Variable("LoadBalancer_IP_information"))
-                .deployedBy(SingleScriptArtifactTemplate("deployLoadBalancerArtifact", salsaRepo + "deployLoadBalancer.sh"));
-
-        ServiceUnit mqttUnit = SingleSoftwareUnit("QueueUnit")
-                //load balancer must provide IP
-                .exposes(Capability.Variable("brokerIp_Capability"))
-                .deployedBy(SingleScriptArtifactTemplate("deployMQTTBroker", salsaRepo + "run_mqtt_broker.sh"));
+                .deployedBy(SingleScriptArtifactTemplate(salsaRepo + "deployLoadBalancer.sh"));
 
         //define event processing unit topology
         ServiceTopology eventProcessingTopology = ServiceTopology("EventProcessingTopology")
                 .withServiceUnits(loadbalancerUnit, eventProcessingUnit //add vm types to topology
-                		, loadbalancerDocker, eventProcessingDocker
-                        , eventProcessingVM
+                        , loadbalancerDocker, eventProcessingDocker, eventProcessingVM
                 );
 
-        //TODO: de verificat de ce nu converteste ok daca pun si constraints si strategies pe topology
         eventProcessingUnit.constrainedBy(
                 Constraint.MetricConstraint("EPT_CO1", new Metric("responseTime", "ms")).lessThan("1000"),
                 Constraint.MetricConstraint("EPT_CO2", new Metric("totalPendingRequests", "#")).lessThan("10"));
@@ -157,49 +142,34 @@ public class ComotHelloElasticity {
                 .andRelationships(
                         //event processing gets IP from load balancer
                         ConnectToRelation("eventProcessingToLoadBalancer")
-                        	.from(loadbalancerUnit.getContext().get("LoadBalancer_IP_information"))
-                        	.to(eventProcessingUnit.getContext().get("EventProcessingUnit_LoadBalancer_IP_Req")), //specify which software unit goes to which VM
+                        .from(loadbalancerUnit.getContext().get("LoadBalancer_IP_information"))
+                        .to(eventProcessingUnit.getContext().get("EventProcessingUnit_LoadBalancer_IP_Req")), //specify which software unit goes to which VM
                         HostedOnRelation("loadbalancerToDocker")
-	                        .from(loadbalancerUnit)
-	                        .to(loadbalancerDocker),
+                        .from(loadbalancerUnit)
+                        .to(loadbalancerDocker),
                         HostedOnRelation("loadbalancerDockerToVM")
-                        	.from(loadbalancerDocker)
-                        	.to(eventProcessingVM),
+                        .from(loadbalancerDocker)
+                        .to(eventProcessingVM),
                         HostedOnRelation("eventProcessingToDocker")
-                        	.from(eventProcessingUnit)
-                        	.to(eventProcessingDocker),
+                        .from(eventProcessingUnit)
+                        .to(eventProcessingDocker),
                         HostedOnRelation("eventProcessingDockerToVM")
-                        	.from(eventProcessingDocker)
-                        	.to(eventProcessingVM)
+                        .from(eventProcessingDocker)
+                        .to(eventProcessingVM)
                 )
                 // as we have horizontally scalable distributed systems (one service unit can have more instances)
                 //metrics must be aggregated among VMs
                 .withDefaultMetrics();
-                //to find scaling actions, one must assume some effects for each action, to understand
-        //if it makes sense or not to execute the action
-//                .withDefaultActionEffects();
 
         //instantiate COMOT orchestrator to deploy, monitor and control the service
         COMOTOrchestrator orchestrator = new COMOTOrchestrator()
                 //we have SALSA as cloud management tool
                 //curently deployed separately
-                .withSalsaIP("128.130.172.215")
-                .withSalsaPort(8080)
-                //we have rSYBL elasticity control service and MELA 
-                //deployed separately
-                //                .withRsyblIP("109.231.121.26")
-                //                .withRsyblIP("localhost")
-                //                                .withRsyblIP("109.231.121.104")
+                .withSalsaIP("128.130.172.214")
+                .withSalsaPort(8380)
                 .withRsyblIP("128.130.172.214")
-                //                .withRsyblIP("128.131.172.4118")
                 .withRsyblPort(8280);
-//                .withRsyblPort(8080);
 
-        //deploy, monitor and control
-//        orchestrator.deployAndControl(serviceTemplate);       
-        
         orchestrator.deploy(serviceTemplate);
-//        orchestrator.controlExisting(serviceTemplate);
-
     }
 }
