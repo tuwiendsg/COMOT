@@ -13,12 +13,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import at.ac.tuwien.dsg.comot.core.ComotOrchestrator;
-import at.ac.tuwien.dsg.comot.cs.test.TestCSContext;
+import at.ac.tuwien.dsg.comot.cs.AppContextCs;
 import at.ac.tuwien.dsg.comot.cs.transformer.ToscaDescriptionBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
-@ContextConfiguration(classes = { TestCSContext.class, TestCoreContext.class })
+@ContextConfiguration(classes = { AppContextCs.class, TestCoreContext.class })
 public abstract class AbstractTest {
 
 	protected final Logger log = LoggerFactory.getLogger(getClass());

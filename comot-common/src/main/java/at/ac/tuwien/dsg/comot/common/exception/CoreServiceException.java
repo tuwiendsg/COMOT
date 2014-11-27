@@ -33,7 +33,5 @@ public class CoreServiceException extends Exception {
 	public boolean isClientError() {
 		return clientError;
 	}
-	
-	
 
 }

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
@@ -19,6 +20,7 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -28,10 +30,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaRepositories("at.ac.tuwien.dsg.comot.core.dal")
 @PropertySource({ "classpath:spring/properties/application.properties" })
 @ComponentScan({ "at.ac.tuwien.dsg.comot" })
-//@EnableAsync
-public class ApplicationContext {
+@EnableAsync
+public class AppContextCore {
 
-	public static final Logger log = LoggerFactory.getLogger(ApplicationContext.class);
+	public static final Logger log = LoggerFactory.getLogger(AppContextCore.class);
 
 	public static final String ENTITYMANAGER_PACKAGES_TO_SCAN = "at.ac.tuwien.dsg.comot.core.model";
 	public static final String PERSISTENCE_NAME = "comot_persist";
@@ -58,7 +60,7 @@ public class ApplicationContext {
 	@Autowired
 	public Properties jpaProperties;
 
-	public ApplicationContext() {
+	public AppContextCore() {
 		super();
 	}
 

@@ -1,5 +1,7 @@
 package at.ac.tuwien.dsg.comot.common.coreservices;
 
+import java.util.List;
+
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
@@ -32,6 +34,8 @@ public interface MonitoringClient extends CoreServiceClient {
 
 	public CompositionRulesConfiguration getMetricsCompositionRules(
 			String serviceId) throws CoreServiceException;
+
+	public List<String> listAllServices() throws CoreServiceException;
 
 	// public void getServiceDescription(String serviceId) throws CoreServiceException;
 }

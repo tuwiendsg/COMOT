@@ -4,7 +4,7 @@ define(function(require) {
 	
 	var model = {};
 	
-	console.log("monitoring");
+	console.log("Test module");
 	
 	return model;
 });

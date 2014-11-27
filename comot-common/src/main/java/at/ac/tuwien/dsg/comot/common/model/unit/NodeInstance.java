@@ -1,8 +1,12 @@
 package at.ac.tuwien.dsg.comot.common.model.unit;
 
+import java.io.Serializable;
+
 import at.ac.tuwien.dsg.comot.common.model.type.State;
 
-public class NodeInstance {
+public class NodeInstance implements Serializable {
+
+	private static final long serialVersionUID = 6826825251009392073L;
 
 	protected int instanceId;
 	protected int hostedId;

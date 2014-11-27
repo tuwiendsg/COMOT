@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
-import at.ac.tuwien.dsg.comot.common.logging.Markers;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitoringSnapshot;
@@ -53,6 +52,7 @@ public class MelaClient extends CoreServiceClient {
 
 	public MelaClient(String host, int port, String basePath) {
 		super(host, port, basePath);
+		name = "[MELA] ";
 	}
 
 	// SERVICE STRUCTURE DESCRIPTION --------------------------------------------------
@@ -69,10 +69,8 @@ public class MelaClient extends CoreServiceClient {
 
 		String result = response.readEntity(String.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "createServiceDescription. Response: '{}'",
-					result);
-		}
+		log.info(name + "createServiceDescription. Response: '{}'", result);
+
 	}
 
 	// get
@@ -89,10 +87,7 @@ public class MelaClient extends CoreServiceClient {
 
 		MonitoredElement result = response.readEntity(MonitoredElement.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "getServiceDescription '{}'. Response: '{}'", serviceId,
-					result);
-		}
+		log.info(name + "getServiceDescription '{}'. Response: '{}'", serviceId, result);
 
 		return result;
 	}
@@ -110,10 +105,7 @@ public class MelaClient extends CoreServiceClient {
 
 		String result = response.readEntity(String.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "updateServiceDescription. Response: '{}'",
-					result);
-		}
+		log.info(name + "updateServiceDescription. Response: '{}'", result);
 
 	}
 
@@ -131,10 +123,7 @@ public class MelaClient extends CoreServiceClient {
 
 		String result = response.readEntity(String.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "removeServiceDescription '{}'. Response: '{}'", serviceId,
-					result);
-		}
+		log.info(name + "removeServiceDescription '{}'. Response: '{}'", serviceId, result);
 
 	}
 
@@ -151,9 +140,7 @@ public class MelaClient extends CoreServiceClient {
 
 		String result = response.readEntity(String.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "listAllServices . Response: '{}'", result);
-		}
+		log.info(name + "listAllServices . Response: '{}'", result);
 
 		// extract IDs from JSON to list
 		List<String> list = new ArrayList<String>();
@@ -183,10 +170,7 @@ public class MelaClient extends CoreServiceClient {
 
 		String result = response.readEntity(String.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "sendMetricsCompositionRules '{}'. Response: '{}'", serviceId,
-					result);
-		}
+		log.info(name + "sendMetricsCompositionRules '{}'. Response: '{}'", serviceId, result);
 
 	}
 
@@ -204,10 +188,8 @@ public class MelaClient extends CoreServiceClient {
 
 		CompositionRulesConfiguration result = response.readEntity(CompositionRulesConfiguration.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "getMetricsCompositionRules '{}'. Response: '{}'", serviceId,
-					result);
-		}
+		log.info(name + "getMetricsCompositionRules '{}'. Response: '{}'", serviceId, result);
+
 		return result;
 	}
 
@@ -226,10 +208,7 @@ public class MelaClient extends CoreServiceClient {
 
 		String result = response.readEntity(String.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "sendRequirements '{}'. Response: '{}'", serviceId,
-					result);
-		}
+		log.info(name + "sendRequirements '{}'. Response: '{}'", serviceId, result);
 
 	}
 
@@ -249,10 +228,8 @@ public class MelaClient extends CoreServiceClient {
 
 		MonitoredElementMonitoringSnapshot result = response.readEntity(MonitoredElementMonitoringSnapshot.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "getMonitoringData '{}'. Response: '{}'", serviceId,
-					result);
-		}
+		log.info(name + "getMonitoringData '{}'. Response: '{}'", serviceId, result);
+
 		return result;
 	}
 
@@ -269,10 +246,8 @@ public class MelaClient extends CoreServiceClient {
 
 		MonitoredElementMonitoringSnapshot result = response.readEntity(MonitoredElementMonitoringSnapshot.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "getMonitoringData '{}'. Response: '{}'", serviceId,
-					result);
-		}
+		log.info(name + "getMonitoringData '{}'. Response: '{}'", serviceId, result);
+
 		return result;
 	}
 
@@ -290,10 +265,8 @@ public class MelaClient extends CoreServiceClient {
 
 		MonitoredElementMonitoringSnapshots result = response.readEntity(MonitoredElementMonitoringSnapshots.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "getAllAggregatedMonitoringData '{}'. Response: '{}'", serviceId,
-					result);
-		}
+		log.info(name + "getAllAggregatedMonitoringData '{}'. Response: '{}'", serviceId, result);
+
 		return result;
 	}
 
@@ -319,10 +292,8 @@ public class MelaClient extends CoreServiceClient {
 
 		MonitoredElementMonitoringSnapshots result = response.readEntity(MonitoredElementMonitoringSnapshots.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "getAllAggregatedMonitoringDataInTimeInterval '{}'. Response: '{}'", serviceId,
-					result);
-		}
+		log.info(name + "getAllAggregatedMonitoringDataInTimeInterval '{}'. Response: '{}'", serviceId, result);
+
 		return result;
 	}
 
@@ -342,10 +313,8 @@ public class MelaClient extends CoreServiceClient {
 
 		MonitoredElementMonitoringSnapshots result = response.readEntity(MonitoredElementMonitoringSnapshots.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "getLastXAggregatedMonitoringData '{}'. Response: '{}'", serviceId,
-					result);
-		}
+		log.info(name + "getLastXAggregatedMonitoringData '{}'. Response: '{}'", serviceId, result);
+
 		return result;
 	}
 
@@ -369,10 +338,8 @@ public class MelaClient extends CoreServiceClient {
 
 		String result = response.readEntity(String.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "getAvailableMetrics '{}'. Response: '{}'", serviceId,
-					result);
-		}
+		log.info(name + "getAvailableMetrics '{}'. Response: '{}'", serviceId, result);
+
 		return result;
 	}
 

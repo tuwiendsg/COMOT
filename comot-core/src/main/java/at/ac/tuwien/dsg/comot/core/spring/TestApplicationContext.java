@@ -17,7 +17,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 @Configuration
 @PropertySource({ "classpath:spring/properties/test.properties" })
-@Profile(ApplicationContext.SPRING_PROFILE_TEST)
+@Profile(AppContextCore.SPRING_PROFILE_TEST)
 public class TestApplicationContext {
 
 	@Resource
@@ -34,11 +34,11 @@ public class TestApplicationContext {
 		return new Properties() {
 			private static final long serialVersionUID = -1625799711343021143L;
 			{
-				setProperty(ApplicationContext.HDM2DLL_AUTO, env.getRequiredProperty(ApplicationContext.HDM2DLL_AUTO));
-				setProperty(ApplicationContext.HIBERNATE_DIALECT,
-						env.getRequiredProperty(ApplicationContext.HIBERNATE_DIALECT));
-				setProperty(ApplicationContext.HIBERNATE_SHOW_SQL,
-						env.getRequiredProperty(ApplicationContext.HIBERNATE_SHOW_SQL));
+				setProperty(AppContextCore.HDM2DLL_AUTO, env.getRequiredProperty(AppContextCore.HDM2DLL_AUTO));
+				setProperty(AppContextCore.HIBERNATE_DIALECT,
+						env.getRequiredProperty(AppContextCore.HIBERNATE_DIALECT));
+				setProperty(AppContextCore.HIBERNATE_SHOW_SQL,
+						env.getRequiredProperty(AppContextCore.HIBERNATE_SHOW_SQL));
 			}
 		};
 	}

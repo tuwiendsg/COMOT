@@ -4,6 +4,8 @@ import at.ac.tuwien.dsg.comot.common.model.type.DirectiveType;
 
 public class SyblDirective extends AbstractEntity implements ReferencableEntity {
 
+	private static final long serialVersionUID = 1938899881721566640L;
+
 	protected String directive;
 	protected DirectiveType type;
 

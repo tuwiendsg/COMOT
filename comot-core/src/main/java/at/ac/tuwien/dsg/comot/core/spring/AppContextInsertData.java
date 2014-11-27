@@ -25,10 +25,10 @@ import at.ac.tuwien.dsg.comot.cs.mapper.ToscaMapper;
 
 @Configuration
 @PropertySource({ "classpath:spring/properties/application.properties" })
-@Profile(ApplicationContext.SPRING_PROFILE_INSERT_DATA)
-public class InsertDataApplicationContext {
+@Profile(AppContextCore.SPRING_PROFILE_INSERT_DATA)
+public class AppContextInsertData {
 
-	public static final Logger log = LoggerFactory.getLogger(InsertDataApplicationContext.class);
+	public static final Logger log = LoggerFactory.getLogger(AppContextInsertData.class);
 
 	@Resource
 	public Environment env;
@@ -40,7 +40,7 @@ public class InsertDataApplicationContext {
 	@Autowired
 	protected ServiceRepo serviceRepo;
 
-	// @DependsOn({"entityManagerFactory", "processEngine", "userMngService"})
+	
 	@Bean
 	public Object insertDeployedInSalsa() {
 		

@@ -40,16 +40,16 @@
 			</div>
 
 			<div class="form-group" data-bind="visible: checkboxMoni() || checkboxCont()">
-				<label class="col-md-2 control-label" for="mcr">Metric composition rules</label>
+				<label class="col-md-2 control-label" for="mcr">Metric composition rules (optional)</label>
 				<div class="col-md-10">
 					<textarea class="form-control" id="mcr" rows="10" data-bind="value: mcr"></textarea>
 				</div>
 			</div>
 
-			<div class="form-group" data-bind="visible: checkboxMoni() || checkboxCont()">
-				<label class="col-md-2 control-label" for="elEffects">Elasticity capabilities effects</label>
+			<div class="form-group" data-bind="visible: checkboxCont()">
+				<label class="col-md-2 control-label" for="effects">Elasticity capabilities effects (optional)</label>
 				<div class="col-md-10">
-					<textarea class="form-control" id="elEffects" rows="10" data-bind="value: elEffects"></textarea>
+					<textarea class="form-control" id="effects" rows="10" data-bind="value: effects"></textarea>
 				</div>
 			</div>
 

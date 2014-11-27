@@ -4,6 +4,8 @@ import at.ac.tuwien.dsg.comot.common.model.AbstractEntity;
 
 public class ArtifactReference extends AbstractEntity {
 
+	private static final long serialVersionUID = 4037194207570549282L;
+
 	protected String uri;
 
 	public ArtifactReference() {

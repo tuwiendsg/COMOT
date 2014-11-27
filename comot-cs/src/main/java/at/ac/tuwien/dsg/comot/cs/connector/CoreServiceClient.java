@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
-import at.ac.tuwien.dsg.comot.common.logging.Markers;
 
 public abstract class CoreServiceClient {
 
@@ -16,6 +15,7 @@ public abstract class CoreServiceClient {
 
 	protected static final String DEF_HOST = "localhost";
 	protected static final int DEF_PORT = 8080;
+	protected static String name;
 
 	protected Client client;
 	protected String baseUri;
@@ -41,6 +41,7 @@ public abstract class CoreServiceClient {
 		client.close();
 	}
 
+
 	protected void processResponseStatus(Response response) throws CoreServiceException {
 
 		int code = response.getStatus();
@@ -51,17 +52,17 @@ public abstract class CoreServiceClient {
 		case 1:
 			break;
 		case 2:
-			log.debug(Markers.CLIENT, "HTTP response status code={}", code);
+			log.trace(name + "HTTP response status code={}", code);
 			break;
 		case 3:
 			break;
 		case 4:
 			msg = response.readEntity(String.class);
-			//log.warn(Markers.CLIENT, "HTTP response status code={} , message='{}' ", code, msg);
+			log.trace(name + "HTTP response status code={} , message='{}' ", code, msg);
 			throw new CoreServiceException(code, msg);
 		case 5:
 			msg = response.readEntity(String.class);
-			//log.error(Markers.CLIENT, "HTTP response status code={} , message='{}' ", code, msg);
+			log.trace(name + "HTTP response status code={} , message='{}' ", code, msg);
 			throw new CoreServiceException(code, msg);
 		}
 

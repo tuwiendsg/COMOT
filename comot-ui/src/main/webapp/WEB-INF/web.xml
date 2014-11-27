@@ -14,7 +14,7 @@
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
-	    at.ac.tuwien.dsg.comot.ui.ApplicationContext
+	    at.ac.tuwien.dsg.comot.core.spring.AppContextCore
 	    </param-value>
 	</context-param>
 	<context-param>

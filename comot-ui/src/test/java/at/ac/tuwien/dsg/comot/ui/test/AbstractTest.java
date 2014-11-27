@@ -40,16 +40,17 @@ import at.ac.tuwien.dsg.comot.common.model.type.NodeType;
 import at.ac.tuwien.dsg.comot.common.model.type.RelationshipType;
 import at.ac.tuwien.dsg.comot.common.model.type.RequirementType;
 import at.ac.tuwien.dsg.comot.core.ComotOrchestrator;
+import at.ac.tuwien.dsg.comot.core.spring.AppContextCore;
+import at.ac.tuwien.dsg.comot.core.spring.AppContextInsertData;
 import at.ac.tuwien.dsg.comot.cs.connector.SalsaClient;
-import at.ac.tuwien.dsg.comot.ui.ApplicationContext;
 import at.ac.tuwien.dsg.comot.ui.service.ServicesResource;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.AssociatedVM;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentUnit;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { ApplicationContext.class })
-@ActiveProfiles({ at.ac.tuwien.dsg.comot.core.spring.ApplicationContext.SPRING_PROFILE_TEST, at.ac.tuwien.dsg.comot.core.spring.ApplicationContext.SPRING_PROFILE_INSERT_DATA })
+@ContextConfiguration(classes = { AppContextCore.class })
+@ActiveProfiles({ AppContextCore.SPRING_PROFILE_TEST, AppContextCore.SPRING_PROFILE_INSERT_DATA })
 // @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 // @DatabaseSetup("classpath:iata_codes/airports_functional.xml")
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)

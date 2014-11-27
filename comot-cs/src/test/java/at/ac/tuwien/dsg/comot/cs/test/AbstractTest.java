@@ -38,13 +38,14 @@ import at.ac.tuwien.dsg.comot.common.model.type.NodePropertiesType;
 import at.ac.tuwien.dsg.comot.common.model.type.NodeType;
 import at.ac.tuwien.dsg.comot.common.model.type.RelationshipType;
 import at.ac.tuwien.dsg.comot.common.model.type.RequirementType;
+import at.ac.tuwien.dsg.comot.cs.AppContextCs;
 import at.ac.tuwien.dsg.comot.cs.connector.SalsaClient;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.AssociatedVM;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentUnit;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { TestCSContext.class })
+@ContextConfiguration(classes = { AppContextCs.class })
 // @ActiveProfiles({ ApplicationContext.SPRING_PROFILE_TEST })
 // @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 // @DatabaseSetup("classpath:iata_codes/airports_functional.xml")
@@ -65,6 +66,7 @@ public abstract class AbstractTest {
 	protected ControlClient control;
 	@Autowired
 	protected MonitoringClient monitoring;
+	
 
 	protected CloudService serviceForMapping;
 	protected String swNodeId = "nodeId";

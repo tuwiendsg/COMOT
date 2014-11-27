@@ -63,11 +63,7 @@ public class MelaMapper {
 			if (element.getLevel().equals(MonitoredElementLevel.SERVICE_UNIT)) {
 				node = resolver.getOsForServiceUnit(element.getId());
 
-				log.info("eeeeeeeeeeeee "+element.getId());
-				
 				for (NodeInstance instance : node.getInstances()) {
-					log.info("instances "+instance.getInstanceId());
-					
 					vmElement = new MonitoredElement();
 					vmElement.setLevel(MonitoredElementLevel.VM);
 					vmElement.setId(((NodeInstanceOs) instance).getIp());
@@ -77,27 +73,21 @@ public class MelaMapper {
 			}
 		}
 		
-		log.info("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
 		// add relationships
 		for (EntityRelationship rel : cloudService.getRelationships()) {
 
-			//log.debug("original from={} to={}", rel.getFrom().getId(), rel.getTo().getId());
+			log.trace("original from={} to={}", rel.getFrom().getId(), rel.getTo().getId());
 
 			if (resolver.isServicePartRelationship(rel)) {
 
 				String fromPartId = resolver.resolveToServicePart(rel.getFrom()).getId();
 				String toPartId = resolver.resolveToServicePart(rel.getTo()).getId();
 
-				//log.debug("part from={} to={}", fromPartId, toPartId);
+				log.trace("part from={} to={}", fromPartId, toPartId);
 
 				if (map.containsKey(fromPartId) && map.containsKey(toPartId)
 						&& !rel.getType().equals(RelationshipType.LOCAL)) {
-
-					//TODO hack, to enable marshaling
-					
-//					MonitoredElement temp1 = new MonitoredElement(fromPartId));
-//					MonitoredElement temp2 = (MonitoredElement) Utils.deepCopy(map.get(toPartId));
 
 					
 					tempRel = new Relationship()
@@ -105,14 +95,14 @@ public class MelaMapper {
 							.withTo(new MonitoredElement(toPartId))
 							.withType(resolveType(rel.getType()));
 					
-					log.debug("inserted relationship from={} to={}", fromPartId, toPartId);
+					log.trace("inserted relationship from={} to={}", fromPartId, toPartId);
 					
 					map.get(fromPartId).getRelationships().add(tempRel);
 				}
 			}
 		}
 
-		log.trace("Final mapping: {}", Utils.asXmlStringLog(root));
+		log.debug("Final mapping: {}", Utils.asXmlStringLog(root));
 
 		return root;
 	}
@@ -170,7 +160,7 @@ public class MelaMapper {
 	// !!! number must be on the right side, there is a bug in rsybl
 	protected List<Requirement> parseToRequirement(ServicePart servicePart, String constraint) {
 
-		log.debug("parsing constraint: {}", constraint);
+		log.trace("parsing constraint: {}", constraint);
 		
 		Requirement req;
 		List<Requirement> requirements = new ArrayList<>();

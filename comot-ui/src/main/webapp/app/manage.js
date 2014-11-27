@@ -44,25 +44,35 @@ define([ 'durandal/app', 'knockout', 'komapping', 'comot_client','plugins/router
 	return model;
 
 	function switchMonitoring() {
+		
+		
+		if(this.monitoring()){
+			comot.stopMonitoring(this.id(),  notify('success'))
+		}else{
+			comot.startMonitoring(this.id(),  notify('success'))
+		}
+		
+		
 		this.monitoring(!this.monitoring());
-		
-		comot.startMonitoring(this.id(),  notify('success'))
-		
-		
 		//app.showMessage('This is a message.', 'Title');
 	}
 
 	function switchControl() {
-		this.control(!this.control());
+		
 
 
 		notify();
 		notify("error");
 		notify("info");
 		notify("success");
+		
+		this.control(!this.control());
 	}
 
 	function deployment() {
+		
+		
+		
 		this.deployment(!this.deployment());
 	}
 

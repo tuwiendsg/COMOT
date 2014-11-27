@@ -9,6 +9,8 @@ import at.ac.tuwien.dsg.comot.common.model.type.ArtifactType;
 
 public class ArtifactTemplate extends AbstractEntity implements ReferencableEntity {
 
+	private static final long serialVersionUID = 4681582673568700847L;
+
 	protected ArtifactType type;
 	protected List<ArtifactReference> artifactReferences = new ArrayList<>();
 

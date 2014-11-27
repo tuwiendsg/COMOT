@@ -141,7 +141,6 @@ public class ToscaOrika {
 										facade.map(tNode.getPolicies(), unit);
 										topology.addServiceUnit(unit);
 
-										log.debug("Created ServiceUnit '{}'", unit.getId());
 									}
 								}
 							}

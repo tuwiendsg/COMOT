@@ -2,6 +2,8 @@ package at.ac.tuwien.dsg.comot.common.model.unit;
 
 public class NodeInstanceOs extends NodeInstance {
 
+	private static final long serialVersionUID = 7489425455903961743L;
+
 	protected String provider;
 	protected String baseImage;
 	protected String instanceType;

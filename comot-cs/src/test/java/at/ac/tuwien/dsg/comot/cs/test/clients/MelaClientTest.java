@@ -2,6 +2,7 @@ package at.ac.tuwien.dsg.comot.cs.test.clients;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -97,7 +98,6 @@ public class MelaClientTest extends AbstractTest {
 		// MCR
 		updateMCR();
 
-		// TODO what are requirements?
 		// sendRequirements
 
 		removeService();
@@ -119,6 +119,7 @@ public class MelaClientTest extends AbstractTest {
 
 		MonitoredElementMonitoringSnapshots dataMultiple = mela.getAllAggregatedMonitoringData(SERVICE_ID);
 		assertNotNull(dataMultiple);
+		assertTrue(0 < dataMultiple.getChildren().size());
 		log.info("getAllAggregatedMonitoringData \n" + Utils.asXmlString(dataMultiple));
 
 		// dataMultiple = mela.getAllAggregatedMonitoringDataInTimeInterval(SERVICE_ID, startTimestamp, endTimestamp);
@@ -127,6 +128,7 @@ public class MelaClientTest extends AbstractTest {
 
 		dataMultiple = mela.getLastXAggregatedMonitoringData(SERVICE_ID, 5);
 		assertNotNull(dataMultiple);
+		assertTrue(0 < dataMultiple.getChildren().size());
 		log.info("getLastXAggregatedMonitoringData \n" + Utils.asXmlString(dataMultiple));
 	}
 

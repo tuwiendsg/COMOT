@@ -4,6 +4,8 @@ import at.ac.tuwien.dsg.comot.common.model.type.RelationshipType;
 
 public class EntityRelationship extends AbstractEntity implements ReferencableEntity {
 
+	private static final long serialVersionUID = -8802319806655668518L;
+
 	protected RelationshipType type;
 
 	protected ReferencableEntity from;

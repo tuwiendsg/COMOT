@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -23,7 +24,6 @@ import at.ac.tuwien.dsg.comot.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
-import at.ac.tuwien.dsg.comot.common.logging.Markers;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.core.ComotOrchestrator;
 import at.ac.tuwien.dsg.comot.core.model.ServiceEntity;
@@ -77,9 +77,9 @@ public class ServicesResource {
 	public Response startMonitoring(@PathParam("serviceId") String serviceId) {
 
 		try {
-			boolean result = orchestrator.startMonitoring(serviceId);
-			return Response.ok(result).build();
-			
+			orchestrator.startMonitoring(serviceId);
+			return Response.ok().build();
+
 		} catch (Exception e) {
 			return handleException(e);
 		}
@@ -91,9 +91,9 @@ public class ServicesResource {
 	public Response startControl(@PathParam("serviceId") String serviceId) {
 
 		try {
-			boolean result =  orchestrator.startControl(serviceId);
-			return Response.ok(result).build();
-			
+			orchestrator.startControl(serviceId);
+			return Response.ok().build();
+
 		} catch (Exception e) {
 			return handleException(e);
 		}
@@ -142,6 +142,36 @@ public class ServicesResource {
 		}
 	}
 
+	// DELETE
+
+	@DELETE
+	@Path("/{serviceId}/monitoring")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response stopMonitoring(@PathParam("serviceId") String serviceId) {
+
+		try {
+			orchestrator.stopMonitoring(serviceId);
+			return Response.ok().build();
+
+		} catch (Exception e) {
+			return handleException(e);
+		}
+	}
+
+	@DELETE
+	@Path("/{serviceId}/control")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response stopControl(@PathParam("serviceId") String serviceId) {
+
+		try {
+			orchestrator.stopControl(serviceId);
+			return Response.ok().build();
+
+		} catch (Exception e) {
+			return handleException(e);
+		}
+	}
+
 	// READ
 
 	@GET
@@ -154,10 +184,11 @@ public class ServicesResource {
 
 			return Response.ok(list.toArray(new ServiceEntity[list.size()])).build();
 		} catch (Exception e) {
+			log.info("aaaaaaaaaaaaaa");
 			return handleException(e);
 		}
 	}
-	
+
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Path("/{serviceId}")
@@ -190,7 +221,6 @@ public class ServicesResource {
 			return handleException(e);
 		}
 	}
-
 
 	protected Response handleException(Exception e) {
 

@@ -15,55 +15,96 @@
 	var base = "rest/";
 	var services = base + "services/";
 
-	exports.deploy = function(tosca, processResult) {
+	function getRequestCore(onSuccess, onError) {
+
+		var core = {};
+
+		if (onSuccess === null || typeof onSuccess === 'undefined') {
+			core.success = function() {
+				console.log("aaaaaaaaaaaa");
+			}
+		}
+		if (onError === null || typeof onError === 'undefined') {
+			core.onError = function() {
+				console.log("bbbbbbbbbbbb");
+			}
+		}
+		return core;
+	}
+
+	exports.deploy = function(tosca, onSuccess, onError) {
 		$.ajax({
 			type : "POST",
 			url : services,
 			data : tosca,
 			dataType : "xml",
 			contentType : "application/xml",
-			success : processResult
+			success : onSuccess,
+			error : onError
 		});
 	}
 
-	exports.startMonitoring = function(serviceId, processResult) {
+	exports.startMonitoring = function(serviceId, onSuccess, onError) {
 
-		console.log("aaaaa");
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "PUT";
+		request.url = services + serviceId + "/monitoring";
 
-		$.ajax({
-			type : "PUT",
-			url : services + serviceId + "/monitoring",
-			success : processResult
-		});
+		$.ajax(request);
 	}
 
-	exports.startControl = function(serviceId, processResult) {
+	exports.startControl = function(serviceId, onSuccess, onError) {
 
 		console.log(mcr);
 
 		$.ajax({
 			type : "PUT",
 			url : services + serviceId + "/control",
-			success : processResult
+			success : onSuccess,
+			error : onError
 		});
 	}
 
-	exports.getServices = function(processResult) {
+	exports.stopMonitoring = function(serviceId, onSuccess, onError) {
+
+		$.ajax({
+			type : "DELETE",
+			url : services + serviceId + "/monitoring",
+			success : onSuccess,
+			error : onError
+		});
+	}
+
+	exports.stopControl = function(serviceId, onSuccess, onError) {
+
+		console.log(mcr);
+
+		$.ajax({
+			type : "DELETE",
+			url : services + serviceId + "/control",
+			success : onSuccess,
+			error : onError
+		});
+	}
+
+	exports.getServices = function(onSuccess, onError) {
 		$.ajax({
 			type : "GET",
 			url : services,
 			dataType : "json",
-			success : processResult
+			success : onSuccess,
+			error : onError
 		});
 	}
 
-	exports.checkStatus = function(serviceId, processResult) {
+	exports.checkStatus = function(serviceId, onSuccess, onError) {
 
 		$.ajax({
 			type : "GET",
 			url : services + serviceId + "/state",
 			dataType : "json",
-			success : processResult
+			success : onSuccess,
+			error : onError
 		});
 	}
 

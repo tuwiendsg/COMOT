@@ -9,29 +9,20 @@ define(function(require) {
 
 		this.tosca = ko.observable("");
 		this.mcr = ko.observable();
-		this.elEffects = ko.observable();
+		this.effects = ko.observable();
 
 		this.deploy = function() {
 
-			var desc = this.tosca();
+			var tosca = this.tosca();
+			var mcr = this.mcr();
+			var effects = this.effects();
 
-			console.log("Tosca: " + desc);
+			console.log("Tosca: " + tosca);
 
 			comot.deploy(this.tosca(), function(data) {
 				console.log("ddddddddddddddddddddddddddddddddddddddddd");
 				console.log(data);
 			});
-
-			// $.ajax({
-			// type : "POST",
-			// url : "rest/services",
-			// data : this.tosca(),
-			// dataType : "xml",
-			// contentType : "application/xml",
-			// success : function(data) {
-			// console.log(data);
-			// }
-			// });
 
 		};
 	}

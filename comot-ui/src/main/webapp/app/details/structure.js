@@ -1,32 +1,51 @@
 define(function(require) {
-	var app = require('durandal/app'), ko = require('knockout'), JsonHuman = require('json_human'), d3 = require('d3'), comot = require('comot_client'), router = require('plugins/router');
+	var app = require('durandal/app'), ko = require('knockout'), JsonHuman = require('json_human'), d3 = require('d3'), comot = require('comot_client');
 
 	var model = {
-		activate : function(serviceId) {
-
-			if (serviceId === null && typeof serviceId === 'undefined') {
-				return;
-			}
-
-			comot.checkStatus(serviceId, doSomething);
-
+		activate : onActivate,
+		deactivate : function(){
+			console.log(">>>> deactivate")
+			onDeactivate()
 		},
-		serviceId : ko.observable(),
-		status : ko.observable(),
-		checkStatus : function() {
-			comot.checkStatus(this.serviceId(), doSomething);
-		}
-	};
+		detached : function(view, parent){
+			console.log(">>>> detached")
+			console.log("view")
+			console.log(view)
+			console.log("parent")
+			console.log(parent)
+			onDeactivate()
+		},
 
-	console.log("structure");
+		refreshing : ko.observable(),
+		status : ko.observable()
+	};
 
 	return model;
 
-	function doSomething(data) {
+	function onActivate(serviceId) {
+
+		comot.checkStatus(serviceId, processStatus);
+
+		var loop = setInterval(function() {
+			console.log("aaaa "+serviceId)
+			comot.checkStatus(serviceId, processStatus);
+		}, 2000);
+		console.log("loop "+loop+" "+serviceId)
+
+		model.refreshing(loop);
+	}
+
+	function onDeactivate() {
+		console.log("onDeactivate"+ model.refreshing());
+		clearInterval(model.refreshing());
+		console.log("after deactivate")
+	}
+
+	function processStatus(data) {
+
 		model.status(data.state);
 
 		$("#output").html(JsonHuman.format(data));
-
 		createTree(data, "#tree_div");
 	}
 });

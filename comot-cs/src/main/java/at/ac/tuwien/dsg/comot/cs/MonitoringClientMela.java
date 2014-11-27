@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot.cs;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.annotation.PreDestroy;
 
@@ -29,7 +30,8 @@ public class MonitoringClientMela implements MonitoringClient {
 	protected MelaMapper melaMapper;
 
 	@Override
-	public void startMonitoring(CloudService service, CompositionRulesConfiguration mcr) throws CoreServiceException, ComotException {
+	public void startMonitoring(CloudService service, CompositionRulesConfiguration mcr) throws CoreServiceException,
+			ComotException {
 
 		if (service == null) {
 			log.warn("startMonitoring(service=null )");
@@ -37,7 +39,7 @@ public class MonitoringClientMela implements MonitoringClient {
 		}
 
 		try {
-			
+
 			MonitoredElement element = melaMapper.extractMela(service);
 			Requirements requirements = melaMapper.extractRequirements(service);
 
@@ -93,6 +95,12 @@ public class MonitoringClientMela implements MonitoringClient {
 
 		CompositionRulesConfiguration mcr = mela.getMetricsCompositionRules(serviceId);
 		return mcr;
+	}
+
+	@Override
+	public List<String> listAllServices() throws CoreServiceException {
+		return mela.listAllServices();
+
 	}
 
 	// @Override

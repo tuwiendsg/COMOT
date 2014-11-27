@@ -7,6 +7,8 @@ package at.ac.tuwien.dsg.comot.core;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,9 @@ import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.core.dal.JobRepo;
 import at.ac.tuwien.dsg.comot.core.dal.ServiceRepo;
+import at.ac.tuwien.dsg.comot.core.model.Job;
 import at.ac.tuwien.dsg.comot.core.model.ServiceEntity;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
@@ -27,8 +31,6 @@ import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionR
 public class ComotOrchestrator {
 
 	private static final Logger log = LoggerFactory.getLogger(ComotOrchestrator.class);
-
-	private static final long CHECK_STATE_TIMEOUT = 10000;
 
 	@Autowired
 	protected DeploymentClient deployment;
@@ -39,21 +41,34 @@ public class ComotOrchestrator {
 
 	@Autowired
 	protected ServiceRepo serviceRepo;
+	@Autowired
+	protected JobRepo jobRepo;
+
+	@Autowired
+	protected AsyncExecutor executor;
+
+	@PostConstruct
+	public void setUp() {
+
+		log.info("uuuu");
+		executor.setOrchestrator(this);
+		executor.start();
+		log.info("uuuu2");
+	}
 
 	public List<ServiceEntity> getServices() {
 		return (List<ServiceEntity>) serviceRepo.findAll();
 	}
-	
 
 	public CloudService getStatus(String serviceId) throws CoreServiceException, ComotException {
 
-		CloudService updated = deployment.refreshStatus(getServiceEntity(serviceId).getServiceDeployed());
+		CloudService updated = getService(serviceId);
 
 		// TODO insert status from mela if monitored
 
 		return updated;
 	}
-	
+
 	public void deployNew(CloudService service) throws CoreServiceException, ComotException {
 
 		CloudService deployedService = deployment.deploy(service);
@@ -63,39 +78,69 @@ public class ComotOrchestrator {
 
 	}
 
-	public boolean startMonitoring(String serviceId) throws CoreServiceException,
-			ComotException {
-
-		if (!deployment.isRunning(serviceId)) {
-			return false;
-		}
+	public void startMonitoring(String serviceId) throws CoreServiceException, ComotException {
 
 		ServiceEntity entity = getServiceEntity(serviceId);
-		CloudService service = deployment.refreshStatus(entity.getServiceDeployed());
 
-		monitoring.startMonitoring(service, entity.getMcr());
+		if (deployment.isRunning(serviceId)) {
 
-		// TODO keep monitoring updated
+			CloudService service = deployment.refreshStatus(entity.getServiceDeployed());
+			monitoring.startMonitoring(service, entity.getMcr());
 
-		return true;
+			entity.setMonitoring(true);
+			serviceRepo.save(entity);
+
+			// TODO keep monitoring updated
+
+		} else {
+			jobRepo.save(new Job(Job.Type.START_MONITORING, entity));
+
+			// entity.addJob(Job.Type.START_MONITORING);
+			// serviceRepo.save(entity);
+		}
 
 	}
 
-	public boolean startControl(String serviceId)
-			throws CoreServiceException,
-			ComotException {
+	public void startControl(String serviceId) throws CoreServiceException, ComotException {
+		ServiceEntity entity = getServiceEntity(serviceId);
 
-		if (!deployment.isRunning(serviceId)) {
-			return false;
+		if (deployment.isRunning(serviceId)) {
+
+			CloudService service = deployment.refreshStatus(entity.getServiceDeployed());
+			control.sendInitialConfig(service, entity.getMcr(), entity.getEffects());
+			control.startControl(serviceId);
+
+			// TODO keep control updated
+
+		} else {
+			jobRepo.save(new Job(Job.Type.START_CONTROL, entity));
 		}
 
+	}
+
+	public void stopMonitoring(String serviceId) throws CoreServiceException, ComotException {
+
 		ServiceEntity entity = getServiceEntity(serviceId);
-		CloudService service = deployment.refreshStatus(entity.getServiceDeployed());
 
-		control.sendInitialConfig(service, entity.getMcr(), entity.getEffects());
-		control.startControl(serviceId);
+		if (entity.getMonitoring()) {
+			monitoring.stopMonitoring(serviceId);
 
-		return true;
+			entity.setMonitoring(false);
+			serviceRepo.save(entity);
+		}
+
+	}
+
+	public void stopControl(String serviceId) throws CoreServiceException, ComotException {
+
+		ServiceEntity entity = getServiceEntity(serviceId);
+
+		if (entity.getControl()) {
+			control.stopControl(serviceId);
+
+			entity.setControl(false);
+			serviceRepo.save(entity);
+		}
 
 	}
 
@@ -136,7 +181,15 @@ public class ComotOrchestrator {
 		serviceRepo.save(entity);
 	}
 
-	protected ServiceEntity getServiceEntity(String serviceId) {
+	public CloudService getService(String serviceId) throws CoreServiceException, ComotException {
+
+		ServiceEntity entity = getServiceEntity(serviceId);
+		CloudService updated = deployment.refreshStatus(entity.getServiceDeployed());
+
+		return updated;
+	}
+
+	public ServiceEntity getServiceEntity(String serviceId) {
 
 		ServiceEntity entity = serviceRepo.findOne(serviceId);
 

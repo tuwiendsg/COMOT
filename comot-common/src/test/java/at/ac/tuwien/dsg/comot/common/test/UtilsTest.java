@@ -59,7 +59,7 @@ public class UtilsTest {
 	}
 	
 	
-	public static void waitInfinit() {
+	public static void sleepInfinit() {
 		while (true) {
 			try {
 				Thread.sleep(1000);
@@ -69,7 +69,7 @@ public class UtilsTest {
 		}
 	}
 
-	public static void waitSeconds(int seconds) {
+	public static void sleepSeconds(int seconds) {
 		try {
 			log.debug("Waiting {} seconds", seconds);
 			Thread.sleep(seconds * 1000);

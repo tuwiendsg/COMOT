@@ -6,6 +6,8 @@ import at.ac.tuwien.dsg.comot.common.model.type.CapabilityType;
 
 public class Capability extends AbstractEntity implements ReferencableEntity {
 
+	private static final long serialVersionUID = -573066037034691710L;
+
 	protected CapabilityType type;
 
 	public Capability() {

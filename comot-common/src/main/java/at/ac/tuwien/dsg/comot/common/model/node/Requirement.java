@@ -4,10 +4,9 @@ import at.ac.tuwien.dsg.comot.common.model.AbstractEntity;
 import at.ac.tuwien.dsg.comot.common.model.ReferencableEntity;
 import at.ac.tuwien.dsg.comot.common.model.type.RequirementType;
 
-/**
- * @author omoser
- */
 public class Requirement extends AbstractEntity implements ReferencableEntity {
+
+	private static final long serialVersionUID = -6524058426472480121L;
 
 	protected RequirementType type;
 

@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
-import at.ac.tuwien.dsg.comot.common.logging.Markers;
 import at.ac.tuwien.dsg.comot.rsybl.CloudServiceXML;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
@@ -42,6 +41,7 @@ public class RsyblClient extends CoreServiceClient {
 
 	public RsyblClient(String host, int port, String basePath) {
 		super(host, port, basePath);
+		name = "[rSYBL] ";
 	}
 
 	public void prepareControl(String serviceId) throws CoreServiceException {
@@ -50,18 +50,13 @@ public class RsyblClient extends CoreServiceClient {
 				.path(PREPARE_CONTROL_PATH)
 				.resolveTemplate("id", serviceId)
 				.request(MediaType.WILDCARD_TYPE)
-				// .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML)
 				.put(Entity.xml(""));
 
 		processResponseStatus(response);
 
 		String msg = response.readEntity(String.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "prepareControl '{}'. Response: '{}'", serviceId,
-					msg);
-		}
-
+		log.info(name + "prepareControl '{}'. Response: '{}'", serviceId, msg);
 	}
 
 	public void serviceDescription(String serviceId, CloudServiceXML cloudServiceXML) throws CoreServiceException {
@@ -76,11 +71,7 @@ public class RsyblClient extends CoreServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "serviceDescription '{}'. Response: '{}'", serviceId,
-					msg);
-		}
-
+		log.info(name + "serviceDescription '{}'. Response: '{}'", serviceId, msg);
 	}
 
 	public void serviceDeployment(String serviceId, DeploymentDescription deploymentDescription)
@@ -96,10 +87,7 @@ public class RsyblClient extends CoreServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "serviceDeployment '{}'. Response: '{}'", serviceId,
-					msg);
-		}
+		log.info(name + "serviceDeployment '{}'. Response: '{}'", serviceId, msg);
 	}
 
 	public void sendMetricsCompositionRules(String serviceId,
@@ -116,10 +104,7 @@ public class RsyblClient extends CoreServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "metricsCompositionRules '{}'. Response: '{}'", serviceId,
-					msg);
-		}
+		log.info(name + "metricsCompositionRules '{}'. Response: '{}'", serviceId, msg);
 	}
 
 	public void updateMetricsCompositionRules(String serviceId,
@@ -136,10 +121,7 @@ public class RsyblClient extends CoreServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "updateMetricsCompositionRules '{}'. Response: '{}'", serviceId,
-					msg);
-		}
+		log.info(name + "updateMetricsCompositionRules '{}'. Response: '{}'", serviceId, msg);
 	}
 
 	public void sendElasticityCapabilitiesEffects(String serviceId, String effectsJSON) throws CoreServiceException {
@@ -154,10 +136,7 @@ public class RsyblClient extends CoreServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "elasticityCapabilitiesEffects '{}'. Response: '{}'", serviceId,
-					msg);
-		}
+		log.info(name + "elasticityCapabilitiesEffects '{}'. Response: '{}'", serviceId, msg);
 	}
 
 	public void updateElasticityCapabilitiesEffects(String serviceId, String effectsJSON) throws CoreServiceException {
@@ -172,10 +151,7 @@ public class RsyblClient extends CoreServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "updateElasticityCapabilitiesEffects '{}'. Response: '{}'", serviceId,
-					msg);
-		}
+		log.info(name + "updateElasticityCapabilitiesEffects '{}'. Response: '{}'", serviceId, msg);
 	}
 
 	public void startControl(String serviceId) throws CoreServiceException {
@@ -190,11 +166,7 @@ public class RsyblClient extends CoreServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "startControl '{}'. Response: '{}'", serviceId,
-					msg);
-		}
-
+		log.info(name + "startControl '{}'. Response: '{}'", serviceId, msg);
 	}
 
 	public void stopControl(String serviceId) throws CoreServiceException {
@@ -209,10 +181,7 @@ public class RsyblClient extends CoreServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "stopControl '{}'. Response: '{}'", serviceId,
-					msg);
-		}
+		log.info(name + "stopControl '{}'. Response: '{}'", serviceId, msg);
 	}
 
 	/**
@@ -235,10 +204,7 @@ public class RsyblClient extends CoreServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		if (log.isInfoEnabled()) {
-			log.info(Markers.CLIENT, "updateElasticityRequirements '{}'. Response: '{}'", serviceId,
-					msg);
-		}
+		log.info(name + "updateElasticityRequirements '{}'. Response: '{}'", serviceId, msg);
 	}
 
 }

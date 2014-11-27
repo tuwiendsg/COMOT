@@ -13,13 +13,18 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import at.ac.tuwien.dsg.comot.common.coreservices.ControlClient;
+import at.ac.tuwien.dsg.comot.common.coreservices.DeploymentClient;
+import at.ac.tuwien.dsg.comot.common.coreservices.MonitoringClient;
+import at.ac.tuwien.dsg.comot.core.ComotOrchestrator;
 import at.ac.tuwien.dsg.comot.core.dal.ServiceRepo;
-import at.ac.tuwien.dsg.comot.core.spring.ApplicationContext;
+import at.ac.tuwien.dsg.comot.core.spring.AppContextCore;
+import at.ac.tuwien.dsg.comot.core.spring.AppContextInsertData;
+
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { ApplicationContext.class })
-@ActiveProfiles({ ApplicationContext.SPRING_PROFILE_TEST })
-// @ActiveProfiles({ ApplicationContext.SPRING_PROFILE_TEST })
+@ContextConfiguration(classes = { AppContextCore.class})
+@ActiveProfiles({ AppContextCore.SPRING_PROFILE_TEST, AppContextCore.SPRING_PROFILE_INSERT_DATA })
 // @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 // @DatabaseSetup("classpath:iata_codes/airports_functional.xml")
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
@@ -32,5 +37,15 @@ public abstract class AbstractTest {
 
 	@Autowired
 	protected ServiceRepo serviceRepo;
+	
+	@Autowired
+	protected ComotOrchestrator orchestrator;
+	
+	@Autowired
+	protected DeploymentClient deployment;
+	@Autowired
+	protected ControlClient control;
+	@Autowired
+	protected MonitoringClient monitoring;
 
 }

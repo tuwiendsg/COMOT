@@ -36,7 +36,7 @@ public class Navigator {
 
 	public ServiceUnit getServiceUnit(String id) {
 		for (ServiceUnit unit : getParentTopologyFor(id).getServiceUnits()) {
-			//log.info("rrrrrrrrrrrrrrrrrrrrrr  {} ? {}", unit.getId(), id);
+			// log.info("rrrrrrrrrrrrrrrrrrrrrr  {} ? {}", unit.getId(), id);
 			if (unit.getId().equals(id)) {
 				return unit;
 			}
@@ -67,7 +67,7 @@ public class Navigator {
 					node.entity.getClass().equals(ArtifactTemplate.class)) {
 				result = (ServiceTopology) node.parent.parent.entity;
 			}
-		} 
+		}
 
 		log.debug("getParentTopologyFor(id={} ): {}", id, ((result == null) ? null : result.getId()));
 		return result;

@@ -8,6 +8,8 @@ import at.ac.tuwien.dsg.comot.common.model.type.NodePropertiesType;
 
 public class Properties implements Serializable {
 
+	private static final long serialVersionUID = -3590178619365886987L;
+
 	protected NodePropertiesType propertiesType;
 	protected Map<String, String> properties = new HashMap<>();
 
