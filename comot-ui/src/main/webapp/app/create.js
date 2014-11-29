@@ -1,18 +1,28 @@
 define(function(require) {
 	var app = require('durandal/app'), ko = require('knockout'), http = require('plugins/http'), comot = require('comot_client');
 
-	function AppViewModel() {
+//	var testModule = require('test_module');
+//	
+//	console.log("aaa "+testModule.something());
+//	
+	var viewModel = {
+			activate : function(){
+				console.log("I am here to create");
+			},
+			deactivate : function(){
+				testModule.deactivate();
+				console.log("This is the end");
+			},
 
-		this.checkboxDepl = ko.observable();
-		this.checkboxMoni = ko.observable();
-		this.checkboxCont = ko.observable();
+		checkboxDepl : ko.observable(),
+		checkboxMoni  : ko.observable(),
+		checkboxCont  : ko.observable(),
 
-		this.tosca = ko.observable("");
-		this.mcr = ko.observable();
-		this.effects = ko.observable();
+		tosca  : ko.observable(""),
+		mcr  : ko.observable(),
+		effects  : ko.observable(),
 
-		this.deploy = function() {
-
+		deploy  : function() {
 			var tosca = this.tosca();
 			var mcr = this.mcr();
 			var effects = this.effects();
@@ -20,12 +30,10 @@ define(function(require) {
 			console.log("Tosca: " + tosca);
 
 			comot.deploy(this.tosca(), function(data) {
-				console.log("ddddddddddddddddddddddddddddddddddddddddd");
 				console.log(data);
 			});
-
-		};
+		}
 	}
 
-	return new AppViewModel();
+	return viewModel;
 });

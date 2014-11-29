@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import at.ac.tuwien.dsg.comot.common.model.AbstractEntity;
-import at.ac.tuwien.dsg.comot.common.model.ReferencableEntity;
 import at.ac.tuwien.dsg.comot.common.model.type.ArtifactType;
 
-public class ArtifactTemplate extends AbstractEntity implements ReferencableEntity {
+public class ArtifactTemplate extends AbstractEntity {
 
 	private static final long serialVersionUID = 4681582673568700847L;
 

@@ -92,18 +92,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <interface id="10" language="java" name="at.ac.tuwien.dsg.comot.common.model.ReferencableEntity" 
-    project="comot-common" 
-    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/ReferencableEntity.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="28" width="131" x="943" y="617"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
-      <operations public="false" package="false" protected="false" private="false" static="false"/>    
-    </display>  
-  </interface>  
-  <class id="11" language="java" name="at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit" project="comot-common" 
+  <class id="10" language="java" name="at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit" project="comot-common" 
     file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/structure/ServiceUnit.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="460" y="225"/>    
@@ -113,7 +102,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="12" language="java" name="at.ac.tuwien.dsg.comot.common.model.unit.ElasticityCapability" 
+  <class id="11" language="java" name="at.ac.tuwien.dsg.comot.common.model.unit.ElasticityCapability" 
     project="comot-common" 
     file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/unit/ElasticityCapability.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -124,7 +113,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="13" language="java" name="at.ac.tuwien.dsg.comot.common.model.unit.NodeInstanceOs" project="comot-common" 
+  <class id="12" language="java" name="at.ac.tuwien.dsg.comot.common.model.unit.NodeInstanceOs" project="comot-common" 
     file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/unit/NodeInstanceOs.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="101" y="662"/>    
@@ -134,7 +123,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="14" language="java" name="at.ac.tuwien.dsg.comot.common.model.unit.NodeInstance" project="comot-common" 
+  <class id="13" language="java" name="at.ac.tuwien.dsg.comot.common.model.unit.NodeInstance" project="comot-common" 
     file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/unit/NodeInstance.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="104" y="518"/>    
@@ -144,7 +133,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="15" language="java" name="at.ac.tuwien.dsg.comot.common.model.node.Properties" project="comot-common" 
+  <class id="14" language="java" name="at.ac.tuwien.dsg.comot.common.model.node.Properties" project="comot-common" 
     file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/node/Properties.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="332" y="522"/>    
@@ -154,7 +143,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="16" language="java" name="at.ac.tuwien.dsg.comot.common.model.EntityRelationship" project="comot-common" 
+  <class id="15" language="java" name="at.ac.tuwien.dsg.comot.common.model.EntityRelationship" project="comot-common" 
     file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/EntityRelationship.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1006" y="324"/>    
@@ -164,169 +153,128 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <association id="17">    
-    <end type="SOURCE" refId="16" navigable="false">      
-      <attribute id="18" name="from"/>      
-      <multiplicity id="19" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="20">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="21" name="capabilities"/>      
-      <multiplicity id="22" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="4" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="23">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="24" name="nodes"/>      
-      <multiplicity id="25" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="7" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="26">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="27" name="directives"/>      
-      <multiplicity id="28" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="29">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="30" name="serviceUnits"/>      
-      <multiplicity id="31" minimum="0" maximum="2147483647"/>    
+  <association id="16">    
+    <end type="SOURCE" refId="10" navigable="false">      
+      <attribute id="17" name="elasticityCapabilities"/>      
+      <multiplicity id="18" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="11" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="32">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <association id="33">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="34" name="artifactReferences"/>      
-      <multiplicity id="35" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <realization id="36">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="10"/>  
-  </realization>  
-  <association id="37">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="38" name="serviceTopologies">        
-        <position height="18" width="97" x="758" y="213"/>      
-      </attribute>      
-      <multiplicity id="39" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="1" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="40">    
-    <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="41" name="relationships"/>      
-      <multiplicity id="42" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="16" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="43">    
-    <end type="SOURCE" refId="11" navigable="false">      
-      <attribute id="44" name="elasticityCapabilities"/>      
-      <multiplicity id="45" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="12" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="46">    
-    <end type="SOURCE" refId="9"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <realization id="47">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="10"/>  
-  </realization>  
-  <association id="48">    
+  <association id="19">    
     <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="49" name="properties"/>      
-      <multiplicity id="50" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="15" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="51">    
-    <end type="SOURCE" refId="13"/>    
-    <end type="TARGET" refId="14"/>  
-  </generalization>  
-  <association id="52">    
-    <end type="SOURCE" refId="16" navigable="false">      
-      <attribute id="53" name="to"/>      
-      <multiplicity id="54" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <realization id="55">    
-    <bendpoint x="952" y="495"/>    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="10"/>  
-  </realization>  
-  <association id="56">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="57" name="requirements"/>      
-      <multiplicity id="58" minimum="0" maximum="2147483647"/>    
+      <attribute id="20" name="requirements"/>      
+      <multiplicity id="21" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="8" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="59">    
-    <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="60" name="serviceTopologies">        
-        <position height="18" width="97" x="753" y="195"/>      
-      </attribute>      
-      <multiplicity id="61" minimum="0" maximum="2147483647"/>    
+  <association id="22">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="23" name="nodes"/>      
+      <multiplicity id="24" minimum="0" maximum="2147483647"/>    
     </end>    
-    <end type="TARGET" refId="1" navigable="true"/>    
+    <end type="TARGET" refId="7" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="62">    
-    <end type="SOURCE" refId="11"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <realization id="63">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="10"/>  
-  </realization>  
-  <realization id="64">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="10"/>  
-  </realization>  
-  <association id="65">    
+  <association id="25">    
     <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="66" name="deploymentArtifacts"/>      
-      <multiplicity id="67" minimum="0" maximum="2147483647"/>    
+      <attribute id="26" name="properties"/>      
+      <multiplicity id="27" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="14" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="28">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="29" name="deploymentArtifacts"/>      
+      <multiplicity id="30" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="6" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <realization id="68">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="10"/>  
-  </realization>  
-  <association id="69">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="70" name="instances"/>      
-      <multiplicity id="71" minimum="0" maximum="2147483647"/>    
+  <association id="31">    
+    <end type="SOURCE" refId="9" navigable="false">      
+      <attribute id="32" name="relationships"/>      
+      <multiplicity id="33" minimum="0" maximum="2147483647"/>    
     </end>    
-    <end type="TARGET" refId="14" navigable="true"/>    
+    <end type="TARGET" refId="15" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="34">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="35" name="directives"/>      
+      <multiplicity id="36" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="37">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="38" name="instances"/>      
+      <multiplicity id="39" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="13" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="40">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <generalization id="41">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <association id="42">    
+    <end type="SOURCE" refId="9" navigable="false">      
+      <attribute id="43" name="serviceTopologies">        
+        <position height="18" width="97" x="753" y="195"/>      
+      </attribute>      
+      <multiplicity id="44" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="1" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="45">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="46" name="capabilities"/>      
+      <multiplicity id="47" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="48">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="13"/>  
+  </generalization>  
+  <association id="49">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="50" name="serviceUnits"/>      
+      <multiplicity id="51" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="10" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="52">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <association id="53">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="54" name="serviceTopologies">        
+        <position height="18" width="97" x="758" y="213"/>      
+      </attribute>      
+      <multiplicity id="55" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="1" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="56">    
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="57" name="artifactReferences"/>      
+      <multiplicity id="58" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 

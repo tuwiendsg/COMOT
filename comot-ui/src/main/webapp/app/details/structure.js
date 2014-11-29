@@ -1,44 +1,51 @@
 define(function(require) {
 	var app = require('durandal/app'), ko = require('knockout'), JsonHuman = require('json_human'), d3 = require('d3'), comot = require('comot_client');
 
+	var tId = undefined;
+	var tabIsActive = false;
+	
 	var model = {
-		activate : onActivate,
-		deactivate : function(){
-			console.log(">>>> deactivate")
-			onDeactivate()
+		startTab : startTab,
+		stopTab : stopTab,
+		detached : function() {
+			console.log(">>>> detached");
+			stopTab();
 		},
-		detached : function(view, parent){
-			console.log(">>>> detached")
-			console.log("view")
-			console.log(view)
-			console.log("parent")
-			console.log(parent)
-			onDeactivate()
-		},
-
-		refreshing : ko.observable(),
-		status : ko.observable()
+		status : ko.observable(),
+		serviceId : ko.observable()
 	};
 
 	return model;
 
-	function onActivate(serviceId) {
+	function startTab(input) {
 
-		comot.checkStatus(serviceId, processStatus);
+		if (tabIsActive === false) {
+			tabIsActive = true;
 
-		var loop = setInterval(function() {
-			console.log("aaaa "+serviceId)
-			comot.checkStatus(serviceId, processStatus);
-		}, 2000);
-		console.log("loop "+loop+" "+serviceId)
+			model.serviceId = input;
 
-		model.refreshing(loop);
+			checkStatus();
+			tId = setInterval(function() {
+				if (checkStatus() == false) {
+					stopTab();
+				}
+			}, 2000);
+		}
 	}
 
-	function onDeactivate() {
-		console.log("onDeactivate"+ model.refreshing());
-		clearInterval(model.refreshing());
-		console.log("after deactivate")
+	function stopTab() {
+		tabIsActive = false;
+		clearInterval(tId);
+		console.log("stopping structure")
+	}
+
+	function checkStatus() {
+		console.log("status for " + model.serviceId());
+		if (model.serviceId() === null || typeof model.serviceId() === 'undefined') {
+			return false;
+		}
+		comot.checkStatus(model.serviceId(), processStatus);
+		return true;
 	}
 
 	function processStatus(data) {

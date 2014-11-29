@@ -6,8 +6,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.ac.tuwien.dsg.comot.common.model.AbstractEntity;
 import at.ac.tuwien.dsg.comot.common.model.EntityRelationship;
-import at.ac.tuwien.dsg.comot.common.model.ReferencableEntity;
 import at.ac.tuwien.dsg.comot.common.model.SyblDirective;
 import at.ac.tuwien.dsg.comot.common.model.node.ArtifactTemplate;
 import at.ac.tuwien.dsg.comot.common.model.node.Capability;
@@ -44,8 +44,8 @@ public class RelationshipResolver {
 
 		for (EntityRelationship rel : service.getRelationships()) {
 			if (rel.getType().equals(RelationshipType.CONNECT_TO)) {
-				if (navigator.getNodeFor(rel.getTo().getId()).getId().equals(node.getId())) {
-					list.add(navigator.getNodeFor(rel.getFrom().getId()).getId());
+				if (navigator.getNodeFor(rel.getTo()).getId().equals(node.getId())) {
+					list.add(navigator.getNodeFor(rel.getFrom()).getId());
 				}
 			}
 		}
@@ -79,7 +79,7 @@ public class RelationshipResolver {
 
 		for (EntityRelationship rel : service.getRelationships()) {
 			if (rel.getType().equals(RelationshipType.HOST_ON)) {
-				if (rel.getTo().getId().equals(node.getId())) {
+				if (rel.getTo().equals(node.getId())) {
 					log.debug("isServiceUnit(nodeId={} ): false", node.getId());
 					return false;
 				}
@@ -95,37 +95,15 @@ public class RelationshipResolver {
 
 		log.trace("getOsForServiceUnit(id={} )", id);
 
-		StackNode host;
+		StackNode host = getHost(id);
 
-		for (EntityRelationship rel : service.getRelationships()) {
-			if (rel.getType().equals(RelationshipType.HOST_ON)) {
-				if (rel.getFrom().getId().equals(id)) {
-					host = (StackNode) rel.getTo();
-
-					log.debug("'{}' hosted_on '{}'", id, host.getId());
-
-					if (host.getType().equals(NodeType.OS)) {
-						return host;
-					} else {
-						return getOsForServiceUnit(host.getId());
-					}
-				}
+		if (host != null) {
+			if (host.getType().equals(NodeType.OS)) {
+				return host;
+			} else {
+				return getOsForServiceUnit(host.getId());
 			}
 		}
-		return null;
-	}
-
-	public StackNode getHost(String id) {
-
-		for (EntityRelationship rel : service.getRelationships()) {
-			if (rel.getType().equals(RelationshipType.HOST_ON)) {
-				if (rel.getFrom().getId().equals(id)) {
-					log.debug("getHost(id={}): {}", id, rel.getTo().getId());
-					return (StackNode) rel.getTo();
-				}
-			}
-		}
-		log.debug("getHost(id={}): {}", id, null);
 		return null;
 	}
 
@@ -135,6 +113,20 @@ public class RelationshipResolver {
 		if (node != null) {
 			return node.getId();
 		}
+		return null;
+	}
+
+	public StackNode getHost(String id) {
+
+		for (EntityRelationship rel : service.getRelationships()) {
+			if (rel.getType().equals(RelationshipType.HOST_ON)) {
+				if (rel.getFrom().equals(id)) {
+					log.debug("getHost(id={}): {}", id, rel.getTo());
+					return (StackNode) navigator.getNode(rel.getTo());
+				}
+			}
+		}
+		log.debug("getHost(id={}): {}", id, null);
 		return null;
 	}
 
@@ -150,9 +142,11 @@ public class RelationshipResolver {
 		return false;
 	}
 
-	public ServicePart resolveToServicePart(ReferencableEntity entity) {
+	public ServicePart resolveToServicePart(String id) {
 
 		ServiceUnit unit;
+
+		AbstractEntity entity = navigator.getAbstractEntity(id);
 
 		if (entity instanceof StackNode) {
 			unit = navigator.getServiceUnit(entity.getId());

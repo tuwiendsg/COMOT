@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import at.ac.tuwien.dsg.comot.common.model.AbstractEntity;
-import at.ac.tuwien.dsg.comot.common.model.ReferencableEntity;
 import at.ac.tuwien.dsg.comot.common.model.node.ArtifactTemplate;
 import at.ac.tuwien.dsg.comot.common.model.node.Capability;
 import at.ac.tuwien.dsg.comot.common.model.node.Properties;
@@ -13,7 +12,7 @@ import at.ac.tuwien.dsg.comot.common.model.type.NodeType;
 import at.ac.tuwien.dsg.comot.common.model.type.State;
 import at.ac.tuwien.dsg.comot.common.model.unit.NodeInstance;
 
-public class StackNode extends AbstractEntity implements ReferencableEntity {
+public class StackNode extends AbstractEntity {
 
 	private static final long serialVersionUID = 4825578027474573978L;
 

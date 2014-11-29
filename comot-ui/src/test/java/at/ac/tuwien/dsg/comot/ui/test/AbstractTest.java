@@ -141,11 +141,10 @@ public abstract class AbstractTest {
 		Navigator navigator = new Navigator(serviceForMapping);
 
 		serviceForMapping.addEntityRelationship(new EntityRelationship("rela1", RelationshipType.HOST_ON,
-				swNode, osNode));
+				swNode.getId(), osNode.getId()));
 		serviceForMapping
 				.addEntityRelationship(new EntityRelationship("rela2", RelationshipType.CONNECT_TO,
-						req2, cap3));
-
+						req2.getId(), cap3.getId()));
 		// Deployment description
 
 		AssociatedVM vm = new AssociatedVM();

@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.comot.common.model.AbstractEntity;
-import at.ac.tuwien.dsg.comot.common.model.ReferencableEntity;
 import at.ac.tuwien.dsg.comot.common.model.node.ArtifactTemplate;
 import at.ac.tuwien.dsg.comot.common.model.node.Capability;
 import at.ac.tuwien.dsg.comot.common.model.node.Requirement;
@@ -36,7 +35,6 @@ public class Navigator {
 
 	public ServiceUnit getServiceUnit(String id) {
 		for (ServiceUnit unit : getParentTopologyFor(id).getServiceUnits()) {
-			// log.info("rrrrrrrrrrrrrrrrrrrrrr  {} ? {}", unit.getId(), id);
 			if (unit.getId().equals(id)) {
 				return unit;
 			}
@@ -96,6 +94,14 @@ public class Navigator {
 
 		return null;
 	}
+	
+	public AbstractEntity getAbstractEntity(String id){
+		Node node = map.get(id);
+		if (node != null) {
+			return (AbstractEntity) node.entity;
+		}
+		return null;
+	}
 
 	public NodeInstance getInstance(String id, int instanceId) {
 		StackNode node = getNode(id);
@@ -116,14 +122,6 @@ public class Navigator {
 		return null;
 	}
 
-	public ReferencableEntity getReferencableEntity(String id) {
-		Node node = map.get(id);
-		if (node != null) {
-			return (ReferencableEntity) node.entity;
-		}
-
-		return null;
-	}
 
 	public ServiceTopology getTopology(String id) {
 		if (map.get(id).entity instanceof ServiceTopology) {

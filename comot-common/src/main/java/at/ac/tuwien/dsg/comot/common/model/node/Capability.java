@@ -1,10 +1,9 @@
 package at.ac.tuwien.dsg.comot.common.model.node;
 
 import at.ac.tuwien.dsg.comot.common.model.AbstractEntity;
-import at.ac.tuwien.dsg.comot.common.model.ReferencableEntity;
 import at.ac.tuwien.dsg.comot.common.model.type.CapabilityType;
 
-public class Capability extends AbstractEntity implements ReferencableEntity {
+public class Capability extends AbstractEntity {
 
 	private static final long serialVersionUID = -573066037034691710L;
 

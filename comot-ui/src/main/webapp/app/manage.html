@@ -42,15 +42,20 @@
 
 	<div role="tabpanel">
 		<!-- Nav tabs -->
-		<ul class="nav nav-tabs" role="tablist" data-bind="foreach: router.navigationModel()">
-			<li role="presentation" data-bind="css: { active: isActive }"><a role="tab" data-toggle="tab"
-				data-bind="attr: { href: '#manage/'+hash+'/'+$parent.selectedServiceId() }, text: title"></a></li>
+		<ul class="nav nav-tabs" role="tablist" data-bind="foreach: tabs">
+			<li role="presentation" data-bind="css: { active: show }"><a role="tab" href="#" data-toggle="tab"
+				data-bind="text: name, click : $parent.activateTab"></a></li>
 		</ul>
-		<!-- Tab panes -->
-		<div class="tab-content">
-			<div>&nbsp;</div>
-			<div role="tabpanel" class="tab-pane active" data-bind="router: { cacheViews: false }"></div>
+		<!-- Tab panes  -->
+		<div class="tab-content" data-bind="foreach: tabs">
+			<div role="tabpanel" class="tab-pane" data-bind="css: { active: show }">
+				<div>&nbsp;</div>
+				<div data-bind="text: module"> </div>
+				<div data-bind="compose:module"></div>
+			</div>
 		</div>
+
+
 	</div>
 
 </div>

@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties;
 import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.model.EntityRelationship;
-import at.ac.tuwien.dsg.comot.common.model.ReferencableEntity;
 import at.ac.tuwien.dsg.comot.common.model.logic.Navigator;
 import at.ac.tuwien.dsg.comot.common.model.logic.RelationshipResolver;
 import at.ac.tuwien.dsg.comot.common.model.node.ArtifactTemplate;
@@ -94,8 +93,8 @@ public class ToscaMapper {
 	public CloudService createModel(Definitions definitions) {
 
 		ArtifactTemplate artifact;
-		ReferencableEntity from;
-		ReferencableEntity to;
+		String from;
+		String to;
 		ServiceUnit unit;
 
 		CloudService cloudService = mapper.get().map(definitions, CloudService.class);
@@ -127,10 +126,8 @@ public class ToscaMapper {
 						TRelationshipTemplate rel = (TRelationshipTemplate) element2;
 
 						if (!cloudService.containsRelationship(rel.getId())) {
-							from = navigator.getReferencableEntity(((TEntityTemplate) rel.getSourceElement().getRef())
-									.getId());
-							to = navigator.getReferencableEntity(((TEntityTemplate) rel.getTargetElement().getRef())
-									.getId());
+							from = ((TEntityTemplate) rel.getSourceElement().getRef()).getId();
+							to = ((TEntityTemplate) rel.getTargetElement().getRef()).getId();
 
 							cloudService.addEntityRelationship(new EntityRelationship(rel.getId(),
 									RelationshipType.fromString(rel.getType().getLocalPart()), from, to));
@@ -160,7 +157,6 @@ public class ToscaMapper {
 			}
 		}
 
-	
 		log.debug("Final mapping: {}", Utils.asJsonString(cloudService));
 
 		return cloudService;
@@ -173,8 +169,8 @@ public class ToscaMapper {
 		for (EntityRelationship relationship : relationships) {
 
 			// create mock object for referencing
-			TEntityTemplate source = new TNodeTemplate().withId(relationship.getFrom().getId());
-			TEntityTemplate target = new TNodeTemplate().withId(relationship.getTo().getId());
+			TEntityTemplate source = new TNodeTemplate().withId(relationship.getFrom());
+			TEntityTemplate target = new TNodeTemplate().withId(relationship.getTo());
 
 			relTemplates.add(new TRelationshipTemplate()
 					.withType(mapper.get().map(relationship.getType(), QName.class))

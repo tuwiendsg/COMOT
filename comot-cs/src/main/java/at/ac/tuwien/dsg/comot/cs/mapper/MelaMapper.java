@@ -77,7 +77,7 @@ public class MelaMapper {
 		// add relationships
 		for (EntityRelationship rel : cloudService.getRelationships()) {
 
-			log.trace("original from={} to={}", rel.getFrom().getId(), rel.getTo().getId());
+			log.trace("original from={} to={}", rel.getFrom(), rel.getTo());
 
 			if (resolver.isServicePartRelationship(rel)) {
 

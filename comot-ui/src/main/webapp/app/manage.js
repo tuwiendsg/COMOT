@@ -1,34 +1,22 @@
-//define(function(require) {
-//	var app = require('durandal/app'), ko = require('knockout'), komapping = require('komapping'), comot = require('comot_client'), router = require('plugins/router'), PNotify = require('pnotify');
-define([ 'durandal/app', 'knockout', 'komapping', 'comot_client','plugins/router', 'pnotify' ], function(app, ko, komapping, comot, router, PNotify) {
+define(function(require) {
+	var app = require('durandal/app'), ko = require('knockout'), komapping = require('komapping'), comot = require('comot_client'), router = require('plugins/router'), PNotify = require('pnotify');
 
-
-	var childRouter = router.createChildRouter().makeRelative({
-		moduleId : 'details',
-		fromParent : true,
-	// dynamicHash : ':serviceId' manage/structure
-	}).map([ {
-		route : 'structure/:serviceId',
-		moduleId : 'structure',
-		title : 'Structure',
-		nav : true,
-		hash : 'structure'
-	}, {
-		route : 'monitoring/:serviceId',
-		moduleId : 'monitoring',
-		title : 'Monitoring',
-		nav : true,
-		hash : 'monitoring'
-	} ]).buildNavigationModel();
+	var moduleStructure = require('details/structure');
+	var moduleMonitoring = require('details/monitoring');
 
 	var model = {
 
-		activate : comot.getServices(processResult),
+		activate : function() {
+			console.log("activating");
+			comot.getServices(processResult),
+
+			activateTab(model.tabs()[0]);
+		},
 		services : ko.observableArray(),
 		switchMonitoring : switchMonitoring,
 		switchControl : switchControl,
 		deployment : deployment,
-		selectedServiceId : ko.observable(""),
+		selectedServiceId : ko.observable(),
 		assignSelected : function(serviceId) {
 
 			if (serviceId === null || typeof serviceId === 'undefined') {
@@ -36,43 +24,69 @@ define([ 'durandal/app', 'knockout', 'komapping', 'comot_client','plugins/router
 			}
 			console.log("id: " + serviceId);
 			this.selectedServiceId(serviceId);
-			router.navigate('#manage/structure/' + serviceId);
+
+			activateTab(model.tabs()[0]);
 		},
-		router : childRouter
+
+		tabs : ko.observableArray([ {
+			name : 'Structure',
+			module : 'details/structure',
+			show : ko.observable(false),
+			instance : moduleStructure
+		}, {
+			name : 'Monitoring',
+			module : 'details/monitoring',
+			show : ko.observable(false),
+			instance : moduleMonitoring
+		} ]),
+
+		activateTab : function() {
+			activateTab(this);
+		}
+	}
+
+	function activateTab(toBeActivated) {
+
+		for (var i = 0; i < model.tabs().length; i++) {
+			var tab = model.tabs()[i];
+
+			if (tab.name === toBeActivated.name) {
+				console.log("activating tab" + tab.name)
+				tab.instance.startTab(model.selectedServiceId);
+				tab.show(true);
+			} else {
+				console.log("deactivating tab" + tab.name)
+				tab.instance.stopTab();
+				tab.show(false);
+			}
+		}
 	}
 
 	return model;
 
 	function switchMonitoring() {
-		
-		
-		if(this.monitoring()){
-			comot.stopMonitoring(this.id(),  notify('success'))
-		}else{
-			comot.startMonitoring(this.id(),  notify('success'))
+
+		if (this.monitoring()) {
+			comot.stopMonitoring(this.id(), notify('success'))
+		} else {
+			comot.startMonitoring(this.id(), notify('success'))
 		}
-		
-		
+
 		this.monitoring(!this.monitoring());
-		//app.showMessage('This is a message.', 'Title');
 	}
 
 	function switchControl() {
-		
-
 
 		notify();
 		notify("error");
 		notify("info");
 		notify("success");
-		
+
 		this.control(!this.control());
 	}
 
 	function deployment() {
-		
-		
-		
+
 		this.deployment(!this.deployment());
 	}
 
