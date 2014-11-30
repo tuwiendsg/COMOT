@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.PreDestroy;
+import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,9 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import at.ac.tuwien.dsg.comot.common.coreservices.MonitoringClient;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.common.model.monitoring.ElementMonitoring;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.cs.connector.MelaClient;
 import at.ac.tuwien.dsg.comot.cs.mapper.MelaMapper;
+import at.ac.tuwien.dsg.comot.cs.mapper.MelaOutputMapper;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitoringSnapshot;
@@ -28,6 +31,8 @@ public class MonitoringClientMela implements MonitoringClient {
 	protected MelaClient mela;
 	@Autowired
 	protected MelaMapper melaMapper;
+	@Autowired
+	protected MelaOutputMapper mapperMelaOutput;
 
 	@Override
 	public void startMonitoring(CloudService service, CompositionRulesConfiguration mcr) throws CoreServiceException,
@@ -71,7 +76,7 @@ public class MonitoringClientMela implements MonitoringClient {
 		try {
 			element = melaMapper.extractMela(sevice);
 		} catch (ClassNotFoundException | IOException e) {
-			throw new ComotException("Mapping from model to Mela failed ", e);
+			throw new ComotException("Mapping from CloudService to MonitoredElement failed ", e);
 		}
 
 		mela.updateServiceDescription(serviceId, element);
@@ -83,11 +88,14 @@ public class MonitoringClientMela implements MonitoringClient {
 	}
 
 	@Override
-	public MonitoredElementMonitoringSnapshot getMonitoringData(String serviceId) throws CoreServiceException {
+	public ElementMonitoring getMonitoringData(String serviceId) throws CoreServiceException, ComotException {
 
 		MonitoredElementMonitoringSnapshot snapshot = mela.getMonitoringData(serviceId);
-		return snapshot;
-
+		try {
+			return mapperMelaOutput.extractOutput(snapshot);
+		} catch (JAXBException e) {
+			throw new ComotException("Mapping from MonitoredElementMonitoringSnapshot to ElementMonitoring failed ", e);
+		}
 	}
 
 	@Override

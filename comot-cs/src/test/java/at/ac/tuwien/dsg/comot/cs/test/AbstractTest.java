@@ -66,7 +66,6 @@ public abstract class AbstractTest {
 	protected ControlClient control;
 	@Autowired
 	protected MonitoringClient monitoring;
-	
 
 	protected CloudService serviceForMapping;
 	protected String swNodeId = "nodeId";

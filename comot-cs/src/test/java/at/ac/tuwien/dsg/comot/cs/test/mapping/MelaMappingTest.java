@@ -1,8 +1,11 @@
 package at.ac.tuwien.dsg.comot.cs.test.mapping;
 
 import java.io.IOException;
+import java.io.StringReader;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.oasis.tosca.Definitions;
@@ -11,14 +14,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.common.model.monitoring.ElementMonitoring;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.cs.mapper.DeploymentMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.MelaMapper;
+import at.ac.tuwien.dsg.comot.cs.mapper.MelaOutputMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.MelaOrika;
 import at.ac.tuwien.dsg.comot.cs.test.AbstractTest;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement;
+import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitoringSnapshot;
 import at.ac.tuwien.dsg.mela.common.requirements.Requirements;
 
 public class MelaMappingTest extends AbstractTest {
@@ -32,6 +39,8 @@ public class MelaMappingTest extends AbstractTest {
 	protected ToscaMapper mapperTosca;
 	@Autowired
 	protected DeploymentMapper mapperDepl;
+	@Autowired
+	protected MelaOutputMapper mapperMelaOutput;
 
 	protected static final String TEST_SERVICE_ID = "aaaa";
 
@@ -72,6 +81,25 @@ public class MelaMappingTest extends AbstractTest {
 
 		MonitoredElement element = orika.get().map(serviceForMapping, MonitoredElement.class);
 		log.info("element {}", UtilsCs.asString(element));
+
+	}
+
+	@Test
+	public void testMelaOutputOffline() throws JAXBException, ClassNotFoundException, IOException,
+			CoreServiceException,
+			ComotException {
+
+		String melaData = UtilsTest.loadFile("./xml/ViennaChillerSensors_monitoringData.xml");
+
+		StringReader reader = new StringReader(melaData);
+		JAXBContext jaxbContext = JAXBContext.newInstance(MonitoredElementMonitoringSnapshot.class);
+		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+
+		MonitoredElementMonitoringSnapshot def = (MonitoredElementMonitoringSnapshot) jaxbUnmarshaller
+				.unmarshal(reader);
+
+		ElementMonitoring element = mapperMelaOutput.extractOutput(def);
+		log.info("mela {}", Utils.asJsonString(element));
 
 	}
 

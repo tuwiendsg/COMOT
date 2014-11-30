@@ -18,8 +18,7 @@ import at.ac.tuwien.dsg.comot.cs.UtilsCs;
 public class DefinitionsContextResolver implements ContextResolver<JAXBContext> {
 
 	protected static final Logger log = LoggerFactory.getLogger(DefinitionsContextResolver.class);
-	
-	
+
 	private JAXBContext jc;
 
 	public DefinitionsContextResolver() {

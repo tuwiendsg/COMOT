@@ -12,46 +12,44 @@ import org.springframework.stereotype.Component;
 import at.ac.tuwien.dsg.comot.common.model.logic.Navigator;
 import at.ac.tuwien.dsg.comot.common.model.logic.RelationshipResolver;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.cs.mapper.orika.RsyblOrika;
-import at.ac.tuwien.dsg.comot.rsybl.CloudServiceXML;
-import at.ac.tuwien.dsg.comot.ui.model.Element;
+import at.ac.tuwien.dsg.comot.ui.model.ElementState;
 
 @Component
-public class OutputMapper {
+public class SalsaOutputMapper {
 
-	protected final Logger log = LoggerFactory.getLogger(OutputMapper.class);
+	protected final Logger log = LoggerFactory.getLogger(SalsaOutputMapper.class);
 
 	@Autowired
-	protected OutputOrika mapper;
+	protected SalsaOutputOrika mapper;
 
-	public Element extractOutput(CloudService cloudService) {
+	public ElementState extractOutput(CloudService cloudService) {
 
 		Navigator navigator = new Navigator(cloudService);
 		RelationshipResolver resolver = new RelationshipResolver(cloudService);
 
-		Element root = mapper.get().map(cloudService, Element.class);
+		ElementState root = mapper.get().map(cloudService, ElementState.class);
 
-		List<Element> tempList = null;
+		List<ElementState> tempList = null;
 
 		// create hierarchical structure based on HOST_ON
-		for (Element eTopo : getAllTopologies(root)) {
+		for (ElementState eTopo : getAllTopologies(root)) {
 			tempList = new ArrayList<>();
 
-			for (Element one : eTopo.getChildren()) {
+			for (ElementState one : eTopo.getChildren()) {
 				// set ServiceUnits
 				if (resolver.isServiceUnit(one.getId())) {
 					one.setServiceUnit(true);
 				}
 				// temp list to point all elements
 				tempList.add(one);
-				
+
 				// set CONNECT_TO
 				one.setConnectToId(resolver.getConnectToIds(one.getId()));
 			}
 
-			for (Iterator<Element> iterator = eTopo.getChildren().iterator(); iterator.hasNext();) {
-				Element one = iterator.next();
-				Element host = findHost(one, tempList, resolver);
+			for (Iterator<ElementState> iterator = eTopo.getChildren().iterator(); iterator.hasNext();) {
+				ElementState one = iterator.next();
+				ElementState host = findHost(one, tempList, resolver);
 
 				log.debug("element={}, host={}", one.getId(), ((host == null) ? null : host.getId()));
 
@@ -61,47 +59,46 @@ public class OutputMapper {
 				}
 			}
 		}
-		
-		
 
 		return root;
 	}
 
-	protected List<Element> getAllTopologies(Element element) {
+	protected List<ElementState> getAllTopologies(ElementState element) {
 
-		List<Element> topologies = new ArrayList<>();
+		List<ElementState> topologies = new ArrayList<>();
 
-		if (element.getType().equals(Element.Type.TOPOLOGY)) {
+		if (element.getType().equals(ElementState.Type.TOPOLOGY)) {
 			topologies.add(element);
 		}
 
-		for (Element child : element.getChildren()) {
+		for (ElementState child : element.getChildren()) {
 			topologies.addAll(getAllTopologies(child));
 		}
 		return topologies;
 	}
 
-	protected Element findHost(Element element, List<Element> list, RelationshipResolver resolver) {
+	protected ElementState findHost(ElementState element, List<ElementState> list, RelationshipResolver resolver) {
 
 		String hostId = resolver.getHostId(element.getId());
-		
-		if(element.getInstanceId() == null){// no instances
-			for (Element temp : list) {
+
+		if (element.getInstanceId() == null) {// no instances
+			for (ElementState temp : list) {
 				if (temp.getId().equals(hostId)) {
 					return temp;
 				}
 			}
-			
-		}else{//with instances
-			int hostInstanceId = resolver.navigator().getInstance(element.getId(), element.getInstanceId()).getHostedId();
 
-			for (Element temp : list) {
+		} else {// with instances
+			int hostInstanceId = resolver.navigator().getInstance(element.getId(), element.getInstanceId())
+					.getHostedId();
+
+			for (ElementState temp : list) {
 				if (temp.getId().equals(hostId) && temp.getInstanceId() == hostInstanceId) {
 					return temp;
 				}
 			}
 		}
-		
+
 		return null;
 	}
 }

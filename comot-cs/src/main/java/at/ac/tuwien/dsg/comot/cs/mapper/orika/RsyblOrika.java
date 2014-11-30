@@ -94,7 +94,8 @@ public class RsyblOrika {
 					rDirecitve.setPriorities(directive.getDirective());
 					break;
 				default:
-					log.warn("Unexpected type of SYBL directive: {}", directive.getType());
+					throw new IllegalArgumentException("Unexpected value " + directive.getType()
+							+ " of enum at.ac.tuwien.dsg.comot.common.model.type.DirectiveType");
 				}
 			}
 			return rDirecitve;

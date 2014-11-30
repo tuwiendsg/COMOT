@@ -2,8 +2,6 @@ package at.ac.tuwien.dsg.comot.core.test;
 
 import org.junit.Test;
 
-import at.ac.tuwien.dsg.comot.common.test.UtilsTest;
-
 public class CoreTest extends AbstractTest {
 
 	// test with https://github.com/tuwiendsg/SALSA/blob/master/examples/4-DeployWithTomcat.xml
@@ -12,7 +10,7 @@ public class CoreTest extends AbstractTest {
 	@Test
 	public void testOutputOffline() {
 
-		//UtilsTest.waitInfinit();
+		// UtilsTest.waitInfinit();
 	}
 
 }

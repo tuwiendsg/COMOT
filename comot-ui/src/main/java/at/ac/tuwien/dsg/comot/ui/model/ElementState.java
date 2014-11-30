@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
-public class Element {
+public class ElementState {
 
 	protected String id;
 	protected Integer instanceId;
@@ -17,9 +17,9 @@ public class Element {
 	protected State state;
 	// @XmlElementWrapper
 	// @XmlElement(name = "element")
-	protected List<Element> children = new ArrayList<>();
+	protected List<ElementState> children = new ArrayList<>();
 	protected boolean serviceUnit;
-	protected List<String> connectToIds= new ArrayList<>();
+	protected List<String> connectToIds = new ArrayList<>();
 
 	public enum Type {
 		SERVICE,
@@ -31,13 +31,13 @@ public class Element {
 		UNDEPLOYED, ALLOCATING, STAGING, STAGING_ACTION, CONFIGURING, RUNNING, DEPLOYED, ERROR
 	}
 
-	public void addChild(Element element) {
+	public void addChild(ElementState element) {
 		if (children == null) {
 			children = new ArrayList<>();
 		}
 		children.add(element);
 	}
-	
+
 	public void addConnectToId(String id) {
 		if (connectToIds == null) {
 			connectToIds = new ArrayList<>();
@@ -71,11 +71,11 @@ public class Element {
 		this.state = state;
 	}
 
-	public List<Element> getChildren() {
+	public List<ElementState> getChildren() {
 		return children;
 	}
 
-	public void setChildren(List<Element> children) {
+	public void setChildren(List<ElementState> children) {
 		this.children = children;
 	}
 
@@ -120,7 +120,7 @@ public class Element {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Element other = (Element) obj;
+		ElementState other = (ElementState) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

@@ -94,8 +94,8 @@ public class Navigator {
 
 		return null;
 	}
-	
-	public AbstractEntity getAbstractEntity(String id){
+
+	public AbstractEntity getAbstractEntity(String id) {
 		Node node = map.get(id);
 		if (node != null) {
 			return (AbstractEntity) node.entity;
@@ -121,7 +121,6 @@ public class Navigator {
 		}
 		return null;
 	}
-
 
 	public ServiceTopology getTopology(String id) {
 		if (map.get(id).entity instanceof ServiceTopology) {

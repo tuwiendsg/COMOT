@@ -41,7 +41,6 @@ import at.ac.tuwien.dsg.comot.common.model.type.RelationshipType;
 import at.ac.tuwien.dsg.comot.common.model.type.RequirementType;
 import at.ac.tuwien.dsg.comot.core.ComotOrchestrator;
 import at.ac.tuwien.dsg.comot.core.spring.AppContextCore;
-import at.ac.tuwien.dsg.comot.core.spring.AppContextInsertData;
 import at.ac.tuwien.dsg.comot.cs.connector.SalsaClient;
 import at.ac.tuwien.dsg.comot.ui.service.ServicesResource;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.AssociatedVM;
@@ -70,12 +69,11 @@ public abstract class AbstractTest {
 	protected ControlClient control;
 	@Autowired
 	protected MonitoringClient monitoring;
-	
+
 	@Autowired
 	protected ComotOrchestrator orchestrator;
 	@Autowired
 	protected ServicesResource servicesResource;
-	
 
 	protected CloudService serviceForMapping;
 	protected String swNodeId = "nodeId";

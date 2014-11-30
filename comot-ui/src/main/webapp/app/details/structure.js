@@ -1,52 +1,26 @@
 define(function(require) {
 	var app = require('durandal/app'), ko = require('knockout'), JsonHuman = require('json_human'), d3 = require('d3'), comot = require('comot_client');
+	var notify = require('notify');
+	var repeater = require('repeater');
 
-	var tId = undefined;
-	var tabIsActive = false;
-	
+	var tab = repeater.create("Structure", 7000);
+
 	var model = {
-		startTab : startTab,
-		stopTab : stopTab,
-		detached : function() {
-			console.log(">>>> detached");
-			stopTab();
+		startTab : function(serviceId) {
+			tab.runWith(serviceId, function() {
+				comot.checkStatus(serviceId, processStatus)
+			})
 		},
-		status : ko.observable(),
-		serviceId : ko.observable()
+		stopTab : function() {
+			tab.stop();
+		},
+		detached : function() {
+			model.stopTab();
+		},
+		status : ko.observable()
 	};
 
 	return model;
-
-	function startTab(input) {
-
-		if (tabIsActive === false) {
-			tabIsActive = true;
-
-			model.serviceId = input;
-
-			checkStatus();
-			tId = setInterval(function() {
-				if (checkStatus() == false) {
-					stopTab();
-				}
-			}, 2000);
-		}
-	}
-
-	function stopTab() {
-		tabIsActive = false;
-		clearInterval(tId);
-		console.log("stopping structure")
-	}
-
-	function checkStatus() {
-		console.log("status for " + model.serviceId());
-		if (model.serviceId() === null || typeof model.serviceId() === 'undefined') {
-			return false;
-		}
-		comot.checkStatus(model.serviceId(), processStatus);
-		return true;
-	}
 
 	function processStatus(data) {
 
@@ -62,7 +36,7 @@ function createTree(root, divId) {
 	// dimensions
 	var margin = {
 		top : 10,
-		right : 200,
+		right : 10,
 		bottom : 10,
 		left : 100
 	};

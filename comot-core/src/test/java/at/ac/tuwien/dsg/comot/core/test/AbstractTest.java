@@ -19,11 +19,9 @@ import at.ac.tuwien.dsg.comot.common.coreservices.MonitoringClient;
 import at.ac.tuwien.dsg.comot.core.ComotOrchestrator;
 import at.ac.tuwien.dsg.comot.core.dal.ServiceRepo;
 import at.ac.tuwien.dsg.comot.core.spring.AppContextCore;
-import at.ac.tuwien.dsg.comot.core.spring.AppContextInsertData;
-
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { AppContextCore.class})
+@ContextConfiguration(classes = { AppContextCore.class })
 @ActiveProfiles({ AppContextCore.SPRING_PROFILE_TEST, AppContextCore.SPRING_PROFILE_INSERT_DATA })
 // @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 // @DatabaseSetup("classpath:iata_codes/airports_functional.xml")
@@ -37,10 +35,10 @@ public abstract class AbstractTest {
 
 	@Autowired
 	protected ServiceRepo serviceRepo;
-	
+
 	@Autowired
 	protected ComotOrchestrator orchestrator;
-	
+
 	@Autowired
 	protected DeploymentClient deployment;
 	@Autowired

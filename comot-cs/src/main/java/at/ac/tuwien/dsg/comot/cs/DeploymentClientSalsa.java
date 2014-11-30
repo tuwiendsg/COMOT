@@ -36,7 +36,7 @@ public class DeploymentClientSalsa implements DeploymentClient {
 	public CloudService deploy(CloudService service) throws CoreServiceException, ComotException {
 
 		String toscaDescriptionXml;
-		
+
 		if (service == null) {
 			log.warn("deploy(service=null )");
 			return null;
@@ -52,7 +52,7 @@ public class DeploymentClientSalsa implements DeploymentClient {
 
 		Definitions def = salsa.getTosca(service.getId());
 		CloudService deployedService = mapperTosca.createModel(def);
-		
+
 		return deployedService;
 	}
 
@@ -125,7 +125,6 @@ public class DeploymentClientSalsa implements DeploymentClient {
 
 		return running;
 	}
-
 
 	@PreDestroy
 	public void cleanup() {

@@ -10,16 +10,20 @@ requirejs.config({
 		crel : '../lib/json-human/crel',
 		json_human : '../lib/json-human/json.human',
 		d3 : '../lib/d3/d3.min',
-		comot_client : '../js/comot-client',
 		pnotify : '../lib/pnotify/pnotify.custom.min',
+		bootstrap : '../lib/bootstrap/js/bootstrap.min',
+
+		notify : '../js/notifications',
+		comot_client : '../js/comot-client',
+		repeater : '../js/repeatedAction',
+
 		shim : {
-			komapping : {
+			'komapping' : {
 				deps : [ 'knockout' ],
 				exports : 'komapping'
 			},
-			comot_client : {
-				deps : [ 'jquery' ],
-				exports : 'comot_client'
+			'bootstrap' : {
+				deps : [ 'jquery' ]
 			}
 		}
 	}
@@ -27,6 +31,7 @@ requirejs.config({
 
 define(function(require) {
 	var system = require('durandal/system'), app = require('durandal/app');
+	// require('bootstrap');
 
 	system.debug(true);
 

@@ -57,7 +57,7 @@ public class MelaMapper {
 		Map<String, MonitoredElement> map = extractAllElements(root);
 
 		log.trace("Orika mapping: {}", Utils.asXmlStringLog(root));
-		
+
 		// add VMs
 		for (MonitoredElement element : map.values()) {
 			if (element.getLevel().equals(MonitoredElementLevel.SERVICE_UNIT)) {
@@ -72,7 +72,6 @@ public class MelaMapper {
 				}
 			}
 		}
-		
 
 		// add relationships
 		for (EntityRelationship rel : cloudService.getRelationships()) {
@@ -89,14 +88,13 @@ public class MelaMapper {
 				if (map.containsKey(fromPartId) && map.containsKey(toPartId)
 						&& !rel.getType().equals(RelationshipType.LOCAL)) {
 
-					
 					tempRel = new Relationship()
 							.withFrom(new MonitoredElement(fromPartId))
 							.withTo(new MonitoredElement(toPartId))
 							.withType(resolveType(rel.getType()));
-					
+
 					log.trace("inserted relationship from={} to={}", fromPartId, toPartId);
-					
+
 					map.get(fromPartId).getRelationships().add(tempRel);
 				}
 			}
@@ -161,7 +159,7 @@ public class MelaMapper {
 	protected List<Requirement> parseToRequirement(ServicePart servicePart, String constraint) {
 
 		log.trace("parsing constraint: {}", constraint);
-		
+
 		Requirement req;
 		List<Requirement> requirements = new ArrayList<>();
 		Constraint rConstraint = SYBLDirectiveMappingFromXML.mapSYBLAnnotationToXMLConstraint(constraint);

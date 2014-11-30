@@ -1,7 +1,6 @@
 package at.ac.tuwien.dsg.comot.core.spring;
 
 import javax.annotation.Resource;
-import javax.sql.DataSource;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,8 +14,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
-import at.ac.tuwien.dsg.comot.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.core.dal.ServiceRepo;
 import at.ac.tuwien.dsg.comot.core.model.ServiceEntity;
@@ -32,7 +29,7 @@ public class AppContextInsertData {
 
 	@Resource
 	public Environment env;
-	
+
 	@Autowired
 	public SalsaClient salsaClient;
 	@Autowired
@@ -40,61 +37,58 @@ public class AppContextInsertData {
 	@Autowired
 	protected ServiceRepo serviceRepo;
 
-	
 	@Bean
 	public Object insertDeployedInSalsa() {
-		
+
 		try {
 			String serviceId;
 			String msg = salsaClient.getServices();
-			
-			
+
 			JSONObject services = new JSONObject(msg);
 			JSONArray array = services.getJSONArray("services");
-			
+
 			for (int i = 0; i < array.length(); i++) {
 				serviceId = array.getJSONObject(i).getString("serviceId");
-				
+
 				Definitions def = salsaClient.getTosca(serviceId);
-				CloudService deployedService = mapperTosca.createModel(def);	
+				CloudService deployedService = mapperTosca.createModel(def);
 				ServiceEntity entity = new ServiceEntity(deployedService, deployedService);
 
-				serviceRepo.save(entity);	
+				serviceRepo.save(entity);
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
-	
-	
+
 	// @DependsOn({"entityManagerFactory", "processEngine", "userMngService"})
-//	@Bean
-//	public Object dbDataInsert() {
-//
-//		// insert data from XML using dbUnit
-//		FlatXmlDataSet dataSet = null;
-//		try {
-//			DatabaseConnection con = new DatabaseConnection(dataSource.getConnection());
-//
-//			dataSet = new FlatXmlDataSet(new FlatXmlProducer(new InputSource(new ClassPathResource(
-//					env.getRequiredProperty(ApplicationContext.DBUNIT_TESTDATA)).getInputStream())));
-//			DatabaseOperation.CLEAN_INSERT.execute(con, dataSet);
-//
-//			con.close();
-//
-//			log.debug("Test data inserted from {}", env.getRequiredProperty(ApplicationContext.DBUNIT_TESTDATA));
-//
-//		} catch (DatabaseUnitException | SQLException | IllegalStateException | IOException e) {
-//
-//			log.error("Failed to insert data to DB using DbUnit. " + e.getLocalizedMessage());
-//			e.printStackTrace();
-//
-//		}
-//
-//		return dataSet;
-//	}
+	// @Bean
+	// public Object dbDataInsert() {
+	//
+	// // insert data from XML using dbUnit
+	// FlatXmlDataSet dataSet = null;
+	// try {
+	// DatabaseConnection con = new DatabaseConnection(dataSource.getConnection());
+	//
+	// dataSet = new FlatXmlDataSet(new FlatXmlProducer(new InputSource(new ClassPathResource(
+	// env.getRequiredProperty(ApplicationContext.DBUNIT_TESTDATA)).getInputStream())));
+	// DatabaseOperation.CLEAN_INSERT.execute(con, dataSet);
+	//
+	// con.close();
+	//
+	// log.debug("Test data inserted from {}", env.getRequiredProperty(ApplicationContext.DBUNIT_TESTDATA));
+	//
+	// } catch (DatabaseUnitException | SQLException | IllegalStateException | IOException e) {
+	//
+	// log.error("Failed to insert data to DB using DbUnit. " + e.getLocalizedMessage());
+	// e.printStackTrace();
+	//
+	// }
+	//
+	// return dataSet;
+	// }
 
 }

@@ -41,7 +41,7 @@ public class AsyncExecutor {
 
 		while (true) {
 			log.trace("async executor, timeout {} ms", TIMEOUT);
-			
+
 			oneIteration();
 
 			try {
@@ -69,10 +69,10 @@ public class AsyncExecutor {
 					if (job.getType().equals(Type.START_MONITORING)) {
 						log.debug("Executing {}", job);
 						monitoring.startMonitoring(orchestrator.getService(serviceId), entity.getMcr());
-						
+
 						entity.setMonitoring(true);
 						serviceRepo.save(entity);
-						
+
 						success = true;
 
 					} else if (job.getType().equals(Type.START_CONTROL)) {
@@ -80,10 +80,10 @@ public class AsyncExecutor {
 						control.sendInitialConfig(orchestrator.getService(serviceId), entity.getMcr(),
 								entity.getEffects());
 						control.startControl(serviceId);
-						
+
 						entity.setControl(true);
 						serviceRepo.save(entity);
-						
+
 						success = true;
 					}
 				}

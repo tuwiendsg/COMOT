@@ -3,14 +3,16 @@ define(function(require) {
 
 	var moduleStructure = require('details/structure');
 	var moduleMonitoring = require('details/monitoring');
+	var notify = require('notify');
+
+	var activeTabIndex = 0;
 
 	var model = {
 
 		activate : function() {
-			console.log("activating");
+			console.log("activated");
 			comot.getServices(processResult),
-
-			activateTab(model.tabs()[0]);
+			activateTab(model.tabs()[activeTabIndex]);
 		},
 		services : ko.observableArray(),
 		switchMonitoring : switchMonitoring,
@@ -22,21 +24,20 @@ define(function(require) {
 			if (serviceId === null || typeof serviceId === 'undefined') {
 				return;
 			}
-			console.log("id: " + serviceId);
+
 			this.selectedServiceId(serviceId);
 
-			activateTab(model.tabs()[0]);
+			activateTab(model.tabs()[activeTabIndex]);
 		},
-
 		tabs : ko.observableArray([ {
 			name : 'Structure',
 			module : 'details/structure',
-			show : ko.observable(false),
+			show : ko.observable(true),
 			instance : moduleStructure
 		}, {
 			name : 'Monitoring',
 			module : 'details/monitoring',
-			show : ko.observable(false),
+			show : ko.observable(false), 
 			instance : moduleMonitoring
 		} ]),
 
@@ -51,11 +52,10 @@ define(function(require) {
 			var tab = model.tabs()[i];
 
 			if (tab.name === toBeActivated.name) {
-				console.log("activating tab" + tab.name)
-				tab.instance.startTab(model.selectedServiceId);
+				tab.instance.startTab(model.selectedServiceId());
 				tab.show(true);
+				activeTabIndex = i;
 			} else {
-				console.log("deactivating tab" + tab.name)
 				tab.instance.stopTab();
 				tab.show(false);
 			}
@@ -65,22 +65,22 @@ define(function(require) {
 	return model;
 
 	function switchMonitoring() {
+		var that = this;
 
 		if (this.monitoring()) {
-			comot.stopMonitoring(this.id(), notify('success'))
+			comot.stopMonitoring(this.id(), function() {
+				that.monitoring(false);
+				notify.success("Monitoring stopped for "+that.id());
+			}, "Failed to stop monitoring for "+that.id())
 		} else {
-			comot.startMonitoring(this.id(), notify('success'))
+			comot.startMonitoring(this.id(), function() {
+				that.monitoring(true);
+				notify.success("Monitoring started for "+that.id());
+			}, "Failed to start monitoring for "+that.id())
 		}
-
-		this.monitoring(!this.monitoring());
 	}
 
 	function switchControl() {
-
-		notify();
-		notify("error");
-		notify("info");
-		notify("success");
 
 		this.control(!this.control());
 	}
@@ -93,32 +93,6 @@ define(function(require) {
 	function processResult(data) {
 		model.services = komapping.fromJS(data);
 
-	}
-
-	function notify(type) {
-		var opts = {
-			title : "Over Here",
-			text : "Check me out. I'm in a different stack.",
-			styling : 'bootstrap3',
-		};
-		switch (type) {
-		case 'error':
-			opts.title = "Oh No";
-			opts.text = "Watch out for that water tower!";
-			opts.type = "error";
-			break;
-		case 'info':
-			opts.title = "Breaking News";
-			opts.text = "Have you met Ted?";
-			opts.type = "info";
-			break;
-		case 'success':
-			opts.title = "Good News Everyone";
-			opts.text = "I've invented a device that bites shiny metal asses.";
-			opts.type = "success";
-			break;
-		}
-		new PNotify(opts);
 	}
 
 });

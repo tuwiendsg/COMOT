@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityState;
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityType;
-import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.test.UtilsTest;
@@ -132,7 +131,8 @@ public class SalsaClientTest extends AbstractTest {
 
 	@Test
 	public void testStatus() throws CoreServiceException, JAXBException, ComotException {
-		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService serviceInfo = salsa.getStatus("aaaa");
+		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService serviceInfo = salsa
+				.getStatus("SalsaExample_comot");
 
 		log.info(UtilsCs.asString(serviceInfo));
 	}

@@ -15,7 +15,7 @@ public abstract class CoreServiceClient {
 
 	protected static final String DEF_HOST = "localhost";
 	protected static final int DEF_PORT = 8080;
-	protected static String name;
+	protected String name;
 
 	protected Client client;
 	protected String baseUri;
@@ -40,7 +40,6 @@ public abstract class CoreServiceClient {
 	public void close() {
 		client.close();
 	}
-
 
 	protected void processResponseStatus(Response response) throws CoreServiceException {
 

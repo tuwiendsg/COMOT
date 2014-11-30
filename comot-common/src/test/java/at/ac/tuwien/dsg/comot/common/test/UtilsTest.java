@@ -57,8 +57,7 @@ public class UtilsTest {
 	public static String loadFile(String path) throws IOException {
 		return IOUtils.toString(ClassLoader.getSystemResourceAsStream(path), "UTF-8");
 	}
-	
-	
+
 	public static void sleepInfinit() {
 		while (true) {
 			try {

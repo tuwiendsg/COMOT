@@ -57,7 +57,7 @@ public class ControlClientRsybl implements ControlClient {
 		}
 
 	}
-	
+
 	@Override
 	public void createMcr(String serviceId, CompositionRulesConfiguration compositionRulesConfiguration)
 			throws CoreServiceException {
@@ -68,7 +68,6 @@ public class ControlClientRsybl implements ControlClient {
 	public void createEffects(String serviceId, String effectsJSON) throws CoreServiceException {
 		rsybl.sendElasticityCapabilitiesEffects(serviceId, effectsJSON);
 	}
-	
 
 	@Override
 	public void updateService(CloudService service) throws CoreServiceException {

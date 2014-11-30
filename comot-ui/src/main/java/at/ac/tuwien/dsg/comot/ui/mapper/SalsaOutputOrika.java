@@ -1,8 +1,5 @@
 package at.ac.tuwien.dsg.comot.ui.mapper;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 
 import ma.glasnost.orika.CustomMapper;
@@ -16,24 +13,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceInstance;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.common.model.structure.ServicePart;
 import at.ac.tuwien.dsg.comot.common.model.structure.ServiceTopology;
-import at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.common.model.structure.StackNode;
-import at.ac.tuwien.dsg.comot.common.model.type.NodeType;
 import at.ac.tuwien.dsg.comot.common.model.unit.NodeInstance;
-import at.ac.tuwien.dsg.comot.common.model.unit.NodeInstanceOs;
-import at.ac.tuwien.dsg.comot.ui.model.Element;
-import at.ac.tuwien.dsg.comot.ui.model.Element.State;
-import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement;
-import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement.MonitoredElementLevel;
+import at.ac.tuwien.dsg.comot.ui.model.ElementState;
+import at.ac.tuwien.dsg.comot.ui.model.ElementState.State;
 
 @Component
-public class OutputOrika {
+public class SalsaOutputOrika {
 
-	protected final Logger log = LoggerFactory.getLogger(OutputOrika.class);
+	protected final Logger log = LoggerFactory.getLogger(SalsaOutputOrika.class);
 
 	protected MapperFacade facade;
 
@@ -43,41 +34,41 @@ public class OutputOrika {
 		MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 		ConverterFactory converterFactory = mapperFactory.getConverterFactory();
 
-		mapperFactory.classMap(ServicePart.class, Element.class)
+		mapperFactory.classMap(ServicePart.class, ElementState.class)
 				.field("id", "id")
 				.field("state", "state")
 				.register();
 
-		mapperFactory.classMap(CloudService.class, Element.class)
+		mapperFactory.classMap(CloudService.class, ElementState.class)
 				.field("serviceTopologies", "children")
 				.customize(
-						new CustomMapper<CloudService, Element>() {
+						new CustomMapper<CloudService, ElementState>() {
 							@Override
-							public void mapAtoB(CloudService service, Element element, MappingContext context) {
-								element.setType(Element.Type.SERVICE);
+							public void mapAtoB(CloudService service, ElementState element, MappingContext context) {
+								element.setType(ElementState.Type.SERVICE);
 							}
 						})
 				.register();
 
-		mapperFactory.classMap(ServiceTopology.class, Element.class)
+		mapperFactory.classMap(ServiceTopology.class, ElementState.class)
 				.customize(
-						new CustomMapper<ServiceTopology, Element>() {
+						new CustomMapper<ServiceTopology, ElementState>() {
 							@Override
-							public void mapAtoB(ServiceTopology topology, Element element, MappingContext context) {
-								element.setType(Element.Type.TOPOLOGY);
+							public void mapAtoB(ServiceTopology topology, ElementState element, MappingContext context) {
+								element.setType(ElementState.Type.TOPOLOGY);
 
 								for (ServiceTopology child : topology.getServiceTopologies()) {
-									element.addChild(facade.map(child, Element.class));
+									element.addChild(facade.map(child, ElementState.class));
 								}
 
 								for (StackNode node : topology.getNodes()) {
 									if (node.getInstances().size() == 0) {
-										Element one = facade.map(node, Element.class);
+										ElementState one = facade.map(node, ElementState.class);
 										one.setState(State.valueOf(node.getState().toString()));
 										element.addChild(one);
 									} else {
 										for (NodeInstance instance : node.getInstances()) {
-											Element one = facade.map(node, Element.class);
+											ElementState one = facade.map(node, ElementState.class);
 											facade.map(instance, one);
 											element.addChild(one);
 										}
@@ -87,12 +78,12 @@ public class OutputOrika {
 						})
 				.register();
 
-		mapperFactory.classMap(StackNode.class, Element.class)
+		mapperFactory.classMap(StackNode.class, ElementState.class)
 				.field("id", "id")
 				.fieldAToB("type", "type")
 				.register();
 
-		mapperFactory.classMap(NodeInstance.class, Element.class)
+		mapperFactory.classMap(NodeInstance.class, ElementState.class)
 				.field("instanceId", "instanceId")
 				.field("state", "state")
 				.register();

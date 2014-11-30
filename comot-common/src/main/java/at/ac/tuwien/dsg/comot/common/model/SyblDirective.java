@@ -2,7 +2,7 @@ package at.ac.tuwien.dsg.comot.common.model;
 
 import at.ac.tuwien.dsg.comot.common.model.type.DirectiveType;
 
-public class SyblDirective extends AbstractEntity  {
+public class SyblDirective extends AbstractEntity {
 
 	private static final long serialVersionUID = 1938899881721566640L;
 

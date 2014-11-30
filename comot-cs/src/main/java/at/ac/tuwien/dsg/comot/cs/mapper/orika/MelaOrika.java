@@ -107,7 +107,8 @@ public class MelaOrika {
 		} else if (part instanceof ServiceUnit) {
 			return MonitoredElementLevel.SERVICE_UNIT;
 		} else {
-			throw new UnsupportedOperationException();
+			throw new IllegalArgumentException(
+					"Unexpected inheritance of at.ac.tuwien.dsg.comot.common.model.structure.ServicePart");
 		}
 
 	}

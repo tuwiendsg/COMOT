@@ -8,8 +8,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -19,7 +17,6 @@ import javax.xml.bind.Unmarshaller;
 import org.eclipse.persistence.jaxb.JAXBContextProperties;
 import org.junit.Test;
 
-import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties;
 import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
@@ -94,8 +91,7 @@ public class ControlClientTest extends AbstractTest {
 				.getNodeTemplateOrRelationshipTemplate().get(0);
 
 		log.info("{}", Utils.asXmlString(tosca));
-		
-		
+
 		// CloudService service = SalsaToscaDeployer.buildRuntimeDataFromTosca(tosca);
 
 		// log.info("{}", Utils.asXmlString(service));

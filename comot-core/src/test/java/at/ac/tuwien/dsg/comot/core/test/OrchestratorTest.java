@@ -22,6 +22,7 @@ public class OrchestratorTest extends AbstractTest {
 
 	@Before
 	public void startUp() throws CoreServiceException {
+		log.info("START UP TEST");
 		newServiceId = null;
 
 		for (String str : monitoring.listAllServices()) {
@@ -31,6 +32,7 @@ public class OrchestratorTest extends AbstractTest {
 
 	@After
 	public void cleanUp() throws CoreServiceException {
+		log.info("CLEAN UP TEST");
 		if (newServiceId != null) {
 			deployment.undeploy(newServiceId);
 		}
@@ -43,12 +45,12 @@ public class OrchestratorTest extends AbstractTest {
 
 	@Test
 	public void dostuff() throws CoreServiceException, ComotException {
-		
+		orchestrator.getServices();
 	}
-	
+
 	@Test
 	public void testMonitoring() throws CoreServiceException, ComotException {
-		//orchestrator.startMonitoring(SERVICE_ID);
+		// orchestrator.startMonitoring(SERVICE_ID);
 	}
 
 	@Test

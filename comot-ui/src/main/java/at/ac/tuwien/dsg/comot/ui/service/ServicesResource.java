@@ -20,16 +20,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import at.ac.tuwien.dsg.comot.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.common.model.monitoring.ElementMonitoring;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.core.ComotOrchestrator;
 import at.ac.tuwien.dsg.comot.core.model.ServiceEntity;
 import at.ac.tuwien.dsg.comot.cs.mapper.ToscaMapper;
-import at.ac.tuwien.dsg.comot.ui.mapper.OutputMapper;
-import at.ac.tuwien.dsg.comot.ui.model.Element;
+import at.ac.tuwien.dsg.comot.ui.mapper.SalsaOutputMapper;
+import at.ac.tuwien.dsg.comot.ui.model.ElementState;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
 // WADL http://localhost:8380/comot/rest/application.wadl
@@ -42,7 +42,7 @@ public class ServicesResource {
 	private static final Logger log = LoggerFactory.getLogger(ServicesResource.class);
 
 	@Autowired
-	protected OutputMapper mapperOutput;
+	protected SalsaOutputMapper mapperOutput;
 	@Autowired
 	protected ToscaMapper mapperTosca;
 
@@ -184,7 +184,6 @@ public class ServicesResource {
 
 			return Response.ok(list.toArray(new ServiceEntity[list.size()])).build();
 		} catch (Exception e) {
-			log.info("aaaaaaaaaaaaaa");
 			return handleException(e);
 		}
 	}
@@ -196,7 +195,7 @@ public class ServicesResource {
 
 		try {
 			CloudService service = orchestrator.getStatus(serviceId);
-			Element element = mapperOutput.extractOutput(service);
+			ElementState element = mapperOutput.extractOutput(service);
 
 			return Response.ok(element).build();
 
@@ -213,7 +212,22 @@ public class ServicesResource {
 
 		try {
 			CloudService service = orchestrator.getStatus(serviceId);
-			Element element = mapperOutput.extractOutput(service);
+			ElementState element = mapperOutput.extractOutput(service);
+
+			return Response.ok(element).build();
+
+		} catch (Exception e) {
+			return handleException(e);
+		}
+	}
+
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Path("/{serviceId}/monitoring/snapshots/last")
+	public Response getMonitoringData(@PathParam("serviceId") String serviceId) {
+
+		try {
+			ElementMonitoring element = orchestrator.getMonitoringData(serviceId);
 
 			return Response.ok(element).build();
 

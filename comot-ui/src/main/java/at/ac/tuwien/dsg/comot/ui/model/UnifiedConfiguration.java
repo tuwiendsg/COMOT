@@ -10,14 +10,14 @@ import org.oasis.tosca.Definitions;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name="ElasticCloudService")
+@XmlRootElement(name = "ElasticCloudService")
 public class UnifiedConfiguration {
 
-	@XmlElement(name = "Tosca", required=true)
+	@XmlElement(name = "Tosca", required = true)
 	protected Definitions definition;
-	@XmlElement(name = "MetricCompositionRules", required=false)
+	@XmlElement(name = "MetricCompositionRules", required = false)
 	protected CompositionRulesConfiguration mcr;
-	@XmlElement(name = "ElasticityCapabilitiesEffects", required=false)
+	@XmlElement(name = "ElasticityCapabilitiesEffects", required = false)
 	protected String effects;
 
 	public CompositionRulesConfiguration getMcr() {
@@ -44,5 +44,4 @@ public class UnifiedConfiguration {
 		this.definition = definition;
 	}
 
-	
 }

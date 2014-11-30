@@ -133,7 +133,6 @@ public class MelaClient extends CoreServiceClient {
 		Response response = client.target(getBaseUri())
 				.path(LIST_ALL_SERVICES_PATH)
 				.request(MediaType.APPLICATION_JSON)
-				// .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML)
 				.get();
 
 		processResponseStatus(response);
