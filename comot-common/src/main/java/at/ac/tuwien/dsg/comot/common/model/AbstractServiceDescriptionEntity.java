@@ -17,8 +17,9 @@ public abstract class AbstractServiceDescriptionEntity extends AbstractCloudEnti
 
     Set<ElasticityCapability> elasticityCapabilities = new HashSet<>();
 
-    Map<String, Object> properties = new HashMap<>();
+    Map<LifecyclePhase, AbstractLifecycleAction> lifecycleActions = new HashMap<>();
 
+//    Map<String, Object> properties = new HashMap<>();
     AbstractServiceDescriptionEntity(String id) {
         super(id);
     }
@@ -69,10 +70,29 @@ public abstract class AbstractServiceDescriptionEntity extends AbstractCloudEnti
     }
 
     @Override
-    public Map<String, Object> getProperties() {
-        return properties;
+    public Map<LifecyclePhase, AbstractLifecycleAction> getLifecycleActions() {
+        return lifecycleActions;
     }
 
+    public AbstractServiceDescriptionEntity withLifecycleAction(LifecyclePhase phase, AbstractLifecycleAction action) {
+        lifecycleActions.put(phase, action);
+        return this;
+    }
+
+    public AbstractServiceDescriptionEntity removeLifecycleAction(LifecyclePhase phase, AbstractLifecycleAction action) {
+        lifecycleActions.remove(phase);
+        return this;
+    }
+
+    @Override
+    public AbstractLifecycleAction getLifecycleAction(LifecyclePhase phase) {
+        return lifecycleActions.get(phase);
+    }
+
+//    @Override
+//    public Map<String, Object> getProperties() {
+//        return properties;
+//    }
     public AbstractServiceDescriptionEntity exposes(Capability... capabilities) {
         this.capabilities.addAll(Arrays.asList(capabilities));
         return this;

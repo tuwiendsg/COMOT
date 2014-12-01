@@ -20,9 +20,8 @@ public class SoftwareNode extends ServiceUnit {
 
     public static SoftwareNode UnboundedSoftwareUnit(String id) {
         return new SoftwareNode(id).ofType(NodeType.Software).withMinInstances(1).withMaxColocatedInstances(Integer.MAX_VALUE)
-                .provides(ElasticityCapability.ScaleIn(id))
-                .provides(ElasticityCapability.ScaleOut(id))
-                ;
+                .provides(ElasticityCapability.ScaleIn())
+                .provides(ElasticityCapability.ScaleOut());
     }
 
     @Override
@@ -99,4 +98,17 @@ public class SoftwareNode extends ServiceUnit {
     public SoftwareNode provides(ElasticityCapability... capabilities) {
         return (SoftwareNode) super.provides(capabilities);
     }
+
+    @Override
+    public SoftwareNode withLifecycleAction(LifecyclePhase phase, AbstractLifecycleAction action) {
+        lifecycleActions.put(phase, action);
+        return this;
+    }
+
+    @Override
+    public SoftwareNode removeLifecycleAction(LifecyclePhase phase, AbstractLifecycleAction action) {
+        lifecycleActions.remove(phase);
+        return this;
+    }
+
 }

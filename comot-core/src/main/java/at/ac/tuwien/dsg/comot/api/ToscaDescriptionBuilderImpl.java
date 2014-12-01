@@ -85,7 +85,10 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
                         .withCapabilities(getCapabilities(node))
                         .withRequirements(getRequirements(node))
                         .withPolicies(getPolicies(node))
-                        .withProperties(getProperties(node));
+                        .withProperties(getProperties(node)
+                        //aici tre sa bag si actions
+
+                        );
 
                 handleDeploymentArtifacts(node, tNodeTemplate, definitions);
                 context.put(tNodeTemplate.getId(), tNodeTemplate);
@@ -270,19 +273,48 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
     // todo implement
     private TEntityTemplate.Properties getProperties(ServiceUnit node) {
         TEntityTemplate.Properties properties = new TEntityTemplate.Properties();
+        SalsaMappingProperties salsaMappingProperties = new SalsaMappingProperties();
+
         if (node instanceof OperatingSystemUnit) {
             OperatingSystemUnit osNode = (OperatingSystemUnit) node;
             OperatingSystemSpecification specification = osNode.getSpecification();
-            SalsaMappingProperties salsaMappingProperties = new SalsaMappingProperties();
+
             Map<String, String> osProperties = new HashMap<>();
             osProperties.put("instanceType", specification.getInstanceType());
             osProperties.put("provider", specification.getProvider());
             osProperties.put("baseImage", specification.getBaseImage());
             osProperties.put("packages", joinOsSpecificationPackages(specification));
             salsaMappingProperties.put("os", osProperties);
-            properties.withAny(salsaMappingProperties);
+
+        } else if (node instanceof DockerUnit) {
+            DockerUnit osNode = (DockerUnit) node;
+            OperatingSystemSpecification specification = osNode.getSpecification();
+            Map<String, String> osProperties = new HashMap<>();
+            osProperties.put("instanceType", specification.getInstanceType());
+            osProperties.put("provider", specification.getProvider());
+            osProperties.put("baseImage", specification.getBaseImage());
+            osProperties.put("packages", joinOsSpecificationPackages(specification));
+            salsaMappingProperties.put("os", osProperties);
         }
 
+        if (!node.getLifecycleActions().isEmpty()) {
+            Map<String, String> actions = new HashMap<>();
+            for (Map.Entry<LifecyclePhase, AbstractLifecycleAction> entry : node.getLifecycleActions().entrySet()) {
+                AbstractLifecycleAction abstractAction = entry.getValue();
+                if (abstractAction instanceof BASHAction) {
+                    BASHAction action = (BASHAction) abstractAction;
+                    actions.put(entry.getKey().toString(), action.getCommand());
+                } else {
+                    log.error("Currently action type " + abstractAction.getClass().toString() + "is not supported");
+                }
+            }
+
+            salsaMappingProperties.put("action", actions);
+        }
+
+        properties.withAny(salsaMappingProperties);
+
+        //get lifecycle shit
         return properties;
     }
 

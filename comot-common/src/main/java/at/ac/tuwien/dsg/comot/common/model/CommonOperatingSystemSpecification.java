@@ -1,7 +1,6 @@
 package at.ac.tuwien.dsg.comot.common.model;
 
 import java.util.UUID;
-import static jdk.nashorn.internal.runtime.Debug.id;
 
 /**
  * @author omoser

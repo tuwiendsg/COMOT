@@ -3,6 +3,7 @@ package at.ac.tuwien.dsg.comot.common.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author omoser
@@ -22,8 +23,8 @@ public class ElasticityCapability extends AbstractCloudEntity {
 
     public enum CapabilityType {
 
-        ScaleIn("scalein"),
-        ScaleOut("scaleout");
+        ScaleIn("scaleIn"),
+        ScaleOut("scaleOut");
 
         private final String type;
 
@@ -37,20 +38,20 @@ public class ElasticityCapability extends AbstractCloudEntity {
         }
     }
 
-    ElasticityCapability(String id) {
-        super(id);
+    ElasticityCapability() {
+        super(UUID.randomUUID().toString());
     }
 
     public static ElasticityCapability ElasticityCapability(String id) {
-        return new ElasticityCapability(id);
+        return new ElasticityCapability();
     }
 
-    public static ElasticityCapability ScaleIn(String id) {
-        return new ElasticityCapability(id).ofType(CapabilityType.ScaleIn);
+    public static ElasticityCapability ScaleIn() {
+        return new ElasticityCapability().ofType(CapabilityType.ScaleIn);
     }
 
-    public static ElasticityCapability ScaleOut(String id) {
-        return new ElasticityCapability(id).ofType(CapabilityType.ScaleOut);
+    public static ElasticityCapability ScaleOut() {
+        return new ElasticityCapability().ofType(CapabilityType.ScaleOut);
     }
 
     public ElasticityCapability ofType(final CapabilityType capabilityType) {

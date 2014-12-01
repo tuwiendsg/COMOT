@@ -1,6 +1,8 @@
 package at.ac.tuwien.dsg.cloudcom.elasticitytutorial;
 
 import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifactTemplate;
+import at.ac.tuwien.dsg.comot.common.model.BASHAction;
+import static at.ac.tuwien.dsg.comot.common.model.BASHAction.BASHAction;
 import static at.ac.tuwien.dsg.comot.common.model.CapabilityEffect.CapabilityEffect;
 import static at.ac.tuwien.dsg.comot.common.model.CloudService.ServiceTemplate;
 import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.DockerDefault;
@@ -22,6 +24,7 @@ import at.ac.tuwien.dsg.comot.common.model.MetricEffect;
 import at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit;
 import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingSystemUnit;
 import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackSmall;
+import at.ac.tuwien.dsg.comot.common.model.LifecyclePhase;
 import at.ac.tuwien.dsg.comot.common.model.Requirement;
 import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
 import at.ac.tuwien.dsg.comot.common.model.ServiceUnit;
@@ -70,6 +73,7 @@ public class ComotHelloElasticity {
                         .and(Constraint.MetricConstraint("EP_ST1_CO2", new Metric("totalPendingRequests", "#")).greaterThan("10"))
                         .then(Strategy.Action.ScaleOut)
                 )
+                .withLifecycleAction(LifecyclePhase.STOP, BASHAction("sudo service daas-service stop"))
                 .withMinInstances(2)
                 .withMaxColocatedInstances(1); //TODO: needs to be fixed somehow
 
@@ -90,7 +94,7 @@ public class ComotHelloElasticity {
                 Constraint.MetricConstraint("EPT_CO2", new Metric("totalPendingRequests", "#")).lessThan("10"));
 
         eventProcessingUnit.provides(
-                ElasticityCapability.ScaleOut("ScaleOutEventProcessing").withPrimitiveOperations("Salsa.scaleOut")
+                ElasticityCapability.ScaleOut().withPrimitiveOperations("Salsa.scaleOut")
                 .withCapabilityEffect(CapabilityEffect(eventProcessingUnit)
                         .withMetricEffect(
                                 MetricEffect().withMetric(new Metric("cpuUsage", "#")).withType(MetricEffect.Type.SUB).withValue(40.0))
@@ -113,7 +117,7 @@ public class ComotHelloElasticity {
                 )
         );
         eventProcessingUnit.provides(
-                ElasticityCapability.ScaleIn("ScaleInEventProcessing").withPrimitiveOperations("M2MDaaS.decommissionWS", "Salsa.scaleIn")
+                ElasticityCapability.ScaleIn().withPrimitiveOperations("M2MDaaS.decommissionWS", "Salsa.scaleIn")
                 .withCapabilityEffect(CapabilityEffect(eventProcessingUnit)
                         .withMetricEffect(
                                 MetricEffect().withMetric(new Metric("cpuUsage", "#")).withType(MetricEffect.Type.ADD).withValue(40.0))

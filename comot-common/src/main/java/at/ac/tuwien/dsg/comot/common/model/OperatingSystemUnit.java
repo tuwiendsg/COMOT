@@ -94,4 +94,16 @@ public class OperatingSystemUnit extends ServiceUnit {
     public OperatingSystemUnit exposes(Capability... capabilities) {
         return (OperatingSystemUnit) super.exposes(capabilities);
     }
+
+    @Override
+    public OperatingSystemUnit withLifecycleAction(LifecyclePhase phase, AbstractLifecycleAction action) {
+        lifecycleActions.put(phase, action);
+        return this;
+    }
+
+    @Override
+    public OperatingSystemUnit removeLifecycleAction(LifecyclePhase phase, AbstractLifecycleAction action) {
+        lifecycleActions.remove(phase);
+        return this;
+    }
 }

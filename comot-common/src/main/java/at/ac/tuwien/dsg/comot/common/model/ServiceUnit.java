@@ -126,6 +126,19 @@ public class ServiceUnit extends AbstractServiceDescriptionEntity {
     public ServiceUnit provides(ElasticityCapability... capabilities) {
         return (ServiceUnit) super.provides(capabilities);
     }
+    
+    
+    @Override
+    public ServiceUnit withLifecycleAction(LifecyclePhase phase, AbstractLifecycleAction action) {
+        lifecycleActions.put(phase, action);
+        return this;
+    }
+
+    @Override
+    public ServiceUnit removeLifecycleAction(LifecyclePhase phase, AbstractLifecycleAction action) {
+        lifecycleActions.remove(phase);
+        return this;
+    }
 
     @Override
     public String toString() {

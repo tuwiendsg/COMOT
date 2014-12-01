@@ -690,13 +690,13 @@ public class rSYBLInterraction {
                 for (ElasticityCapability capability : capabilities) {
                     at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.ElasticityCapability ec = new at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.ElasticityCapability();
                     String primitiveOps = "";
-                    for (String op : capability.getPrimitiveOperations()) {
-                        primitiveOps += ";" + op;
-                    }
-
-                    if (primitiveOps.length() > 0) {
-                        //remove first ;
+                    if (!capability.getPrimitiveOperations().isEmpty()) {
+                        for (String op : capability.getPrimitiveOperations()) {
+                            primitiveOps += ";" + op;
+                        }
                         primitiveOps = primitiveOps.substring(1);
+                    } else {
+                        primitiveOps = capability.getType().toString();
                     }
 
                     ec.setPrimitiveOperations(primitiveOps);

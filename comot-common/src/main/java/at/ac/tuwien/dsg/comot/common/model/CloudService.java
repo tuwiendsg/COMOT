@@ -148,6 +148,18 @@ public class CloudService extends AbstractServiceDescriptionEntity {
     }
 
     @Override
+    public CloudService withLifecycleAction(LifecyclePhase phase, AbstractLifecycleAction action) {
+        lifecycleActions.put(phase, action);
+        return this;
+    }
+
+    @Override
+    public CloudService removeLifecycleAction(LifecyclePhase phase, AbstractLifecycleAction action) {
+        lifecycleActions.remove(phase);
+        return this;
+    }
+
+    @Override
     public int hashCode() {
         int hash = 7;
         hash = 67 * hash + Objects.hashCode(this.serviceNodes);

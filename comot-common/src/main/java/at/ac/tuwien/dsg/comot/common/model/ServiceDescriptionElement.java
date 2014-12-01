@@ -18,6 +18,9 @@ public interface ServiceDescriptionElement extends CloudEntity {
 
     Set<ElasticityCapability> getElasticityCapabilities();
 
-    Map<String, Object> getProperties();
+//    Map<String, Object> getProperties();
+    Map<LifecyclePhase, AbstractLifecycleAction> getLifecycleActions();
+
+    AbstractLifecycleAction getLifecycleAction(LifecyclePhase phase);
 
 }

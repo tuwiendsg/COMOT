@@ -94,4 +94,16 @@ public class DockerUnit extends ServiceUnit {
     public DockerUnit exposes(Capability... capabilities) {
         return (DockerUnit) super.exposes(capabilities);
     }
+
+    @Override
+    public DockerUnit withLifecycleAction(LifecyclePhase phase, AbstractLifecycleAction action) {
+        lifecycleActions.put(phase, action);
+        return this;
+    }
+
+    @Override
+    public DockerUnit removeLifecycleAction(LifecyclePhase phase, AbstractLifecycleAction action) {
+        lifecycleActions.remove(phase);
+        return this;
+    }
 }
