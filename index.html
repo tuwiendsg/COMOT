@@ -1,97 +1,137 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Comot by tuwiendsg</title>
+    <head>
+        <meta charset='utf-8'>
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+        <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+        <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="javascripts/scale.fix.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <!--[if lt IE 9]>
+        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
 
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-  </head>
-  <body>
-    <div class="wrapper">
-      <header>
-        <h1>Comot</h1>
-        <p>COMOT </p>
-        <p class="view"><a href="https://github.com/tuwiendsg/COMOT">View the Project on GitHub <small>tuwiendsg/COMOT</small></a></p>
-        <ul>
-          <li><a href="https://github.com/tuwiendsg/COMOT/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/tuwiendsg/COMOT/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/tuwiendsg/COMOT">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h3>
-<a id="guideline-to-run-the-comot-demo-on-a-single-host" class="anchor" href="#guideline-to-run-the-comot-demo-on-a-single-host" aria-hidden="true"><span class="octicon octicon-link"></span></a>Guideline to run the COMOT demo on a single host</h3>
+        <title>COMOT by tuwiendsg</title>
 
-<p>This guide is going to introduce the step of running COMOT components on a single machine such as one VM or on user's PC.</p>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script type="text/javascript">
 
-<ul>
-<li>Install and run COMOT dashboard</li>
-<li>Create a HelloElasticity application by COMOT fluent API</li>
-<li>Deploy the application by SALSA</li>
-<li>Control the application by SYBL</li>
-<li>Monitor the application by MELA</li>
-<li>Analyze the elasticity by QUELE</li>
-</ul>
+            $(document).ready(function() {
+                var top = $('#navibar').offset().top - parseFloat($('#navibar').css('marginTop').replace(/auto/, 100));
 
-<h3>
-<a id="materials" class="anchor" href="#materials" aria-hidden="true"><span class="octicon octicon-link"></span></a>Materials</h3>
+                $(window).scroll(function(event) {
+                    // what the y position of the scroll is
+                    var y = $(this).scrollTop();
 
-<p>User can download all the built version of COMOT modules on our temporary repository: <a href="http://128.130.172.215/repository/">http://128.130.172.215/repository/</a>. The repository is also shown in the dashboard after the installation.</p>
+                    // whether that's below the form
+                    if (y >= top) {
+                        // if so, ad the fixed class
+                        $('#navibar').addClass('fixed');
+                    } else {
+                        // otherwise remove it
+                        $('#navibar').removeClass('fixed');
+                    }
+                });
+            });</script>
 
-<h3>
-<a id="prerequisites" class="anchor" href="#prerequisites" aria-hidden="true"><span class="octicon octicon-link"></span></a>Prerequisites</h3>
+        <script>
+            (function(i, s, o, g, r, a, m) {
+                i['GoogleAnalyticsObject'] = r;
+                i[r] = i[r] || function() {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+                a = s.createElement(o),
+                        m = s.getElementsByTagName(o)[0];
+                a.async = 1;
+                a.src = g;
+                m.parentNode.insertBefore(a, m)
+            })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-<ol>
-<li>Operation system: This demo was tested with Ubuntu 14.04. As the application need Docker to run, our Docker installation does not work with older Ubuntu. User can install Docker manually if they use older system (Please refer: <a href="https://docs.docker.com/installation/ubuntulinux/">https://docs.docker.com/installation/ubuntulinux/</a>)</li>
-<li>Root privilege: This demo need root to run Docker.</li>
-<li>RAM: At least 2GB recommended for running all the COMOT modules, ideally more than 4GB.</li>
-<li>Storage: At least 1GB free of disk to store the Docker local image.</li>
-</ol>
+            ga('create', 'UA-43025584-5', 'tuwiendsg.github.io');
+            ga('send', 'pageview');
 
-<h3>
-<a id="installation-and-cleaning" class="anchor" href="#installation-and-cleaning" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation and cleaning</h3>
+        </script>
 
-<p>We provide two scripts for installing and cleaning COMOT</p>
+    </head>
 
-<pre><code> # mkdir comot
- # cd comot
- ~comot# wget http://128.130.172.215/repository/files/COMOTCompactPlatform/installCOMOT.sh
- ~comot# sh installCOMOT.sh
- Is COMOT deployed on a local machine? Please select 1(Yes), 2(No), 3(Quit)
- 1) Yes
- 2) No
- 3) Quit
- #? 1 (_=&gt; user enter 1 if the demo is run on his/her PC_)
- #? 2 (_=&gt; user enter 2 if the machine is not his/her PC_)
- Please enter a PUBLICLY ACCESSIBLE IP for this machine to setup COMOT Dashboard accordingly
- 128.130.35.76 (_=&gt; if 2 was selected, enter the public IP of the machine_)
- ...
- [ many logs are shown here ]
- ...
-  COMOT installation done!
-  Please access to COMOT Dashboard via URL: http://[128.130.35.76]:8080/COMOT
-</code></pre>
+    <body>
+        <header>
+            <div class="inner">
+                <h1>COMOT</h1>
+                <h2>Describing, deploying, monitoring and controlling elastic cloud services</h2>
+                <a href="https://github.com/tuwiendsg/COMOT" class="button"><small>View project on </small> GitHub</a>
+            </div>
 
-<p>For cleaning COMOT, user run the uninstallation script</p>
+            <aside id="navibar">
 
-<pre><code> ~comot# wget http://128.130.172.215/repository/files/COMOTCompactPlatform/uninstallCOMOT.sh
- ~comot# sh ./uninstallCOMOT.sh
-</code></pre>
-      </section>
-    </div>
-    <footer>
-      <p>Project maintained by <a href="https://github.com/tuwiendsg">tuwiendsg</a></p>
-      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
-    </footer>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-    
-  </body>
+                <div id="nav">
+                    <ul>
+                        <li><div id="currentNav"><a href="./index.html" id="homenav">Home</a></div>
+                            <ul>
+                                <li><a href="#introduction">What is COMOT</a>
+                                    <!--<li><a href="#features"  >Features</a></li>-->
+                            </ul>
+                        </li>
+                        <li><a href="./elasticityDemo.html" id="elasticityDemo">COMOT Demo: Programming Elasticity</a></li>
+                    </ul>
+
+                </div>
+            </aside>
+
+
+
+
+
+        </header>
+
+        <div id="horizontalNav">
+            <ul>
+                <li><div id="horizontalNavCurrentNav"><a href="./index.html" id="homenav">Home</a></div>
+                    <ul>
+                        <li><a href="#introduction"  >What is COMOT</a>
+                            <!--<li><a href="#features"  >Features</a></li>-->
+                    </ul>
+                </li>
+                <li><a href="./elasticityDemo.html" id="elasticityDemo">COMOT Demo: Programming Elasticity</a></li>
+            </ul>
+
+        </div>
+
+        <div id="content-wrapper">
+
+
+
+
+            <div class="inner clearfix">
+
+
+                <section id="main-content">
+                    <h1>
+                        <a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>What is COMOT?</h1>
+
+                    <p> Note: From here onwards we will refer to services and cloud applications with the same "services" term.  </p>
+
+                    <p>COMOT provides an easy to use integration layer for managing various aspects of elastic cloud services. In particular, COMOT provides a domain specific API to describe elastic cloud services, interracts with <a href="https://github.com/tuwiendsg/SALSA">SALSA</a> for deploying the description to virtualized infrastructures (e.g., OpenStack, Docker), relies on  <a href="https://github.com/tuwiendsg/MELA">MELA</a> for cloud service monitoring and analysis, and on <a href="https://github.com/tuwiendsg/SALSA">rSYBL</a> for run-time control of elastic cloud services.</p>
+
+
+                </section>
+
+                <aside id="sidebar">
+                    <a href="http://www.tuwien.ac.at/" class="button" style="background: url(./images/TU_logo.png) 0 0 no-repeat; height:70px;  width:300px">
+                    </a>
+
+                    <a href="http://www.infosys.tuwien.ac.at/" class="button" style="background: url(./images/dsgComplet.png) 0 0 no-repeat; background-size:100%; width:300px; height:70px">
+                    </a>
+
+                    <p class="repo-owner" style="width:300px"><a href="https://github.com/tuwiendsg/MELA"></a> Maintained and distributed by <a href="http://www.infosys.tuwien.ac.at/staff/dmoldovan/"> Daniel Moldovan </a>
+                        </br> </br><a href="http://www.infosys.tuwien.ac.at/">Distributed Systems Group</a>
+                        , <a href="http://www.tuwien.ac.at/">Vienna University of Technology</a>.</p>
+                </aside>
+
+
+            </div>
+        </div>
+    </body>
 </html>
