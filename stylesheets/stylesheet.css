@@ -91,7 +91,7 @@ header h2 {
 
 .inner {
     position: relative;
-    width: 940px;
+    width: 80%;
     margin: 0 auto;
 }
 
@@ -101,8 +101,9 @@ header h2 {
 }
 
 #main-content {
-    width: 690px;
-    float: left;
+    width: 700px;
+    padding-left: 270px;
+    //float: right;
 }
 
 #main-content img {
@@ -110,7 +111,7 @@ header h2 {
 }
 
 aside#sidebar {
-    width: 200px;
+    width: 20%;
     padding-left: 20px;
     min-height: 504px;
     float: right;
@@ -330,7 +331,6 @@ aside#sidebar p.repo-owner a {
 
 #nav{
     width: 270px;
-
 }
 
 #downloads {
@@ -370,9 +370,7 @@ aside a.button {
     font-size: 21px;
 }
 
-
-background: url(./images/TU_logo.png) 0 0 no-repeat; background-size:50%
-
+ 
 code, pre {
   font-family: Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal;
   color: #333;
