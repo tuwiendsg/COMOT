@@ -35,7 +35,7 @@
 
 <ul>
 <li>Install and run COMOT dashboard</li>
-<li>Create a HelloElasticity application from COMOT fluent API</li>
+<li>Create a HelloElasticity application by COMOT fluent API</li>
 <li>Deploy the application by SALSA</li>
 <li>Control the application by SYBL</li>
 <li>Monitor the application by MELA</li>
@@ -45,7 +45,47 @@
 <h3>
 <a id="materials" class="anchor" href="#materials" aria-hidden="true"><span class="octicon octicon-link"></span></a>Materials</h3>
 
-<p>User can download all the built version of COMOT modules on our temporary repository: <a href="http://128.130.172.215/repository/">http://128.130.172.215/repository/</a></p>
+<p>User can download all the built version of COMOT modules on our temporary repository: <a href="http://128.130.172.215/repository/">http://128.130.172.215/repository/</a>. The repository is also shown in the dashboard after the installation.</p>
+
+<h3>
+<a id="prerequisites" class="anchor" href="#prerequisites" aria-hidden="true"><span class="octicon octicon-link"></span></a>Prerequisites</h3>
+
+<ol>
+<li>Operation system: This demo was tested with Ubuntu 14.04. As the application need Docker to run, our Docker installation does not work with older Ubuntu. User can install Docker manually if they use older system (Please refer: <a href="https://docs.docker.com/installation/ubuntulinux/">https://docs.docker.com/installation/ubuntulinux/</a>)</li>
+<li>Root privilege: This demo need root to run Docker.</li>
+<li>RAM: At least 2GB recommended for running all the COMOT modules, ideally more than 4GB.</li>
+<li>Storage: At least 1GB free of disk to store the Docker local image.</li>
+</ol>
+
+<h3>
+<a id="installation-and-clean" class="anchor" href="#installation-and-clean" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation and clean</h3>
+
+<p>We provide two script for install and clean the COMOT</p>
+
+<pre><code> # mkdir comot
+ # cd comot
+ ~comot# wget http://128.130.172.215/repository/files/COMOTCompactPlatform/installCOMOT.sh
+ ~comot# sh installCOMOT.sh
+ Is COMOT deployed on a local machine? Please select 1(Yes), 2(No), 3(Quit)
+ 1) Yes
+ 2) No
+ 3) Quit
+ #? 1 (_=&gt; user enter 1 if the demo is run on his/her PC_)
+ #? 2 (_=&gt; user enter 2 if the machine is not his/her PC_)
+ Please enter a PUBLICLY ACCESSIBLE IP for this machine to setup COMOT Dashboard accordingly
+ 128.130.35.76 (_=&gt; if 2 was selected, enter the public IP of the machine_)
+ ...
+ [ many logs are shown here ]
+ ...
+  COMOT installation done!
+  Please access to COMOT Dashboard via URL: http://[128.130.35.76]:8080/COMOT
+</code></pre>
+
+<p>For cleaning COMOT, user run the uninstallation script</p>
+
+<pre><code> ~comot# wget http://128.130.172.215/repository/files/COMOTCompactPlatform/uninstallCOMOT.sh
+ ~comot# sh ./uninstallCOMOT.sh
+</code></pre>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/tuwiendsg">tuwiendsg</a></p>
