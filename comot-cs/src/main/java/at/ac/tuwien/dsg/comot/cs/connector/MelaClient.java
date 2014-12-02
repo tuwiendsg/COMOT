@@ -52,7 +52,7 @@ public class MelaClient extends CoreServiceClient {
 
 	public MelaClient(String host, int port, String basePath) {
 		super(host, port, basePath);
-		name = "[MELA] ";
+		setName("MELA");
 	}
 
 	// SERVICE STRUCTURE DESCRIPTION --------------------------------------------------
@@ -69,7 +69,7 @@ public class MelaClient extends CoreServiceClient {
 
 		String result = response.readEntity(String.class);
 
-		log.info(name + "createServiceDescription. Response: '{}'", result);
+		log.info(ln + "createServiceDescription. Response: '{}'", result);
 
 	}
 
@@ -87,7 +87,7 @@ public class MelaClient extends CoreServiceClient {
 
 		MonitoredElement result = response.readEntity(MonitoredElement.class);
 
-		log.info(name + "getServiceDescription '{}'. Response: '{}'", serviceId, result);
+		log.info(ln + "getServiceDescription '{}'. Response: '{}'", serviceId, result);
 
 		return result;
 	}
@@ -105,7 +105,7 @@ public class MelaClient extends CoreServiceClient {
 
 		String result = response.readEntity(String.class);
 
-		log.info(name + "updateServiceDescription. Response: '{}'", result);
+		log.info(ln + "updateServiceDescription. Response: '{}'", result);
 
 	}
 
@@ -123,7 +123,7 @@ public class MelaClient extends CoreServiceClient {
 
 		String result = response.readEntity(String.class);
 
-		log.info(name + "removeServiceDescription '{}'. Response: '{}'", serviceId, result);
+		log.info(ln + "removeServiceDescription '{}'. Response: '{}'", serviceId, result);
 
 	}
 
@@ -139,7 +139,7 @@ public class MelaClient extends CoreServiceClient {
 
 		String result = response.readEntity(String.class);
 
-		log.info(name + "listAllServices . Response: '{}'", result);
+		log.info(ln + "listAllServices . Response: '{}'", result);
 
 		// extract IDs from JSON to list
 		List<String> list = new ArrayList<String>();
@@ -169,7 +169,7 @@ public class MelaClient extends CoreServiceClient {
 
 		String result = response.readEntity(String.class);
 
-		log.info(name + "sendMetricsCompositionRules '{}'. Response: '{}'", serviceId, result);
+		log.info(ln + "sendMetricsCompositionRules '{}'. Response: '{}'", serviceId, result);
 
 	}
 
@@ -187,7 +187,7 @@ public class MelaClient extends CoreServiceClient {
 
 		CompositionRulesConfiguration result = response.readEntity(CompositionRulesConfiguration.class);
 
-		log.info(name + "getMetricsCompositionRules '{}'. Response: '{}'", serviceId, result);
+		log.info(ln + "getMetricsCompositionRules '{}'. Response: '{}'", serviceId, result);
 
 		return result;
 	}
@@ -207,7 +207,7 @@ public class MelaClient extends CoreServiceClient {
 
 		String result = response.readEntity(String.class);
 
-		log.info(name + "sendRequirements '{}'. Response: '{}'", serviceId, result);
+		log.info(ln + "sendRequirements '{}'. Response: '{}'", serviceId, result);
 
 	}
 
@@ -227,7 +227,7 @@ public class MelaClient extends CoreServiceClient {
 
 		MonitoredElementMonitoringSnapshot result = response.readEntity(MonitoredElementMonitoringSnapshot.class);
 
-		log.info(name + "getMonitoringData '{}'. Response: '{}'", serviceId, result);
+		log.info(ln + "getMonitoringData '{}'. Response: '{}'", serviceId, result);
 
 		return result;
 	}
@@ -245,7 +245,7 @@ public class MelaClient extends CoreServiceClient {
 
 		MonitoredElementMonitoringSnapshot result = response.readEntity(MonitoredElementMonitoringSnapshot.class);
 
-		log.info(name + "getMonitoringData '{}'. Response: '{}'", serviceId, result);
+		log.info(ln + "getMonitoringData '{}'. Response: '{}'", serviceId, result);
 
 		return result;
 	}
@@ -264,7 +264,7 @@ public class MelaClient extends CoreServiceClient {
 
 		MonitoredElementMonitoringSnapshots result = response.readEntity(MonitoredElementMonitoringSnapshots.class);
 
-		log.info(name + "getAllAggregatedMonitoringData '{}'. Response: '{}'", serviceId, result);
+		log.info(ln + "getAllAggregatedMonitoringData '{}'. Response: '{}'", serviceId, result);
 
 		return result;
 	}
@@ -291,7 +291,7 @@ public class MelaClient extends CoreServiceClient {
 
 		MonitoredElementMonitoringSnapshots result = response.readEntity(MonitoredElementMonitoringSnapshots.class);
 
-		log.info(name + "getAllAggregatedMonitoringDataInTimeInterval '{}'. Response: '{}'", serviceId, result);
+		log.info(ln + "getAllAggregatedMonitoringDataInTimeInterval '{}'. Response: '{}'", serviceId, result);
 
 		return result;
 	}
@@ -312,7 +312,7 @@ public class MelaClient extends CoreServiceClient {
 
 		MonitoredElementMonitoringSnapshots result = response.readEntity(MonitoredElementMonitoringSnapshots.class);
 
-		log.info(name + "getLastXAggregatedMonitoringData '{}'. Response: '{}'", serviceId, result);
+		log.info(ln + "getLastXAggregatedMonitoringData '{}'. Response: '{}'", serviceId, result);
 
 		return result;
 	}
@@ -337,7 +337,7 @@ public class MelaClient extends CoreServiceClient {
 
 		String result = response.readEntity(String.class);
 
-		log.info(name + "getAvailableMetrics '{}'. Response: '{}'", serviceId, result);
+		log.info(ln + "getAvailableMetrics '{}'. Response: '{}'", serviceId, result);
 
 		return result;
 	}

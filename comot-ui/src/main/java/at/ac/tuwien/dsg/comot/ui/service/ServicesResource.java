@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.monitoring.ElementMonitoring;
 import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
@@ -41,6 +40,8 @@ public class ServicesResource {
 
 	private static final Logger log = LoggerFactory.getLogger(ServicesResource.class);
 
+	// public static final String TOSCA_FILE = "./TOSCA-v1.0.xsd";
+
 	@Autowired
 	protected SalsaOutputMapper mapperOutput;
 	@Autowired
@@ -58,74 +59,50 @@ public class ServicesResource {
 
 	@POST
 	@Path("/")
-	@Produces(MediaType.TEXT_PLAIN)
-	public Response createAndDeploy(Definitions def) {
+	public Response createAndDeploy(Definitions def) throws CoreServiceException, ComotException {
 
-		try {
-
-			orchestrator.deployNew(mapperTosca.createModel(def));
-			return Response.ok().build();
-
-		} catch (Exception e) {
-			return handleException(e);
-		}
+		orchestrator.deployNew(mapperTosca.createModel(def));
+		return Response.ok().build();
 	}
 
 	@PUT
 	@Path("/{serviceId}/monitoring")
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response startMonitoring(@PathParam("serviceId") String serviceId) {
+	public Response startMonitoring(@PathParam("serviceId") String serviceId) throws CoreServiceException,
+			ComotException {
 
-		try {
-			orchestrator.startMonitoring(serviceId);
-			return Response.ok().build();
-
-		} catch (Exception e) {
-			return handleException(e);
-		}
+		orchestrator.startMonitoring(serviceId);
+		return Response.ok().build();
 	}
 
 	@PUT
 	@Path("/{serviceId}/control")
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response startControl(@PathParam("serviceId") String serviceId) {
+	public Response startControl(@PathParam("serviceId") String serviceId) throws CoreServiceException, ComotException {
 
-		try {
-			orchestrator.startControl(serviceId);
-			return Response.ok().build();
-
-		} catch (Exception e) {
-			return handleException(e);
-		}
+		orchestrator.startControl(serviceId);
+		return Response.ok().build();
 	}
 
 	@PUT
 	@Path("/{serviceId}/mcr")
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response createMcr(@PathParam("serviceId") String serviceId, CompositionRulesConfiguration mcr) {
+	public Response createMcr(@PathParam("serviceId") String serviceId, CompositionRulesConfiguration mcr)
+			throws CoreServiceException, ComotException {
 
-		try {
-			orchestrator.setMcr(serviceId, mcr);
-			return Response.ok().build();
-
-		} catch (Exception e) {
-			return handleException(e);
-		}
+		orchestrator.setMcr(serviceId, mcr);
+		return Response.ok().build();
 	}
 
 	@PUT
 	@Path("/{serviceId}/effects")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response createElasticityEffects(@PathParam("serviceId") String serviceId, String input) {
+	public Response createElasticityEffects(@PathParam("serviceId") String serviceId, String input)
+			throws CoreServiceException, ComotException {
 
-		try {
-			orchestrator.startMonitoring(serviceId);// todo
-			return Response.ok().build();
-
-		} catch (Exception e) {
-			return handleException(e);
-		}
+		orchestrator.startMonitoring(serviceId);// todo
+		return Response.ok().build();
 	}
 
 	// update structure / requirements for monitoring / SYBL directives
@@ -134,12 +111,8 @@ public class ServicesResource {
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response updateService(@PathParam("serviceId") String serviceId, Definitions def) {
 
-		try {
-			// TODO
-			return null;
-		} catch (Exception e) {
-			return handleException(e);
-		}
+		// TODO
+		return null;
 	}
 
 	// DELETE
@@ -147,29 +120,20 @@ public class ServicesResource {
 	@DELETE
 	@Path("/{serviceId}/monitoring")
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response stopMonitoring(@PathParam("serviceId") String serviceId) {
+	public Response stopMonitoring(@PathParam("serviceId") String serviceId) throws CoreServiceException,
+			ComotException {
 
-		try {
-			orchestrator.stopMonitoring(serviceId);
-			return Response.ok().build();
-
-		} catch (Exception e) {
-			return handleException(e);
-		}
+		orchestrator.stopMonitoring(serviceId);
+		return Response.ok().build();
 	}
 
 	@DELETE
 	@Path("/{serviceId}/control")
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response stopControl(@PathParam("serviceId") String serviceId) {
+	public Response stopControl(@PathParam("serviceId") String serviceId) throws CoreServiceException, ComotException {
 
-		try {
-			orchestrator.stopControl(serviceId);
-			return Response.ok().build();
-
-		} catch (Exception e) {
-			return handleException(e);
-		}
+		orchestrator.stopControl(serviceId);
+		return Response.ok().build();
 	}
 
 	// READ
@@ -179,88 +143,53 @@ public class ServicesResource {
 	@Path("/")
 	public Response getServices() {
 
-		try {
-			List<ServiceEntity> list = orchestrator.getServices();
-
-			return Response.ok(list.toArray(new ServiceEntity[list.size()])).build();
-		} catch (Exception e) {
-			return handleException(e);
-		}
+		List<ServiceEntity> list = orchestrator.getServices();
+		return Response.ok(list.toArray(new ServiceEntity[list.size()])).build();
 	}
 
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Path("/{serviceId}")
-	public Response getService(@PathParam("serviceId") String serviceId) {
+	public Response getService(@PathParam("serviceId") String serviceId) throws CoreServiceException, ComotException {
 
-		try {
-			CloudService service = orchestrator.getStatus(serviceId);
-			ElementState element = mapperOutput.extractOutput(service);
-
-			return Response.ok(element).build();
-
-		} catch (Exception e) {
-			return handleException(e);
-		}
+		CloudService service = orchestrator.getStatus(serviceId);
+		ElementState element = mapperOutput.extractOutput(service);
+		return Response.ok(element).build();
 	}
 
 	// return status from salsa & monitoring (depends on what is turned on)
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Path("/{serviceId}/state")
-	public Response getState(@PathParam("serviceId") String serviceId) {
+	public Response getState(@PathParam("serviceId") String serviceId) throws CoreServiceException, ComotException {
 
-		try {
-			CloudService service = orchestrator.getStatus(serviceId);
-			ElementState element = mapperOutput.extractOutput(service);
-
-			return Response.ok(element).build();
-
-		} catch (Exception e) {
-			return handleException(e);
-		}
+		CloudService service = orchestrator.getStatus(serviceId);
+		ElementState element = mapperOutput.extractOutput(service);
+		return Response.ok(element).build();
 	}
 
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Path("/{serviceId}/monitoring/snapshots/last")
-	public Response getMonitoringData(@PathParam("serviceId") String serviceId) {
+	public Response getMonitoringData(@PathParam("serviceId") String serviceId) throws CoreServiceException,
+			ComotException {
 
-		try {
-			ElementMonitoring element = orchestrator.getMonitoringData(serviceId);
-
-			return Response.ok(element).build();
-
-		} catch (Exception e) {
-			return handleException(e);
-		}
+		ElementMonitoring element = orchestrator.getMonitoringData(serviceId);
+		return Response.ok(element).build();
 	}
 
-	protected Response handleException(Exception e) {
-
-		if (e.getClass().equals(ComotIllegalArgumentException.class)) {
-			log.warn("Wrong user input: {}", e.getMessage());
-			return Response.status(404).entity(e.getMessage()).build();
-
-		} else if (e.getClass().equals(CoreServiceException.class)) {
-			CoreServiceException ce = (CoreServiceException) e;
-
-			if (ce.isClientError()) {
-				log.warn("Core service CLIENT ERROR - {}", e);
-			} else {
-				log.warn("Core service SERVER ERROR - {}", e);
-			}
-			return Response.status(ce.getCode()).entity(ce.getMsg()).build();
-
-		} else if (e.getClass().equals(ComotException.class)) {
-			log.error("Something bad happened: {}", e);
-			return Response.serverError().build();
-
-		} else {
-			log.error("Wut? {}", e);
-			return Response.serverError().build();
-		}
-
-	}
+	// @GET
+	// @Consumes(MediaType.WILDCARD)
+	// @Produces(MediaType.APPLICATION_XML)
+	// @Path("/tosca")
+	// public Response getToscaXsd() {
+	//
+	// try {
+	// return Response.ok(IOUtils.toString(ClassLoader.getSystemResourceAsStream(TOSCA_FILE), "UTF-8")).build();
+	//
+	// } catch (Exception e) {
+	// return handleException(e);
+	// }
+	// }
 
 }

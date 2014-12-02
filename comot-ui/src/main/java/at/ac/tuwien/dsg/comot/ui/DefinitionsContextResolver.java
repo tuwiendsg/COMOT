@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot.ui;
 
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 import javax.xml.bind.JAXBContext;
@@ -12,9 +13,10 @@ import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.comot.cs.UtilsCs;
 
+// properties of type object and additional classes for JAXB
 // http://stackoverflow.com/questions/9086930/flexible-marshalling-with-jaxb/9089542#9089542
 @Provider
-@Produces({ "application/xml", "application/json" })
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class DefinitionsContextResolver implements ContextResolver<JAXBContext> {
 
 	protected static final Logger log = LoggerFactory.getLogger(DefinitionsContextResolver.class);

@@ -16,6 +16,7 @@ public abstract class CoreServiceClient {
 	protected static final String DEF_HOST = "localhost";
 	protected static final int DEF_PORT = 8080;
 	protected String name;
+	protected String ln;
 
 	protected Client client;
 	protected String baseUri;
@@ -58,13 +59,18 @@ public abstract class CoreServiceClient {
 		case 4:
 			msg = response.readEntity(String.class);
 			log.trace(name + "HTTP response status code={} , message='{}' ", code, msg);
-			throw new CoreServiceException(code, msg);
+			throw new CoreServiceException(code, msg, name);
 		case 5:
 			msg = response.readEntity(String.class);
 			log.trace(name + "HTTP response status code={} , message='{}' ", code, msg);
-			throw new CoreServiceException(code, msg);
+			throw new CoreServiceException(code, msg, name);
 		}
 
+	}
+
+	protected void setName(String name) {
+		this.name = name;
+		ln = "[" + name + "] ";
 	}
 
 	public void setHost(String host) {

@@ -44,6 +44,10 @@
 		</dependency>
 		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
+			<artifactId>comot-tosca</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-common</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<type>test-jar</type>
@@ -119,7 +123,7 @@
 				<version>2.7</version>
 				<executions>
 					<execution>
-						<id>copy-resources</id>
+						<id>legacy-copy-resources</id>
 						<phase>process-resources</phase>
 						<goals>
 							<goal>copy-resources</goal>

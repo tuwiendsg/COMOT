@@ -18,6 +18,7 @@ public class JerseyMoxyConfig extends ResourceConfig {
 		register(RequestContextFilter.class);
 		register(ServicesResource.class);
 		register(DefinitionsContextResolver.class);
-
+		register(ToscaValidatingReader.class);
+		register(ComotExceptionMapper.class);
 	}
 }

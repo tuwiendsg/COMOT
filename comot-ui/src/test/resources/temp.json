@@ -1,106 +1,110 @@
 {
-	"id" : "ElasticIoTPlatform",
-	"children" : [{
-			"id" : "EventProcessingTopology",
-			"children" : [{
-					"id" : "EventProcessingUnitVM",
-					"children" : []
+	"serviceTopologies" : [{
+			"nodes" : [{
+					"minInstances" : 1,
+					"maxInstances" : 1,
+					"type" : "WAR",
+					"requirements" : [],
+
+					"capabilities" : [],
+
+					"deploymentArtifacts" : [{
+							"type" : "WAR_FILE",
+							"artifactReferences" : [{
+									"uri" : "http://128.130.172.215/salsa/upload/files/ASE/PoliceDaaS.war"
+								}],
+
+							"id" : "deployWar",
+							"name" : "Deployment script"
+						}],
+
+					"properties" : [],
+
+					"instances" : [],
+
+					"id" : "policeApp",
+					"name" : "policeApp"
 				},{
-					"id" : "LoadBalancerUnit",
-					"children" : [{
-							"id" : "deployLoadBalancerArtifact",
-							"children" : []
-						},{
-							"id" : "LoadBalancer_IP_information",
-							"children" : []
-						}]
+					"minInstances" : 1,
+					"maxInstances" : 1,
+					"type" : "TOMCAT",
+					"requirements" : [],
+
+					"capabilities" : [],
+
+					"deploymentArtifacts" : [],
+
+					"properties" : [{
+							"propertiesType" : "ACTION",
+							"properties" : {
+								"stop" : "service tomcat7 stop",
+								"start" : "service tomcat7 start",
+								"deploy" : "apt-get -y install tomcat7",
+								"undeploy" : "apt-get -y erase tomcat7"
+							}
+						}],
+
+					"instances" : [],
+
+					"id" : "tomcat_OF_policeApp"
 				},{
-					"id" : "LoadBalancerUnitVM",
-					"children" : []
-				},{
-					"id" : "MoMVM",
-					"children" : []
-				},{
-					"id" : "MOMUnit",
-					"children" : [{
-							"id" : "MOM_IP_information",
-							"children" : []
+					"minInstances" : 1,
+					"maxInstances" : 2147483647,
+					"type" : "OS",
+					"requirements" : [],
+
+					"capabilities" : [],
+
+					"deploymentArtifacts" : [],
+
+					"properties" : [{
+							"properties" : {
+								"provider" : "dsg@openstack",
+								"instanceType" : "000000960",
+								"baseImage" : "8f1428ac-f239-42e0-ab35-137f6e234101",
+								"packages" : "openjdk-7-jre"
+							}
 						},{
-							"id" : "deployMOMArtifact",
-							"children" : []
-						}]
-				},{
-					"id" : "EventProcessingUnit",
-					"children" : [{
-							"id" : "deployEventProcessingArtifact",
-							"children" : []
-						},{
-							"id" : "EventProcessingUnit_MOM_IP_Req",
-							"children" : []
-						},{
-							"id" : "EventProcessingUnit_LoadBalancer_IP_Req",
-							"children" : []
-						},{
-							"id" : "EventProcessingUnit_DataController_IP_Req",
-							"children" : []
-						}]
-				}]
+							"propertiesType" : "OS",
+							"properties" : {
+								"provider" : "dsg@openstack",
+								"instanceType" : "000000960",
+								"baseImage" : "8f1428ac-f239-42e0-ab35-137f6e234101",
+								"packages" : ""
+							}
+						}],
+
+					"instances" : [],
+
+					"id" : "os_OF_tomcat_OF_policeApp"
+				}],
+
+			"serviceUnits" : [{
+					"directives" : [],
+
+					"id" : "policeApp"
+				}],
+
+			"serviceTopologies" : [],
+
+			"directives" : [],
+
+			"id" : "SampleService_test"
+		}],
+
+	"relationships" : [{
+			"type" : "HOST_ON",
+			"from" : "policeApp",
+			"to" : "tomcat_OF_policeApp",
+			"id" : "policeApp_HOSTON_tomcat_OF_policeApp"
 		},{
-			"id" : "Gateway",
-			"children" : [{
-					"id" : "LocalProcessingUnitVM",
-					"children" : []
-				},{
-					"id" : "MqttQueueVM",
-					"children" : []
-				},{
-					"id" : "LocalProcessingUnit",
-					"children" : [{
-							"id" : "deployLocalProcessing",
-							"children" : []
-						},{
-							"id" : "loadBalancerIp_Requirement",
-							"children" : []
-						},{
-							"id" : "brokerIp_Requirement",
-							"children" : []
-						}]
-				},{
-					"id" : "QueueUnit",
-					"children" : [{
-							"id" : "deployMQTTBroker",
-							"children" : []
-						},{
-							"id" : "brokerIp_Capability",
-							"children" : []
-						}]
-				}]
-		},{
-			"id" : "DataEndTopology",
-			"children" : [{
-					"id" : "DataControllerUnit",
-					"children" : [{
-							"id" : "deployDataControllerArtifact",
-							"children" : []
-						},{
-							"id" : "DataController_IP_information",
-							"children" : []
-						}]
-				},{
-					"id" : "DataNodeUnit",
-					"children" : [{
-							"id" : "DataController_IP_Data_Node_Req",
-							"children" : []
-						},{
-							"id" : "deployDataNodeArtifact",
-							"children" : []
-						}]
-				},{
-					"id" : "DataControllerUnitVM",
-					"children" : []
-				},{
-					"id" : "DataNodeUnitVM",
-					"children" : []
-				}]
-		}]
+			"type" : "HOST_ON",
+			"from" : "tomcat_OF_policeApp",
+			"to" : "os_OF_tomcat_OF_policeApp",
+			"id" : "tomcat_OF_policeApp_HOSTON_os_OF_tomcat_OF_policeApp"
+		}],
+
+	"directives" : [],
+
+	"id" : "SalsaExample_comot"
 }

@@ -86,4 +86,9 @@ public class OutputMappingTest extends AbstractTest {
 
 	}
 
+	// @Test
+	// public void aaaaa() throws IOException{
+	// log.info(IOUtils.toString(ClassLoader.getSystemResourceAsStream("./TOSCA-v1.0.xsd"), "UTF-8"));
+	// }
+
 }

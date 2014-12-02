@@ -48,15 +48,21 @@ public class AppContextInsertData {
 			JSONArray array = services.getJSONArray("services");
 
 			for (int i = 0; i < array.length(); i++) {
-				serviceId = array.getJSONObject(i).getString("serviceId");
 
-				Definitions def = salsaClient.getTosca(serviceId);
-				CloudService deployedService = mapperTosca.createModel(def);
-				ServiceEntity entity = new ServiceEntity(deployedService, deployedService);
+				try {
 
-				serviceRepo.save(entity);
+					serviceId = array.getJSONObject(i).getString("serviceId");
+
+					Definitions def = salsaClient.getTosca(serviceId);
+					CloudService deployedService = mapperTosca.createModel(def);
+					ServiceEntity entity = new ServiceEntity(deployedService, deployedService);
+
+					serviceRepo.save(entity);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

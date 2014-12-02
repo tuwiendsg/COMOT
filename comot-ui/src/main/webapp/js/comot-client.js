@@ -19,16 +19,13 @@
 
 		var core = {};
 
-		console.log("onSuccess aa" + typeof onSuccess);
-		console.log("onError " + typeof onError);
-
 		// SUCCESS
 		if (isFunction(onSuccess)) {
 			console.log("isFuncion")
 			core.success = onSuccess;
 		} else if (onSuccess === null || typeof onSuccess === 'undefined') {
-			core.success = function() {
-				console.log("success");
+			core.success = function(data) {
+				console.log("success: " + data);
 			}
 		} else if (typeof onSuccess === 'string') {
 			core.success = function() {
@@ -38,13 +35,13 @@
 
 		// ERROR
 		if (isFunction(onError)) {
-			core.success = onError;
+			core.error = onError;
 		} else if (onError === null || typeof onError === 'undefined') {
-			core.error = function() {
-				console.log("error");
+			core.error = function(request, status, error) {
+				console.log("code="+request.status+"("+request.statusText+"), text="+request.responseText);
 			}
 		} else if (typeof onError === 'string') {
-			core.error = function() {
+			core.error = function(request, status, error) {
 				notify.error(onError);
 			}
 		}
@@ -57,19 +54,19 @@
 	}
 
 	exports.deploy = function(tosca, onSuccess, onError) {
-		$.ajax({
-			type : "POST",
-			url : services,
-			data : tosca,
-			dataType : "xml",
-			contentType : "application/xml",
-			success : onSuccess,
-			error : onError
-		});
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "POST";
+		request.url = services;
+		request.data = tosca;
+		request.dataType = "json"
+		request.contentType = "application/xml";
+		$.ajax(request);
+
 	}
 
 	exports.startMonitoring = function(serviceId, onSuccess, onError) {
-	
+
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "PUT";
 		request.url = services + serviceId + "/monitoring";

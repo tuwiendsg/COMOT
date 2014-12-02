@@ -49,12 +49,12 @@ public class SalsaClient extends CoreServiceClient {
 
 	public SalsaClient(String host, int port, String basePath) {
 		super(host, port, basePath);
-		name = "[SALSA] ";
+		setName("SALSA");
 	}
 
 	public String deploy(String toscaDescriptionXml) throws CoreServiceException {
 
-		log.trace(name + "Deploying cloud application: {}", toscaDescriptionXml);
+		log.trace(ln + "Deploying cloud application: {}", toscaDescriptionXml);
 
 		Response response = client.target(getBaseUri())
 				.path(DEPLOY_PATH)
@@ -65,7 +65,7 @@ public class SalsaClient extends CoreServiceClient {
 
 		String serviceId = response.readEntity(String.class);
 
-		log.info(name + "deployed service. Response: '{}'",
+		log.info(ln + "deployed service. Response: '{}'",
 				serviceId);
 
 		return serviceId;
@@ -74,7 +74,7 @@ public class SalsaClient extends CoreServiceClient {
 
 	public void undeploy(String serviceId) throws CoreServiceException {
 
-		log.trace(name + "Undeploying service with serviceId '{}'", serviceId);
+		log.trace(ln + "Undeploying service with serviceId '{}'", serviceId);
 
 		Response response = client.target(getBaseUri())
 				.path(UNDEPLOY_PATH)
@@ -86,14 +86,14 @@ public class SalsaClient extends CoreServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		log.info(name + "undeployed '{}'. Response: '{}'", serviceId, msg);
+		log.info(ln + "undeployed '{}'. Response: '{}'", serviceId, msg);
 
 	}
 
 	public void spawn(String serviceId, String topologyId, String nodeId, int instanceCount)
 			throws CoreServiceException {
 
-		log.trace(name +
+		log.trace(ln +
 				"Spawning additional instances (+{}) for serviceId={}, topologyId={}, nodeId={}",
 				instanceCount, serviceId, topologyId, nodeId);
 
@@ -118,7 +118,7 @@ public class SalsaClient extends CoreServiceClient {
 
 	public void destroy(String serviceId, String topologyId, String nodeId, int instanceId) throws CoreServiceException {
 
-		log.trace(name + "Destroying instance with id {} (service: {} topology: {} node: {})",
+		log.trace(ln + "Destroying instance with id {} (service: {} topology: {} node: {})",
 				instanceId, serviceId, topologyId, nodeId);
 
 		Response response = client.target(getBaseUri())
@@ -134,7 +134,7 @@ public class SalsaClient extends CoreServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		log.info(name + "Sestroyed instance with id {} (service={}, topology={}, node={}). Response: '{}'",
+		log.info(ln + "Sestroyed instance with id {} (service={}, topology={}, node={}). Response: '{}'",
 				instanceId, serviceId, topologyId, nodeId, msg);
 
 	}
@@ -142,7 +142,7 @@ public class SalsaClient extends CoreServiceClient {
 	public CloudService getStatus(String serviceId)
 			throws CoreServiceException, ComotException {
 
-		log.trace(name + "Checking status for serviceId {}", serviceId);
+		log.trace(ln + "Checking status for serviceId {}", serviceId);
 
 		Response response = client.target(getBaseUri())
 				.path(STATUS_PATH)
@@ -160,7 +160,7 @@ public class SalsaClient extends CoreServiceClient {
 			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 			CloudService service = (CloudService) jaxbUnmarshaller.unmarshal(reader);
 
-			log.info(name + "Checked status for serviceId '{}'. Response: '{}'", serviceId, service);
+			log.info(ln + "Checked status for serviceId '{}'. Response: '{}'", serviceId, service);
 
 			return service;
 
@@ -173,7 +173,7 @@ public class SalsaClient extends CoreServiceClient {
 	public Definitions getTosca(String serviceId)
 			throws CoreServiceException, ComotException {
 
-		log.trace(name + "Getting tosca for serviceId {}", serviceId);
+		log.trace(ln + "Getting tosca for serviceId {}", serviceId);
 
 		Response response = client.target(getBaseUri())
 				.path(TOSCA_PATH)
@@ -191,7 +191,7 @@ public class SalsaClient extends CoreServiceClient {
 			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 			Definitions service = (Definitions) jaxbUnmarshaller.unmarshal(reader);
 
-			log.info(name + "Tosca for serviceId '{}'. Response: '{}'", serviceId, service);
+			log.info(ln + "Tosca for serviceId '{}'. Response: '{}'", serviceId, service);
 
 			return service;
 
@@ -211,7 +211,7 @@ public class SalsaClient extends CoreServiceClient {
 	@Deprecated
 	public DeploymentDescription getServiceDeploymentInfo(String serviceId) throws CoreServiceException {
 
-		log.trace(name + "Getting DeploymentInfo for serviceId {}", serviceId);
+		log.trace(ln + "Getting DeploymentInfo for serviceId {}", serviceId);
 
 		Response response = client.target(getBaseUri())
 				.path(DEPLOYMENT_INFO_PATH)
@@ -224,7 +224,7 @@ public class SalsaClient extends CoreServiceClient {
 
 		DeploymentDescription description = response.readEntity(DeploymentDescription.class);
 
-		log.info(name + "DeploymentInfo for serviceId '{}'. Response: '{}'", serviceId, description);
+		log.info(ln + "DeploymentInfo for serviceId '{}'. Response: '{}'", serviceId, description);
 
 		return description;
 	}
@@ -232,7 +232,7 @@ public class SalsaClient extends CoreServiceClient {
 	@Deprecated
 	public String getServices() throws CoreServiceException {
 
-		log.trace(name + "Getting list of all services {}");
+		log.trace(ln + "Getting list of all services {}");
 
 		Response response = client.target(getBaseUri())
 				.path(SERVICES_LIST)
@@ -243,7 +243,7 @@ public class SalsaClient extends CoreServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		log.info(name + "List of all services. Response: '{}'", msg);
+		log.info(ln + "List of all services. Response: '{}'", msg);
 
 		return msg;
 	}

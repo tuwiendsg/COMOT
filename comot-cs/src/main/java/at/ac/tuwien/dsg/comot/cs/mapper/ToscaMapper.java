@@ -99,8 +99,7 @@ public class ToscaMapper {
 
 		CloudService cloudService = mapper.get().map(definitions, CloudService.class);
 
-		// if(cloudService.getId().equals("ElasticIoTPlatform"))
-		// log.trace("Mapping by orika: {}", Utils.asJsonString(cloudService));
+		log.trace("Mapping by orika: {}", Utils.asJsonString(cloudService));
 
 		Navigator navigator = new Navigator(cloudService);
 
@@ -142,6 +141,9 @@ public class ToscaMapper {
 
 		// remove and add ServiceUnits
 		for (StackNode node : navigator.getAllNodes()) {
+			log.info("node: " + node);
+			log.info("n id: " + ((node != null) ? node.getId() : "null"));
+
 			unit = navigator.getServiceUnit(node.getId());
 
 			if (resolver.isServiceUnit(node)) {
