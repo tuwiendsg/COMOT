@@ -1,4 +1,4 @@
-//package at.ac.tuwien.dsg.comot.common.model;
+package at.ac.tuwien.dsg.comot.common.model;
 //
 //import java.util.Arrays;
 //import java.util.HashSet;
