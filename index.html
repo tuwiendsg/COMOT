@@ -71,7 +71,7 @@
                         <li><div id="currentNav"><a href="./index.html" id="homenav">Home</a></div>
                             <ul>
                                 <li><a href="#introduction">What is COMOT</a>
-                                    <!--<li><a href="#features"  >Features</a></li>-->
+                                 <li><a href="#features"  >Features</a></li>
                             </ul>
                         </li>
                         <li><a href="./elasticityDemo.html" id="elasticityDemo">COMOT Demo: Programming Elasticity</a></li>
@@ -98,7 +98,7 @@
                 <li><div id="horizontalNavCurrentNav"><a href="./index.html" id="homenav">Home</a></div>
                     <ul>
                         <li><a href="#introduction"  >What is COMOT</a>
-                            <!--<li><a href="#features"  >Features</a></li>-->
+                         <li><a href="#features"  >Features</a></li>
                     </ul>
                 </li>
                 <li><a href="./elasticityDemo.html" id="elasticityDemo">COMOT Demo: Programming Elasticity</a></li>
@@ -118,17 +118,28 @@
                     <h1>
                         <a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>What is COMOT?</h1>
 
-                    <p> Note: From here onwards we will refer to services and cloud applications with the same "services" term.  </p>
+                    <p> <font size="2">Note: From here onwards we will refer to services and cloud applications with the same "services" term.  </font></p>
 
-                    <p>COMOT provides an easy to use integration layer for managing various aspects of elastic cloud services. In particular, COMOT provides a domain specific API to describe elastic cloud services, interracts with <a href="https://github.com/tuwiendsg/SALSA">SALSA</a> for deploying the description to virtualized infrastructures (e.g., OpenStack, Docker), relies on  <a href="https://github.com/tuwiendsg/MELA">MELA</a> for cloud service monitoring and analysis, and on <a href="https://github.com/tuwiendsg/SALSA">rSYBL</a> for run-time control of elastic cloud services.</p>
+                    <p>COMOT provides an easy to use integration layer for managing various aspects of elastic cloud services. In particular, COMOT provides a domain specific API to describe elastic cloud services, interracts with <a href="https://github.com/tuwiendsg/SALSA">SALSA</a> for deploying the description to virtualized infrastructures (e.g., OpenStack, Docker), relies on  <a href="https://github.com/tuwiendsg/MELA">MELA</a> for cloud service monitoring and analysis, and on <a href="http://www.infosys.tuwien.ac.at/research/viecom/SYBL">rSYBL</a> for run-time control of elastic cloud services. This whole process is depicted in Figure 1.</p>
+									
 					<center>
 	<figure style="border: 1px solid #d2d2d2">
                             <img src="images/comot.png" alt="COMOT" width="100%"  />
                             <figcaption>Figure 1: COMOT platform</figcaption>
                         </figure>
 						</center>
-
-                </section>
+					<h1><a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>COMOT features</h1>
+					<p>
+					Through COMOT service stakeholders (e.g., service developers, service providers) can manage the full lifecycle of the service. Service stakeholders can:
+					<ul>
+					<li> <b>Describe</b> the service: the service can be programmatically described using COMOT API, in terms of service structure, the desired requirements which can be specified in <a href="http://www.infosys.tuwien.ac.at/research/viecom/SYBL">SYBL</a> at multiple levels of abstraction, or in terms of the used artifacts. COMOT will automatically generate a TOSCA description, which can be re-used with TOSCA-compatible tools (e.g., description tools like <a href="https://projects.eclipse.org/proposals/cloud-application-management-framework">CAMF</a>, <a href="http://www.iaas.uni-stuttgart.de/OpenTOSCA/">OpenTOSCA</a>). </li>
+					<li><em>Deploy</em> the service: COMOT deploys the service by using SALSA, a tool for complex services deployment and configuration. SALSA configures the various software stacks necessary for the service software artifacts to run in cloud environments. SALSA can run with various cloud providers (<a href="http://www.flexiant.com/flexiant-cloud-orchestrator/">Flexiant Cloud Orchestrator</a>, <a href="http://www.openstack.org/">OpenStack</a>-based private clouds, <a href="http://www.stratuslab.eu/">StratusLab</a>), or under multiple layers of <a href="https://www.docker.com/">Docker</a> platform, for simulating cloud environments.</li>
+					<li><em>Monitor and understand</em> the service: COMOT monitors and analyzes the service using MELA, a tool capable of analyzing elasticity of the service in relation to elasticity requirements specified by the service provider, and service structure, thus bridging the gap between virtual resources elasticity and service elasticity, at various abstraction levels.</li>
+					<li><em>Control</em> the service: COMOT controls the service by using rSYBL, a tool which considers monitoring and analysis information coming from MELA, and elasticity requirements information from service provider, for various levels of abstraction, for generating elasticity control plans using both application-level and resource-level actions. The elasticity control plans are enforced with the help of SALSA. After enforcement, the service structure and used virtual resources is also synchronized with MELA, for sharing the service model and having a good understanding of the service elasticity behavior.</li>
+					</ul>
+					</p>
+				</section>
+				
 
 
 
