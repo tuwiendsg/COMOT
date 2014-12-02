@@ -107,7 +107,7 @@ public class SalsaConnector {
 
             CloudService service = this.getStatus(serviceID);
 
-            if (!service.getState().equals(SalsaEntityState.RUNNING)) {
+            if (!service.getState().equals(SalsaEntityState.DEPLOYED)) {
                 allRunning = false;
             } else {
                 for (at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceUnit serviceUnit : service.getAllComponentByType(SalsaEntityType.SOFTWARE)) {
