@@ -34,6 +34,25 @@ public class COMOTOrchestrator {
 
     }
 
+    public COMOTOrchestrator() {
+    }
+
+    public COMOTOrchestrator(String ip) {
+        defaultSalsaClient.getConfiguration().setHost(ip);
+        defaultSalsaClient.getConfiguration().setPort(8080);
+        sYBLInterraction.setIp(ip);
+        sYBLInterraction.setPort(8280);
+    }
+
+    public COMOTOrchestrator withIP(String ip) {
+        defaultSalsaClient.getConfiguration().setHost(ip);
+        defaultSalsaClient.getConfiguration().setPort(8080);
+        sYBLInterraction.setIp(ip);
+        sYBLInterraction.setPort(8280);
+        return this;
+
+    }
+
     public COMOTOrchestrator withSalsaIP(String ip) {
         defaultSalsaClient.getConfiguration().setHost(ip);
 
@@ -101,6 +120,21 @@ public class COMOTOrchestrator {
 
         DeploymentDescription deploymentDescription = salsaInterraction.getServiceDeploymentInfo(serviceTemplate.getId());
 
+    }
+
+    public COMOTOrchestrator withSalsaInterraction(final SalsaInterraction salsaInterraction) {
+        this.salsaInterraction = salsaInterraction;
+        return this;
+    }
+
+    public COMOTOrchestrator withDefaultSalsaClient(final DefaultSalsaClient defaultSalsaClient) {
+        this.defaultSalsaClient = defaultSalsaClient;
+        return this;
+    }
+
+    public COMOTOrchestrator withSYBLInterraction(final rSYBLInterraction sYBLInterraction) {
+        this.sYBLInterraction = sYBLInterraction;
+        return this;
     }
 
 }

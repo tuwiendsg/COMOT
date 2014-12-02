@@ -36,6 +36,8 @@ public class DataAsAServiceCloudApplication {
         //
         // Cassandra Data Node
         //
+        
+       ElasticityCapability scaleInCapability =  ElasticityCapability.ScaleIn();
         ServiceUnit cassandraDataNode = UnboundedSoftwareUnit("CassandraNode")
                 .withName("Cassandra data node (multiple instances)")
                 .deployedBy(
@@ -45,11 +47,12 @@ public class DataAsAServiceCloudApplication {
                 )
                 .requires(Requirement.Variable("CassandraHeadIP_req").withName("Connect to data controller"))
                 .constrainedBy(CpuUsageConstraint("Co3").lessThan("50"))
+                .provides(scaleInCapability)
                 .controlledBy(
                         Strategy("St2")
                         .when(ResponseTimeConstraint("St2Co1").lessThan("300"))
                         .and(ThroughputConstraint("St2Co2").lessThan("400"))
-                        .then(Strategy.Action.ScaleIn)
+                        .enforce(scaleInCapability)
                 );
 
         //
