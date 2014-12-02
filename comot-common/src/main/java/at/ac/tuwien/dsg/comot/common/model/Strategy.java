@@ -7,12 +7,12 @@ import java.util.*;
 import static java.lang.String.format;
 
 /**
- * Created by omoser on 3/1/14.
- * todo atm only AND or OR constraints are supported
+ * Created by omoser on 3/1/14. todo atm only AND or OR constraints are
+ * supported
  */
 public class Strategy extends AbstractCloudEntity implements Renderable {
 
-    private Action action;
+    private ElasticityCapability capability;
 
     private Constraint.Operator operator = Constraint.Operator.UNDEF;
 
@@ -28,42 +28,39 @@ public class Strategy extends AbstractCloudEntity implements Renderable {
         return new Strategy(id);
     }
 
-    public enum Action {
-        ScaleIn("scalein", "enacts a scale-in operation on the platform"),
-        ScaleOut("scaleout", "enacts a scale-out operation on the platform");
-
-        private String description;
-
-        private String name;
-
-        Action(String name, String description) {
-            this.description = description;
-            this.name = name;
-        }
-
-        @Override
-        public String toString() {
-           return name;
-        }
-    }
-
-
+//    public enum Action {
+//        ScaleIn("scalein", "enacts a scale-in operation on the platform"),
+//        ScaleOut("scaleout", "enacts a scale-out operation on the platform");
+//
+//        private String description;
+//
+//        private String name;
+//
+//        Action(String name, String description) {
+//            this.description = description;
+//            this.name = name;
+//        }
+//
+//        @Override
+//        public String toString() {
+//           return name;
+//        }
+//    }
     //
     // public API
     //
-
     public Strategy withStrategyType(final Constraint.ConstraintType strategyConstraintType) {
         this.strategyConstraintType = strategyConstraintType;
         return this;
     }
 
-    public Strategy withAction(Action action) {
-        this.action = action;
+    public Strategy withCapability(ElasticityCapability capability) {
+        this.capability = capability;
         return this;
     }
 
-    public Strategy then(Action action) {
-        return withAction(action);
+    public Strategy enforce(ElasticityCapability capability) {
+        return withCapability(capability);
     }
 
     public Strategy when(Constraint constraint) {
@@ -98,8 +95,8 @@ public class Strategy extends AbstractCloudEntity implements Renderable {
         return this;
     }
 
-    public Action getAction() {
-        return action;
+    public ElasticityCapability getCapability() {
+        return capability;
     }
 
     public Constraint.Operator getOperator() {
@@ -116,8 +113,8 @@ public class Strategy extends AbstractCloudEntity implements Renderable {
 
     private void checkOperatorState(Constraint.Operator operator) {
         if (this.operator != operator && this.operator != Constraint.Operator.UNDEF) {
-            throw new IllegalStateException("Cannot add '" + operator + "' constraint since another operator was used " +
-                    "previously: " + this.operator);
+            throw new IllegalStateException("Cannot add '" + operator + "' constraint since another operator was used "
+                    + "previously: " + this.operator);
         }
     }
 
@@ -135,7 +132,7 @@ public class Strategy extends AbstractCloudEntity implements Renderable {
 
         return builder.append(Joiner.on(" AND ").join(constraintsToRender))
                 .append(" : ")
-                .append(action)
+                .append(capability)
                 .toString();
     }
 }

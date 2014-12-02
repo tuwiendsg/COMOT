@@ -600,7 +600,7 @@ public class rSYBLInterraction {
                         }
 
                         costraints = costraints.trim();
-                        strategies += strategy.getId() + ":STRATEGY CASE " + costraints + ":" + strategy.getAction().toString() + ";";
+                        strategies += strategy.getId() + ":STRATEGY CASE " + costraints + ":" + strategy.getCapability().getType() + ";";
 
                     }
 
@@ -648,7 +648,7 @@ public class rSYBLInterraction {
                     }
 
                     costraints = costraints.trim();
-                    strategies += strategy.getId() + ":STRATEGY CASE " + costraints + ":" + strategy.getAction().toString() + ";";
+                    strategies += strategy.getId() + ":STRATEGY CASE " + costraints + ":" + strategy.getCapability().getType() + ";";
 
                 }
 

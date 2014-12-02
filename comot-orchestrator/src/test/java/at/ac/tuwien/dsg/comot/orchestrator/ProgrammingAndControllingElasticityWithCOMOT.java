@@ -102,15 +102,19 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 //data controller exposed its IP 
                 .exposes(Capability.Variable("DataController_IP_information"));
 
+        ElasticityCapability dataNodeUnitScaleIn = ElasticityCapability.ScaleIn().withPrimitiveOperations("M2MDaaS.decommissionNode", "Salsa.scaleIn");
+        ElasticityCapability dataNodeUnitScaleOut = ElasticityCapability.ScaleOut().withPrimitiveOperations("Salsa.scaleOut");
+
         //specify data node
         ServiceUnit dataNodeUnit = SingleSoftwareUnit("DataNodeUnit")
                 .deployedBy(SingleScriptArtifactTemplate("deployDataNodeArtifact", salsaRepo + "deployCassandraNode.sh"))
                 //data node MUST KNOW the IP of cassandra seed, to connect to it and join data cluster
                 .requires(Requirement.Variable("DataController_IP_Data_Node_Req").withName("requiringDataNodeIP"))
+                .provides(dataNodeUnitScaleIn, dataNodeUnitScaleOut)
                 //express elasticity strategy: Scale IN Data Node when cpu usage < 40%
                 .controlledBy(Strategy("DN_ST1")
                         .when(Constraint.MetricConstraint("DN_ST1_CO1", new Metric("cpuUsage", "%")).lessThan("40"))
-                        .then(Strategy.Action.ScaleIn)
+                        .enforce(dataNodeUnitScaleIn)
                 );
 
         //add the service units belonging to the event processing topology
@@ -118,6 +122,9 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 //load balancer must provide IP
                 .exposes(Capability.Variable("MOM_IP_information"))
                 .deployedBy(SingleScriptArtifactTemplate("deployMOMArtifact", salsaRepo + "deployQueue.sh"));
+
+        ElasticityCapability eventProcessingUnitScaleIn = ElasticityCapability.ScaleIn().withPrimitiveOperations("M2MDaaS.decommissionWS", "Salsa.scaleIn");
+        ElasticityCapability eventProcessingUnitScaleOut = ElasticityCapability.ScaleOut().withPrimitiveOperations("Salsa.scaleOut");
 
         //add the service units belonging to the event processing topology
         ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
@@ -127,11 +134,12 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 //event processing also needs to querry the Data Controller to access data
                 .requires(Requirement.Variable("EventProcessingUnit_DataController_IP_Req"))
                 .requires(Requirement.Variable("EventProcessingUnit_MOM_IP_Req"))
+                .provides(eventProcessingUnitScaleIn, eventProcessingUnitScaleOut)
                 //scale IN if throughput < 200 and responseTime < 200
                 .controlledBy(Strategy("EP_ST1")
                         .when(Constraint.MetricConstraint("EP_ST1_CO1", new Metric("responseTime", "ms")).lessThan("10"))
                         .and(Constraint.MetricConstraint("EP_ST1_CO2", new Metric("avgThroughput", "operations/s")).lessThan("200"))
-                        .then(Strategy.Action.ScaleIn)
+                        .enforce(eventProcessingUnitScaleIn)
                 );
 
         //add the service units belonging to the event processing topology
@@ -145,10 +153,14 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 .exposes(Capability.Variable("brokerIp_Capability"))
                 .deployedBy(SingleScriptArtifactTemplate("deployMQTTBroker", salsaRepo + "run_mqtt_broker.sh"));
 
+        ElasticityCapability localProcessingUnitScaleIn = ElasticityCapability.ScaleIn().withPrimitiveOperations("Salsa.scaleIn");
+        ElasticityCapability localProcessingUnitScaleOut = ElasticityCapability.ScaleOut().withPrimitiveOperations("Salsa.scaleOut");
+
         ServiceUnit localProcessingUnit = SingleSoftwareUnit("LocalProcessingUnit")
                 //load balancer must provide IP
                 .requires(Requirement.Variable("brokerIp_Requirement"))
                 .requires(Requirement.Variable("loadBalancerIp_Requirement"))
+                .provides(localProcessingUnitScaleIn, localProcessingUnitScaleOut)
                 .deployedBy(SingleScriptArtifactTemplate("deployLocalProcessing", salsaRepo + "install-local-analysis-service.sh"));
 
         //Describe a Data End service topology containing the previous 2 software service units
@@ -170,9 +182,10 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
         ServiceTopology localProcessinTopology = ServiceTopology("Gateway")
                 .withServiceUnits(mqttQueueVM, mqttUnit, localProcessingUnit, localProcessingVM
                 );
+
         localProcessingUnit.
                 controlledBy(Strategy("LPT_ST1").when(Constraint.MetricConstraint("LPT_ST1_CO1", new Metric("avgBufferSize", "#")).lessThan("50"))
-                        .then(Strategy.Action.ScaleIn));
+                        .enforce(localProcessingUnitScaleIn));
 
         localProcessingUnit.constrainedBy(Constraint.MetricConstraint("LPT_CO1", new Metric("avgBufferSize", "#")).lessThan("200"));
 
@@ -181,37 +194,31 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 Constraint.MetricConstraint("EPT_CO1", new Metric("responseTime", "ms")).lessThan("20"));
 
         // elasticity capabilities
-        dataNodeUnit.provides(
-                ElasticityCapability.ScaleOut().withPrimitiveOperations("Salsa.scaleOut")
-                .withCapabilityEffect(CapabilityEffect(dataNodeUnit)
-                        .withMetricEffect(
-                                MetricEffect().withMetric(new Metric("cpuUsage", "%")).withType(MetricEffect.Type.SUB).withValue(30.0))
-                        .withMetricEffect(
-                                MetricEffect().withMetric(new Metric("cost", "$")).withType(MetricEffect.Type.ADD).withValue(0.12)))
+        dataNodeUnitScaleOut.withCapabilityEffect(CapabilityEffect(dataNodeUnit)
+                .withMetricEffect(
+                        MetricEffect().withMetric(new Metric("cpuUsage", "%")).withType(MetricEffect.Type.SUB).withValue(30.0))
+                .withMetricEffect(
+                        MetricEffect().withMetric(new Metric("cost", "$")).withType(MetricEffect.Type.ADD).withValue(0.12)))
                 .withCapabilityEffect(CapabilityEffect(dataControllerUnit)
                         .withMetricEffect(
                                 MetricEffect().withMetric(new Metric("cpuUsage", "%")).withType(MetricEffect.Type.SUB).withValue(30.0)))
                 .withCapabilityEffect(CapabilityEffect(dataEndTopology)
                         .withMetricEffect(
-                                MetricEffect().withMetric(new Metric("cpuUsage", "%")).withType(MetricEffect.Type.SUB).withValue(30.0)))
-        );
-        dataNodeUnit.provides(
-                ElasticityCapability.ScaleIn().withPrimitiveOperations("M2MDaaS.decommissionNode", "Salsa.scaleIn")
-                .withCapabilityEffect(CapabilityEffect(dataNodeUnit)
-                        .withMetricEffect(
-                                MetricEffect().withMetric(new Metric("cpuUsage", "%")).withType(MetricEffect.Type.ADD).withValue(30.0))
-                        .withMetricEffect(
-                                MetricEffect().withMetric(new Metric("cost", "$")).withType(MetricEffect.Type.SUB).withValue(0.12)))
-                .withCapabilityEffect(CapabilityEffect(dataControllerUnit)
-                        .withMetricEffect(
-                                MetricEffect().withMetric(new Metric("cpuUsage", "%")).withType(MetricEffect.Type.ADD).withValue(30.0)))
-                .withCapabilityEffect(CapabilityEffect(dataEndTopology)
-                        .withMetricEffect(
-                                MetricEffect().withMetric(new Metric("cpuUsage", "%")).withType(MetricEffect.Type.ADD).withValue(30.0)))
-        );
+                                MetricEffect().withMetric(new Metric("cpuUsage", "%")).withType(MetricEffect.Type.SUB).withValue(30.0)));
 
-        localProcessingUnit.provides(
-                ElasticityCapability.ScaleOut().withPrimitiveOperations("Salsa.scaleOut")
+        dataNodeUnitScaleIn.withCapabilityEffect(CapabilityEffect(dataNodeUnit)
+                .withMetricEffect(
+                        MetricEffect().withMetric(new Metric("cpuUsage", "%")).withType(MetricEffect.Type.ADD).withValue(30.0))
+                .withMetricEffect(
+                        MetricEffect().withMetric(new Metric("cost", "$")).withType(MetricEffect.Type.SUB).withValue(0.12)))
+                .withCapabilityEffect(CapabilityEffect(dataControllerUnit)
+                        .withMetricEffect(
+                                MetricEffect().withMetric(new Metric("cpuUsage", "%")).withType(MetricEffect.Type.ADD).withValue(30.0)))
+                .withCapabilityEffect(CapabilityEffect(dataEndTopology)
+                        .withMetricEffect(
+                                MetricEffect().withMetric(new Metric("cpuUsage", "%")).withType(MetricEffect.Type.ADD).withValue(30.0)));
+
+        localProcessingUnitScaleOut
                 .withCapabilityEffect(CapabilityEffect(localProcessingUnit)
                         .withMetricEffect(
                                 MetricEffect().withMetric(new Metric("avgBufferSize", "#")).withType(MetricEffect.Type.SUB).withValue(200.0))
@@ -221,11 +228,9 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                         .withMetricEffect(
                                 MetricEffect().withMetric(new Metric("avgBufferSize", "#")).withType(MetricEffect.Type.SUB).withValue(200.0))
                         .withMetricEffect(
-                                MetricEffect().withMetric(new Metric("bufferSize", "#")).withType(MetricEffect.Type.ADD).withValue(500.0)))
-        );
+                                MetricEffect().withMetric(new Metric("bufferSize", "#")).withType(MetricEffect.Type.ADD).withValue(500.0)));
 
-        localProcessingUnit.provides(
-                ElasticityCapability.ScaleIn().withPrimitiveOperations("Salsa.scaleIn")
+        localProcessingUnitScaleIn
                 .withCapabilityEffect(CapabilityEffect(localProcessingUnit)
                         .withMetricEffect(
                                 MetricEffect().withMetric(new Metric("avgBufferSize", "#")).withType(MetricEffect.Type.ADD).withValue(90.0))
@@ -235,11 +240,9 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                         .withMetricEffect(
                                 MetricEffect().withMetric(new Metric("avgBufferSize", "#")).withType(MetricEffect.Type.ADD).withValue(90.0))
                         .withMetricEffect(
-                                MetricEffect().withMetric(new Metric("bufferSize", "#")).withType(MetricEffect.Type.SUB).withValue(200.0)))
-        );
+                                MetricEffect().withMetric(new Metric("bufferSize", "#")).withType(MetricEffect.Type.SUB).withValue(200.0)));
 
-        eventProcessingUnit.provides(
-                ElasticityCapability.ScaleOut().withPrimitiveOperations("Salsa.scaleOut")
+        eventProcessingUnitScaleOut
                 .withCapabilityEffect(CapabilityEffect(eventProcessingUnit)
                         .withMetricEffect(
                                 MetricEffect().withMetric(new Metric("cpuUsage", "#")).withType(MetricEffect.Type.SUB).withValue(40.0))
@@ -259,10 +262,9 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                                 MetricEffect().withMetric(new Metric("throughput", "#")).withType(MetricEffect.Type.ADD).withValue(200.0))
                         .withMetricEffect(
                                 MetricEffect().withMetric(new Metric("cost", "$")).withType(MetricEffect.Type.ADD).withValue(0.12))
-                )
-        );
-        eventProcessingUnit.provides(
-                ElasticityCapability.ScaleIn().withPrimitiveOperations("M2MDaaS.decommissionWS", "Salsa.scaleIn")
+                );
+
+        eventProcessingUnitScaleIn
                 .withCapabilityEffect(CapabilityEffect(eventProcessingUnit)
                         .withMetricEffect(
                                 MetricEffect().withMetric(new Metric("cpuUsage", "#")).withType(MetricEffect.Type.ADD).withValue(40.0))
@@ -282,8 +284,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                                 MetricEffect().withMetric(new Metric("throughput", "#")).withType(MetricEffect.Type.SUB).withValue(100.0))
                         .withMetricEffect(
                                 MetricEffect().withMetric(new Metric("cost", "$")).withType(MetricEffect.Type.SUB).withValue(0.12))
-                )
-        );
+                );
 
         //describe the service template which will hold more topologies
         CloudService serviceTemplate = ServiceTemplate("ElasticIoTPlatform")
@@ -345,7 +346,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 //metrics must be aggregated among VMs
                 .withDefaultMetrics();
                 //to find scaling actions, one must assume some effects for each action, to understand
-                //if it makes sense or not to execute the action
+        //if it makes sense or not to execute the action
 //                .withDefaultActionEffects();
 
         //instantiate COMOT orchestrator to deploy, monitor and control the service
@@ -359,17 +360,15 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 //                .withRsyblIP("109.231.121.26")
                 //                .withRsyblIP("localhost")
                 //                                .withRsyblIP("109.231.121.104")
-                                .withRsyblIP("128.130.172.214")
-//                .withRsyblIP("128.131.172.4118")
-                                .withRsyblPort(8280);
+                .withRsyblIP("128.130.172.214")
+                //                .withRsyblIP("128.131.172.4118")
+                .withRsyblPort(8280);
 //                .withRsyblPort(8080);
 
         //deploy, monitor and control
         orchestrator.deployAndControl(serviceTemplate);
 //        orchestrator.deploy(serviceTemplate);
 //        orchestrator.controlExisting(serviceTemplate);
-        
 
     }
 }
- 

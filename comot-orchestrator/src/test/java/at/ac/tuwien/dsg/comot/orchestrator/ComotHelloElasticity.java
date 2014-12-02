@@ -56,6 +56,9 @@ public class ComotHelloElasticity {
                 .providedBy(LocalDocker()
                 );
 
+        ElasticityCapability scaleOut = ElasticityCapability.ScaleOut().withPrimitiveOperations("Salsa.scaleOut");
+        ElasticityCapability scaleIn = ElasticityCapability.ScaleIn().withPrimitiveOperations("M2MDaaS.decommissionWS", "Salsa.scaleIn");
+
         //add the service units belonging to the event processing topology
         ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
                 .deployedBy(SingleScriptArtifactTemplate(salsaRepo + "deployEventProcessing.sh"))
@@ -63,15 +66,16 @@ public class ComotHelloElasticity {
                 .requires(Requirement.Variable("EventProcessingUnit_LoadBalancer_IP_Req"))
                 //event processing also needs to querry the Data Controller to access data
                 //scale IN if throughput < 200 and responseTime < 200
+                .provides(scaleOut, scaleIn)
                 .controlledBy(
                         Strategy("EP_ST1")
                         .when(Constraint.MetricConstraint("EP_ST1_CO1", new Metric("responseTime", "ms")).lessThan("1000"))
                         .and(Constraint.MetricConstraint("EP_ST1_CO2", new Metric("totalPendingRequests", "#")).lessThan("10"))
-                        .then(Strategy.Action.ScaleIn),
+                        .enforce(scaleIn),
                         Strategy("EP_ST2")
                         .when(Constraint.MetricConstraint("EP_ST1_CO1", new Metric("responseTime", "ms")).greaterThan("1000"))
                         .and(Constraint.MetricConstraint("EP_ST1_CO2", new Metric("totalPendingRequests", "#")).greaterThan("10"))
-                        .then(Strategy.Action.ScaleOut)
+                        .enforce(scaleOut)
                 )
                 .withLifecycleAction(LifecyclePhase.STOP, BASHAction("sudo service daas-service stop"))
                 .withMinInstances(2)
@@ -93,19 +97,17 @@ public class ComotHelloElasticity {
                 Constraint.MetricConstraint("EPT_CO1", new Metric("responseTime", "ms")).lessThan("1000"),
                 Constraint.MetricConstraint("EPT_CO2", new Metric("totalPendingRequests", "#")).lessThan("10"));
 
-        eventProcessingUnit.provides(
-                ElasticityCapability.ScaleOut().withPrimitiveOperations("Salsa.scaleOut")
-                .withCapabilityEffect(CapabilityEffect(eventProcessingUnit)
-                        .withMetricEffect(
-                                MetricEffect().withMetric(new Metric("cpuUsage", "#")).withType(MetricEffect.Type.SUB).withValue(40.0))
-                        .withMetricEffect(
-                                MetricEffect().withMetric(new Metric("responseTime", "ms")).withType(MetricEffect.Type.SUB).withValue(1000.0))
-                        .withMetricEffect(
-                                MetricEffect().withMetric(new Metric("throughput", "#")).withType(MetricEffect.Type.ADD).withValue(200.0))
-                        .withMetricEffect(
-                                MetricEffect().withMetric(new Metric("cost", "$")).withType(MetricEffect.Type.ADD).withValue(0.12))
-                )
-                .withCapabilityEffect(CapabilityEffect(eventProcessingTopology)
+        scaleOut.withCapabilityEffect(CapabilityEffect(eventProcessingUnit)
+                .withMetricEffect(
+                        MetricEffect().withMetric(new Metric("cpuUsage", "#")).withType(MetricEffect.Type.SUB).withValue(40.0))
+                .withMetricEffect(
+                        MetricEffect().withMetric(new Metric("responseTime", "ms")).withType(MetricEffect.Type.SUB).withValue(1000.0))
+                .withMetricEffect(
+                        MetricEffect().withMetric(new Metric("throughput", "#")).withType(MetricEffect.Type.ADD).withValue(200.0))
+                .withMetricEffect(
+                        MetricEffect().withMetric(new Metric("cost", "$")).withType(MetricEffect.Type.ADD).withValue(0.12))
+        ).
+                withCapabilityEffect(CapabilityEffect(eventProcessingTopology)
                         .withMetricEffect(
                                 MetricEffect().withMetric(new Metric("cpuUsage", "#")).withType(MetricEffect.Type.SUB).withValue(20.0))
                         .withMetricEffect(
@@ -114,10 +116,9 @@ public class ComotHelloElasticity {
                                 MetricEffect().withMetric(new Metric("throughput", "#")).withType(MetricEffect.Type.ADD).withValue(200.0))
                         .withMetricEffect(
                                 MetricEffect().withMetric(new Metric("cost", "$")).withType(MetricEffect.Type.ADD).withValue(0.12))
-                )
-        );
-        eventProcessingUnit.provides(
-                ElasticityCapability.ScaleIn().withPrimitiveOperations("M2MDaaS.decommissionWS", "Salsa.scaleIn")
+                );
+
+        scaleOut.withPrimitiveOperations("M2MDaaS.decommissionWS", "Salsa.scaleIn")
                 .withCapabilityEffect(CapabilityEffect(eventProcessingUnit)
                         .withMetricEffect(
                                 MetricEffect().withMetric(new Metric("cpuUsage", "#")).withType(MetricEffect.Type.ADD).withValue(40.0))
@@ -137,8 +138,8 @@ public class ComotHelloElasticity {
                                 MetricEffect().withMetric(new Metric("throughput", "#")).withType(MetricEffect.Type.SUB).withValue(100.0))
                         .withMetricEffect(
                                 MetricEffect().withMetric(new Metric("cost", "$")).withType(MetricEffect.Type.SUB).withValue(0.12))
-                )
-        );
+                );
+
         //describe the service template which will hold more topologies
         CloudService serviceTemplate = ServiceTemplate("HelloElasticity")
                 .consistsOfTopologies(eventProcessingTopology)
