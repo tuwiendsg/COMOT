@@ -69,9 +69,13 @@
                 <div id="nav">
                     <ul>
                         <li> <a href="./index.html" id="homenav">Home</a></li>
-                        <li><div id="currentNav"><a href="./elasticityDemo.html" id="elasticityDemo">COMOT Demo: Programming Elasticity</a></div>
+                        <li><div id="currentNav"><a href="./elasticityDemo.html" id="elasticityDemo">COMOT Demo</a></div>
                             <ul>
-                                <li><a href="#installing">Deploying COMOT</a>
+								<li><a href="#overview">Overview</a></li>
+								<li><a href="#requirements">Requirements</a></li>
+								<li><a href="#demoApp">Demo Application</a></li>
+                                <li><a href="#installing">Deploying COMOT</a></li>
+								<li><a href="#runtimeElasticity">Runtime elasticity</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -124,7 +128,7 @@
                             <li>Describe a simple elastic service using COMOT API</li>
                             <li>Deploy the service on Docker containers using <a href="https://github.com/tuwiendsg/SALSA">SALSA</a></li>
                             <li>Monitor and analyze the service using <a href="https://github.com/tuwiendsg/MELA">MELA</a></li>
-                            <li>Control the service's elasticity using <a href="https://github.com/tuwiendsg/rSYBL">rSYBL</a></li>
+                            <li>Control the service's elasticity using <a href="http://www.infosys.tuwien.ac.at/research/viecom/SYBL">rSYBL</a></li>
                         </ul>
                     </div> 
 
@@ -169,7 +173,23 @@
                     <h3>Software requirements</h3>
                     <p>The demo was tested and tailored for <a href="http://www.ubuntu.com/download/server/thank-you/?version=14.04.1&architecture=amd64">Ubuntu 14.04</a> 
                         </p>
-
+					<h1><a name="demoApp" class="anchor" href="#demoApp"><span class="octicon octicon-link"></span></a>DEMO Service</h1>
+					<p>
+					The pilot service for this demo contains two units: (i) a load balancer unit, and (ii) an event processing unit, as depicted in the figure below. After <a href="#installing">deploying COMOT</a>, the service is described, deployed, monitored, and its elasticity is analyzed and controlled (as we see in <a href="#runtimeElasticity">runtime elasticity</a> section). 
+										
+					<center>
+					<figure style="border: 1px solid #d2d2d2">
+                            <img src="images/demo/app.png" alt="DEMO application" width="100%"  />
+                            <figcaption>Figure 1: Demo Application</figcaption>
+                        </figure>
+						</center>
+						
+						<br/>
+					While the load balancer does not expose any elasticity capabilities, the event processing unit can be scaled in/out by elasticity controllers. We measure and analyze with <a href="https://github.com/tuwiendsg/MELA">MELA</a> the response time and throughput as application-level metrics, based on which we can specify <a href="http://www.infosys.tuwien.ac.at/research/viecom/SYBL/index.html">SYBL</a> elasticity requirements. 
+					
+					
+					</p>
+					
                     <h1><a name="installing" class="anchor" href="#installing"><span class="octicon octicon-link"></span></a>Deploying COMOT</h1>
 
                     <p>Built and ready to use versions of COMOT are available in our <a href="http://128.130.172.215/repository/">Software Repository</a>.
@@ -214,13 +234,16 @@
 
                     <div></br></br></br>
                         <p>If deployment is successful, the COMOT Dashboard should be accessible as below:</p>
+						<center>
                         <figure style="border: 1px solid #d2d2d2">
                             <img src="images/demo/comotDashboardOverview.png" alt="COMOT Dashboard" width="100%"  />
-                            <figcaption>Figure 1: COMOT Dashboard</figcaption>
-                        </figure>
+                            <figcaption>Figure 2: COMOT Dashboard</figcaption>
+                        </figure></center>
                     </div>
 
-
+		<h1><a name="runtimeElasticity" class="anchor" href="#runtimeElasticity"><span class="octicon octicon-link"></span></a>Runtime Elasticity</h1>
+					<p></p>
+					
                 </section>
 
 
