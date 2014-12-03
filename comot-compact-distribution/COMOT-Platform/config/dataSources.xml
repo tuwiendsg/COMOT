@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:amq="http://activemq.apache.org/schema/core"
+       xmlns:mela="http://www.infosys.tuwien.ac.at/schema/mela"
+       xmlns:jms="http://www.springframework.org/schema/jms"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+       http://www.infosys.tuwien.ac.at/schema/mela http://www.infosys.tuwien.ac.at/schema/mela/spring-mela.xsd
+       http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd
+       http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd">
+
+<!-- <mela:ganglia-datasource id="flexiant-1" host="109.231.122.193" port="8650" polling-interval-ms="5000"/>-->
+<mela:ganglia-datasource id="local-ganglia" host="localhost" port="8649" polling-interval-ms="5000"/>
+
+ 
+</beans>

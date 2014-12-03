@@ -1,0 +1,67 @@
+### BEGIN INIT INFO
+# Provides:          comot-platform
+# Required-Start:
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start comot platform  daemon
+# Description:       To start-stop comot platform 
+### END INIT INFO
+
+RUN_MODE="daemons"
+
+JAVA_HOME=/opt/jre1.7.0/bin/java
+NAME=comot-platform
+DAEMONDIR=./
+
+export JAVA_HOME=$JAVA_HOME
+
+DAEMON=./bin/catalina.sh
+PIDDIR=/tmp/
+PIDFILE=$PIDDIR/comot-platform.pid
+LOG_DIR=/tmp/comot
+
+
+case "$1" in
+	start)
+                echo [ $RETVAL = 0 ] && touch /var/lock/comot-platform-daemon  
+		mkdir -p $LOG_DIR
+                cd $DAEMONDIR
+                ./$DAEMON start > $LOG_DIR/comot.log  2>&1 &
+		RETVAL=$?
+                echo
+		[ $RETVAL = 0 ] && touch /var/lock/comot-platform-daemon
+		;;
+	stop)
+		 
+		$DAEMONDIR/$DAEMON stop 
+		pid=`ps -ef | grep $DAEMONDIR | tr -s ' '  | cut -f2 -d ' ' | head -n 2`
+		echo $pid
+		sudo kill -9 $pid
+		RETVAL=$?
+   		echo
+                [ $RETVAL = 0 ] && rm -f /var/lock/comot-platform-daemon
+ 		;;
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		;;
+	status)
+		pidofproc -p $PIDFILE $JAVA >/dev/null
+		status=$?
+		if [ $status -eq 0 ]; then
+			log_success_msg "Mela-DataService is running"
+		else
+			log_failure_msg "Mela-DataService is not running"
+		fi
+		exit $status
+		;;
+	*)
+		echo "Usage: $0 {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+ 
+exit 0
+

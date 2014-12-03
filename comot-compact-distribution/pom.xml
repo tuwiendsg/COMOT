@@ -1,0 +1,184 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>at.ac.tuwien.dsg.comot</groupId>
+        <artifactId>comot-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>COMOT-CompactPlatform</artifactId>
+    <packaging>pom</packaging>
+
+    <name>COMOT-CompactPlatform</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>at.ac.tuwien.mela</groupId>
+            <artifactId>MELA-DataService</artifactId>
+            <version>3.0-SNAPSHOT</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>eu.celar.multilevel-metrics-evaluation</groupId>
+            <artifactId>MELA-SpaceAndPathwayAnalysisService</artifactId>
+            <version>3.0-SNAPSHOT</version>
+            <type>war</type>
+        </dependency>
+        
+        <dependency>
+            <groupId>at.ac.tuwien.dsg.cloud.salsa</groupId>
+            <artifactId>salsa-pioneer-vm</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+        </dependency>
+        
+        <dependency>
+            <groupId>at.ac.tuwien.dsg.cloud.salsa</groupId>
+            <artifactId>salsa-engine</artifactId>
+            <version>1.0</version>
+            <type>war</type>
+        </dependency>
+        
+        <dependency>
+            <groupId>at.ac.tuwien.dsg.comot</groupId>
+            <version>0.0.1-SNAPSHOT</version>
+            <artifactId>COMOT-VisualizationService</artifactId>
+            <type>war</type>
+        </dependency>
+        
+        
+        <dependency>
+            <groupId>at.ac.tuwien.rSYBL.control-service</groupId>
+            <artifactId>rSYBL-analysis-engine</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <type>jar</type>
+            <classifier>exec-war</classifier>
+        </dependency>
+        
+        
+        
+    </dependencies>
+     
+    
+    <repositories>
+        <repository>
+            <id>infosys-repo</id>
+            <url>http://www.infosys.tuwien.ac.at/research/viecom/mvn</url>
+        </repository>
+    </repositories>
+
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+
+                <executions>
+                    <execution>
+                        <id>copy-jar</id>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>at.ac.tuwien.mela</groupId>
+                                    <artifactId>MELA-DataService</artifactId>
+                                    <version>3.0-SNAPSHOT</version>
+                                    <type>war</type>  
+                                    <destFileName>MELA-DataService.war</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>at.ac.tuwien.mela</groupId>
+                                    <artifactId>MELA-SpaceAndPathwayAnalysisService</artifactId>
+                                    <version>3.0-SNAPSHOT</version>
+                                    <type>war</type>  
+                                    <destFileName>MELA-AnalysisService.war</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>at.ac.tuwien.dsg.cloud.salsa</groupId>
+                                    <artifactId>salsa-pioneer-vm</artifactId>
+                                    <version>1.0</version>
+                                    <type>jar</type>
+                                    <destFileName>salsa-pioneer.jar</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>at.ac.tuwien.dsg.cloud.salsa</groupId>
+                                    <artifactId>salsa-engine</artifactId>
+                                    <version>1.0</version>
+                                    <type>war</type>
+                                    <destFileName>salsa-engine.war</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>at.ac.tuwien.dsg.comot</groupId>
+                                    <version>0.0.1-SNAPSHOT</version>
+                                    <artifactId>COMOT-VisualizationService</artifactId>
+                                    <type>war</type>
+                                    <destFileName>COMOT.war</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>at.ac.tuwien.rSYBL.control-service</groupId>
+                                    <artifactId>rSYBL-analysis-engine</artifactId>
+                                    <version>1.0-SNAPSHOT</version>
+                                    <type>jar</type>
+                                    <classifier>exec-war</classifier>  
+                                    <destFileName>rSYBL-analysis-engine-1.0-SNAPSHOT-war-exec.jar</destFileName>
+                                </artifactItem>
+                                
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+      
+<!--            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <descriptor>rSYBL.xml</descriptor>
+                    </descriptors>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <finalName>rSYBL</finalName>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>-->
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <descriptor>ComotPlatform.xml</descriptor>
+                    </descriptors>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <finalName>COMOT-Platform</finalName>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+      
+        </plugins>
+    </build>
+</project>
+ 
