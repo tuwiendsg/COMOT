@@ -57,8 +57,7 @@ public class SalsaClientTest extends AbstractTest {
 				break;
 			}
 
-		} while (!(service.getState().equals(SalsaEntityState.DEPLOYED)
-		|| service.getState().equals(SalsaEntityState.RUNNING)));
+		} while (!(service.getState().equals(SalsaEntityState.DEPLOYED)));
 
 		// check DeploymentInfo
 		assertNotNull(salsa.getServiceDeploymentInfo(SERVICE_ID));

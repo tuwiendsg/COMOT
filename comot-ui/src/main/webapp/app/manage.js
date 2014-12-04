@@ -4,15 +4,20 @@ define(function(require) {
 	var moduleStructure = require('details/structure');
 	var moduleMonitoring = require('details/monitoring');
 	var notify = require('notify');
+	var repeater = require('repeater');
 
 	var activeTabIndex = 0;
+	var repeated = repeater.create("State_List", 7000);
 
 	var model = {
-
 		activate : function() {
-			console.log("activated");
-			comot.getServices(processResult),
+			repeated.runWith(null, function() {
+				comot.getServices(processResult)
+			})
 			activateTab(model.tabs()[activeTabIndex]);
+		},
+		detached : function() {
+			repeated.stop();
 		},
 		services : ko.observableArray(),
 		switchMonitoring : switchMonitoring,
@@ -20,13 +25,10 @@ define(function(require) {
 		deployment : deployment,
 		selectedServiceId : ko.observable(),
 		assignSelected : function(serviceId) {
-
 			if (serviceId === null || typeof serviceId === 'undefined') {
 				return;
 			}
-
 			this.selectedServiceId(serviceId);
-
 			activateTab(model.tabs()[activeTabIndex]);
 		},
 		tabs : ko.observableArray([ {
@@ -37,7 +39,7 @@ define(function(require) {
 		}, {
 			name : 'Monitoring',
 			module : 'details/monitoring',
-			show : ko.observable(false), 
+			show : ko.observable(false),
 			instance : moduleMonitoring
 		} ]),
 
@@ -70,13 +72,13 @@ define(function(require) {
 		if (this.monitoring()) {
 			comot.stopMonitoring(this.id(), function() {
 				that.monitoring(false);
-				notify.success("Monitoring stopped for "+that.id());
-			}, "Failed to stop monitoring for "+that.id())
+				notify.success("Monitoring stopped for " + that.id());
+			}, "Failed to stop monitoring for " + that.id())
 		} else {
 			comot.startMonitoring(this.id(), function() {
 				that.monitoring(true);
-				notify.success("Monitoring started for "+that.id());
-			}, "Failed to start monitoring for "+that.id())
+				notify.success("Monitoring started for " + that.id());
+			}, "Failed to start monitoring for " + that.id())
 		}
 	}
 
@@ -87,7 +89,48 @@ define(function(require) {
 
 	function deployment() {
 
-		this.deployment(!this.deployment());
+		var that = this;
+
+		if (this.deployment()) {
+
+			app.showMessage("Confirm the undeployment of service '" + that.id() + "'. This may take several minutes.",
+					"Undeployment", [ {
+						text : "Confirm",
+						value : true
+					}, {
+						text : "Cancel",
+						value : false
+					} ], false).then(function(dialogResult) {
+
+				if (dialogResult) {
+					comot.undeploy(that.id(), function() {
+						that.deployment(false);
+						notify.success("Cloud service " + that.id() + " undeployed.");
+					}, "Failed to stop monitoring for " + that.id())
+				}
+			});
+
+		} else {
+
+			app.showMessage("Confirm the deployment of service '" + that.id() + "'. This may take several minutes.",
+					"Deployment", [ {
+						text : "Confirm",
+						value : true
+					}, {
+						text : "Cancel",
+						value : false
+					} ], false).then(function(dialogResult) {
+
+				if (dialogResult) {
+					comot.deploy(that.id(), function() {
+						that.deployment(true);
+						notify.success("Cloud service " + that.id() + " deployed.")
+					}, function(request) {
+						notify.error(comot.errorBody(request.responseText));
+					})
+				}
+			});
+		}
 	}
 
 	function processResult(data) {

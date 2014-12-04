@@ -31,7 +31,7 @@
 	
 	exports.info = function(text) {
 		var opts = notifyCore();
-		opts.title = "Error";
+		opts.title = "Info";
 		opts.text = text;
 		opts.type = "info";
 		new PNotify(opts);

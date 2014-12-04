@@ -115,7 +115,15 @@ function createTreeMonitoring(root, divId) {
 			var string = "";
 
 			if (d.metrics.length > i) {
-				string = d.metrics[i].name + ": " + d.metrics[i].value.value + " " + d.metrics[i].measurementUnit;
+				var value;
+
+				if (d.metrics[i].value.type === "double") {
+					value = Number((d.metrics[i].value.value).toFixed(5));
+				} else {
+					value = d.metrics[i].value.value;
+				}
+
+				string = d.metrics[i].name + ": " + value + " " + d.metrics[i].measurementUnit;
 			}
 			return string;
 		})

@@ -36,7 +36,10 @@ public class ToscaValidatingReader implements MessageBodyReader<Definitions> {
 
 	protected static final Logger log = LoggerFactory.getLogger(ToscaValidatingReader.class);
 
-	private static final String TOSCA_URI = "http://docs.oasis-open.org/tosca/TOSCA/v1.0/os/schemas/TOSCA-v1.0.xsd";
+	private static final String TOSCA_URI = "http://docs.oasis-open.org/tosca/TOSCA/v1.0/os/schemas/TOSCA-v1.0.xsd"; // TODO
+																														// load
+																														// from
+																														// localhost
 
 	@Context
 	protected Providers providers;

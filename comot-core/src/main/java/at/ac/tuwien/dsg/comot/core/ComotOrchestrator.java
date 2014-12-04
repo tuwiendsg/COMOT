@@ -84,6 +84,31 @@ public class ComotOrchestrator {
 
 	}
 
+	public void deploy(String serviceId) throws CoreServiceException, ComotException {
+
+		ServiceEntity entity = getServiceEntity(serviceId);
+
+		CloudService deployedService = deployment.deploy(entity.getServiceOriginal());
+
+		entity.setServiceDeployed(deployedService);
+		entity.setDeployment(true);
+		serviceRepo.save(entity);
+
+	}
+
+	public void undeploy(String serviceId) throws CoreServiceException, ComotException {
+		ServiceEntity entity = getServiceEntity(serviceId);
+
+		deployment.undeploy(serviceId);
+
+		entity.setDeployment(false);
+		serviceRepo.save(entity);
+
+		stopMonitoring(serviceId);
+		stopControl(serviceId);
+
+	}
+
 	public void startMonitoring(String serviceId) throws CoreServiceException, ComotException {
 
 		ServiceEntity entity = getServiceEntity(serviceId);
@@ -95,6 +120,8 @@ public class ComotOrchestrator {
 
 		entity.setMonitoring(true);
 		serviceRepo.save(entity);
+
+		jobRepo.save(new Job(Job.Type.UPDATE_STRUCTURE_MONITORING, entity));
 
 		// TODO keep monitoring updated
 

@@ -19,9 +19,10 @@
 
 		var core = {};
 
+		console.log(onSuccess + " --- " + onError);
+
 		// SUCCESS
 		if (isFunction(onSuccess)) {
-			console.log("isFuncion")
 			core.success = onSuccess;
 		} else if (onSuccess === null || typeof onSuccess === 'undefined') {
 			core.success = function(data) {
@@ -38,10 +39,10 @@
 			core.error = onError;
 		} else if (onError === null || typeof onError === 'undefined') {
 			core.error = function(request, status, error) {
-				console.log("code="+request.status+"("+request.statusText+"), text="+request.responseText);
+				console.log("status: " + request.status + "(" + request.statusText + "), " + errorBody(error));
 			}
 		} else if (typeof onError === 'string') {
-			core.error = function(request, status, error) {
+			core.error = function(request, status, error) { // $.parseJSON( jsonString )
 				notify.error(onError);
 			}
 		}
@@ -53,16 +54,55 @@
 		return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
 	}
 
-	exports.deploy = function(tosca, onSuccess, onError) {
+	exports.errorBody = function(error) {
+
+		var msg = "";
+
+		if (typeof onError === 'string') {
+			var obj = $.parseJSON(error)
+
+			if (typeof obj.origin !== 'undefined') {
+				msg = msg + "component: " + obj.origin
+			}
+			if (typeof obj.message !== 'undefined') {
+				if (msg !== "") {
+					msg = msg + "\n";
+				}
+				msg = msg + "message: " + obj.message
+			}
+		} else {
+			msg = error;
+		}
+		return msg;
+	}
+
+	// API
+
+	exports.createAndDeploy = function(tosca, onSuccess, onError) {
 
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "POST";
 		request.url = services;
 		request.data = tosca;
-		request.dataType = "json"
+		// request.dataType = "json"
 		request.contentType = "application/xml";
-		$.ajax(request);
+		return $.ajax(request);
+	}
 
+	exports.deploy = function(serviceId, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "PUT";
+		request.url = services + serviceId + "/deployment";
+		return $.ajax(request);
+	}
+
+	exports.undeploy = function(serviceId, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "DELETE";
+		request.url = services + serviceId + "/deployment";
+		return $.ajax(request);
 	}
 
 	exports.startMonitoring = function(serviceId, onSuccess, onError) {
@@ -70,14 +110,14 @@
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "PUT";
 		request.url = services + serviceId + "/monitoring";
-		$.ajax(request);
+		return $.ajax(request);
 	}
 
 	exports.startControl = function(serviceId, onSuccess, onError) {
 
 		console.log(mcr);
 
-		$.ajax({
+		return $.ajax({
 			type : "PUT",
 			url : services + serviceId + "/control",
 			success : onSuccess,
@@ -90,7 +130,7 @@
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "DELETE";
 		request.url = services + serviceId + "/monitoring";
-		$.ajax(request);
+		return $.ajax(request);
 	}
 
 	exports.stopControl = function(serviceId, onSuccess, onError) {
@@ -103,6 +143,16 @@
 			success : onSuccess,
 			error : onError
 		});
+	}
+
+	exports.createMcr = function(serviceId, mcr, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "PUT";
+		request.url = services + serviceId + "/mcr";
+		request.data = mcr;
+		request.contentType = "application/xml";
+		return $.ajax(request);
 	}
 
 	exports.getServices = function(onSuccess, onError) {

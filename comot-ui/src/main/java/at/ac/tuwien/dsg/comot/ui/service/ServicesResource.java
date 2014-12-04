@@ -59,9 +59,19 @@ public class ServicesResource {
 
 	@POST
 	@Path("/")
+	@Produces(MediaType.TEXT_PLAIN)
 	public Response createAndDeploy(Definitions def) throws CoreServiceException, ComotException {
 
 		orchestrator.deployNew(mapperTosca.createModel(def));
+		return Response.ok(def.getId()).build();
+	}
+
+	@PUT
+	@Path("/{serviceId}/deployment")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response deploy(@PathParam("serviceId") String serviceId) throws CoreServiceException, ComotException {
+
+		orchestrator.deploy(serviceId);
 		return Response.ok().build();
 	}
 
@@ -86,7 +96,6 @@ public class ServicesResource {
 
 	@PUT
 	@Path("/{serviceId}/mcr")
-	@Produces(MediaType.TEXT_PLAIN)
 	public Response createMcr(@PathParam("serviceId") String serviceId, CompositionRulesConfiguration mcr)
 			throws CoreServiceException, ComotException {
 
@@ -97,7 +106,6 @@ public class ServicesResource {
 	@PUT
 	@Path("/{serviceId}/effects")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.TEXT_PLAIN)
 	public Response createElasticityEffects(@PathParam("serviceId") String serviceId, String input)
 			throws CoreServiceException, ComotException {
 
@@ -108,7 +116,6 @@ public class ServicesResource {
 	// update structure / requirements for monitoring / SYBL directives
 	@PUT
 	@Path("/{serviceId}")
-	@Produces(MediaType.TEXT_PLAIN)
 	public Response updateService(@PathParam("serviceId") String serviceId, Definitions def) {
 
 		// TODO
@@ -118,8 +125,16 @@ public class ServicesResource {
 	// DELETE
 
 	@DELETE
+	@Path("/{serviceId}/deployment")
+	public Response undeploy(@PathParam("serviceId") String serviceId) throws CoreServiceException,
+			ComotException {
+
+		orchestrator.undeploy(serviceId);
+		return Response.ok().build();
+	}
+
+	@DELETE
 	@Path("/{serviceId}/monitoring")
-	@Produces(MediaType.TEXT_PLAIN)
 	public Response stopMonitoring(@PathParam("serviceId") String serviceId) throws CoreServiceException,
 			ComotException {
 
@@ -129,7 +144,6 @@ public class ServicesResource {
 
 	@DELETE
 	@Path("/{serviceId}/control")
-	@Produces(MediaType.TEXT_PLAIN)
 	public Response stopControl(@PathParam("serviceId") String serviceId) throws CoreServiceException, ComotException {
 
 		orchestrator.stopControl(serviceId);

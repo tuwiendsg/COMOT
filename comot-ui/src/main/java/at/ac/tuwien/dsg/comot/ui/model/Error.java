@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.ui;
+package at.ac.tuwien.dsg.comot.ui.model;
 
 import java.io.Serializable;
 
@@ -44,6 +44,25 @@ public class Error implements Serializable {
 
 	public void setOrigin(String origin) {
 		this.origin = origin;
+	}
+
+	@Override
+	public String toString() {
+
+		String msg = "";
+
+		if (origin != null) {
+			msg = "component: " + origin;
+		}
+
+		if (message != null) {
+			if (!msg.equals("")) {
+				msg += "\n";
+			}
+			msg += "message: " + message;
+		}
+
+		return msg;
 	}
 
 }

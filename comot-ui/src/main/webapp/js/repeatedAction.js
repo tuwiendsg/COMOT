@@ -32,7 +32,7 @@
 			console.log("start " + name)
 			var tempId = input;
 
-			if (tempId === null || typeof tempId === 'undefined') {
+			if (typeof tempId === 'undefined') {
 				this.stop();
 				return;
 			}

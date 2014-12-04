@@ -54,15 +54,12 @@ public class AsyncExecutor {
 
 	protected void oneIteration() {
 
-		boolean success;
-
 		for (Job job : jobRepo.findAll()) {
 
 			try {
 
 				ServiceEntity entity = job.getService();
 				String serviceId = entity.getId();
-				success = false;
 
 				if (deployment.isRunning(serviceId)) {
 
@@ -73,7 +70,7 @@ public class AsyncExecutor {
 						entity.setMonitoring(true);
 						serviceRepo.save(entity);
 
-						success = true;
+						jobRepo.delete(job.getId());
 
 					} else if (job.getType().equals(Type.START_CONTROL)) {
 						log.debug("Executing {}", job);
@@ -84,12 +81,11 @@ public class AsyncExecutor {
 						entity.setControl(true);
 						serviceRepo.save(entity);
 
-						success = true;
+						jobRepo.delete(job.getId());
+					} else if (job.getType().equals(Type.UPDATE_STRUCTURE_MONITORING)) {
+						log.debug("Executing {}", job);
+						monitoring.updateService(serviceId, orchestrator.getService(serviceId));
 					}
-				}
-
-				if (success) {
-					jobRepo.delete(job.getId());
 				}
 
 			} catch (Throwable e) {

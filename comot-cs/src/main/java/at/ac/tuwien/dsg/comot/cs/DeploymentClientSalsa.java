@@ -107,16 +107,14 @@ public class DeploymentClientSalsa implements DeploymentClient {
 
 		log.info("Service {} is in state={}", serviceId, service.getState());
 
-		if (service.getState().equals(SalsaEntityState.DEPLOYED)
-				|| service.getState().equals(SalsaEntityState.RUNNING)) {
+		if (service.getState().equals(SalsaEntityState.DEPLOYED)) {
 			running = true;
 
 			for (at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceUnit serviceUnit : service
 					.getAllComponentByType(SalsaEntityType.SOFTWARE)) {
 
 				if (serviceUnit != null
-						&& !(serviceUnit.getState().equals(SalsaEntityState.DEPLOYED) || serviceUnit.getState()
-								.equals(SalsaEntityState.RUNNING))) {
+						&& !(serviceUnit.getState().equals(SalsaEntityState.DEPLOYED))) {
 					running = false;
 					break;
 				}

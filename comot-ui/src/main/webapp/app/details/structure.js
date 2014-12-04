@@ -120,7 +120,7 @@ function createTree(root, divId) {
 			});
 	node.append("text").attr("class", function(d) {
 
-		if (d.state === "RUNNING" || d.state === "DEPLOYED") {
+		if (d.state === "DEPLOYED") {
 			return "bold svg_ok";
 		} else if (d.state === "ERROR") {
 			return "bold svg_error";

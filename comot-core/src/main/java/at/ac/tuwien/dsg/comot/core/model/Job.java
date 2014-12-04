@@ -7,8 +7,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 public class Job {
 
@@ -24,7 +27,7 @@ public class Job {
 	protected ServiceEntity service;
 
 	public enum Type {
-		START_MONITORING, START_CONTROL
+		START_MONITORING, START_CONTROL, UPDATE_STRUCTURE_MONITORING
 	}
 
 	public Job() {
