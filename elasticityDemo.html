@@ -374,16 +374,16 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                         <p>First, we describe the required deployment stack,
                                             starting with mentioning Docker as a base</p> 
                                         <pre	class="prettyprint" style="background-color: white;">
-		   OperatingSystemUnit privateVM = OperatingSystemUnit("PersonalLaptop").providedBy(LocalDocker());</pre>
+	       OperatingSystemUnit privateVM = OperatingSystemUnit("PersonalLaptop").providedBy(LocalDocker());</pre>
                                     </li>
                                     <li><p>Next, we describe the docker containers which
                                             will hold our software</p> <pre class="prettyprint"
                                                                         style="background-color: white;">
-                                            //Docker container for load balancer
-                                            DockerUnit loadbalancerDocker = DockerUnit("LoadBalancerUnitDocker").providedBy(DockerDefault());
+               //Docker container for load balancer
+               DockerUnit loadbalancerDocker = DockerUnit("LoadBalancerUnitDocker").providedBy(DockerDefault());
 
-                                            //Docker container for event processing
-                                            DockerUnit eventProcessingDocker = DockerUnit("EventProcessingUnitDocker").providedBy(DockerDefault());
+               //Docker container for event processing
+               DockerUnit eventProcessingDocker = DockerUnit("EventProcessingUnitDocker").providedBy(DockerDefault());
                                         </pre></li>
 
                                     <li><p>
@@ -405,7 +405,7 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                             location of the software repository holding our artifacts, in
                                             this case our own repository.</p> <pre class="prettyprint"
                                                                                style="background-color: white;">
-                                            String salsaRepo = "http://128.130.172.215/repository/files/HelloElasticity/";
+ 	       String salsaRepo = "http://128.130.172.215/repository/files/HelloElasticity/";
                                         </pre></li>
 
                                     <li><p>As deploying an elastic service can imply
@@ -413,38 +413,38 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                             by an artifact:</p> 
                                         <pre class="prettyprint"
                                              style="background-color: white;">
-                                            ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
-                                            .deployedBy(SingleScriptArtifact(salsaRepo + "deployEventProcessing.sh"));
+ 	       ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
+                                        .deployedBy(SingleScriptArtifact(salsaRepo + "deployEventProcessing.sh"));
 
-                                            ServiceUnit loadbalancerUnit = SingleSoftwareUnit("LoadBalancerUnit")
-                                            .deployedBy(SingleScriptArtifact(salsaRepo + "deployLoadBalancer.sh"));
+ 	       ServiceUnit loadbalancerUnit = SingleSoftwareUnit("LoadBalancerUnit")
+                                         .deployedBy(SingleScriptArtifact(salsaRepo + "deployLoadBalancer.sh"));
                                         </pre></li>
 
-                                    <li><p>To function, information about one service unit
+                                    <li><div><p>To function, information about one service unit
                                             might be required by other units, such as for event processing
                                             to know the IP of the load balancer, to know where to
                                             register/deregister after an event processing instance is
                                             created/deallocated due to scaling actions</p> <pre
                                             class="prettyprint" style="background-color: white;">
-                                            ServiceUnit loadbalancerUnit = SingleSoftwareUnit("LoadBalancerUnit")
-                                            .exposes(Capability.Variable("LoadBalancer_IP_information"))
+ 	       ServiceUnit loadbalancerUnit = SingleSoftwareUnit("LoadBalancerUnit")
+                                         .exposes(Capability.Variable("LoadBalancer_IP_information"))
 
-                                            ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
-                                            .requires(Requirement.Variable("EventProcessingUnit_LoadBalancer_IP_Req"))
+ 	       ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
+                                         .requires(Requirement.Variable("EventProcessingUnit_LoadBalancer_IP_Req"))
 
-                                            //event processing receives IP from load balancer
-                                            ConnectToRelation("eventProcessingToLoadBalancer")
-                                            .from(loadbalancerUnit.getContext().get("LoadBalancer_IP_information"))
-                                            .to(eventProcessingUnit.getContext().get("EventProcessingUnit_LoadBalancer_IP_Req")),                     
+ 	       //event processing receives IP from load balancer
+ 	       ConnectToRelation("eventProcessingToLoadBalancer")
+                                         .from(loadbalancerUnit.getContext().get("LoadBalancer_IP_information"))
+                                         .to(eventProcessingUnit.getContext().get("EventProcessingUnit_LoadBalancer_IP_Req")),                     
                                         </pre></li>
 
                                     <li><p>Each unit might support/have enabled different	elasticity capabilities</p>
                                         <pre class="prettyprint"style="background-color: white;">
-           ElasticityCapability scaleOutEventProcessing = ElasticityCapability.ScaleOut();
-           ElasticityCapability scaleInEventProcessing = ElasticityCapability.ScaleIn();
+ 	       ElasticityCapability scaleOutEventProcessing = ElasticityCapability.ScaleOut();
+ 	       ElasticityCapability scaleInEventProcessing = ElasticityCapability.ScaleIn();
 
-           ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
-                .provides(scaleOutEventProcessing, scaleInEventProcessing)
+ 	       ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
+                                         .provides(scaleOutEventProcessing, scaleInEventProcessing)
                                         </pre></li>
 
                                     <li><p>Depending on individual implementations, we
@@ -455,8 +455,8 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                             gracefully shut down before a scale in, as to deregister
                                             itself from the load balancer</p> <pre class="prettyprint"
                                                                                style="background-color: white;">
-                                            ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
-                                            .withLifecycleAction(LifecyclePhase.STOP, BASHAction("sudo service event-processing stop"));
+ 	       ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
+                                         .withLifecycleAction(LifecyclePhase.STOP, BASHAction("sudo service event-processing stop"));
                                         </pre></li>
 
 
@@ -470,8 +470,8 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                             enforce. For the latter case additional information is
                                             required, such as effect of enforcing each capability.</p> <pre
                                             class="prettyprint" style="background-color: white;">
-                                            ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
-                                            .controlledBy(
+ 	       ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
+                                         .controlledBy(
                                             //WHEN responseTime < 500 ms  AND avgThroughput < 50 : SCALE IN
                                             Strategy("EP_ST1")
                                             .when(Constraint.MetricConstraint("EP_ST1_CO1", new Metric("responseTime", "ms")).lessThan("500"))
@@ -484,10 +484,10 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                     <li><p>Individual units can be grupped in higher level
                                             constructus, called topologies</p> <pre class="prettyprint"
                                                                                 style="background-color: white;">
-                                            ServiceTopology eventProcessingTopology = ServiceTopology("EventProcessingTopology")
-                                            .withServiceUnits(loadbalancerUnit, eventProcessingUnit //add vm types to topology
+ 	       ServiceTopology eventProcessingTopology = ServiceTopology("EventProcessingTopology")
+                                         .withServiceUnits(loadbalancerUnit, eventProcessingUnit //add vm types to topology
                                             , loadbalancerDocker, eventProcessingDocker, privateVM
-                                            );
+                                         );
                                         </pre></li>
 
 
@@ -496,9 +496,9 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                             understand what is hosted on what</p> <pre class="prettyprint"
                                                                                    style="background-color: white;">
                                             //load balancer software unit resides in its own docker container
-                                            HostedOnRelation("loadbalancerToDocker")
-                                            .from(loadbalancerUnit)
-                                            .to(loadbalancerDocker)
+ 	       HostedOnRelation("loadbalancerToDocker")
+                                         .from(loadbalancerUnit)
+                                         .to(loadbalancerDocker)
                                         </pre></li>
 
 
