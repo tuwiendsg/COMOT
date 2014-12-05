@@ -86,6 +86,12 @@ public class MonitoringClientMela implements MonitoringClient {
 	public void setMcr(String serviceId, CompositionRulesConfiguration mcr) throws CoreServiceException {
 		mela.sendMetricsCompositionRules(serviceId, mcr);
 	}
+	
+	@Override
+	public CompositionRulesConfiguration getMcr(String serviceId) throws CoreServiceException {
+		CompositionRulesConfiguration mcr = mela.getMetricsCompositionRules(serviceId);
+		return mcr;
+	}
 
 	@Override
 	public ElementMonitoring getMonitoringData(String serviceId) throws CoreServiceException, ComotException {
@@ -96,13 +102,6 @@ public class MonitoringClientMela implements MonitoringClient {
 		} catch (JAXBException e) {
 			throw new ComotException("Mapping from MonitoredElementMonitoringSnapshot to ElementMonitoring failed ", e);
 		}
-	}
-
-	@Override
-	public CompositionRulesConfiguration getMetricsCompositionRules(String serviceId) throws CoreServiceException {
-
-		CompositionRulesConfiguration mcr = mela.getMetricsCompositionRules(serviceId);
-		return mcr;
 	}
 
 	@Override

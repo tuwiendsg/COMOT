@@ -32,7 +32,7 @@ public interface MonitoringClient extends CoreServiceClient {
 	public ElementMonitoring getMonitoringData(
 			String serviceId) throws CoreServiceException, ComotException;
 
-	public CompositionRulesConfiguration getMetricsCompositionRules(
+	public CompositionRulesConfiguration getMcr(
 			String serviceId) throws CoreServiceException;
 
 	public List<String> listAllServices() throws CoreServiceException;

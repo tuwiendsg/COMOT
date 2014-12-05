@@ -191,6 +191,15 @@ public class ServicesResource {
 		ElementMonitoring element = orchestrator.getMonitoringData(serviceId);
 		return Response.ok(element).build();
 	}
+	
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Path("/{serviceId}/mcr")
+	public Response getMcr(@PathParam("serviceId") String serviceId) throws CoreServiceException {
+
+		CompositionRulesConfiguration mcr = orchestrator.getMcr(serviceId);
+		return Response.ok(mcr).build();
+	}
 
 	// @GET
 	// @Consumes(MediaType.WILDCARD)

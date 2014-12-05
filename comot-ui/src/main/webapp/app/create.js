@@ -24,7 +24,7 @@ define(function(require) {
 			})).done(
 					function(result) {
 						
-						router.navigate('#manager');
+						// TODO router.navigate('#manager');
 						
 						if (model.checkboxMoni() === true) {// start monitoring
 							$.when(comot.startMonitoring(result, function() {

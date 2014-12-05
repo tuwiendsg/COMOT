@@ -155,6 +155,16 @@
 		return $.ajax(request);
 	}
 
+	exports.getMcr = function(serviceId, onSuccess, onError) {
+		$.ajax({
+			type : "GET",
+			url : services + serviceId + "/mcr",
+			dataType : "text",
+			success : onSuccess,
+			error : onError
+		});
+	}
+
 	exports.getServices = function(onSuccess, onError) {
 		$.ajax({
 			type : "GET",

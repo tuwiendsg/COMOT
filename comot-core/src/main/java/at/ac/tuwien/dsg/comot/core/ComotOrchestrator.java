@@ -196,6 +196,16 @@ public class ComotOrchestrator {
 		entity.setMcr(mcr);
 		serviceRepo.save(entity);
 	}
+	
+	public CompositionRulesConfiguration getMcr(String serviceId) throws CoreServiceException {
+		
+		ServiceEntity entity = getServiceEntity(serviceId);
+		
+		// TODO: could be taken only from DB
+		CompositionRulesConfiguration mcr = monitoring.getMcr(serviceId);
+		
+		return mcr;
+	}
 
 	public void setEffects(String serviceId, String effects) throws CoreServiceException,
 			ComotException {

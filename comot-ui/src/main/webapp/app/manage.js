@@ -1,5 +1,5 @@
 define(function(require) {
-	var app = require('durandal/app'), ko = require('knockout'), komapping = require('komapping'), comot = require('comot_client'), router = require('plugins/router'), PNotify = require('pnotify');
+	var app = require('durandal/app'), ko = require('knockout'), komapping = require('komapping'), comot = require('comot_client'), router = require('plugins/router'), PNotify = require('pnotify'), bootstrap = require('bootstrap');
 
 	var moduleStructure = require('details/structure');
 	var moduleMonitoring = require('details/monitoring');
@@ -45,6 +45,12 @@ define(function(require) {
 
 		activateTab : function() {
 			activateTab(this);
+		},
+		mcr : ko.observable(),
+		getMcr : function(id){
+			comot.getMcr(id, function(data){
+				model.mcr(data);
+			});
 		}
 	}
 
