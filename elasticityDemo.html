@@ -104,13 +104,13 @@
                                 <li><a href="#demoApp">Pilot Elastic Service</a></li>
                                 <li><a href="#installing">Deploying COMOT</a></li>
                                 <li><a href="#runtimeElasticity">Tutorial</a>
-                                  <ul>
-									   <li><a href="#javaDevPerspective">Programming</a></li>
-									   <li><a href="#salsaView">Deploying</a></li>
-									   <li><a href="#melaView">Monitoring</a></li>
-									   <li><a href="#rSYBLView">Controlling</a></li>
-									   <li><a href="#metricsCompositionView">Elasticity analysis</a></li>
-							      </ul>
+                                    <ul>
+                                        <li><a href="#javaDevPerspective">Programming</a></li>
+                                        <li><a href="#salsaView">Deploying</a></li>
+                                        <li><a href="#melaView">Monitoring</a></li>
+                                        <li><a href="#rSYBLView">Controlling</a></li>
+                                        <li><a href="#metricsCompositionView">Elasticity analysis</a></li>
+                                    </ul>
                                 </li>
                             </ul></li>
                     </ul>
@@ -161,7 +161,7 @@
                     </h1>
 
                     <div>
-                        <p>In this page we describe a demo in which COMOT is deployed on a personal laptop, and its features highlighted on an elastic service running
+                        <p>In this page we describe a demo in which COMOT is deployed on a personal laptop / single virtual machine, and its features highlighted on an elastic service running
                             on a small Docker-based "private cloud".</p>
 
                         <p>In the demo we will cover the following steps:</p>
@@ -174,7 +174,8 @@
                             <li>Control the service's elasticity using <a href="http://www.infosys.tuwien.ac.at/research/viecom/SYBL">rSYBL</a></li>
                         </ul>
                     </div> 
-
+                    <p>Note: Deploying COMOT will download about 800 MB - 1GB of data, containing the COMOT platform, and used docker image. It is recommended to do this step
+                        over a good internet connection.                </p>
 
                     <h1><a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h1>
 
@@ -261,12 +262,13 @@
                         service used in the demo.
                     </p>
 
-
                     <p>We provide separate install and uninstall scripts for both
                         compact or distributed COMOT deployments. Depending on the desired
                         platform, please use the appropriate scripts.</p>
 
-                    <p>Note: While the steps below are exemplified for the COMOT
+                    <p>Note 1: Deploying COMOT will download about 800 MB - 1GB of data, containing the COMOT platform, and used docker image.  </p>
+
+                    <p>Note 2: While the steps below are exemplified for the COMOT
                         compact deployment, the same approach applies to the distributed
                         deployment version</p>
 
@@ -275,10 +277,10 @@
  $ cd COMOTDemo
  $ wget http://128.130.172.215/repository/files/COMOTCompactPlatform/installCOMOT.sh
  $ bash installCOMOT.sh</code></pre>
- 
+
                     <p>A prompt will appear and ask for a publicly accessible IP of the machine on which COMOT is deployed to be specified. This is used to correctly configure the 
                         web-based COMOT Dashboard.<p>
-                   <pre><code>Is this a virtual machine/container?
+                    <pre><code>Is this a virtual machine/container?
 Please select 1(No) if this is the local machine, 2(Yes) if this is a separate machine, 3(Quit)
  1) Yes
  2) No
@@ -334,8 +336,8 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                         <p>We prepared a Java Maven project containing the description
                             of the pilot elastic service, ready to be deployed and controlled</p>
 
- 						<a name="downloadExample" class="anchor"
-                               href="#downloadExample"><span class="octicon octicon-link"></span></a><h3> a. Download programming elasticity example project</h3>
+                        <a name="downloadExample" class="anchor"
+                           href="#downloadExample"><span class="octicon octicon-link"></span></a><h3> a. Download programming elasticity example project</h3>
                         <p>
                             From the COMOT Dashboard "http://10.x.x.x:8080/COMOT", choose from
                             <i>Artifact Repository</i>, the <i>Programming Elasticity</i>
@@ -350,13 +352,13 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                     programming elasticity</figcaption>
                             </figure>
                         </center>
-                        
-                           
-                      <a name="runExample" class="anchor"
-                               href="#runExample"><span class="octicon octicon-link"></span></a>
-                               <h3>b. Run the programming elasticity example</h3>
-                               <p>Input the publicly accessible IP of COMOT (i.e., of the machine comot is deployed on) in ./src/at/ac/tuwien/dsg/cloudcom/elasticitytutorial/HelloElasticity and run the provided example:</p>  
-                       <center>
+
+
+                        <a name="runExample" class="anchor"
+                           href="#runExample"><span class="octicon octicon-link"></span></a>
+                        <h3>b. Run the programming elasticity example</h3>
+                        <p>Input the publicly accessible IP of COMOT (i.e., of the machine comot is deployed on) in ./src/at/ac/tuwien/dsg/cloudcom/elasticitytutorial/HelloElasticity and run the provided example:</p>  
+                        <center>
                             <figure style="border: 1px solid #d2d2d2">
                                 <img src="images/demo/programElasticService2.png"
                                      alt="Run Maven project for programming elasticity"
@@ -366,7 +368,7 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                         </center>
 
                         <div id="codeDescription">
-                           <h3>Expand for detailed explanation of the elasticity
+                            <h3>Expand for detailed explanation of the elasticity
                                 concepts captured by the provided example</h3>
                             <div style="overflow-x: scroll;font-size: small;">
                                 <ol>
@@ -379,11 +381,11 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                     <li><p>Next, we describe the docker containers which
                                             will hold our software</p> <pre class="prettyprint"
                                                                         style="background-color: white;">
-               //Docker container for load balancer
-               DockerUnit loadbalancerDocker = DockerUnit("LoadBalancerUnitDocker").providedBy(DockerDefault());
+                                            //Docker container for load balancer
+                                            DockerUnit loadbalancerDocker = DockerUnit("LoadBalancerUnitDocker").providedBy(DockerDefault());
 
-               //Docker container for event processing
-               DockerUnit eventProcessingDocker = DockerUnit("EventProcessingUnitDocker").providedBy(DockerDefault());
+                                            //Docker container for event processing
+                                            DockerUnit eventProcessingDocker = DockerUnit("EventProcessingUnitDocker").providedBy(DockerDefault());
                                         </pre></li>
 
                                     <li><p>
@@ -405,7 +407,7 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                             location of the software repository holding our artifacts, in
                                             this case our own repository.</p> <pre class="prettyprint"
                                                                                style="background-color: white;">
- 	       String salsaRepo = "http://128.130.172.215/repository/files/HelloElasticity/";
+                                            String salsaRepo = "http://128.130.172.215/repository/files/HelloElasticity/";
                                         </pre></li>
 
                                     <li><p>As deploying an elastic service can imply
@@ -413,30 +415,30 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                             by an artifact:</p> 
                                         <pre class="prettyprint"
                                              style="background-color: white;">
- 	       ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
-                                        .deployedBy(SingleScriptArtifact(salsaRepo + "deployEventProcessing.sh"));
+                                            ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
+                                            .deployedBy(SingleScriptArtifact(salsaRepo + "deployEventProcessing.sh"));
 
- 	       ServiceUnit loadbalancerUnit = SingleSoftwareUnit("LoadBalancerUnit")
-                                         .deployedBy(SingleScriptArtifact(salsaRepo + "deployLoadBalancer.sh"));
+                                            ServiceUnit loadbalancerUnit = SingleSoftwareUnit("LoadBalancerUnit")
+                                            .deployedBy(SingleScriptArtifact(salsaRepo + "deployLoadBalancer.sh"));
                                         </pre></li>
 
                                     <li><div><p>To function, information about one service unit
-                                            might be required by other units, such as for event processing
-                                            to know the IP of the load balancer, to know where to
-                                            register/deregister after an event processing instance is
-                                            created/deallocated due to scaling actions</p> <pre
-                                            class="prettyprint" style="background-color: white;">
- 	       ServiceUnit loadbalancerUnit = SingleSoftwareUnit("LoadBalancerUnit")
-                                         .exposes(Capability.Variable("LoadBalancer_IP_information"))
+                                                might be required by other units, such as for event processing
+                                                to know the IP of the load balancer, to know where to
+                                                register/deregister after an event processing instance is
+                                                created/deallocated due to scaling actions</p> <pre
+                                                class="prettyprint" style="background-color: white;">
+                                                ServiceUnit loadbalancerUnit = SingleSoftwareUnit("LoadBalancerUnit")
+                                                .exposes(Capability.Variable("LoadBalancer_IP_information"))
 
- 	       ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
-                                         .requires(Requirement.Variable("EventProcessingUnit_LoadBalancer_IP_Req"))
+                                                ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
+                                                .requires(Requirement.Variable("EventProcessingUnit_LoadBalancer_IP_Req"))
 
- 	       //event processing receives IP from load balancer
- 	       ConnectToRelation("eventProcessingToLoadBalancer")
-                                         .from(loadbalancerUnit.getContext().get("LoadBalancer_IP_information"))
-                                         .to(eventProcessingUnit.getContext().get("EventProcessingUnit_LoadBalancer_IP_Req")),                     
-                                        </pre></li>
+                                                //event processing receives IP from load balancer
+                                                ConnectToRelation("eventProcessingToLoadBalancer")
+                                                .from(loadbalancerUnit.getContext().get("LoadBalancer_IP_information"))
+                                                .to(eventProcessingUnit.getContext().get("EventProcessingUnit_LoadBalancer_IP_Req")),                     
+                                            </pre></li>
 
                                     <li><p>Each unit might support/have enabled different	elasticity capabilities</p>
                                         <pre class="prettyprint"style="background-color: white;">
@@ -455,8 +457,8 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                             gracefully shut down before a scale in, as to deregister
                                             itself from the load balancer</p> <pre class="prettyprint"
                                                                                style="background-color: white;">
- 	       ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
-                                         .withLifecycleAction(LifecyclePhase.STOP, BASHAction("sudo service event-processing stop"));
+                                            ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
+                                            .withLifecycleAction(LifecyclePhase.STOP, BASHAction("sudo service event-processing stop"));
                                         </pre></li>
 
 
@@ -470,8 +472,8 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                             enforce. For the latter case additional information is
                                             required, such as effect of enforcing each capability.</p> <pre
                                             class="prettyprint" style="background-color: white;">
- 	       ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
-                                         .controlledBy(
+                                            ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
+                                            .controlledBy(
                                             //WHEN responseTime < 500 ms  AND avgThroughput < 50 : SCALE IN
                                             Strategy("EP_ST1")
                                             .when(Constraint.MetricConstraint("EP_ST1_CO1", new Metric("responseTime", "ms")).lessThan("500"))
@@ -484,10 +486,10 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                     <li><p>Individual units can be grupped in higher level
                                             constructus, called topologies</p> <pre class="prettyprint"
                                                                                 style="background-color: white;">
- 	       ServiceTopology eventProcessingTopology = ServiceTopology("EventProcessingTopology")
-                                         .withServiceUnits(loadbalancerUnit, eventProcessingUnit //add vm types to topology
+                                            ServiceTopology eventProcessingTopology = ServiceTopology("EventProcessingTopology")
+                                            .withServiceUnits(loadbalancerUnit, eventProcessingUnit //add vm types to topology
                                             , loadbalancerDocker, eventProcessingDocker, privateVM
-                                         );
+                                            );
                                         </pre></li>
 
 
@@ -496,25 +498,25 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                             understand what is hosted on what</p> <pre class="prettyprint"
                                                                                    style="background-color: white;">
                                             //load balancer software unit resides in its own docker container
- 	       HostedOnRelation("loadbalancerToDocker")
-                                         .from(loadbalancerUnit)
-                                         .to(loadbalancerDocker)
+                                            HostedOnRelation("loadbalancerToDocker")
+                                            .from(loadbalancerUnit)
+                                            .to(loadbalancerDocker)
                                         </pre></li>
 
 
 
                                 </ol>
                             </div>
-                         
+
                         </div>
-                        
-                     
-                       <a name="salsaView" class="anchor"
-                               href="#salsaView"><span class="octicon octicon-link"></span></a>
-                               <h2>2. View service deployment progress </h2>
+
+
+                        <a name="salsaView" class="anchor"
+                           href="#salsaView"><span class="octicon octicon-link"></span></a>
+                        <h2>2. View service deployment progress </h2>
                         <p> Open COMOT Web and select the COMOT Web UI Deployment and Management Tab </p>
-                         
-                     
+
+
                         <center>
                             <figure style="border: 1px solid #d2d2d2">
                                 <img src="images/demo/visualizeDemoInSalsa.png"
@@ -523,8 +525,8 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                 <figcaption>Figure 5: Selecting Hello Elasticity service in Deployment and Management Tab</figcaption>
                             </figure>
                         </center>
-                        
-                          <center>
+
+                        <center>
                             <figure style="border: 1px solid #d2d2d2">
                                 <img src="images/demo/visualizeDemoInSalsa2.png"
                                      alt="Select Hello Elasticity service in Deployment and Management Tab"
@@ -532,17 +534,17 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                 <figcaption>Figure 6: Monitoring deployment progress of Hello Elasticity service</figcaption>
                             </figure>
                         </center>
-                        
-                      </br> </br> </br>
+
+                        </br> </br> </br>
                         <a name="dockerView" class="anchor"
-                               href="#dockerView"><span class="octicon octicon-link"></span></a>
-                               <h2>3. Connect (trough ssh) to machine hosting COMOT</h2>
-                        
-                        
+                           href="#dockerView"><span class="octicon octicon-link"></span></a>
+                        <h2>3. Connect (trough ssh) to machine hosting COMOT</h2>
+
+
                         <p> In the current example, the service is be deployed using docker containers, which can be listed by running: </p>
-                         <pre><code> # docker ps -a</code></pre>
-                                                
-                         <center>
+                        <pre><code> # docker ps -a</code></pre>
+
+                        <center>
                             <figure style="border: 1px solid #d2d2d2">
                                 <img src="images/demo/listingDocker.png"
                                      alt="Listing running docker containers"
@@ -550,19 +552,19 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                 <figcaption>Figure 7: Listing running docker containers</figcaption>
                             </figure>
                         </center>
-                        
-                        
-                          </br> </br> </br>
-                    <a name="melaView" class="anchor"
-                               href="#melaView"><span class="octicon octicon-link"></span></a>
-                               <h2>4. View service monitoring information</h2>
-                               
-                         <ul>      
-                             <li> Open COMOT Web and select the Elasticity Monitoring tab </li>                        
-                             <li> Select the Hello Elasticity service from the monitored services list</li>
+
+
+                        </br> </br> </br>
+                        <a name="melaView" class="anchor"
+                           href="#melaView"><span class="octicon octicon-link"></span></a>
+                        <h2>4. View service monitoring information</h2>
+
+                        <ul>      
+                            <li> Open COMOT Web and select the Elasticity Monitoring tab </li>                        
+                            <li> Select the Hello Elasticity service from the monitored services list</li>
                         </ul>
-                         
-                         <center>
+
+                        <center>
                             <figure style="border: 1px solid #d2d2d2">
                                 <img src="images/demo/visualizeDemoInMELA2.png"
                                      alt="Select Service in Elasticity Monitoring"
@@ -570,11 +572,11 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                 <figcaption>Figure 8: Selecting elastic service in Elasticity Monitoring</figcaption>
                             </figure>
                         </center>
-                          </br> </br> </br>
-                         <p> A hierarchical monitoring view will open, showing the elastic service, containing the specified topology, in turn made of units, which run on
-                         separate instances of docker containers (marked by their distinct IPs)</p>
-                       
-                         <center>
+                        </br> </br> </br>
+                        <p> A hierarchical monitoring view will open, showing the elastic service, containing the specified topology, in turn made of units, which run on
+                            separate instances of docker containers (marked by their distinct IPs)</p>
+
+                        <center>
                             <figure style="border: 1px solid #d2d2d2">
                                 <img src="images/demo/visualizeDemoInMELA3.png"
                                      alt="Visualize service in Elasticity Monitoring"
@@ -582,21 +584,21 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                 <figcaption>Figure 9: Visualize service in Elasticity Monitoring</figcaption>
                             </figure>
                         </center>
-                        
-                    
- 
-                   </br> </br> </br>
-                    <a name="rSYBLView" class="anchor"
-                               href="#rSYBLView"><span class="octicon octicon-link"></span></a>
-                               <h2>4. View service elasticity requirements</h2>
-                                
-                          <ul>      
-                             <li> Open COMOT Web and select the Control tab</li>                        
-                             <li> Select the Hello Elasticity service from the monitored services drop-down list</li>
+
+
+
+                        </br> </br> </br>
+                        <a name="rSYBLView" class="anchor"
+                           href="#rSYBLView"><span class="octicon octicon-link"></span></a>
+                        <h2>4. View service elasticity requirements</h2>
+
+                        <ul>      
+                            <li> Open COMOT Web and select the Control tab</li>                        
+                            <li> Select the Hello Elasticity service from the monitored services drop-down list</li>
                         </ul>
- 
-                         
-                         <center>
+
+
+                        <center>
                             <figure style="border: 1px solid #d2d2d2">
                                 <img src="images/demo/visualizeDemoInrSYBL2.png"
                                      alt="Visualize elasticity requirements"
@@ -604,23 +606,23 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                 <figcaption>Figure 9: Visualizing elasticity requirements</figcaption>
                             </figure>
                         </center>
-                  
+
                         <p> If required, a user can change the supplied elasticity requirements during run-time, using one of the supported editing formats.</p>
- 
-                        
+
+
                         </br> </br> </br>
-                       <a name="loadServiceView" class="anchor"
-                               href="#loadServiceView"><span class="octicon octicon-link"></span></a>
-                               <h2>5. Put service under load</h2>
-                                
-                          <ul>      
-                             <li>  Open a terminal to the COMOT machine, and from the folder in which COMOT was deployed, change working directory to ./WorkloadGenerator </li>                        
-                             <li>  Run  <pre><code> $ python ./load.py LOAD_BALANCER_IP </code></pre>, by replacing LOAD_BALANCER_IP with the IP of the single
-                             instance of the LoadBalancerUnit reported in MELA</li>
+                        <a name="loadServiceView" class="anchor"
+                           href="#loadServiceView"><span class="octicon octicon-link"></span></a>
+                        <h2>5. Put service under load</h2>
+
+                        <ul>      
+                            <li>  Open a terminal to the COMOT machine, and from the folder in which COMOT was deployed, change working directory to ./WorkloadGenerator </li>                        
+                            <li>  Run  <pre><code> $ python ./load.py LOAD_BALANCER_IP </code></pre>, by replacing LOAD_BALANCER_IP with the IP of the single
+                                instance of the LoadBalancerUnit reported in MELA</li>
                         </ul>
- 
-                         
-                         <center>
+
+
+                        <center>
                             <figure style="border: 1px solid #d2d2d2">
                                 <img src="images/demo/load.png"
                                      alt="Apply load on the elastic service"
@@ -628,18 +630,18 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                 <figcaption>Figure 10: Applying load on the elastic service</figcaption>
                             </figure>
                         </center>
-                        
-                         </br> </br> </br>
-                          <a name="scaleOutActionView" class="anchor"
-                               href="#scaleOutActionView"><span class="octicon octicon-link"></span></a>
-                               <h2>5. Observe elasticity actions</h2>
-                                
-                          
- 
+
+                        </br> </br> </br>
+                        <a name="scaleOutActionView" class="anchor"
+                           href="#scaleOutActionView"><span class="octicon octicon-link"></span></a>
+                        <h2>5. Observe elasticity actions</h2>
+
+
+
                         <p> The load will lead to the specified requirements on responseTime &lt; 1 s and totalPendingRequests &lt; 10 to be violated, leading to scale out actions</p>
-                        
-                         
-                         <center>
+
+
+                        <center>
                             <figure style="border: 1px solid #d2d2d2">
                                 <img src="images/demo/scaleOutInMELA.png"
                                      alt="Scaling out the elastic service"
@@ -647,11 +649,11 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                 <figcaption>Figure 11: Scaling out the elastic service</figcaption>
                             </figure>
                         </center>
-                        
-                          </br> </br> </br>
+
+                        </br> </br> </br>
                         <p> The action progress can be monitored in COMOT web in the Deployment and Management tab</p>
-                        
-                         <center>
+
+                        <center>
                             <figure style="border: 1px solid #d2d2d2">
                                 <img src="images/demo/scaleOutInSalsa.png"
                                      alt="Scaling out the elastic service"
@@ -659,24 +661,24 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                 <figcaption>Figure 12: Scaling out the elastic service progress in Deployment and Management</figcaption>
                             </figure>
                         </center>
-                  
-                 
+
+
                         </br> </br> </br>
-                          <a name="metricsCompositionView" class="anchor"
-                               href="#metricsCompositionView"><span class="octicon octicon-link"></span></a>
-                               <h2>6. Observe metric composition and structuring after scale out</h2>
-                                 
-                          
-                         <p> In general, elastic cloud sevices can re-configure and scale  individual units or the whole service at run-time, due to various elasticity requirements.
-                           As unit instances running in virtual containers such as virtual machines, or Docker are created/destroyed dynamically at run-time,
-                        if monitoring information is associated only with each virtual machine, it will be lost during scale-in operations which destroy the containers.</p>
+                        <a name="metricsCompositionView" class="anchor"
+                           href="#metricsCompositionView"><span class="octicon octicon-link"></span></a>
+                        <h2>6. Observe metric composition and structuring after scale out</h2>
+
+
+                        <p> In general, elastic cloud sevices can re-configure and scale  individual units or the whole service at run-time, due to various elasticity requirements.
+                            As unit instances running in virtual containers such as virtual machines, or Docker are created/destroyed dynamically at run-time,
+                            if monitoring information is associated only with each virtual machine, it will be lost during scale-in operations which destroy the containers.</p>
                         <p>Thus, we use metric composition to associate monitoring information with the service structure, and select only the metrics we consider important for
-                        the elasticity of the service</p> 
-                        
-                          <p>To see how metric are aggregated in this example, click or double click on the gray icon near any metric. 
-                              The need to aggregate metrics is more visible when more instances of the Event Processing Unit are running. </p
-                         
-                         <center>
+                            the elasticity of the service</p> 
+
+                        <p>To see how metric are aggregated in this example, click or double click on the gray icon near any metric. 
+                            The need to aggregate metrics is more visible when more instances of the Event Processing Unit are running. </p
+
+                        <center>
                             <figure style="border: 1px solid #d2d2d2">
                                 <img src="images/demo/melaMetrics1.png"
                                      alt="Metrisc composition"
@@ -684,16 +686,16 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                 <figcaption>Figure 13: Metrics composition</figcaption>
                             </figure>
                         </center>
-                        
-                         </br> </br> </br>
-                          <a name="elasticitySpaceView" class="anchor"
-                               href="#relasticitySpaceView"><span class="octicon octicon-link"></span></a>
-                               <h2>7. Observe service Elasticity Space</h2>
-                                 
-                          
-                         <p>In the Elasticity Monitoring tab, click on the component icon below the Event Processing Unit name, and select <i>Elasticity Space</i> from the dialog.  </p> 
-                         
-                         <center>
+
+                        </br> </br> </br>
+                        <a name="elasticitySpaceView" class="anchor"
+                           href="#relasticitySpaceView"><span class="octicon octicon-link"></span></a>
+                        <h2>7. Observe service Elasticity Space</h2>
+
+
+                        <p>In the Elasticity Monitoring tab, click on the component icon below the Event Processing Unit name, and select <i>Elasticity Space</i> from the dialog.  </p> 
+
+                        <center>
                             <figure style="border: 1px solid #d2d2d2">
                                 <img src="images/demo/spaceMELA2.png"
                                      alt="Opening Service Elasticity Space for Event Processing Uni"
@@ -701,12 +703,12 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                 <figcaption>Figure 14: Selecting Elasticity Space for Event Processing Uni</figcaption>
                             </figure>
                         </center>
-                         </br> </br> </br>
-                         
-                         <p>Increase the size of the space window by clicking on the maximize button, and investigate the historical monitoring information recorded for each of the
-                         selected metrics for the particular unit </p> 
-                         
-                         <center>
+                        </br> </br> </br>
+
+                        <p>Increase the size of the space window by clicking on the maximize button, and investigate the historical monitoring information recorded for each of the
+                            selected metrics for the particular unit </p> 
+
+                        <center>
                             <figure style="border: 1px solid #d2d2d2">
                                 <img src="images/demo/spaceMELA3.png"
                                      alt="Investigating Service Elasticity Space for Event Processing Unit"
@@ -714,9 +716,9 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                 <figcaption>Figure 15: Investigating Elasticity Space for Event Processing Unit</figcaption>
                             </figure>
                         </center>
-                         </br> </br> </br>
-                        
-                        
+                        </br> </br> </br>
+
+
                 </section>
 
 
