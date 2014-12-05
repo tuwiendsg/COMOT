@@ -27,6 +27,7 @@
 				<module>comot-cs</module>
 				<module>comot-common</module>
 				<module>comot-ui</module>
+				<module>comot-common-graph</module>
 			</modules>
 		</profile>
 		<profile>
@@ -42,12 +43,23 @@
 				<module>comot-tosca</module>
 				<module>comot-visualization-service</module>
 				<module>comot-fluent</module>
+				<module>comot-common-graph</module>
 			</modules>
 		</profile>
 	</profiles>
 
 	<dependencyManagement>
 		<dependencies>
+
+			<dependency>
+				<!-- http://howtodoinjava.com/2014/02/18/maven-bom-bill-of-materials-dependency/ -->
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-framework-bom</artifactId>
+				<version>${spring.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
 			<dependency>
 				<groupId>org.glassfish.jersey.core</groupId>
 				<artifactId>jersey-client</artifactId>
@@ -62,20 +74,6 @@
 				<groupId>org.glassfish.jersey.ext</groupId>
 				<artifactId>jersey-spring3</artifactId>
 				<version>${jersey.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-core</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-web</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-beans</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 
 			<dependency>
@@ -101,34 +99,6 @@
 				<artifactId>json</artifactId>
 				<version>20140107</version>
 			</dependency>
-
-			<!-- SPRING -->
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-context</artifactId>
-				<version>${spring.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-core</artifactId>
-				<version>${spring.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-test</artifactId>
-				<version>${spring.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-web</artifactId>
-				<version>${spring.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-aop</artifactId>
-				<version>${spring.version}</version>
-			</dependency>
-
 
 			<!-- CoMoT -->
 			<dependency>
@@ -173,22 +143,6 @@
 						<artifactId>slf4j-log4j12</artifactId>
 					</exclusion>
 					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-context</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-core</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-jdbc</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-web</artifactId>
-					</exclusion>
-					<exclusion>
 						<groupId>com.jcraft</groupId>
 						<artifactId>jsch</artifactId>
 					</exclusion>
@@ -222,18 +176,6 @@
 				<artifactId>salsa-common</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 				<exclusions>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-context</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-core</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-web</artifactId>
-					</exclusion>
 					<exclusion>
 						<groupId>com.sun.jersey</groupId>
 						<artifactId>jersey-client</artifactId>
