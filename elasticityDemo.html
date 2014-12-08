@@ -114,7 +114,7 @@
                                 </li>
                             </ul></li>
                     </ul>
-                    </br> </br> </br>
+                    </br> </br>
                     <p class="repo-owner" style="width: 300px">
                         <a href="https://github.com/tuwiendsg/COMOT"></a> Maintained and
                         distributed by </br> <a href="http://www.infosys.tuwien.ac.at/">Distributed
@@ -303,7 +303,7 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
  # bash ./uninstallCOMOT.sh</code></pre>
 
                     <div>
-                        </br> </br> </br>
+                        </br> 
                         <p>If deployment is successful, the COMOT Dashboard should be
                             accessible as below:</p>
                         <center>
@@ -314,10 +314,9 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                             </figure>
                         </center>
                     </div>
-
-                    <p></p>
+ 
                     <div>
-                        </br> </br> </br>
+                         </br> </br>
                         <h1>
                             <a name="runtimeElasticity" class="anchor"
                                href="#runtimeElasticity"><span class="octicon octicon-link"></span></a>Tutorial:
@@ -510,10 +509,10 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
 
                         </div>
 
-
+			</br></br>
                         <a name="salsaView" class="anchor"
                            href="#salsaView"><span class="octicon octicon-link"></span></a>
-                        <h2>2. View service deployment progress </h2>
+                        <h2>2. Visualize service deployment progress </h2>
                         <p> Open COMOT Web and select the COMOT Web UI Deployment and Management Tab </p>
 
 
@@ -535,7 +534,7 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                             </figure>
                         </center>
 
-                        </br> </br> </br>
+                        </br> </br>
                         <a name="dockerView" class="anchor"
                            href="#dockerView"><span class="octicon octicon-link"></span></a>
                         <h2>3. Connect (trough ssh) to machine hosting COMOT</h2>
@@ -554,10 +553,10 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                         </center>
 
 
-                        </br> </br> </br>
+                        </br> </br>
                         <a name="melaView" class="anchor"
                            href="#melaView"><span class="octicon octicon-link"></span></a>
-                        <h2>4. View service monitoring information</h2>
+                        <h2>4. Visualize service monitoring information</h2>
 
                         <ul>      
                             <li> Open COMOT Web and select the Elasticity Monitoring tab </li>                        
@@ -572,7 +571,7 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                 <figcaption>Figure 8: Selecting elastic service in Elasticity Monitoring</figcaption>
                             </figure>
                         </center>
-                        </br> </br> </br>
+                        </br> </br>
                         <p> A hierarchical monitoring view will open, showing the elastic service, containing the specified topology, in turn made of units, which run on
                             separate instances of docker containers (marked by their distinct IPs)</p>
 
@@ -587,10 +586,10 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
 
 
 
-                        </br> </br> </br>
+                        </br> </br>
                         <a name="rSYBLView" class="anchor"
                            href="#rSYBLView"><span class="octicon octicon-link"></span></a>
-                        <h2>4. View service elasticity requirements</h2>
+                        <h2>4. Visualize service elasticity requirements</h2>
 
                         <ul>      
                             <li> Open COMOT Web and select the Control tab</li>                        
@@ -609,19 +608,18 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
 
                         <p> If required, a user can change the supplied elasticity requirements during run-time, using one of the supported editing formats.</p>
 
-
-                        </br> </br> </br>
+                      </br> 
                         <a name="loadServiceView" class="anchor"
                            href="#loadServiceView"><span class="octicon octicon-link"></span></a>
-                        <h2>5. Put service under load</h2>
+                        <h2>5. Simulate service workload</h2>
 
                         <ul>      
                             <li>  Open a terminal to the COMOT machine, and from the folder in which COMOT was deployed, change working directory to ./WorkloadGenerator </li>                        
-                            <li>  Run  <pre><code> $ python ./load.py LOAD_BALANCER_IP </code></pre>, by replacing LOAD_BALANCER_IP with the IP of the single
+                            <li> Run  <pre><code> $ python ./load.py LOAD_BALANCER_IP </code></pre>, by replacing LOAD_BALANCER_IP with the IP of the single
                                 instance of the LoadBalancerUnit reported in MELA</li>
                         </ul>
 
-
+                       
                         <center>
                             <figure style="border: 1px solid #d2d2d2">
                                 <img src="images/demo/load.png"
@@ -631,7 +629,12 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                             </figure>
                         </center>
 
-                        </br> </br> </br>
+</br>
+ <p>Note: If the default values of the load script are not enough to trigger scaling actions, the script takes four additional arguments: [minimum # of requests], [maximum # of requests], [number of iterations with same # of requests ], [requests change value]. </p>
+                        <p>If needed, please use all load parameters as in the example below:</p>
+                        <pre><code> $ python ./load.py LOAD_BALANCER_IP 300 500 5 1 #will issue 5 times 300 requests, then 5 times 301, and so on, until 500, from which it will decrease </code></pre>
+ 
+                     </br>
                         <a name="scaleOutActionView" class="anchor"
                            href="#scaleOutActionView"><span class="octicon octicon-link"></span></a>
                         <h2>5. Observe elasticity actions</h2>
@@ -650,7 +653,7 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                             </figure>
                         </center>
 
-                        </br> </br> </br>
+                         </br>
                         <p> The action progress can be monitored in COMOT web in the Deployment and Management tab</p>
 
                         <center>
@@ -663,10 +666,10 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                         </center>
 
 
-                        </br> </br> </br>
+                         </br> </br>
                         <a name="metricsCompositionView" class="anchor"
                            href="#metricsCompositionView"><span class="octicon octicon-link"></span></a>
-                        <h2>6. Observe metric composition and structuring after scale out</h2>
+                        <h2>6. Visualize metric composition and structuring after scale out</h2>
 
 
                         <p> In general, elastic cloud sevices can re-configure and scale  individual units or the whole service at run-time, due to various elasticity requirements.
@@ -687,10 +690,10 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                             </figure>
                         </center>
 
-                        </br> </br> </br>
+                        </br> </br>
                         <a name="elasticitySpaceView" class="anchor"
                            href="#relasticitySpaceView"><span class="octicon octicon-link"></span></a>
-                        <h2>7. Observe service Elasticity Space</h2>
+                        <h2>7. Visualize service Elasticity Space</h2>
 
 
                         <p>In the Elasticity Monitoring tab, click on the component icon below the Event Processing Unit name, and select <i>Elasticity Space</i> from the dialog.  </p> 
@@ -703,7 +706,7 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                 <figcaption>Figure 14: Selecting Elasticity Space for Event Processing Uni</figcaption>
                             </figure>
                         </center>
-                        </br> </br> </br>
+                        </br> </br>
 
                         <p>Increase the size of the space window by clicking on the maximize button, and investigate the historical monitoring information recorded for each of the
                             selected metrics for the particular unit </p> 
@@ -716,7 +719,7 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                 <figcaption>Figure 15: Investigating Elasticity Space for Event Processing Unit</figcaption>
                             </figure>
                         </center>
-                        </br> </br> </br>
+                        </br> </br>
 
 
                 </section>
