@@ -8,7 +8,7 @@
 	<parent>
 		<artifactId>comot-parent</artifactId>
 		<groupId>at.ac.tuwien.dsg.comot</groupId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.2</version>
 	</parent>
 
 	<build>

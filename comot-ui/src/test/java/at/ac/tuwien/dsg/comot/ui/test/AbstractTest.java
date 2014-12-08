@@ -154,7 +154,7 @@ public abstract class AbstractTest {
 
 		DeploymentUnit dUnit = new DeploymentUnit();
 		dUnit.setServiceUnitID(swNodeId);
-		dUnit.setAssociatedVM(list);
+		dUnit.setAssociatedVMs(list);
 
 		List<DeploymentUnit> deployments = new ArrayList<>();
 		deployments.add(dUnit);

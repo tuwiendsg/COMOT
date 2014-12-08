@@ -5,7 +5,7 @@
 
 	<groupId>at.ac.tuwien.dsg.comot</groupId>
 	<artifactId>comot-parent</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.2</version>
 	<name>COMOT Parent</name>
 
 	<packaging>pom</packaging>
@@ -104,32 +104,27 @@
 			<dependency>
 				<groupId>at.ac.tuwien.dsg.comot</groupId>
 				<artifactId>comot-core</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
+				<version>0.2</version>
 			</dependency>
 			<dependency>
 				<groupId>at.ac.tuwien.dsg.comot</groupId>
 				<artifactId>comot-common</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
+				<version>0.2</version>
 			</dependency>
 			<dependency>
 				<groupId>at.ac.tuwien.dsg.comot</groupId>
 				<artifactId>comot-cs</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
+				<version>0.2</version>
 			</dependency>
 			<dependency>
 				<groupId>at.ac.tuwien.dsg.comot</groupId>
 				<artifactId>comot-bundles</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
+				<version>0.2</version>
 			</dependency>
 			<dependency>
 				<groupId>at.ac.tuwien.dsg.comot</groupId>
 				<artifactId>comot-tosca</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>at.ac.tuwien.dsg.comot</groupId>
-				<artifactId>comot-visualization-service</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
+				<version>0.2</version>
 			</dependency>
 
 			<!-- TU Wien DSG -->
@@ -159,7 +154,7 @@
 			<dependency>
 				<groupId>at.ac.tuwien.rSYBL.control-service</groupId>
 				<artifactId>rSYBL-cloud-application-dependency-graph</artifactId>
-				<version>0.1-SNAPSHOT</version>
+				<version>1.0-SNAPSHOT</version>
 				<exclusions>
 					<exclusion>
 						<groupId>log4j</groupId>
