@@ -4,7 +4,7 @@ import at.ac.tuwien.dsg.comot.bundles.BundleLoaderFactory;
 import at.ac.tuwien.dsg.comot.common.model.*;
 
 import static at.ac.tuwien.dsg.comot.common.model.ArtifactReference.ArtifactReference;
-import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.ScriptArtifactTemplate;
+import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifact;
 
 /**
  * @author omoser
@@ -18,7 +18,7 @@ public class CassandraNode extends SoftwareNode {
     public static CassandraNode CassandraNode(String id) {
         BundleConfig bundleConfig = BundleLoaderFactory.getDefaultBundleLoader().getBundleConfig("cassandra");
         return new CassandraNode(id)
-                .deployedBy(ScriptArtifactTemplate("id")
+                .deployedBy(SingleScriptArtifact("id")
                         .withBundleConfig(bundleConfig)
                         .consistsOf(ArtifactReference("cassandra").locatedAt(bundleConfig.getDeploymentConfig().getUri())));
     }

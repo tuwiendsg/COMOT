@@ -1,10 +1,8 @@
 package at.ac.tuwien.dsg.comot.orchestrator;
 
-import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifactTemplate;
+import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifact;
 import at.ac.tuwien.dsg.comot.common.model.Capability;
-import at.ac.tuwien.dsg.comot.common.model.CapabilityEffect;
 import static at.ac.tuwien.dsg.comot.common.model.CapabilityEffect.CapabilityEffect;
-import at.ac.tuwien.dsg.comot.common.model.CloudService;
 import static at.ac.tuwien.dsg.comot.common.model.MetricEffect.MetricEffect;
 import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackMicro;
 import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackSmall;
@@ -23,11 +21,8 @@ import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
 import static at.ac.tuwien.dsg.comot.common.model.ServiceTopology.ServiceTopology;
 import at.ac.tuwien.dsg.comot.common.model.ServiceUnit;
 import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.SingleSoftwareUnit;
-import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.UnboundedSoftwareUnit;
-import at.ac.tuwien.dsg.comot.common.model.Strategy;
 import static at.ac.tuwien.dsg.comot.common.model.Strategy.Strategy;
 import at.ac.tuwien.dsg.orchestrator.interraction.COMOTOrchestrator;
-import at.ac.tuwien.dsg.orchestrator.interraction.rsybl.rSYBLInterraction;
 
 /**
  *
@@ -98,7 +93,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
         //start with Data End, and first with Data Controller
         ServiceUnit dataControllerUnit = SingleSoftwareUnit("DataControllerUnit")
                 //software artifacts needed for unit deployment   = script to deploy Cassandra
-                .deployedBy(SingleScriptArtifactTemplate("deployDataControllerArtifact", salsaRepo + "deployCassandraSeed.sh"))
+                .deployedBy(SingleScriptArtifact("deployDataControllerArtifact", salsaRepo + "deployCassandraSeed.sh"))
                 //data controller exposed its IP 
                 .exposes(Capability.Variable("DataController_IP_information"));
 
@@ -107,7 +102,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
 
         //specify data node
         ServiceUnit dataNodeUnit = SingleSoftwareUnit("DataNodeUnit")
-                .deployedBy(SingleScriptArtifactTemplate("deployDataNodeArtifact", salsaRepo + "deployCassandraNode.sh"))
+                .deployedBy(SingleScriptArtifact("deployDataNodeArtifact", salsaRepo + "deployCassandraNode.sh"))
                 //data node MUST KNOW the IP of cassandra seed, to connect to it and join data cluster
                 .requires(Requirement.Variable("DataController_IP_Data_Node_Req").withName("requiringDataNodeIP"))
                 .provides(dataNodeUnitScaleIn, dataNodeUnitScaleOut)
@@ -121,14 +116,14 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
         ServiceUnit momUnit = SingleSoftwareUnit("MOMUnit")
                 //load balancer must provide IP
                 .exposes(Capability.Variable("MOM_IP_information"))
-                .deployedBy(SingleScriptArtifactTemplate("deployMOMArtifact", salsaRepo + "deployQueue.sh"));
+                .deployedBy(SingleScriptArtifact("deployMOMArtifact", salsaRepo + "deployQueue.sh"));
 
         ElasticityCapability eventProcessingUnitScaleIn = ElasticityCapability.ScaleIn().withPrimitiveOperations("M2MDaaS.decommissionWS", "Salsa.scaleIn");
         ElasticityCapability eventProcessingUnitScaleOut = ElasticityCapability.ScaleOut().withPrimitiveOperations("Salsa.scaleOut");
 
         //add the service units belonging to the event processing topology
         ServiceUnit eventProcessingUnit = SingleSoftwareUnit("EventProcessingUnit")
-                .deployedBy(SingleScriptArtifactTemplate("deployEventProcessingArtifact", salsaRepo + "deployEventProcessing.sh"))
+                .deployedBy(SingleScriptArtifact("deployEventProcessingArtifact", salsaRepo + "deployEventProcessing.sh"))
                 //event processing must register in Load Balancer, so it needs the IP
                 .requires(Requirement.Variable("EventProcessingUnit_LoadBalancer_IP_Req"))
                 //event processing also needs to querry the Data Controller to access data
@@ -146,12 +141,12 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
         ServiceUnit loadbalancerUnit = SingleSoftwareUnit("LoadBalancerUnit")
                 //load balancer must provide IP
                 .exposes(Capability.Variable("LoadBalancer_IP_information"))
-                .deployedBy(SingleScriptArtifactTemplate("deployLoadBalancerArtifact", salsaRepo + "deployLoadBalancer.sh"));
+                .deployedBy(SingleScriptArtifact("deployLoadBalancerArtifact", salsaRepo + "deployLoadBalancer.sh"));
 
         ServiceUnit mqttUnit = SingleSoftwareUnit("QueueUnit")
                 //load balancer must provide IP
                 .exposes(Capability.Variable("brokerIp_Capability"))
-                .deployedBy(SingleScriptArtifactTemplate("deployMQTTBroker", salsaRepo + "run_mqtt_broker.sh"));
+                .deployedBy(SingleScriptArtifact("deployMQTTBroker", salsaRepo + "run_mqtt_broker.sh"));
 
         ElasticityCapability localProcessingUnitScaleIn = ElasticityCapability.ScaleIn().withPrimitiveOperations("Salsa.scaleIn");
         ElasticityCapability localProcessingUnitScaleOut = ElasticityCapability.ScaleOut().withPrimitiveOperations("Salsa.scaleOut");
@@ -161,7 +156,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 .requires(Requirement.Variable("brokerIp_Requirement"))
                 .requires(Requirement.Variable("loadBalancerIp_Requirement"))
                 .provides(localProcessingUnitScaleIn, localProcessingUnitScaleOut)
-                .deployedBy(SingleScriptArtifactTemplate("deployLocalProcessing", salsaRepo + "install-local-analysis-service.sh"));
+                .deployedBy(SingleScriptArtifact("deployLocalProcessing", salsaRepo + "install-local-analysis-service.sh"));
 
         //Describe a Data End service topology containing the previous 2 software service units
         ServiceTopology dataEndTopology = ServiceTopology("DataEndTopology")

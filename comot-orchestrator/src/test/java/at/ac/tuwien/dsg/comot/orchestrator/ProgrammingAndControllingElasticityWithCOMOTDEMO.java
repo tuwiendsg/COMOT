@@ -1,6 +1,6 @@
 package at.ac.tuwien.dsg.comot.orchestrator;
 
-import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifactTemplate;
+ 
 import at.ac.tuwien.dsg.comot.common.model.Capability;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;
 import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackMicro;

@@ -1,14 +1,13 @@
 package at.ac.tuwien.dsg.comot.samples;
 
 import at.ac.tuwien.dsg.comot.common.model.*;
+import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifact;
 
-import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifactTemplate;
 import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackSmall;
 import static at.ac.tuwien.dsg.comot.common.model.Constraint.*;
 import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.ConnectToRelation;
 import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.HostedOnRelation;
 import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingSystemUnit;
-import static at.ac.tuwien.dsg.comot.common.model.ServiceTopology.ServiceTopology;
 import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.SingleSoftwareUnit;
 import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.UnboundedSoftwareUnit;
 import static at.ac.tuwien.dsg.comot.common.model.Strategy.Strategy;
@@ -27,7 +26,7 @@ public class DataAsAServiceCloudApplication {
                 .withName("Cassandra head node (single instance)")
                 .exposes(Capability.Variable("CassandraHeadIP_capa").withName("Data controller IP"))
                 .deployedBy(
-                        SingleScriptArtifactTemplate(
+                        SingleScriptArtifact(
                                 "deployCassandraHead",
                                 "http://134.158.75.65/salsa/upload/files/daas/deployCassandraHead.sh")
                 )
@@ -36,12 +35,12 @@ public class DataAsAServiceCloudApplication {
         //
         // Cassandra Data Node
         //
-        
-       ElasticityCapability scaleInCapability =  ElasticityCapability.ScaleIn();
+        ElasticityCapability scaleInCapability = ElasticityCapability.ScaleIn();
         ServiceUnit cassandraDataNode = UnboundedSoftwareUnit("CassandraNode")
                 .withName("Cassandra data node (multiple instances)")
                 .deployedBy(
-                        SingleScriptArtifactTemplate(
+                        SingleScriptArtifact
+        (
                                 "deployCassandraNode",
                                 "http://134.158.75.65/salsa/upload/files/daas/deployCassandraNode.sh")
                 )

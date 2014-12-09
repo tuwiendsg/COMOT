@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot.orchestrator;
 
-import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifactTemplate;
+ 
+import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifact;
 import at.ac.tuwien.dsg.comot.common.model.Capability;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;
 import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackMicro;
@@ -43,7 +44,7 @@ public class ProgrammingAndControllingElasticityWithCOMOTSensors {
         //start with Data End, and first with Data Controller
         ServiceUnit dataControllerUnit = SingleSoftwareUnit("sensor_gas")
                 //software artifacts needed for unit deployment   = script to deploy Cassandra
-                .deployedBy(SingleScriptArtifactTemplate("deployDataControllerArtifact", "http://128.130.172.215/salsa/upload/files/DaasService/deployCassandraSeed.sh"))
+                .deployedBy(SingleScriptArtifact("deployDataControllerArtifact", "http://128.130.172.215/salsa/upload/files/DaasService/deployCassandraSeed.sh"))
                 //data controller exposed its IP 
                 .exposes(Capability.Variable("DataController_IP_information"));
 

@@ -20,7 +20,8 @@ public class ArtifactTemplate extends AbstractCloudEntity {
 
     public enum ArtifactType {
 
-        Script("sh");
+        RunOnceScript("sh"),
+        RunContinuousScript("shcont");
 
         private final String type;
 
@@ -46,19 +47,27 @@ public class ArtifactTemplate extends AbstractCloudEntity {
         return new ArtifactTemplate();
     }
 
-    public static ArtifactTemplate ScriptArtifactTemplate() {
-        return new ArtifactTemplate().ofType(ArtifactType.Script);
-    }
-    public static ArtifactTemplate ScriptArtifactTemplate(String id) {
-        return new ArtifactTemplate(id).ofType(ArtifactType.Script);
-    }
+//    public static ArtifactTemplate ScriptArtifactTemplate() {
+//        return new ArtifactTemplate().ofType(ArtifactType.RunOnceScript);
+//    }
+//    public static ArtifactTemplate ScriptArtifactTemplate(String id) {
+//        return new ArtifactTemplate(id).ofType(ArtifactType.RunOnceScript);
+//    }
 
-    public static ArtifactTemplate SingleScriptArtifactTemplate(String scriptUri) {
-        return new ArtifactTemplate().ofType(ArtifactType.Script)
+    public static ArtifactTemplate SingleScriptArtifact(String scriptUri) {
+        return new ArtifactTemplate().ofType(ArtifactType.RunOnceScript)
                 .consistsOf(ArtifactReference.ArtifactReference(scriptUri).locatedAt(scriptUri));
     }
-    public static ArtifactTemplate SingleScriptArtifactTemplate(String id, String scriptUri) {
-        return new ArtifactTemplate(id).ofType(ArtifactType.Script)
+    public static ArtifactTemplate SingleScriptArtifact(String id, String scriptUri) {
+        return new ArtifactTemplate(id).ofType(ArtifactType.RunOnceScript)
+                .consistsOf(ArtifactReference.ArtifactReference(scriptUri).locatedAt(scriptUri));
+    }
+    public static ArtifactTemplate ServiceArtifact(String scriptUri) {
+        return new ArtifactTemplate().ofType(ArtifactType.RunContinuousScript)
+                .consistsOf(ArtifactReference.ArtifactReference(scriptUri).locatedAt(scriptUri));
+    }
+    public static ArtifactTemplate ServiceArtifact(String id, String scriptUri) {
+        return new ArtifactTemplate(id).ofType(ArtifactType.RunContinuousScript)
                 .consistsOf(ArtifactReference.ArtifactReference(scriptUri).locatedAt(scriptUri));
     }
 
