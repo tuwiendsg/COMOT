@@ -84,7 +84,7 @@
         <header>
             <div class="inner">
                 <h1>COMOT</h1>
-                <h2>Demo: Programming Elasticity in the Cloud</h2>
+                <h2 style="width:900px">Tutorial CloudCom 2014:Programming Elasticity in the Cloud</h2>
                 <a href="https://github.com/tuwiendsg/COMOT" class="button"><small>View
                         project on </small> GitHub</a>
             </div>
@@ -95,13 +95,12 @@
                     <ul>
                         <li><a href="./index.html" id="homenav">Home</a></li>
                         <li><div id="currentNav">
-                                <a href="./elasticityDemo.html" id="elasticityDemo">COMOT
-                                    Demo</a>
+                                <a href="./elasticityTutorial.html" id="elasticityTutorial">Tutorial CloudCom 2014</a>
                             </div>
                             <ul>
                                 <li><a href="#overview">Overview</a></li>
                                 <li><a href="#requirements">Requirements</a></li>
-                                <li><a href="#demoApp">Pilot Elastic Service</a></li>
+                                <li><a href="#pilotService">Elastic Cloud Service</a></li>
                                 <li><a href="#installing">Deploying COMOT</a></li>
                                 <li><a href="#runtimeElasticity">Tutorial</a>
                                     <ul>
@@ -138,8 +137,7 @@
                 <li><div id="currentNav">
                         <a href="./index.html" id="homenav">Home</a>
                     </div></li>
-                <li><a href="./elasticityDemo.html" id="elasticityDemo">COMOT
-                        Demo: Programming Elasticity</a>
+                <li><a href="./elasticityTutorial.html" id="elasticityTutorial">Tutorial CloudCom 2014</a>
                     <ul>
                         <li><a href="#installing">Deploying COMOT</a>
                     </ul></li>
@@ -161,10 +159,23 @@
                     </h1>
 
                     <div>
-                        <p>In this page we describe a demo in which COMOT is deployed on a personal laptop / single virtual machine, and its features highlighted on an elastic service running
-                            on a small Docker-based "private cloud".</p>
+                        <p>This page provides supporting material for the hands-on session of the CloudCom 2014 Tutorial: Programming Elasticity in the Cloud.</p>
+                        <p>
+	Elasticity is seen as one of the main characteristics of Cloud Computing today. But elasticity is
+often viewed as scaling in/out computational resources, which basically means resource elasticity.
+In fact, elasticity is a multi-dimensional perspective in which elasticity can be based on resource,
+quality and cost/benefit dimensions, and each of them can be further divided into several subdimensions.
+</p>
+<p>
+In this tutorial we will present the concept of multi-dimensional elasticity, the main
+principles of elasticity and how these principles play a role in the development and integration of
+software services, people, and things into native cloud applications/systems, which can be modeled,
+programmed, and deployed on a large scale in multiples of cloud infrastructures.
+</p>  
 
-                        <p>In the demo we will cover the following steps:</p>
+<p> The hands-on session of the tutorial focuses on programming elasticity by using our COMOT toolset. To reduce complexity, COMOT will be deployed tutorial on a personal laptop / single virtual machine, and its features highlighted on an elastic service running on a small Docker-based "private cloud". We further provide an example COMOT elastic cloud service description tailored for an environment with reduced resources.</p>
+
+                        <p>The tutorial will cover the following steps:</p>
 
                         <ul>
                             <li>Deploy and run COMOT</li>
@@ -216,26 +227,26 @@
 
                     <h3>Software requirements</h3>
                     <p>
-                        The demo was tested and tailored for <a
+                        The tutorial was tested and tailored for <a
                             href="http://www.ubuntu.com/download/server/thank-you/?version=14.04.1&architecture=amd64">Ubuntu
                             14.04</a> and <a
                             href="http://www.ubuntu.com/download/server/thank-you?country=AT&version=14.10&architecture=amd64">Ubuntu
                             14.10</a>
                     </p>
                     <h1>
-                        <a name="demoApp" class="anchor" href="#demoApp"><span
-                                class="octicon octicon-link"></span></a>Pilot Elastic Service
+                        <a name="pilotService" class="anchor" href="#pilotService"><span
+                                class="octicon octicon-link"></span></a>Elastic Cloud Service
                     </h1>
                     <p>
-                        The pilot service for this demo contains two units: (i) a fixed
+                        The pilot service for this tutorial contains two units: (i) a fixed
                         load balancer unit, and (ii) an elastic event processing unit, as
                         depicted in the figure below. After <a href="#installing">deploying
                             COMOT</a>, this pilot service will be described, deployed, monitored,
                         and its elasticity is analyzed and controlled (as we see in the <a
-                            href="#runtimeElasticity">Tutorial</a> section).
+                            href="#runtimeElasticity">Tutorial</a> section).  
                     <center>
                         <figure style="border: 1px solid #d2d2d2">
-                            <img src="images/demo/app.png" alt="DEMO application" width="100%" />
+                            <img src="images/demo/app.png" alt="Tutorial application" width="100%" />
                             <figcaption>Figure 1: Pilot Elastic Service</figcaption>
                         </figure>
                     </center>
@@ -259,7 +270,7 @@
                         Built and ready to use versions of COMOT are available in our <a
                             href="http://128.130.172.215/repository/">Software Repository</a>.
                         The repository also contains the software artifacts for the elastic
-                        service used in the demo.
+                        service used in the tutorial.
                     </p>
 
                     <p>We provide separate install and uninstall scripts for both
@@ -273,8 +284,8 @@
                         deployment version</p>
 
                     <p>For deploying COMOT follow the next steps:</p>
-                    <pre><code> $ mkdir COMOTDemo
- $ cd COMOTDemo
+                    <pre><code> $ mkdir Tutorial
+ $ cd Tutorial
  $ wget http://128.130.172.215/repository/files/COMOTCompactPlatform/installCOMOT.sh
  $ bash installCOMOT.sh</code></pre>
 
@@ -285,7 +296,7 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
  1) Yes
  2) No
  3) Quit
- $? 1 [please enter 1 if the demo is run on local machine]
+ $? 1 [please enter 1 if the tutorial is run on local machine]
  $? 2 [please enter 2 if the machine is a remote one, i.e., not accessible as "localhost"]
  Please enter a PUBLICLY ACCESSIBLE IP for this machine to setup COMOT Dashboard accordingly
  10.0.0.X [if 2 was selected, please enter instead of "10.0.0.X" the public IP of the machine]
@@ -320,7 +331,7 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                         <h1>
                             <a name="runtimeElasticity" class="anchor"
                                href="#runtimeElasticity"><span class="octicon octicon-link"></span></a>Tutorial:
-                            Programming Elastic Cloud Service
+                            Programming Elasticity in the Cloud
                         </h1>
 
 
@@ -406,7 +417,7 @@ Please select 1(No) if this is the local machine, 2(Yes) if this is a separate m
                                             location of the software repository holding our artifacts, in
                                             this case our own repository.</p> <pre class="prettyprint"
                                                                                style="background-color: white;">
-                                            String salsaRepo = "http://128.130.172.215/repository/files/HelloElasticity/";
+              String salsaRepo = "http://128.130.172.215/repository/files/HelloElasticity/";
                                         </pre></li>
 
                                     <li><p>As deploying an elastic service can imply
