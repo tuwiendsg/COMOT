@@ -1,25 +1,31 @@
 package at.ac.tuwien.dsg.comot.graph.model.node;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import at.ac.tuwien.dsg.comot.graph.model.AbstractEntity;
+import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.NodeEntity;
+
 import at.ac.tuwien.dsg.comot.graph.model.type.ArtifactType;
 
-public class ArtifactTemplate extends AbstractEntity {
+@NodeEntity
+public class ArtifactTemplate implements Serializable {
 
 	private static final long serialVersionUID = 4681582673568700847L;
 
+	@GraphId
+	protected Long nodeId;
+
+	protected String id;
 	protected ArtifactType type;
 	protected Set<ArtifactReference> artifactReferences = new HashSet<>();
-
-	// protected BundleConfig bundleConfig;
 
 	public ArtifactTemplate() {
 	}
 
 	public ArtifactTemplate(String id, ArtifactType type) {
-		super(id);
+		this.id = id;
 		this.type = type;
 	}
 
@@ -29,6 +35,8 @@ public class ArtifactTemplate extends AbstractEntity {
 		}
 		artifactReferences.add(reference);
 	}
+
+	// GENERATED METHODS
 
 	public Set<ArtifactReference> getArtifactReferences() {
 		return artifactReferences;
@@ -44,6 +52,22 @@ public class ArtifactTemplate extends AbstractEntity {
 
 	public void setType(ArtifactType type) {
 		this.type = type;
+	}
+
+	public Long getNodeId() {
+		return nodeId;
+	}
+
+	public void setNodeId(Long nodeId) {
+		this.nodeId = nodeId;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 }

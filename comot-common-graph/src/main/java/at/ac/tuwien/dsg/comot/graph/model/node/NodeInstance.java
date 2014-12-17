@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.graph.model.unit;
+package at.ac.tuwien.dsg.comot.graph.model.node;
 
 import java.io.Serializable;
 
@@ -16,18 +16,18 @@ public class NodeInstance implements Serializable {
 	protected Long nodeId;
 
 	protected int instanceId;
-	protected int hostedId;
 	protected State state;
+	protected NodeInstance hostInstance;
 
 	public NodeInstance() {
 
 	}
 
-	public NodeInstance(int instanceId, int hostedId, State state) {
+	public NodeInstance(int instanceId, State state, NodeInstance hostInstance) {
 		super();
 		this.instanceId = instanceId;
-		this.hostedId = hostedId;
 		this.state = state;
+		this.hostInstance = hostInstance;
 	}
 
 	public int getInstanceId() {
@@ -36,14 +36,6 @@ public class NodeInstance implements Serializable {
 
 	public void setInstanceId(int instanceId) {
 		this.instanceId = instanceId;
-	}
-
-	public int getHostedId() {
-		return hostedId;
-	}
-
-	public void setHostedId(int hostedId) {
-		this.hostedId = hostedId;
 	}
 
 	public State getState() {
@@ -60,6 +52,14 @@ public class NodeInstance implements Serializable {
 
 	public void setNodeId(Long nodeId) {
 		this.nodeId = nodeId;
+	}
+
+	public NodeInstance getHostInstance() {
+		return hostInstance;
+	}
+
+	public void setHostInstance(NodeInstance hostInstance) {
+		this.hostInstance = hostInstance;
 	}
 
 }

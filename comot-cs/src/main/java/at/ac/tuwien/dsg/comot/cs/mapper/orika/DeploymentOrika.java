@@ -43,7 +43,7 @@ public class DeploymentOrika {
 		mapperFactory.classMap(StackNode.class, DeploymentUnit.class)
 				// .field("deploymentInfo.defaultImage", "defaultImage")
 				// .field("deploymentInfo.defaultFlavor", "defaultFlavor")
-				.field("instances", "associatedVM")
+				.field("instances", "associatedVMs")
 				.register();
 
 		mapperFactory.classMap(NodeInstanceOs.class, AssociatedVM.class)

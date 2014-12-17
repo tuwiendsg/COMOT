@@ -1,38 +1,49 @@
 package at.ac.tuwien.dsg.comot.graph.model.structure;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import at.ac.tuwien.dsg.comot.graph.model.AbstractEntity;
+import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.NodeEntity;
+
+import at.ac.tuwien.dsg.comot.graph.model.XSelectable;
 import at.ac.tuwien.dsg.comot.graph.model.SyblDirective;
 import at.ac.tuwien.dsg.comot.graph.model.type.State;
 
-
-public abstract class ServicePart extends AbstractEntity {
+@NodeEntity
+public abstract class ServicePart implements Serializable, XSelectable {
 
 	private static final long serialVersionUID = -889982124609754463L;
 
-	protected Set<SyblDirective> directives = new HashSet<>();
+	@GraphId
+	protected Long nodeId;
+
+	protected String id;
+	protected String name;
 	protected State state;
+
+	protected Set<SyblDirective> directives = new HashSet<>();
 
 	public ServicePart() {
 	}
 
 	public ServicePart(String id) {
-		super(id);
+		this.id = id;
 	}
 
 	public ServicePart(String id, String name) {
-		super(id, name);
+		this.id = id;
+		this.name = name;
 	}
 
 	public ServicePart(String id, Set<SyblDirective> directives) {
-		super(id);
+		this.id = id;
 		this.directives = directives;
 	}
 
 	public ServicePart(String id, String name, Set<SyblDirective> directives) {
-		super(id, name);
+		this(id, name);
 		this.directives = directives;
 	}
 
@@ -59,6 +70,30 @@ public abstract class ServicePart extends AbstractEntity {
 
 	public void setState(State state) {
 		this.state = state;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Long getNodeId() {
+		return nodeId;
+	}
+
+	public void setNodeId(Long nodeId) {
+		this.nodeId = nodeId;
 	}
 
 }

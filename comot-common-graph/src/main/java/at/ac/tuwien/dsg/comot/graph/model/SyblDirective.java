@@ -1,10 +1,19 @@
 package at.ac.tuwien.dsg.comot.graph.model;
 
+import java.io.Serializable;
+
+import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.NodeEntity;
+
 import at.ac.tuwien.dsg.comot.graph.model.type.DirectiveType;
 
-public class SyblDirective extends AbstractEntity {
+@NodeEntity
+public class SyblDirective implements Serializable {
 
 	private static final long serialVersionUID = 1938899881721566640L;
+
+	@GraphId
+	protected Long nodeId;
 
 	protected String directive;
 	protected DirectiveType type;
@@ -12,12 +21,7 @@ public class SyblDirective extends AbstractEntity {
 	public SyblDirective() {
 	}
 
-	public SyblDirective(String id) {
-		super(id);
-	}
-
 	public SyblDirective(String id, DirectiveType type, String directive) {
-		super(id);
 		this.directive = directive;
 		this.type = type;
 	}

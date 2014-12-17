@@ -19,7 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import at.ac.tuwien.dsg.comot.graph.AppContext;
 import at.ac.tuwien.dsg.comot.graph.repo.CloudServiceRepo;
-import at.ac.tuwien.dsg.comot.graph.repo.RequirementRepo;
+import at.ac.tuwien.dsg.comot.graph.repo.ContractItemRepo;
 
 @SuppressWarnings("deprecation")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -36,9 +36,9 @@ public abstract class AbstractTest {
 	protected Environment env;
 
 	@Autowired
-	protected RequirementRepo reqRepo;
-	@Autowired
 	protected CloudServiceRepo serviceRepo;
+	@Autowired
+	protected ContractItemRepo contractItemRepo;
 
 	@Autowired
 	protected GraphDatabaseService db;

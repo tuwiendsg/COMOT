@@ -2,7 +2,7 @@
 <tosca:Definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xmlns:tosca="http://docs.oasis-open.org/tosca/ns/2011/12" xmlns:salsa="http://example.com"
 	xsi:schemaLocation="http://docs.oasis-open.org/tosca/ns/2011/12 TOSCA-v1.0.xsd" targetNamespace="http://tempuri.org"
-	id="example_executableOnVM_test2" name="example_executableOnVM">
+	id="example_executableOnVM" name="example_executableOnVM">
 
 	<tosca:ServiceTemplate id="example_topology">
 		

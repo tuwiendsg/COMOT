@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.graph.model.unit;
+package at.ac.tuwien.dsg.comot.graph.model.node;
 
 import at.ac.tuwien.dsg.comot.graph.model.type.State;
 
@@ -16,9 +16,9 @@ public class NodeInstanceOs extends NodeInstance {
 
 	}
 
-	public NodeInstanceOs(int instanceId, int hostedId, State state, String provider, String baseImage,
+	public NodeInstanceOs(int instanceId, NodeInstance hostInstance, State state, String provider, String baseImage,
 			String instanceType, String uuid, String ip) {
-		super(instanceId, hostedId, state);
+		super(instanceId, state, hostInstance);
 		this.provider = provider;
 		this.baseImage = baseImage;
 		this.instanceType = instanceType;

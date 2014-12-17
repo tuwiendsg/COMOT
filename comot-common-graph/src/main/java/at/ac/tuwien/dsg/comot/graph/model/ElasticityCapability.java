@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.graph.model.unit;
+package at.ac.tuwien.dsg.comot.graph.model;
 
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;

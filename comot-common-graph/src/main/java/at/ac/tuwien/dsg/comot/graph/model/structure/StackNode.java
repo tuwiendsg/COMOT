@@ -1,61 +1,65 @@
 package at.ac.tuwien.dsg.comot.graph.model.structure;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import at.ac.tuwien.dsg.comot.graph.model.AbstractEntity;
+import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.NodeEntity;
+
 import at.ac.tuwien.dsg.comot.graph.model.node.ArtifactTemplate;
-import at.ac.tuwien.dsg.comot.graph.model.node.Capability;
+import at.ac.tuwien.dsg.comot.graph.model.node.NodeInstance;
 import at.ac.tuwien.dsg.comot.graph.model.node.Properties;
-import at.ac.tuwien.dsg.comot.graph.model.node.Requirement;
 import at.ac.tuwien.dsg.comot.graph.model.type.NodeType;
 import at.ac.tuwien.dsg.comot.graph.model.type.State;
-import at.ac.tuwien.dsg.comot.graph.model.unit.NodeInstance;
 
-public class StackNode extends AbstractEntity {
+@NodeEntity
+public class StackNode implements Serializable {
 
 	private static final long serialVersionUID = 4825578027474573978L;
 
+	@GraphId
+	protected Long nodeId;
+	
+	protected String id;
+	protected String name;
 	protected Integer minInstances = 1;
 	protected Integer maxInstances = 1;
-
 	protected NodeType type;
+	protected State state;
 
-	protected Set<Requirement> requirements = new HashSet<>();
-	protected Set<Capability> capabilities = new HashSet<>();
+	protected StackNode hostNode;
+	protected Set<StackNode> connectTo = new HashSet<>();
+
 	protected Set<ArtifactTemplate> deploymentArtifacts = new HashSet<>();
 	protected Set<Properties> properties = new HashSet<>();
 	protected Set<NodeInstance> instances = new HashSet<>();
-	protected State state;
-	
-	protected StackNode hostsOn;
 
 	public StackNode() {
 
 	}
 
 	public StackNode(String id, NodeType type) {
-		super(id);
+		this.id = id;
 		this.type = type;
 
 	}
 
 	public StackNode(String id, String name, Integer minInstances, Integer maxInstances, NodeType type) {
-		super(id, name);
+		this.id = id;
+		this.name = name;
 		this.minInstances = minInstances;
 		this.maxInstances = maxInstances;
 		this.type = type;
 	}
 
 	public StackNode(String id, String name, Integer minInstances, Integer maxInstances, NodeType type,
-			Set<Requirement> requirements, Set<Capability> capabilities,
 			Set<Properties> properties, Set<ArtifactTemplate> deploymentArtifacts) {
-		super(id, name);
+		this.id = id;
+		this.name = name;
 		this.minInstances = minInstances;
 		this.maxInstances = maxInstances;
 		this.type = type;
-		this.requirements = requirements;
-		this.capabilities = capabilities;
 		this.properties = properties;
 		this.deploymentArtifacts = deploymentArtifacts;
 	}
@@ -67,18 +71,11 @@ public class StackNode extends AbstractEntity {
 		deploymentArtifacts.add(template);
 	}
 
-	public void addRequirement(Requirement requirement) {
-		if (requirements == null) {
-			requirements = new HashSet<>();
+	public void addConnectTo(StackNode rel) {
+		if (connectTo == null) {
+			connectTo = new HashSet<>();
 		}
-		requirements.add(requirement);
-	}
-
-	public void addCapability(Capability capability) {
-		if (capabilities == null) {
-			capabilities = new HashSet<>();
-		}
-		capabilities.add(capability);
+		connectTo.add(rel);
 	}
 
 	public void addNodeInstance(NodeInstance instance) {
@@ -138,22 +135,6 @@ public class StackNode extends AbstractEntity {
 		this.deploymentArtifacts = deploymentArtifacts;
 	}
 
-	public Set<Requirement> getRequirements() {
-		return requirements;
-	}
-
-	public void setRequirements(Set<Requirement> requirements) {
-		this.requirements = requirements;
-	}
-
-	public Set<Capability> getCapabilities() {
-		return capabilities;
-	}
-
-	public void setCapabilities(Set<Capability> capabilities) {
-		this.capabilities = capabilities;
-	}
-
 	public Set<Properties> getProperties() {
 		return properties;
 	}
@@ -178,14 +159,45 @@ public class StackNode extends AbstractEntity {
 		this.state = state;
 	}
 
-	public StackNode getHostsOn() {
-		return hostsOn;
+	public String getId() {
+		return id;
 	}
 
-	public void setHostsOn(StackNode hostsOn) {
-		this.hostsOn = hostsOn;
+	public void setId(String id) {
+		this.id = id;
 	}
-	
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public StackNode getHostNode() {
+		return hostNode;
+	}
+
+	public void setHostNode(StackNode hostNode) {
+		this.hostNode = hostNode;
+	}
+
+	public Set<StackNode> getConnectTo() {
+		return connectTo;
+	}
+
+	public void setConnectTo(Set<StackNode> connectTo) {
+		this.connectTo = connectTo;
+	}
+
+	public Long getNodeId() {
+		return nodeId;
+	}
+
+	public void setNodeId(Long nodeId) {
+		this.nodeId = nodeId;
+	}
 	
 	
 
