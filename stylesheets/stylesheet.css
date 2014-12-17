@@ -51,7 +51,7 @@ body {
     font-size: 15px;
     line-height: 1.5; 
     background: #fafafa url(../images/body-bg.jpg) 0 0 repeat;
-    font-family: 'Helvetica Neue', Helvetica, Arial, serif;
+    font-family:  Helvetica, Arial, serif;
     font-weight: 400;
     color: #666;
 }
@@ -66,14 +66,14 @@ a:hover {
 header {
     padding-top: 40px;
     padding-bottom: 40px;
-    font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif; 
+    font-family:   Helvetica, Arial, serif; 
     background: #2e7bcf url(../images/header-bg.png) 0 0 repeat-x;
     border-bottom: solid 1px #275da1;
 }
 
 header h1 {
     letter-spacing: -1px;
-    font-size: 72px;
+    font-size: 60px;
     color: #fff;
     line-height: 1;
     margin-bottom: 0.2em;
@@ -284,10 +284,11 @@ aside#sidebar p.repo-owner a {
  
 #nav li a:link, #nav li a:visited {
     background: url(../images/nav1.png) no-repeat;
+    background-position:  bottom;
     background-size: 100% auto;
     font-size: 15px;
     display: block;
-    padding: 7% 0px 7% 20%;
+    padding: 7% 0px 7% 15%;
     color: #43433e;
     text-decoration: none;
 }
@@ -295,14 +296,16 @@ aside#sidebar p.repo-owner a {
 #nav li a:hover, #nav li a:focus {
     background: url(../images/nav2.png) no-repeat;
     background-size: 100% auto;
+        background-position:  bottom;
     color: #000;
-    padding: 7% 7% 7% 20%;
+    padding:7% 0px 7% 15%;
     margin-top:-10px;
 }
 
 #subnav li a:link, #subnav li a:visited {
     background: url(../images/subMenu1.png) no-repeat;
     background-size: 100% auto;
+    background-position:  bottom;
     font-size: 15px;
     display: block;
     padding: 7% 0px 7% 15%;
@@ -313,14 +316,16 @@ aside#sidebar p.repo-owner a {
 #subnav li a:hover, #subnav li a:focus {
     background: url(../images/subMenu2.png) no-repeat;
     background-size: 100% auto;
+    background-position:  bottom;
     color: #000;
-    padding: 7% 7% 7% 20%;
+    padding: 7% 0px 7% 15%;
     margin-top:-10px;
 }
 
 #currentNav  {
     background: url(../images/nav3.png) no-repeat;
     background-size: 100% auto;
+    background-position: 5px 10px;
     font-size: 15px;
     display: block;
     color: #43433e;
@@ -345,7 +350,7 @@ a.button {
     color: #fff;
     padding-left: 68px;
     padding-top: 22px;
-    font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif; 
+    font-family:  'Helvetica Neue', Helvetica, Arial, serif; 
 }
 
 
@@ -434,8 +439,8 @@ form {
 /* GENERAL ELEMENT TYPE STYLES */
 
 #main-content h1 {
-    font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif; 
-    font-size: 2.8em;
+    font-family:  'Helvetica Neue', Helvetica, Arial, serif; 
+    font-size: 32px;
     letter-spacing: -1px;
     color: #474747;
 } 
@@ -448,7 +453,7 @@ form {
 }
 
 #main-content h2 {
-    font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif; 
+    font-family:  'Helvetica Neue', Helvetica, Arial, serif; 
     font-size: 22px;
     font-weight: bold;
     margin-bottom: 8px;
@@ -462,7 +467,7 @@ form {
 }
 
 #main-content h3 {
-    font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif; 
+    font-family:  'Helvetica Neue', Helvetica, Arial, serif; 
     font-size: 18px;
     font-weight: bold;
     margin-top: 24px;
@@ -478,7 +483,7 @@ form {
 }
 
 #main-content h4 {
-    font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif; 
+    font-family:  'Helvetica Neue', Helvetica, Arial, serif; 
     font-size: 15px;
     font-weight: bold;
     color: #474747;
@@ -492,7 +497,7 @@ h4:before {
 }
 
 #main-content h5 {
-    font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif; 
+    font-family:  'Helvetica Neue', Helvetica, Arial, serif; 
     font-size: 14px;
     color: #474747;
 } 
@@ -504,7 +509,7 @@ h5:before {
 }
 
 #main-content h6 {
-    font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif; 
+    font-family:  'Helvetica Neue', Helvetica, Arial, serif; 
     font-size: .8em;
     color: #474747;
 } 
