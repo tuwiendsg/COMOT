@@ -1,0 +1,32 @@
+To run the service as standalone application, just type:
+sudo java -jar target/comot-elise.jar --server.port=8888
+
+POST http://localhost:8888/serviceunit -d {"name":"SU1","type":"type1"}
+
+Errors when developing and dealing with the service:
+
+ERROR 13905 --- [nio-8888-exec-1] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is org.springframework.dao.DataRetrievalFailureException: RELATIONSHIP[8] has no property with propertyKey="__type__".; nested exception is org.neo4j.graphdb.NotFoundException: RELATIONSHIP[8] has no property with propertyKey="__type__".]
+==> Nodes and links must be explicitly created. If only node is create, neo4j will create a default Link without __type__. 
+==> Solution: (1) do not put the RelatedTo or RelatedToVia and let neoj4 persists automatically.
+			  (2) manually create node/link. If creating link, add appropriate source and target.
+			  
+			  
+
+			  
+The step of create data is:
+Method 1: using relationship to store the value
+1. Create node 1: fix node, e.g. resource type X
+2. Create node 2: dynamic node, e.g. VM type Y
+3. Create link from node 2 to node 1: e.g. VM type Y [has ABC] resource X
+
+Method 2: automatic relationship, just for storing data
+1. Create node 1
+2. Other nodes which are properties of node 1 are create automatically
+
+Using node or using link:
+- Node: when the data is embedded in node and node are 1-1 association
+- Link: when a property is reused multiple times and need to be consistent, 1-N association. Link are used for storing value and node for description. 
+
+
+
+ERROR: Could not write JSON: Detected multiple association links with same relation type! Disambiguate association class at.ac.tuwien.dsg.ElasticityInformationService.concepts.Entity target rel: true idx: false using @RestResource
