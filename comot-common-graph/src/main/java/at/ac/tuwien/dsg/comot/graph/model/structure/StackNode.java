@@ -6,7 +6,9 @@ import java.util.Set;
 
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
+import org.springframework.data.neo4j.annotation.RelatedToVia;
 
+import at.ac.tuwien.dsg.comot.graph.model.ConnectToRelationship;
 import at.ac.tuwien.dsg.comot.graph.model.node.ArtifactTemplate;
 import at.ac.tuwien.dsg.comot.graph.model.node.NodeInstance;
 import at.ac.tuwien.dsg.comot.graph.model.node.Properties;
@@ -20,7 +22,7 @@ public class StackNode implements Serializable {
 
 	@GraphId
 	protected Long nodeId;
-	
+
 	protected String id;
 	protected String name;
 	protected Integer minInstances = 1;
@@ -29,7 +31,8 @@ public class StackNode implements Serializable {
 	protected State state;
 
 	protected StackNode hostNode;
-	protected Set<StackNode> connectTo = new HashSet<>();
+	@RelatedToVia(type = "CONNECT_TO")
+	protected Set<ConnectToRelationship> connectTo = new HashSet<>();
 
 	protected Set<ArtifactTemplate> deploymentArtifacts = new HashSet<>();
 	protected Set<Properties> properties = new HashSet<>();
@@ -71,7 +74,7 @@ public class StackNode implements Serializable {
 		deploymentArtifacts.add(template);
 	}
 
-	public void addConnectTo(StackNode rel) {
+	public void addConnectTo(ConnectToRelationship rel) {
 		if (connectTo == null) {
 			connectTo = new HashSet<>();
 		}
@@ -183,11 +186,11 @@ public class StackNode implements Serializable {
 		this.hostNode = hostNode;
 	}
 
-	public Set<StackNode> getConnectTo() {
+	public Set<ConnectToRelationship> getConnectTo() {
 		return connectTo;
 	}
 
-	public void setConnectTo(Set<StackNode> connectTo) {
+	public void setConnectTo(Set<ConnectToRelationship> connectTo) {
 		this.connectTo = connectTo;
 	}
 
@@ -198,7 +201,5 @@ public class StackNode implements Serializable {
 	public void setNodeId(Long nodeId) {
 		this.nodeId = nodeId;
 	}
-	
-	
 
 }

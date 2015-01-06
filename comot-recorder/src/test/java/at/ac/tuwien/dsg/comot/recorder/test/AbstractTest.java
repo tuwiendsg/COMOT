@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.graph.test;
+package at.ac.tuwien.dsg.comot.recorder.test;
 
 import javax.annotation.Resource;
 
@@ -18,14 +18,16 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import at.ac.tuwien.dsg.comot.graph.AppContextGraph;
-import at.ac.tuwien.dsg.comot.graph.repo.CloudServiceRepo;
-import at.ac.tuwien.dsg.comot.graph.repo.ContractItemRepo;
+import at.ac.tuwien.dsg.comot.recorder.AppContextRecorder;
+import at.ac.tuwien.dsg.comot.recorder.repo.ChangeRepo;
+import at.ac.tuwien.dsg.comot.recorder.repo.CloudServiceRepo;
+import at.ac.tuwien.dsg.comot.recorder.repo.RevisionRepo;
+import at.ac.tuwien.dsg.comot.recorder.revisions.RevisionApi;
 
 @SuppressWarnings("deprecation")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = AppContextGraph.class)
-@ActiveProfiles({ AppContextGraph.SPRING_PROFILE_TEST })
+@ContextConfiguration(classes = AppContextRecorder.class)
+@ActiveProfiles({ AppContextRecorder.SPRING_PROFILE_TEST })
 // @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 // @DatabaseSetup("classpath:iata_codes/airports_functional.xml")
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
@@ -39,7 +41,11 @@ public abstract class AbstractTest {
 	@Autowired
 	protected CloudServiceRepo serviceRepo;
 	@Autowired
-	protected ContractItemRepo contractItemRepo;
+	protected ChangeRepo changeRepo;
+	@Autowired
+	protected RevisionRepo revisionRepo;
+	@Autowired
+	protected RevisionApi revisionApi;
 
 	@Autowired
 	protected GraphDatabaseService db;

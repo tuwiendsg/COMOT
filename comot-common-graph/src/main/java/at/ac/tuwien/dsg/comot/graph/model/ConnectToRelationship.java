@@ -16,7 +16,7 @@ public class ConnectToRelationship implements Serializable {
 
 	@GraphId
 	protected Long graphId;
-	
+
 	protected String variableId;
 	protected String variableValue;
 
@@ -76,6 +76,5 @@ public class ConnectToRelationship implements Serializable {
 	public void setGraphId(Long graphId) {
 		this.graphId = graphId;
 	}
-	
 
 }

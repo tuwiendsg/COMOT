@@ -7,8 +7,8 @@ import java.util.Set;
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
-import at.ac.tuwien.dsg.comot.graph.model.XSelectable;
 import at.ac.tuwien.dsg.comot.graph.model.SyblDirective;
+import at.ac.tuwien.dsg.comot.graph.model.XSelectable;
 import at.ac.tuwien.dsg.comot.graph.model.type.State;
 
 @NodeEntity

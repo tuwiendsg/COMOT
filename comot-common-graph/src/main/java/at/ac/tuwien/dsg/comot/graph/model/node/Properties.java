@@ -34,7 +34,7 @@ public class Properties implements Serializable {
 	public Properties(NodePropertiesType propertiesType, Map<String, String> properties) {
 		super();
 		this.propertiesType = propertiesType;
-		setProperties(properties);
+		this.properties = convert(properties);
 	}
 
 	public void addProperty(String key, String value) {
@@ -64,11 +64,11 @@ public class Properties implements Serializable {
 		return properties;
 	}
 
-	public Map<String, String> getProperties() {
+	public Map<String, String> getPropertiesMap() {
 		return convert(properties);
 	}
 
-	public void setProperties(Map<String, String> properties) {
+	public void setPropertiesMap(Map<String, String> properties) {
 		this.properties = convert(properties);
 	}
 
@@ -89,5 +89,15 @@ public class Properties implements Serializable {
 	public void setNodeId(Long nodeId) {
 		this.nodeId = nodeId;
 	}
+
+	public DynamicProperties getProperties() {
+		return properties;
+	}
+
+	public void setProperties(DynamicProperties properties) {
+		this.properties = properties;
+	}
+	
+	
 
 }

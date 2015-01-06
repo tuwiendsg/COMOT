@@ -6,9 +6,10 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
+import at.ac.tuwien.dsg.comot.graph.model.ConnectToRelationship;
 import at.ac.tuwien.dsg.comot.graph.model.ContractItem;
-import at.ac.tuwien.dsg.comot.graph.model.XSelectable;
 import at.ac.tuwien.dsg.comot.graph.model.SyblDirective;
+import at.ac.tuwien.dsg.comot.graph.model.XSelectable;
 import at.ac.tuwien.dsg.comot.graph.model.node.ArtifactReference;
 import at.ac.tuwien.dsg.comot.graph.model.node.ArtifactTemplate;
 import at.ac.tuwien.dsg.comot.graph.model.node.NodeInstance;
@@ -27,15 +28,18 @@ import at.ac.tuwien.dsg.comot.graph.model.type.State;
 public class ConvertingToGraph extends AbstractTest {
 
 	protected CloudService service;
-	protected String swNodeId = "nodeId";
-	protected String swNodeId2 = "nodeId2";
-	protected String serviceId = "serviceId";
+	protected static String swNodeId = "nodeId";
+	protected static String swNodeId2 = "nodeId2";
+	protected static String serviceId = "serviceId";
 
 	@Before
 	public void startup() {
+		service = createService();
+	}
+
+	public static CloudService createService() {
 
 		// NODE OS
-
 		Properties properties = new Properties(NodePropertiesType.OS);
 		properties.addProperty("instanceType", "000000512");
 		properties.addProperty("provider", "dsg@openstack");
@@ -43,6 +47,7 @@ public class ConvertingToGraph extends AbstractTest {
 		properties.addProperty("packages", "java-jdk, something-something");
 
 		StackNode osNode = new StackNode("osId", "Test os", 1, 2, NodeType.OS);
+		osNode.addProperties(properties);
 
 		// NODE SW 1
 
@@ -63,16 +68,19 @@ public class ConvertingToGraph extends AbstractTest {
 
 		StackNode swNode = new StackNode(swNodeId, "Test node unit", 2, 5, NodeType.SOFTWARE, null, artifacts);
 		swNode.setHostNode(osNode);
-		
+
 		ServiceUnit unit = new ServiceUnit(swNode, directives);
 
 		// NODE SW 2
 		StackNode swNode2 = new StackNode(swNodeId2, "Test node unit 2",
 				2, 5, NodeType.SOFTWARE, null, null);
-		swNode2.addConnectTo(swNode);
 		swNode2.setHostNode(osNode);
-		
+
 		ServiceUnit unit2 = new ServiceUnit(swNode2);
+
+		// CONNECT TO
+		ConnectToRelationship rel = new ConnectToRelationship("connectVariableName", swNode2, swNode);
+		swNode2.addConnectTo(rel);
 
 		// TOPOLOGY
 
@@ -85,7 +93,7 @@ public class ConvertingToGraph extends AbstractTest {
 		topology.addSyblDirective(new SyblDirective("con4", DirectiveType.CONSTRAINT,
 				"Co4: CONSTRAINT total_cost < 800"));
 
-		service = new CloudService(serviceId);
+		CloudService service = new CloudService(serviceId);
 		service.addServiceTopology(topology);
 
 		// INSTANCES
@@ -98,6 +106,8 @@ public class ConvertingToGraph extends AbstractTest {
 		swNode.addNodeInstance(new NodeInstance(0, State.DEPLOYED, instanceOs));
 		swNode2.addNodeInstance(new NodeInstance(0, State.DEPLOYED, instanceOs));
 
+		return service;
+
 	}
 
 	// start and check at http://127.0.0.1:7474/
@@ -105,11 +115,11 @@ public class ConvertingToGraph extends AbstractTest {
 	public void testStuff() throws InterruptedException {
 
 		CloudService serviceFromDb = serviceRepo.save(service);
-		
+
 		ContractItem item = new ContractItem();
 		item.addProperty(serviceFromDb);
 		item.addProperty((XSelectable) serviceFromDb.getServiceTopologies().toArray()[0]);
-		
+
 		contractItemRepo.save(item);
 
 		while (true) {

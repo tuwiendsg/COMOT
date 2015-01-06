@@ -12,18 +12,17 @@ public class ContractItem {
 	@GraphId
 	protected Long nodeId;
 	protected Set<XSelectable> properties = new HashSet<>();
-	
-	public ContractItem(){
-		
+
+	public ContractItem() {
+
 	}
-	
+
 	public void addProperty(XSelectable object) {
 		if (properties == null) {
 			properties = new HashSet<>();
 		}
 		properties.add(object);
 	}
-
 
 	public Long getNodeId() {
 		return nodeId;

@@ -28,6 +28,7 @@
 				<module>comot-common</module>
 				<module>comot-ui</module>
 				<module>comot-common-graph</module>
+				<module>comot-recorder</module>
 			</modules>
 		</profile>
 		<profile>
@@ -41,9 +42,10 @@
 				<module>comot-common</module>
 				<module>comot-ui</module>
 				<module>comot-tosca</module>
-				<module>comot-visualization-service</module>
+			<!-- <module>comot-visualization-service</module> -->
 				<module>comot-fluent</module>
 				<module>comot-common-graph</module>
+				<module>comot-recorder</module>
 			</modules>
 		</profile>
 	</profiles>
@@ -124,6 +126,11 @@
 			<dependency>
 				<groupId>at.ac.tuwien.dsg.comot</groupId>
 				<artifactId>comot-tosca</artifactId>
+				<version>0.2</version>
+			</dependency>
+			<dependency>
+				<groupId>at.ac.tuwien.dsg.comot</groupId>
+				<artifactId>comot-common-graph</artifactId>
 				<version>0.2</version>
 			</dependency>
 

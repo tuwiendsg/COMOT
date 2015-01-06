@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.graph.repo;
+package at.ac.tuwien.dsg.comot.recorder.repo;
 
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.GraphRepository;
