@@ -17,5 +17,4 @@ public class AppContextGraph extends Neo4jConfiguration {
 		setBasePackage("at.ac.tuwien.dsg.comot");
 	}
 
-
 }

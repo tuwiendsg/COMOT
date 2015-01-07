@@ -5,6 +5,7 @@ import javax.annotation.Resource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.server.WrappingNeoServerBootstrapper;
 import org.neo4j.test.ImpermanentGraphDatabase;
@@ -20,7 +21,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import at.ac.tuwien.dsg.comot.recorder.AppContextRecorder;
 import at.ac.tuwien.dsg.comot.recorder.repo.ChangeRepo;
-import at.ac.tuwien.dsg.comot.recorder.repo.CloudServiceRepo;
 import at.ac.tuwien.dsg.comot.recorder.repo.RevisionRepo;
 import at.ac.tuwien.dsg.comot.recorder.revisions.RevisionApi;
 
@@ -39,17 +39,18 @@ public abstract class AbstractTest {
 	protected Environment env;
 
 	@Autowired
-	protected CloudServiceRepo serviceRepo;
-	@Autowired
 	protected ChangeRepo changeRepo;
 	@Autowired
 	protected RevisionRepo revisionRepo;
 	@Autowired
 	protected RevisionApi revisionApi;
+	@Autowired
+	protected TestBean testBean;
 
 	@Autowired
 	protected GraphDatabaseService db;
 
+	protected ExecutionEngine engine;
 	protected WrappingNeoServerBootstrapper srv;
 
 	@Before
@@ -58,6 +59,8 @@ public abstract class AbstractTest {
 		// http://127.0.0.1:7474/
 		srv = new WrappingNeoServerBootstrapper((ImpermanentGraphDatabase) db);
 		srv.start();
+
+		engine = new ExecutionEngine(db);
 	}
 
 	@After

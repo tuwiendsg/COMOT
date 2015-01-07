@@ -1,9 +1,11 @@
-package at.ac.tuwien.dsg.comot.recorder.revisions;
+package at.ac.tuwien.dsg.comot.recorder.model;
 
 import java.util.UUID;
 
+import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
+import org.springframework.data.neo4j.annotation.RelatedToVia;
 
 @NodeEntity
 public class Revision {
@@ -13,11 +15,20 @@ public class Revision {
 
 	protected UUID id;
 
+	@RelatedToVia(direction = Direction.INCOMING)
 	protected Change start;
+	@RelatedToVia(direction = Direction.OUTGOING)
 	protected Change end;
 
 	public Revision() {
 		id = UUID.randomUUID();
+	}
+
+	public Revision(Revision oldRev, String changeType, Long timestamp) {
+		this();
+		Change change = new Change(timestamp, changeType, oldRev, this);
+		oldRev.setEnd(change);
+		this.setStart(change);
 	}
 
 	// GENERATED METHODS

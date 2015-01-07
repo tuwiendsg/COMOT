@@ -3,7 +3,9 @@ package at.ac.tuwien.dsg.comot.recorder.revisions;
 import java.beans.Transient;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -11,7 +13,6 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,11 @@ import org.springframework.data.neo4j.fieldaccess.DynamicProperties;
 import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+
+import at.ac.tuwien.dsg.comot.graph.BusinessId;
+import at.ac.tuwien.dsg.comot.recorder.model.InternalNode;
+import at.ac.tuwien.dsg.comot.recorder.model.InternalRel;
+import at.ac.tuwien.dsg.comot.recorder.model.ManagedRegion;
 
 @Component
 @Scope("prototype")
@@ -36,21 +41,31 @@ public class SingleConversion {
 	protected GraphDatabaseService db;
 
 	protected Neo4jOperations neo;
-	Map<Object, Node> nodes = new HashMap<>();
+	protected Map<Object, InternalNode> nodes;
+	protected ManagedRegion graph;
 
 	@PostConstruct
 	public void setUp() {
 		neo = new Neo4jTemplate(db);
 	}
 
-	@Transactional
-	public void convertGraph(Object obj) throws IllegalArgumentException, IllegalAccessException {
+	public ManagedRegion convertGraph(Object obj) throws IllegalArgumentException, IllegalAccessException {
 
-		convertToNode(obj);
+		graph = new ManagedRegion();
 		nodes = new HashMap<>();
+
+		if (obj instanceof Collection) {
+			for (Object one : (Collection<?>) obj) {
+				createNode(one);
+			}
+		} else {
+			createNode(obj);
+		}
+
+		return graph;
 	}
 
-	private Node convertToNode(Object obj) throws IllegalArgumentException, IllegalAccessException {
+	private InternalNode createNode(Object obj) throws IllegalArgumentException, IllegalAccessException {
 
 		Class<?> clazz = obj.getClass();
 
@@ -60,13 +75,30 @@ public class SingleConversion {
 
 		List<Field> fields = getInheritedNonStaticNonTransientNonNullFields(clazz, obj);
 
-		// set labels
-		List<String> labels = new ArrayList<>();
-		labels.add(clazz.getSimpleName());
-		Node node = neo.createNode(extractProperties(obj, fields), labels);
+		InternalNode node = new InternalNode();
 		nodes.put(obj, node);
+		graph.addNode(node);
 
-		// process fields
+		// set businessId
+		for (Field field : fields) {
+			if (field.isAnnotationPresent(BusinessId.class)) {
+				node.setBusinessId(field.get(obj).toString());
+				break;
+			}
+		}
+
+		node.setLabel(clazz.getSimpleName());
+		node.setProperties(extractProperties(obj, fields));
+		node.setRelationships(createAllRelationships(node, obj, fields));
+
+		return node;
+	}
+
+	private Set<InternalRel> createAllRelationships(InternalNode node, Object obj, List<Field> fields)
+			throws IllegalArgumentException, IllegalAccessException {
+
+		Set<InternalRel> relSet = new HashSet<>();
+
 		for (Field field : fields) {
 
 			Class<?> fc = field.get(obj).getClass();
@@ -81,19 +113,21 @@ public class SingleConversion {
 				Set<?> set = (Set<?>) field.get(obj);
 
 				for (Object one : set) {
-					createRelationship(node, field.getName(), one);
+					relSet.add(createRelationship(node, field.getName(), one));
 				}
 			}
 		}
 
-		return node;
+		return relSet;
 	}
 
-	private void createRelationship(Node from, String relName, Object obj) throws IllegalArgumentException,
+	private InternalRel createRelationship(InternalNode from, String relName, Object obj)
+			throws IllegalArgumentException,
 			IllegalAccessException {
 
-		Map<String, Object> properties = null;
+		Map<String, Object> properties = new HashMap<>();
 		Object toObject = null;
+		InternalNode toNode;
 
 		// rich REL
 		if (obj.getClass().isAnnotationPresent(RelationshipEntity.class)) {
@@ -115,11 +149,14 @@ public class SingleConversion {
 		}
 
 		if (nodes.containsKey(toObject)) {
-			neo.createRelationshipBetween(from, nodes.get(toObject), relName, properties);
+			toNode = nodes.get(toObject);
 		} else {
-			neo.createRelationshipBetween(from, convertToNode(toObject), relName, properties);
+			toNode = createNode(toObject);
 		}
 
+		InternalRel rel = new InternalRel(relName, from, toNode, properties);
+		graph.addRelationship(rel);
+		return rel;
 	}
 
 	private Map<String, Object> extractProperties(Object obj, List<Field> fields) throws IllegalArgumentException,
@@ -131,7 +168,7 @@ public class SingleConversion {
 
 			Object fieldObj = field.get(obj);
 			Class<?> fc = fieldObj.getClass();
-			
+
 			// @GraphId -> skip
 			if (field.isAnnotationPresent(GraphId.class)) {
 				continue;
@@ -147,12 +184,12 @@ public class SingleConversion {
 			} else if (fieldObj instanceof DynamicProperties) {
 				DynamicProperties props = (DynamicProperties) fieldObj;
 
-				for(String name: props.getPropertyKeys()){
-					properties.put(field.getName()+"-"+name, props.getProperty(name));
+				for (String name : props.getPropertyKeys()) {
+					properties.put(field.getName() + "-" + name, props.getProperty(name));
 				}
-				
+
 				// enum
-			} else if(field.getType() instanceof Class && ((Class<?>)field.getType()).isEnum()){
+			} else if (field.getType() instanceof Class && ((Class<?>) field.getType()).isEnum()) {
 				properties.put(field.getName(), fieldObj.toString());
 			}
 
@@ -181,7 +218,7 @@ public class SingleConversion {
 				continue;
 			}
 
-			log.info("name: {}, type: {}", field.getName(), field.getType());
+			log.debug("name: {}, type: {}", field.getName(), field.getType());
 			list.add(field);
 		}
 

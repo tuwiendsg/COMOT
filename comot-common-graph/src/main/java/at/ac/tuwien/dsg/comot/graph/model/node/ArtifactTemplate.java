@@ -7,6 +7,7 @@ import java.util.Set;
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
+import at.ac.tuwien.dsg.comot.graph.BusinessId;
 import at.ac.tuwien.dsg.comot.graph.model.type.ArtifactType;
 
 @NodeEntity
@@ -16,7 +17,7 @@ public class ArtifactTemplate implements Serializable {
 
 	@GraphId
 	protected Long nodeId;
-
+	@BusinessId
 	protected String id;
 	protected ArtifactType type;
 	protected Set<ArtifactReference> artifactReferences = new HashSet<>();

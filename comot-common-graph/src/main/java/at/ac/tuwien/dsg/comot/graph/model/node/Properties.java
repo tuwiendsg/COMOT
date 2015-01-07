@@ -9,6 +9,7 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.fieldaccess.DynamicProperties;
 import org.springframework.data.neo4j.fieldaccess.DynamicPropertiesContainer;
 
+import at.ac.tuwien.dsg.comot.graph.BusinessId;
 import at.ac.tuwien.dsg.comot.graph.model.type.NodePropertiesType;
 
 @NodeEntity
@@ -18,6 +19,9 @@ public class Properties implements Serializable {
 
 	@GraphId
 	protected Long nodeId;
+
+	@BusinessId
+	protected String id;
 
 	protected NodePropertiesType propertiesType;
 	protected DynamicProperties properties; // instead of Map<String, String>
@@ -97,7 +101,13 @@ public class Properties implements Serializable {
 	public void setProperties(DynamicProperties properties) {
 		this.properties = properties;
 	}
-	
-	
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 
 }

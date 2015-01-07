@@ -28,9 +28,9 @@ import at.ac.tuwien.dsg.comot.graph.model.type.State;
 public class ConvertingToGraph extends AbstractTest {
 
 	protected CloudService service;
-	protected static String swNodeId = "nodeId";
-	protected static String swNodeId2 = "nodeId2";
-	protected static String serviceId = "serviceId";
+	public static final String swNodeId = "nodeId";
+	public static final String swNodeId2 = "nodeId2";
+	public static final String serviceId = "serviceId";
 
 	@Before
 	public void startup() {
@@ -45,6 +45,7 @@ public class ConvertingToGraph extends AbstractTest {
 		properties.addProperty("provider", "dsg@openstack");
 		properties.addProperty("baseImage", "8f1428ac-f239-42e0-ab35-137f6e234101");
 		properties.addProperty("packages", "java-jdk, something-something");
+		properties.setId("propertiesId");
 
 		StackNode osNode = new StackNode("osId", "Test os", 1, 2, NodeType.OS);
 		osNode.addProperties(properties);
@@ -98,13 +99,13 @@ public class ConvertingToGraph extends AbstractTest {
 
 		// INSTANCES
 
-		NodeInstance instanceOs = new NodeInstanceOs(0, null, State.ALLOCATING, "dsg@openstack",
+		NodeInstance instanceOs = new NodeInstanceOs(osNode, 0, null, State.ALLOCATING, "dsg@openstack",
 				"8f1428ac-f239-42e0-ab35-137f6e234101", "000000512", "uuid_of_VM", "192.168.1.1");
 
 		osNode.addNodeInstance(instanceOs);
 
-		swNode.addNodeInstance(new NodeInstance(0, State.DEPLOYED, instanceOs));
-		swNode2.addNodeInstance(new NodeInstance(0, State.DEPLOYED, instanceOs));
+		swNode.addNodeInstance(new NodeInstance(swNode, 0, State.DEPLOYED, instanceOs));
+		swNode2.addNodeInstance(new NodeInstance(swNode2, 0, State.DEPLOYED, instanceOs));
 
 		return service;
 

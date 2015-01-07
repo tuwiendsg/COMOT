@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.recorder.revisions;
+package at.ac.tuwien.dsg.comot.recorder.model;
 
 import java.io.Serializable;
 
@@ -7,33 +7,38 @@ import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.RelationshipEntity;
 import org.springframework.data.neo4j.annotation.StartNode;
 
-@RelationshipEntity(type = "CHANGE")
+@RelationshipEntity(type = Change.REL)
 public class Change implements Serializable {
+
+	public static final String REL = "CHANGE";
 
 	private static final long serialVersionUID = -4184717754543656669L;
 
 	@GraphId
 	protected Long graphId;
 
-	protected Long timestampId;
-	protected ChangeType type;
+	protected Long timestamp;
+	protected String type;
 
 	@StartNode
 	protected Revision from;
 	@EndNode
 	protected Revision to;
 
-	public enum ChangeType {
-		SCALE_OUT, SCALE_IN, CONFIG_UPDATE
-	}
-
 	public Change() {
-		timestampId = System.currentTimeMillis();
 	}
 
-	public Change(ChangeType type) {
+	public Change(String type) {
 		this();
 		this.type = type;
+	}
+
+	public Change(Long timestamp, String type, Revision from, Revision to) {
+		super();
+		this.timestamp = timestamp;
+		this.type = type;
+		this.from = from;
+		this.to = to;
 	}
 
 	// GENERATED METHODS
@@ -46,11 +51,11 @@ public class Change implements Serializable {
 		this.graphId = graphId;
 	}
 
-	public ChangeType getType() {
+	public String getType() {
 		return type;
 	}
 
-	public void setType(ChangeType type) {
+	public void setType(String type) {
 		this.type = type;
 	}
 
@@ -70,12 +75,12 @@ public class Change implements Serializable {
 		this.to = to;
 	}
 
-	public Long getTimestampId() {
-		return timestampId;
+	public Long getTimestamp() {
+		return timestamp;
 	}
 
-	public void setTimestampId(Long timestampId) {
-		this.timestampId = timestampId;
+	public void setTimestamp(Long timestamp) {
+		this.timestamp = timestamp;
 	}
 
 }

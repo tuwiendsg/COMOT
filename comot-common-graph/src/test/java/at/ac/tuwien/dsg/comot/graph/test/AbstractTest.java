@@ -52,6 +52,7 @@ public abstract class AbstractTest {
 		// http://127.0.0.1:7474/
 		srv = new WrappingNeoServerBootstrapper((ImpermanentGraphDatabase) db);
 		srv.start();
+
 	}
 
 	@After

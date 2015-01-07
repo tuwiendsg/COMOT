@@ -1,5 +1,6 @@
 package at.ac.tuwien.dsg.comot.graph.model.node;
 
+import at.ac.tuwien.dsg.comot.graph.model.structure.StackNode;
 import at.ac.tuwien.dsg.comot.graph.model.type.State;
 
 public class NodeInstanceOs extends NodeInstance {
@@ -16,9 +17,10 @@ public class NodeInstanceOs extends NodeInstance {
 
 	}
 
-	public NodeInstanceOs(int instanceId, NodeInstance hostInstance, State state, String provider, String baseImage,
+	public NodeInstanceOs(StackNode node, int instanceId, NodeInstance hostInstance, State state, String provider,
+			String baseImage,
 			String instanceType, String uuid, String ip) {
-		super(instanceId, state, hostInstance);
+		super(node, instanceId, state, hostInstance);
 		this.provider = provider;
 		this.baseImage = baseImage;
 		this.instanceType = instanceType;

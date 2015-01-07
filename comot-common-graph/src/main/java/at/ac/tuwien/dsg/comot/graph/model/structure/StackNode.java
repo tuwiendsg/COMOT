@@ -1,13 +1,16 @@
 package at.ac.tuwien.dsg.comot.graph.model.structure;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedToVia;
 
+import at.ac.tuwien.dsg.comot.graph.BusinessId;
 import at.ac.tuwien.dsg.comot.graph.model.ConnectToRelationship;
 import at.ac.tuwien.dsg.comot.graph.model.node.ArtifactTemplate;
 import at.ac.tuwien.dsg.comot.graph.model.node.NodeInstance;
@@ -22,6 +25,8 @@ public class StackNode implements Serializable {
 
 	@GraphId
 	protected Long nodeId;
+	@BusinessId
+	protected String businessId;
 
 	protected String id;
 	protected String name;
@@ -43,26 +48,24 @@ public class StackNode implements Serializable {
 	}
 
 	public StackNode(String id, NodeType type) {
-		this.id = id;
+		setId(id);
 		this.type = type;
 
 	}
 
 	public StackNode(String id, String name, Integer minInstances, Integer maxInstances, NodeType type) {
-		this.id = id;
+		this(id, type);
 		this.name = name;
 		this.minInstances = minInstances;
 		this.maxInstances = maxInstances;
-		this.type = type;
 	}
 
 	public StackNode(String id, String name, Integer minInstances, Integer maxInstances, NodeType type,
 			Set<Properties> properties, Set<ArtifactTemplate> deploymentArtifacts) {
-		this.id = id;
+		this(id, type);
 		this.name = name;
 		this.minInstances = minInstances;
 		this.maxInstances = maxInstances;
-		this.type = type;
 		this.properties = properties;
 		this.deploymentArtifacts = deploymentArtifacts;
 	}
@@ -102,6 +105,15 @@ public class StackNode implements Serializable {
 			}
 		}
 		return null;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+		businessId = id + "_" + "StackNode";
+	}
+
+	public List<ConnectToRelationship> getConnectToList() {
+		return new ArrayList(connectTo);
 	}
 
 	// GENERATED METHODS
@@ -166,10 +178,6 @@ public class StackNode implements Serializable {
 		return id;
 	}
 
-	public void setId(String id) {
-		this.id = id;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -200,6 +208,14 @@ public class StackNode implements Serializable {
 
 	public void setNodeId(Long nodeId) {
 		this.nodeId = nodeId;
+	}
+
+	public String getBusinessId() {
+		return businessId;
+	}
+
+	public void setBusinessId(String businessId) {
+		this.businessId = businessId;
 	}
 
 }

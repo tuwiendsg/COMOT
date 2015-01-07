@@ -5,6 +5,8 @@ import java.io.Serializable;
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
+import at.ac.tuwien.dsg.comot.graph.BusinessId;
+
 @NodeEntity
 public class ArtifactReference implements Serializable {
 
@@ -12,7 +14,7 @@ public class ArtifactReference implements Serializable {
 
 	@GraphId
 	protected Long nodeId;
-
+	@BusinessId
 	protected String id;
 	protected String uri;
 

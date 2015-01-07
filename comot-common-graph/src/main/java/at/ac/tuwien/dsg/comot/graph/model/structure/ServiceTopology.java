@@ -1,6 +1,8 @@
 package at.ac.tuwien.dsg.comot.graph.model.structure;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import at.ac.tuwien.dsg.comot.graph.model.SyblDirective;
@@ -49,6 +51,18 @@ public class ServiceTopology extends ServicePart {
 			serviceTopologies = new HashSet<>();
 		}
 		serviceTopologies.add(serviceTopology);
+	}
+
+	public List<ServiceTopology> getServiceTopologiesList() {
+		return new ArrayList(serviceTopologies);
+	}
+
+	public List<ServiceUnit> getServiceUnitsList() {
+		return new ArrayList(serviceUnits);
+	}
+
+	public List<StackNode> getStackNodeList() {
+		return new ArrayList(nodes);
 	}
 
 	// GENERATED METHODS

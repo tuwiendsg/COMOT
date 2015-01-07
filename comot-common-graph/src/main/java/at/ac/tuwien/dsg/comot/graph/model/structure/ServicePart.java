@@ -7,6 +7,7 @@ import java.util.Set;
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
+import at.ac.tuwien.dsg.comot.graph.BusinessId;
 import at.ac.tuwien.dsg.comot.graph.model.SyblDirective;
 import at.ac.tuwien.dsg.comot.graph.model.XSelectable;
 import at.ac.tuwien.dsg.comot.graph.model.type.State;
@@ -19,6 +20,7 @@ public abstract class ServicePart implements Serializable, XSelectable {
 	@GraphId
 	protected Long nodeId;
 
+	@BusinessId
 	protected String id;
 	protected String name;
 	protected State state;

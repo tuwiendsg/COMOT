@@ -5,6 +5,8 @@ import java.io.Serializable;
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
+import at.ac.tuwien.dsg.comot.graph.BusinessId;
+import at.ac.tuwien.dsg.comot.graph.model.structure.StackNode;
 import at.ac.tuwien.dsg.comot.graph.model.type.State;
 
 @NodeEntity
@@ -15,6 +17,9 @@ public class NodeInstance implements Serializable {
 	@GraphId
 	protected Long nodeId;
 
+	@BusinessId
+	protected String id;
+
 	protected int instanceId;
 	protected State state;
 	protected NodeInstance hostInstance;
@@ -23,12 +28,15 @@ public class NodeInstance implements Serializable {
 
 	}
 
-	public NodeInstance(int instanceId, State state, NodeInstance hostInstance) {
+	public NodeInstance(StackNode node, int instanceId, State state, NodeInstance hostInstance) {
 		super();
 		this.instanceId = instanceId;
 		this.state = state;
 		this.hostInstance = hostInstance;
+		id = node.getId() + "_" + instanceId;
 	}
+
+	// GENERATED METHODS
 
 	public int getInstanceId() {
 		return instanceId;
@@ -60,6 +68,14 @@ public class NodeInstance implements Serializable {
 
 	public void setHostInstance(NodeInstance hostInstance) {
 		this.hostInstance = hostInstance;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 }

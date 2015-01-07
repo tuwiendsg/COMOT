@@ -1,23 +1,29 @@
 package at.ac.tuwien.dsg.comot.recorder.revisions;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
-import javax.annotation.PostConstruct;
-
+import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import at.ac.tuwien.dsg.comot.graph.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.recorder.model.InternalNode;
+import at.ac.tuwien.dsg.comot.recorder.model.InternalRel;
+import at.ac.tuwien.dsg.comot.recorder.model.ManagedRegion;
+import at.ac.tuwien.dsg.comot.recorder.model.RelTypes;
+import at.ac.tuwien.dsg.comot.recorder.model.Revision;
 import at.ac.tuwien.dsg.comot.recorder.repo.ChangeRepo;
-import at.ac.tuwien.dsg.comot.recorder.repo.CloudServiceRepo;
 import at.ac.tuwien.dsg.comot.recorder.repo.RevisionRepo;
 
 @Component
@@ -34,59 +40,123 @@ public class RevisionApi {
 	protected RevisionRepo revisionRepo;
 
 	@Autowired
-	protected CloudServiceRepo serviceRepo;
-
-	@Autowired
 	protected GraphDatabaseService db;
-
+	@Autowired
 	protected Neo4jOperations neo;
 
-	@PostConstruct
-	public void setUp() {
-		neo = new Neo4jTemplate(db);
-	}
-
 	@Transactional
-	public void saveThis() {
+	public void createOrUpdateRegion(Object obj, String regionId, String changeType)
+			throws IllegalArgumentException,
+			IllegalAccessException {
 
-		CloudService service = serviceRepo.findById("serviceId");
+		// log.info("tx {}", TransactionSynchronizationManager.isActualTransactionActive());
+		// log.info("tx name {}", TransactionSynchronizationManager.getCurrentTransactionName());
 
-		log.info("aaaa " + service);
+		RegionRepo repo = context.getBean(RegionRepo.class);
+		repo.setRegionId(regionId);
 
-		Revision rev1 = new Revision();
+		Long time = System.currentTimeMillis();
 
-		Revision rev2 = new Revision();
+		ManagedRegion graph = context.getBean(SingleConversion.class).convertGraph(obj);
 
-		Change change = new Change(Change.ChangeType.CONFIG_UPDATE);
-		change.setFrom(rev1);
-		change.setTo(rev2);
+		Map<InternalNode, Node> savedNodes = new HashMap<>();
+		Set<Long> currentRels = new HashSet<>();
+		Node identityNode, regionNode, currentState, stateNode, revisionNode, lastRevisionNode;
+		Relationship stateRel, oldRel, newRel;
 
-		rev1.setEnd(change);
-		rev2.setStart(change);
+		Boolean update;
+		Revision revision;
 
-		revisionRepo.save(rev1);
-		revisionRepo.save(rev2);
+		// create REGION
+		if ((regionNode = repo.getRegion()) == null) {
+			regionNode = neo.createNode();
+			regionNode.addLabel(DynamicLabel.label(ManagedRegion.LABEL_REGION));
+			regionNode.setProperty(ManagedRegion.PROPERTY_ID, regionId);
+			regionNode.setProperty("timestampId", time);
 
-		changeRepo.save(change);
+			revisionNode = neo.createNode();
+			revisionNode.addLabel(DynamicLabel.label("_Revision"));
+			revisionNode.addLabel(DynamicLabel.label("Revision"));
+			revisionNode.setProperty("id", UUID.randomUUID().toString());
 
-		serviceRepo.save(service);
+			neo.createRelationshipBetween(regionNode, revisionNode, RelTypes._FIRST_REV.toString(), null);
+			neo.createRelationshipBetween(regionNode, revisionNode, RelTypes._LAST_REV.toString(), null);
 
-	}
+		} else {
+			lastRevisionNode = repo.getLastRevision();
+			Revision lastRevision = revisionRepo.findOne(lastRevisionNode.getId());
 
-	@Transactional
-	public void createService(CloudService service) {
+			revision = revisionRepo.save(new Revision(lastRevision, changeType, time));
+			revisionNode = db.getNodeById(revision.getNodeId());
 
-		Map<String, Object> map = new HashMap<>();
-		map.put("key", "value");
+			for (Relationship rel : lastRevisionNode.getRelationships(RelTypes._LAST_REV)) {
+				rel.delete();
+			}
+		}
 
-		neo.createNode(map);
+		for (InternalNode node : graph.getNodes()) {
 
-	}
+			// IDENTITY node
+			if ((identityNode = repo.getIdentityNode(node.getBusinessId())) == null) {
+				identityNode = neo.createNode(node.getBusinessIdAsMap(), node.getLablesForIdentityNode());
 
-	@Transactional
-	public void convertGraph(Object obj) throws IllegalArgumentException, IllegalAccessException {
+				// connect identity node with the region
+				neo.createRelationshipBetween(regionNode, identityNode, RelTypes._MANAGE.toString(), null);
+			}
+			savedNodes.put(node, identityNode);
 
-		context.getBean(SingleConversion.class).convertGraph(obj);
+			// STATE
+			currentState = repo.getCurrentState(node.getBusinessId());
+			update = repo.needUpdateState(currentState, node);
+
+			if (currentState == null || update) {
+
+				stateNode = neo.createNode(node.getProperties(), node.getLablesForStateNode());
+
+				// connect state and identity nodes
+				stateRel = neo.createRelationshipBetween(identityNode, stateNode, RelTypes._HAS_STATE.toString(), null);
+				stateRel.setProperty(InternalRel.PROPERTY_FROM, time);
+				stateRel.setProperty(InternalRel.PROPERTY_TO, Long.MAX_VALUE);
+
+				if (update) {
+					currentState.getRelationships(RelTypes._HAS_STATE).iterator().next()
+							.setProperty(InternalRel.PROPERTY_TO, time);
+				}
+			}
+
+		}
+
+		// create structural relationships
+		for (InternalRel rel : graph.getRelationships()) {
+
+			oldRel = repo.getRelationship(savedNodes.get(rel.getStartNode()), savedNodes.get(rel.getEndNode()),
+					rel.getType());
+			update = repo.needUpdateRelationship(oldRel, rel);
+
+			if (oldRel == null || update) {
+				newRel = neo.createRelationshipBetween(savedNodes.get(rel.getStartNode()),
+						savedNodes.get(rel.getEndNode()),
+						rel.getType(), rel.getProperties());
+				newRel.setProperty(InternalRel.PROPERTY_FROM, time);
+				newRel.setProperty(InternalRel.PROPERTY_TO, Long.MAX_VALUE);
+				currentRels.add(newRel.getId());
+
+				if (update) {
+					oldRel.setProperty(InternalRel.PROPERTY_TO, time);
+				}
+			} else {
+				currentRels.add(oldRel.getId());
+			}
+
+		}
+
+		// set outdated rels
+		for (Relationship rel : repo.getAllCurrentStructuralRelationships()) {
+			if (!currentRels.contains(rel.getId())) {
+				rel.setProperty(InternalRel.PROPERTY_TO, time);
+			}
+		}
+
 	}
 
 }
