@@ -29,6 +29,8 @@ public class CloudService extends ServicePart {
 	public List<ServiceTopology> getServiceTopologiesList() {
 		return new ArrayList(serviceTopologies);
 	}
+	
+	
 
 	// GENERATED METHODS
 

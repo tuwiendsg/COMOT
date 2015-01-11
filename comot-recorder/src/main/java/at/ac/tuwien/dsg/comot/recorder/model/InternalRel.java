@@ -12,9 +12,6 @@ public class InternalRel {
 	protected InternalNode startNode;
 	protected InternalNode endNode;
 
-	protected Long from;
-	protected Long to;
-
 	private Map<String, Object> properties = new HashMap<>();
 
 	public InternalRel() {
@@ -31,20 +28,10 @@ public class InternalRel {
 
 	// GENERATED METHODS
 
-	public Long getFrom() {
-		return from;
-	}
-
-	public void setFrom(Long from) {
-		this.from = from;
-	}
-
-	public Long getTo() {
-		return to;
-	}
-
-	public void setTo(Long to) {
-		this.to = to;
+	@Override
+	public String toString() {
+		return " (" + startNode.getBusinessId() + ") - [" + type + "] -> (" + endNode.getBusinessId() + ") props="
+				+ properties;
 	}
 
 	public InternalNode getStartNode() {

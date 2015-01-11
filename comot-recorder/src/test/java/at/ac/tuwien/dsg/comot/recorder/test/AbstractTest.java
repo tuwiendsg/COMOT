@@ -12,6 +12,7 @@ import org.neo4j.test.ImpermanentGraphDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
@@ -35,6 +36,8 @@ public abstract class AbstractTest {
 
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 
+	@Autowired
+	protected ApplicationContext context;
 	@Resource
 	protected Environment env;
 

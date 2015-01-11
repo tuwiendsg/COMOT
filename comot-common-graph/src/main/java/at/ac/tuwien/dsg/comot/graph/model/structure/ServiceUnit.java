@@ -29,18 +29,13 @@ public class ServiceUnit extends ServicePart {
 		this.node = node;
 	}
 
-	public ServiceUnit(StackNode node, Set<SyblDirective> directives) {
-		super(node.getId(), directives);
-		this.node = node;
-	}
-
 	public void addCodeRegion(CodeRegion region) {
 		if (codeRegions == null) {
 			codeRegions = new HashSet<>();
 		}
 		codeRegions.add(region);
 	}
-
+	
 	// GENERATED METHODS
 
 	public Set<ElasticityCapability> getElasticityCapabilities() {

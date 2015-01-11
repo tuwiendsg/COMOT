@@ -36,4 +36,14 @@ public class TestBean {
 		}
 	}
 
+	@Transactional
+	public Long countLabel(String label) {
+
+		Iterator<Long> iter = engine.execute("match (n:" + label + ") return count(n) as m").columnAs("m");
+		for (Long ll : IteratorUtil.asIterable(iter)) {
+			return ll;
+		}
+		return null;
+	}
+
 }

@@ -39,22 +39,14 @@ public abstract class ServicePart implements Serializable, XSelectable {
 		this.name = name;
 	}
 
-	public ServicePart(String id, Set<SyblDirective> directives) {
-		this.id = id;
-		this.directives = directives;
-	}
-
-	public ServicePart(String id, String name, Set<SyblDirective> directives) {
-		this(id, name);
-		this.directives = directives;
-	}
-
-	public void addSyblDirective(SyblDirective directive) {
+	public void addDirective(SyblDirective directive) {
 		if (directives == null) {
 			directives = new HashSet<>();
 		}
 		directives.add(directive);
 	}
+	
+	
 
 	// GENERATED METHODS
 

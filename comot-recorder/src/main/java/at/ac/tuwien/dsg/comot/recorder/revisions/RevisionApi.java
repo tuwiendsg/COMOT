@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.slf4j.Logger;
@@ -18,8 +19,10 @@ import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.recorder.model.InternalNode;
 import at.ac.tuwien.dsg.comot.recorder.model.InternalRel;
+import at.ac.tuwien.dsg.comot.recorder.model.LabelTypes;
 import at.ac.tuwien.dsg.comot.recorder.model.ManagedRegion;
 import at.ac.tuwien.dsg.comot.recorder.model.RelTypes;
 import at.ac.tuwien.dsg.comot.recorder.model.Revision;
@@ -38,7 +41,6 @@ public class RevisionApi {
 	protected ChangeRepo changeRepo;
 	@Autowired
 	protected RevisionRepo revisionRepo;
-
 	@Autowired
 	protected GraphDatabaseService db;
 	@Autowired
@@ -55,9 +57,10 @@ public class RevisionApi {
 		RegionRepo repo = context.getBean(RegionRepo.class);
 		repo.setRegionId(regionId);
 
-		Long time = System.currentTimeMillis();
+		ManagedRegion graph = context.getBean(ConverterToInternal.class).convertToGraph(obj);
+		log.info("count nodes: {}, rels: {}", graph.getNodes().size(), graph.getRelationships().size());
 
-		ManagedRegion graph = context.getBean(SingleConversion.class).convertGraph(obj);
+		Long time = System.currentTimeMillis();
 
 		Map<InternalNode, Node> savedNodes = new HashMap<>();
 		Set<Long> currentRels = new HashSet<>();
@@ -71,30 +74,41 @@ public class RevisionApi {
 		if ((regionNode = repo.getRegion()) == null) {
 			regionNode = neo.createNode();
 			regionNode.addLabel(DynamicLabel.label(ManagedRegion.LABEL_REGION));
-			regionNode.setProperty(ManagedRegion.PROPERTY_ID, regionId);
-			regionNode.setProperty("timestampId", time);
+			regionNode.setProperty(ManagedRegion.PROP_ID, regionId);
+			regionNode.setProperty(ManagedRegion.PROP_TIMESTAMP, time);
 
 			revisionNode = neo.createNode();
 			revisionNode.addLabel(DynamicLabel.label("_Revision"));
 			revisionNode.addLabel(DynamicLabel.label("Revision"));
-			revisionNode.setProperty("id", UUID.randomUUID().toString());
+			revisionNode.setProperty(Revision.PROP_ID, UUID.randomUUID().toString());
 
 			neo.createRelationshipBetween(regionNode, revisionNode, RelTypes._FIRST_REV.toString(), null);
-			neo.createRelationshipBetween(regionNode, revisionNode, RelTypes._LAST_REV.toString(), null);
 
 		} else {
 			lastRevisionNode = repo.getLastRevision();
+			log.info("lastRevisionNode.getId() {}", lastRevisionNode.getId());
 			Revision lastRevision = revisionRepo.findOne(lastRevisionNode.getId());
 
 			revision = revisionRepo.save(new Revision(lastRevision, changeType, time));
 			revisionNode = db.getNodeById(revision.getNodeId());
 
+			// delete old _LAST_REV
 			for (Relationship rel : lastRevisionNode.getRelationships(RelTypes._LAST_REV)) {
 				rel.delete();
 			}
+
+		}
+
+		// create new _LAST_REV
+		neo.createRelationshipBetween(regionNode, revisionNode, RelTypes._LAST_REV.toString(), null);
+
+		for (String label : graph.getClasses().keySet()) {
+			regionNode.setProperty(label, graph.getClasses().get(label));
 		}
 
 		for (InternalNode node : graph.getNodes()) {
+
+			log.info("node {}", node);
 
 			// IDENTITY node
 			if ((identityNode = repo.getIdentityNode(node.getBusinessId())) == null) {
@@ -106,7 +120,7 @@ public class RevisionApi {
 			savedNodes.put(node, identityNode);
 
 			// STATE
-			currentState = repo.getCurrentState(node.getBusinessId());
+			currentState = repo.getState(node.getBusinessId(), Long.MAX_VALUE);
 			update = repo.needUpdateState(currentState, node);
 
 			if (currentState == null || update) {
@@ -129,9 +143,11 @@ public class RevisionApi {
 		// create structural relationships
 		for (InternalRel rel : graph.getRelationships()) {
 
-			oldRel = repo.getRelationship(savedNodes.get(rel.getStartNode()), savedNodes.get(rel.getEndNode()),
+			oldRel = repo.getCurrentRelationship(savedNodes.get(rel.getStartNode()), savedNodes.get(rel.getEndNode()),
 					rel.getType());
 			update = repo.needUpdateRelationship(oldRel, rel);
+
+			log.info("old: {}, update: {} - {}", oldRel, update, rel);
 
 			if (oldRel == null || update) {
 				newRel = neo.createRelationshipBetween(savedNodes.get(rel.getStartNode()),
@@ -151,7 +167,7 @@ public class RevisionApi {
 		}
 
 		// set outdated rels
-		for (Relationship rel : repo.getAllCurrentStructuralRelationships()) {
+		for (Relationship rel : repo.getAllCurrentStructuralRels()) {
 			if (!currentRels.contains(rel.getId())) {
 				rel.setProperty(InternalRel.PROPERTY_TO, time);
 			}
@@ -159,4 +175,101 @@ public class RevisionApi {
 
 	}
 
+	@Transactional
+	public Object getRevision(String regionId, String id, Long timestamp) throws InstantiationException,
+			IllegalAccessException, IllegalArgumentException, ClassNotFoundException, ComotException {
+
+		ManagedRegion region = extractFromDB(regionId, id, timestamp);
+
+		ConverterFromInternal converter = context.getBean(ConverterFromInternal.class);
+
+		log.info("{}", region.getStartNode().getRelationships());
+
+		Object obj = converter.convertToObject(region);
+		log.info("getRevision(regionId={}, businessId={}, timestamp={}): {}", regionId, id, timestamp, obj);
+
+		return obj;
+	}
+
+	protected ManagedRegion extractFromDB(String regionId, String id, Long timestamp) {
+
+		RegionRepo repo = context.getBean(RegionRepo.class);
+		repo.setRegionId(regionId);
+
+		String businessId;
+		Map<Long, InternalNode> nodes = new HashMap<>();
+		ManagedRegion region = new ManagedRegion();
+		InternalNode internalNode;
+
+		Node identityNode = repo.getIdentityNode(id);
+		if (identityNode == null) {
+			throw new IllegalArgumentException("No managed object '" + id + "' in region '" + regionId + "'");
+		}
+
+		String startBusinessId = identityNode.getProperty(InternalNode.ID).toString();
+
+		// create nodes
+		for (Node connectedNode : repo.getAllConnectedIdentityNodes(id, timestamp)) {
+			businessId = connectedNode.getProperty(InternalNode.ID).toString();
+			internalNode = createNodeSimple(repo, connectedNode, repo.getState(businessId, timestamp));
+			nodes.put(connectedNode.getId(), internalNode);
+
+			if (startBusinessId.equals(businessId)) {
+				region.setStartNode(internalNode);
+			}
+		}
+
+		// create relationships
+		for (InternalNode node : nodes.values()) {
+
+			for (Relationship rel : repo.getAllStructuralRelsFromObject(node.getBusinessId(), timestamp)) {
+
+				String type = rel.getType().name();
+				InternalNode startNode = nodes.get(rel.getStartNode().getId());
+				InternalNode endNode = nodes.get(rel.getEndNode().getId());
+
+				InternalRel internalRel = new InternalRel(type, startNode, endNode, repo.extractPropsWithoutTime(rel));
+
+				startNode.addRelationship(internalRel);
+				region.addRelationship(internalRel);
+
+				log.info("startNode {} {}", startNode, System.identityHashCode(startNode));
+				log.info("outgoing rel: {} ", internalRel);
+			}
+
+		}
+
+		for (InternalNode node : nodes.values()) {
+			log.info("node {} {}", node, System.identityHashCode(node));
+		}
+
+		log.info("region.getStartNode() {} {}", region.getStartNode(), System.identityHashCode(region.getStartNode()));
+
+		region.setNodes(new HashSet<InternalNode>(nodes.values()));
+		region.setClasses(repo.extractClasses());
+
+		return region;
+	}
+
+	protected InternalNode createNodeSimple(RegionRepo repo, Node identityNode, Node stateNode) {
+
+		InternalNode node = new InternalNode();
+
+		// set id
+		node.setBusinessId(identityNode.getProperty(InternalNode.ID).toString());
+		// set label
+		for (Label label : identityNode.getLabels()) {
+			if (label.toString().equals(LabelTypes._IDENTITY.name())) {
+				continue;
+			}
+
+			node.setLabel(label.name());
+		}
+		// set properties
+
+		node.setProperties(repo.extractProps(stateNode));
+
+		log.info("node: {}", node);
+		return node;
+	}
 }

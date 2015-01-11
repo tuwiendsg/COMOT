@@ -1,29 +1,39 @@
 package at.ac.tuwien.dsg.comot.recorder.test;
 
+import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
+
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.unitils.reflectionassert.ReflectionComparatorMode;
 
+import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.graph.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.graph.model.structure.ServiceTopology;
 import at.ac.tuwien.dsg.comot.graph.model.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.graph.model.structure.StackNode;
 import at.ac.tuwien.dsg.comot.graph.test.ConvertingToGraph;
+import at.ac.tuwien.dsg.comot.graph.test.ServiceTemplates;
 
 public class RecorderTest extends AbstractTest {
 
-	protected static final Logger log = LoggerFactory.getLogger(RecorderTest.class);
-
 	protected CloudService service;
-	protected String swNodeId = "nodeId";
-	protected String swNodeId2 = "nodeId2";
-	protected String serviceId = "serviceId";
-	ServiceTopology topology;
 
 	@Before
 	public void startup() {
-		service = ConvertingToGraph.createService();
+		service = ServiceTemplates.fullService();
+	}
+
+	@Test
+	public void testTemp() throws InstantiationException, IllegalAccessException, IllegalArgumentException,
+			ClassNotFoundException, ComotException {
+
+		revisionApi.createOrUpdateRegion(service, service.getId(), "init");
+
+		CloudService service2 = (CloudService) revisionApi.getRevision(service.getId(), "serviceId",
+				System.currentTimeMillis());
+
+		assertReflectionEquals(service, service2, ReflectionComparatorMode.LENIENT_ORDER);
+
 	}
 
 	@Test
@@ -63,7 +73,7 @@ public class RecorderTest extends AbstractTest {
 
 	}
 
-	public static void sleepSeconds(int seconds) {
+	public void sleepSeconds(int seconds) {
 		try {
 			log.debug("Waiting {} seconds", seconds);
 			Thread.sleep(seconds * 1000);

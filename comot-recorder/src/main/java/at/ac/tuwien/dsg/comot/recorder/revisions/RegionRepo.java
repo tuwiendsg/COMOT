@@ -44,38 +44,62 @@ public class RegionRepo {
 		this.regionId = regionId;
 	}
 
+	protected String identityNode(String id) {
+		return "match (r:_REGION {_id: '" + regionId + "'})-[_MANAGE]->(n {_id: '" + id + "'}) ";
+	}
+
 	@Transactional
-	public Node getLastRevision() {
+	public Map<String, String> extractClasses() {
 
-		Iterator<Node> iter = engine.execute(
-				"match (r:_REGION {_id: '" + regionId + "'})-[rel:_LAST_REV]->(m) return m").columnAs("m");
+		Map<String, String> properties = new HashMap<>();
+		Node node = getRegion();
 
-		for (Node node : IteratorUtil.asIterable(iter)) {
-			return node;
+		for (String one : node.getPropertyKeys()) {
+			if (one.equals(ManagedRegion.PROP_ID) || one.equals(ManagedRegion.PROP_TIMESTAMP)) {
+				continue;
+			}
+			properties.put(one, node.getProperty(one).toString());
 		}
-		return null;
+		return properties;
 	}
 
 	@Transactional
-	public Iterable<Relationship> getAllCurrentStructuralRelationships() {
+	public Map<String, Object> extractPropsWithoutTime(Relationship rel) {
 
-		Iterator<Relationship> iter = engine.execute(
-				"match (r:_REGION {_id: '" + regionId + "'})-[]->(n:_IDENTITY)-[rel {to: " + Long.MAX_VALUE
-						+ "}]->(m:_IDENTITY) return rel ").columnAs("rel");
+		Map<String, Object> properties = new HashMap<>();
 
-		return IteratorUtil.asIterable(iter);
+		for (String one : rel.getPropertyKeys()) {
+			if (one.equals(InternalRel.PROPERTY_FROM) || one.equals(InternalRel.PROPERTY_TO)) {
+				continue;
+			}
+			properties.put(one, rel.getProperty(one));
+		}
+		return properties;
 	}
 
 	@Transactional
-	public Relationship getRelationship(Node startNode, Node endNode, String relType) {
+	public Map<String, Object> extractProps(Node node) {
+
+		Map<String, Object> properties = new HashMap<>();
+
+		for (String one : node.getPropertyKeys()) {
+			properties.put(one, node.getProperty(one));
+		}
+		return properties;
+	}
+
+	@Transactional
+	public Relationship getCurrentRelationship(Node startNode, Node endNode, String relType) {
 
 		for (Relationship rel : startNode.getRelationships(Direction.OUTGOING,
 				DynamicRelationshipType.withName(relType))) {
 			if (rel.getEndNode().equals(endNode)) {
-				return rel;
+				Long to = (Long) rel.getProperty(InternalRel.PROPERTY_TO);
+				if (to == Long.MAX_VALUE) {
+					return rel;
+				}
 			}
 		}
-
 		return null;
 	}
 
@@ -86,17 +110,7 @@ public class RegionRepo {
 			return false;
 		}
 
-		Map<String, Object> properties = new HashMap<>();
-
-		// check properties
-		for (String one : currentRel.getPropertyKeys()) {
-			if (one.equals(InternalRel.PROPERTY_FROM) || one.equals(InternalRel.PROPERTY_TO)) {
-				continue;
-			} else {
-				properties.put(one, currentRel.getProperty(one));
-			}
-		}
-		return !properties.equals(newRel.getProperties());
+		return !extractPropsWithoutTime(currentRel).equals(newRel.getProperties());
 	}
 
 	@Transactional
@@ -105,39 +119,46 @@ public class RegionRepo {
 		if (currentState == null) {
 			return false;
 		}
-
-		Map<String, Object> properties = new HashMap<>();
-
-		for (String one : currentState.getPropertyKeys()) {
-			properties.put(one, currentState.getProperty(one));
-		}
-
-		return !properties.equals(newState.getProperties());
+		return !extractProps(currentState).equals(newState.getProperties());
 	}
 
+	/**
+	 * 
+	 * @param id
+	 * @param timestamp
+	 *            Time when the state was valid. Use Long.MAX_VALUE for the current state.
+	 * @return
+	 */
 	@Transactional
-	public Node getCurrentState(String id) {
+	public Node getState(String id, Long timestamp) {
 		Node identityNode;
 
 		if ((identityNode = getIdentityNode(id)) == null) {
-			return null;
+			throw new IllegalArgumentException("No managed object '" + id + "' in region '" + regionId + "'");
 		}
 
 		for (Relationship rel : identityNode.getRelationships(RelTypes._HAS_STATE)) {
-			if (rel.getProperty(InternalRel.PROPERTY_TO).equals(Long.MAX_VALUE)) {
+			Long from = (Long) rel.getProperty(InternalRel.PROPERTY_FROM);
+			Long to = (Long) rel.getProperty(InternalRel.PROPERTY_TO);
+
+			if (from < timestamp && to >= timestamp) {
 				return rel.getEndNode();
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * 
+	 * @return null if the region does not exist
+	 */
 	@Transactional
 	public Node getRegion() {
 
 		// log.info("txxxx name {}", TransactionSynchronizationManager.getCurrentTransactionName());
 
 		for (Node node : db.findNodesByLabelAndProperty(DynamicLabel.label(ManagedRegion.LABEL_REGION),
-				ManagedRegion.PROPERTY_ID,
+				ManagedRegion.PROP_ID,
 				regionId)) {
 
 			return node;
@@ -146,18 +167,79 @@ public class RegionRepo {
 	}
 
 	@Transactional
+	public Iterable<Node> getAllConnectedIdentityNodes(String id, Long timestamp) {
+
+		Iterator<Node> iter = engine.execute(
+				identityNode(id) + " match p=(n)-[*]->(m:_IDENTITY) where all(x IN relationships(p) WHERE x.from < "
+						+ timestamp
+						+ " AND x.to >= " + timestamp + " ) unwind nodes(p) as w return distinct w").columnAs("w");
+
+		return IteratorUtil.asIterable(iter);
+	}
+
+	@Transactional
+	public Node getLastRevision() {
+
+		Iterator<Node> iter = engine.execute(
+				"match (r:_REGION {_id: '" + regionId + "'})-[rel:_LAST_REV]->(m) return m").columnAs("m");
+
+		if (iter.hasNext()) {
+			Node node = iter.next();
+			if (iter.hasNext()) {
+				throw new RuntimeException("getLastRevision(region=" + regionId + ") returned multiple nodes! ");
+			} else {
+				return node;
+			}
+		} else {
+			throw new RuntimeException("getLastRevision(region=" + regionId + ") returned 0 nodes!");
+		}
+	}
+
+	@Transactional
+	public Iterable<Relationship> getAllCurrentStructuralRels() {
+
+		Iterator<Relationship> iter = engine.execute(
+				"match (r:_REGION {_id: '" + regionId
+						+ "'})-[]->(n:_IDENTITY)-[rel {to: 9223372036854775807}]->(m:_IDENTITY) return rel ").columnAs(
+				"rel");
+
+		return IteratorUtil.asIterable(iter);
+	}
+
+	@Transactional
+	public Iterable<Relationship> getAllStructuralRelsFromObject(String id, Long timestamp) {
+
+		Iterator<Relationship> iter = engine.execute(
+				identityNode(id) + " match (n)-[rel]->(m:_IDENTITY) where rel.from < " + timestamp + " AND rel.to >= "
+						+ timestamp + " return rel ").columnAs("rel");
+
+		return IteratorUtil.asIterable(iter);
+	}
+
+	/**
+	 * 
+	 * @param id
+	 * @return null if there is no node with the id
+	 */
+	@Transactional
 	public Node getIdentityNode(String id) {
 
 		Iterator<Node> iter = engine.execute(
-				"MATCH r, n WHERE (r:_REGION {_id : '" + regionId + "' })-[:_MANAGE]->(n:_IDENTITY {_id : '" + id
-						+ "' }) RETURN n").columnAs("n");
+				identityNode(id) + " RETURN n").columnAs("n");
 
-		for (Node node : IteratorUtil.asIterable(iter)) {
-
-			log.info("getIdentityNode(regionId={}, id={}): {}", regionId, id, node);
-			return node;
+		if (iter.hasNext()) {
+			Node node = iter.next();
+			if (iter.hasNext()) {
+				throw new RuntimeException("getIdentityNode( id=" + id + ", region=" + regionId
+						+ ") returned multiple nodes! ");
+			} else {
+				log.debug("getIdentityNode(regionId={}, id={}): {}", regionId, id, node);
+				return node;
+			}
+		} else {
+			return null;
 		}
-		return null;
+
 	}
 
 }

@@ -24,10 +24,8 @@ public class ServiceTopology extends ServicePart {
 
 	public ServiceTopology(
 			String id,
-			Set<SyblDirective> directives,
 			Set<StackNode> nodes,
 			Set<ServiceTopology> serviceTopologies) {
-		super(id, directives);
 		this.nodes = nodes;
 		this.serviceTopologies = serviceTopologies;
 	}

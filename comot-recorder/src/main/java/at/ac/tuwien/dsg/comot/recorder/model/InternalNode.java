@@ -23,6 +23,11 @@ public class InternalNode {
 
 	}
 
+	@Override
+	public String toString() {
+		return "(" + label + ": id=" + businessId + ", relC=" + relationships.size() + ", props=" + properties + ")";
+	}
+
 	public Collection<String> getLablesForIdentityNode() {
 		List<String> list = new ArrayList<>();
 		list.add(label);
@@ -41,6 +46,20 @@ public class InternalNode {
 		Map<String, Object> map = new HashMap<>();
 		map.put(ID, businessId);
 		return map;
+	}
+
+	public void addProperty(String key, Object value) {
+		if (properties == null) {
+			properties = new HashMap<>();
+		}
+		properties.put(key, value);
+	}
+
+	public void addRelationship(InternalRel rel) {
+		if (relationships == null) {
+			relationships = new HashSet<>();
+		}
+		relationships.add(rel);
 	}
 
 	// GENERATED METHODS

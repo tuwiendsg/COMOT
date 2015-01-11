@@ -10,6 +10,8 @@ import org.springframework.data.neo4j.annotation.RelatedToVia;
 @NodeEntity
 public class Revision {
 
+	public static final String PROP_ID = "id";
+
 	@GraphId
 	protected Long nodeId;
 
@@ -27,8 +29,9 @@ public class Revision {
 	public Revision(Revision oldRev, String changeType, Long timestamp) {
 		this();
 		Change change = new Change(timestamp, changeType, oldRev, this);
-		oldRev.setEnd(change);
 		this.setStart(change);
+		oldRev.setEnd(change);
+
 	}
 
 	// GENERATED METHODS

@@ -60,16 +60,6 @@ public class StackNode implements Serializable {
 		this.maxInstances = maxInstances;
 	}
 
-	public StackNode(String id, String name, Integer minInstances, Integer maxInstances, NodeType type,
-			Set<Properties> properties, Set<ArtifactTemplate> deploymentArtifacts) {
-		this(id, type);
-		this.name = name;
-		this.minInstances = minInstances;
-		this.maxInstances = maxInstances;
-		this.properties = properties;
-		this.deploymentArtifacts = deploymentArtifacts;
-	}
-
 	public void addDeploymentArtifact(ArtifactTemplate template) {
 		if (deploymentArtifacts == null) {
 			deploymentArtifacts = new HashSet<>();
@@ -113,7 +103,7 @@ public class StackNode implements Serializable {
 	}
 
 	public List<ConnectToRelationship> getConnectToList() {
-		return new ArrayList(connectTo);
+		return new ArrayList<ConnectToRelationship>(connectTo);
 	}
 
 	// GENERATED METHODS

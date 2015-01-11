@@ -10,6 +10,7 @@ import org.springframework.data.neo4j.fieldaccess.DynamicProperties;
 import org.springframework.data.neo4j.fieldaccess.DynamicPropertiesContainer;
 
 import at.ac.tuwien.dsg.comot.graph.BusinessId;
+import at.ac.tuwien.dsg.comot.graph.ComotDynamicPropertiesContainer;
 import at.ac.tuwien.dsg.comot.graph.model.type.NodePropertiesType;
 
 @NodeEntity
@@ -35,15 +36,9 @@ public class Properties implements Serializable {
 		this.propertiesType = propertiesType;
 	}
 
-	public Properties(NodePropertiesType propertiesType, Map<String, String> properties) {
-		super();
-		this.propertiesType = propertiesType;
-		this.properties = convert(properties);
-	}
-
 	public void addProperty(String key, String value) {
 		if (properties == null) {
-			properties = new DynamicPropertiesContainer();
+			properties = new ComotDynamicPropertiesContainer();
 		}
 		properties.setProperty(key, value);
 	}
@@ -59,7 +54,7 @@ public class Properties implements Serializable {
 
 	protected DynamicProperties convert(Map<String, String> map) {
 
-		DynamicProperties properties = new DynamicPropertiesContainer();
+		DynamicProperties properties = new ComotDynamicPropertiesContainer();
 
 		for (String key : map.keySet()) {
 			properties.setProperty(key, map.get(key));

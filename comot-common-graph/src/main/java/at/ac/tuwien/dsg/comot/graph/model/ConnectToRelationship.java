@@ -7,6 +7,7 @@ import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.RelationshipEntity;
 import org.springframework.data.neo4j.annotation.StartNode;
 
+import at.ac.tuwien.dsg.comot.graph.BusinessId;
 import at.ac.tuwien.dsg.comot.graph.model.structure.StackNode;
 
 @RelationshipEntity
@@ -16,7 +17,6 @@ public class ConnectToRelationship implements Serializable {
 
 	@GraphId
 	protected Long graphId;
-
 	protected String variableId;
 	protected String variableValue;
 
