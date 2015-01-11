@@ -20,11 +20,6 @@ public class ManagedRegion {
 
 	}
 
-	public ManagedRegion(InternalNode startNode) {
-		super();
-		this.startNode = startNode;
-	}
-
 	public void addClass(String key, String value) {
 		if (classes == null) {
 			classes = new HashMap<>();

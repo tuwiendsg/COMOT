@@ -8,9 +8,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MyReflectionUtils {
+public class CustomReflectionUtils {
 
-	protected static final Logger log = LoggerFactory.getLogger(MyReflectionUtils.class);
+	protected static final Logger log = LoggerFactory.getLogger(CustomReflectionUtils.class);
 
 	public static List<Field> getInheritedNonStaticNonTransientNonNullFields(Object obj)
 			throws IllegalArgumentException, IllegalAccessException {

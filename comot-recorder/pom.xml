@@ -38,6 +38,7 @@
 		<dependency>
 			<artifactId>comot-common-graph</artifactId>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>

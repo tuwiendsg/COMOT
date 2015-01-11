@@ -54,11 +54,17 @@ public class RevisionApi {
 		// log.info("tx {}", TransactionSynchronizationManager.isActualTransactionActive());
 		// log.info("tx name {}", TransactionSynchronizationManager.getCurrentTransactionName());
 
-		RegionRepo repo = context.getBean(RegionRepo.class);
-		repo.setRegionId(regionId);
+		ManagedRegion region = context.getBean(ConverterToInternal.class).convertToGraph(obj);
+		log.info("count nodes: {}, rels: {}", region.getNodes().size(), region.getRelationships().size());
 
-		ManagedRegion graph = context.getBean(ConverterToInternal.class).convertToGraph(obj);
-		log.info("count nodes: {}, rels: {}", graph.getNodes().size(), graph.getRelationships().size());
+		insertToDB(region, regionId, changeType);
+	}
+
+	protected void insertToDB(ManagedRegion region, String regionId, String changeType) {
+
+		RegionRepo repo = context.getBean(RegionRepo.class);
+
+		repo.setRegionId(regionId);
 
 		Long time = System.currentTimeMillis();
 
@@ -96,17 +102,16 @@ public class RevisionApi {
 			for (Relationship rel : lastRevisionNode.getRelationships(RelTypes._LAST_REV)) {
 				rel.delete();
 			}
-
 		}
 
 		// create new _LAST_REV
 		neo.createRelationshipBetween(regionNode, revisionNode, RelTypes._LAST_REV.toString(), null);
 
-		for (String label : graph.getClasses().keySet()) {
-			regionNode.setProperty(label, graph.getClasses().get(label));
+		for (String label : region.getClasses().keySet()) {
+			regionNode.setProperty(label, region.getClasses().get(label));
 		}
 
-		for (InternalNode node : graph.getNodes()) {
+		for (InternalNode node : region.getNodes()) {
 
 			log.info("node {}", node);
 
@@ -137,11 +142,10 @@ public class RevisionApi {
 							.setProperty(InternalRel.PROPERTY_TO, time);
 				}
 			}
-
 		}
 
 		// create structural relationships
-		for (InternalRel rel : graph.getRelationships()) {
+		for (InternalRel rel : region.getRelationships()) {
 
 			oldRel = repo.getCurrentRelationship(savedNodes.get(rel.getStartNode()), savedNodes.get(rel.getEndNode()),
 					rel.getType());
@@ -163,7 +167,6 @@ public class RevisionApi {
 			} else {
 				currentRels.add(oldRel.getId());
 			}
-
 		}
 
 		// set outdated rels
@@ -172,7 +175,7 @@ public class RevisionApi {
 				rel.setProperty(InternalRel.PROPERTY_TO, time);
 			}
 		}
-
+		
 	}
 
 	@Transactional
@@ -210,10 +213,25 @@ public class RevisionApi {
 
 		// create nodes
 		for (Node connectedNode : repo.getAllConnectedIdentityNodes(id, timestamp)) {
+	
 			businessId = connectedNode.getProperty(InternalNode.ID).toString();
-			internalNode = createNodeSimple(repo, connectedNode, repo.getState(businessId, timestamp));
+
+			internalNode = new InternalNode();
+			internalNode.setProperties(repo.extractProps(repo.getState(businessId, timestamp)));
+			internalNode.setBusinessId(businessId);
+			
+			// set label
+			for (Label label : connectedNode.getLabels()) {
+				if (label.toString().equals(LabelTypes._IDENTITY.name())) {
+					continue;
+				}
+				internalNode.setLabel(label.name());
+			}
+			
+			log.info("node: {}", internalNode);
 			nodes.put(connectedNode.getId(), internalNode);
 
+			// set start node of region
 			if (startBusinessId.equals(businessId)) {
 				region.setStartNode(internalNode);
 			}
@@ -221,7 +239,6 @@ public class RevisionApi {
 
 		// create relationships
 		for (InternalNode node : nodes.values()) {
-
 			for (Relationship rel : repo.getAllStructuralRelsFromObject(node.getBusinessId(), timestamp)) {
 
 				String type = rel.getType().name();
@@ -233,17 +250,9 @@ public class RevisionApi {
 				startNode.addRelationship(internalRel);
 				region.addRelationship(internalRel);
 
-				log.info("startNode {} {}", startNode, System.identityHashCode(startNode));
 				log.info("outgoing rel: {} ", internalRel);
 			}
-
 		}
-
-		for (InternalNode node : nodes.values()) {
-			log.info("node {} {}", node, System.identityHashCode(node));
-		}
-
-		log.info("region.getStartNode() {} {}", region.getStartNode(), System.identityHashCode(region.getStartNode()));
 
 		region.setNodes(new HashSet<InternalNode>(nodes.values()));
 		region.setClasses(repo.extractClasses());
@@ -251,25 +260,4 @@ public class RevisionApi {
 		return region;
 	}
 
-	protected InternalNode createNodeSimple(RegionRepo repo, Node identityNode, Node stateNode) {
-
-		InternalNode node = new InternalNode();
-
-		// set id
-		node.setBusinessId(identityNode.getProperty(InternalNode.ID).toString());
-		// set label
-		for (Label label : identityNode.getLabels()) {
-			if (label.toString().equals(LabelTypes._IDENTITY.name())) {
-				continue;
-			}
-
-			node.setLabel(label.name());
-		}
-		// set properties
-
-		node.setProperties(repo.extractProps(stateNode));
-
-		log.info("node: {}", node);
-		return node;
-	}
 }

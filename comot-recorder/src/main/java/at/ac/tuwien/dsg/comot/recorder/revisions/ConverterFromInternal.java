@@ -67,7 +67,7 @@ public class ConverterFromInternal {
 			IllegalAccessException, InstantiationException, ClassNotFoundException, ComotException {
 
 		Class<?> clazz = resolveClassToInstantiate(node.getLabel());
-		List<Field> fields = MyReflectionUtils.getInheritedNonStaticNonTransientFields(clazz);
+		List<Field> fields = CustomReflectionUtils.getInheritedNonStaticNonTransientFields(clazz);
 
 		// do properties
 		Object object = createObjectWithProperties(clazz, fields, node.getProperties());
@@ -122,7 +122,7 @@ public class ConverterFromInternal {
 		if (fc.isAnnotationPresent(RelationshipEntity.class)) {
 
 			Class<?> clazz = resolveClassToInstantiate(rel.getType());
-			List<Field> fields = MyReflectionUtils.getInheritedNonStaticNonTransientFields(clazz);
+			List<Field> fields = CustomReflectionUtils.getInheritedNonStaticNonTransientFields(clazz);
 
 			object = createObjectWithProperties(clazz, fields, rel.getProperties());
 

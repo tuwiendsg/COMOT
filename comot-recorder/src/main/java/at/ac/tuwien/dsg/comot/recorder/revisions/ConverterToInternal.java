@@ -55,7 +55,7 @@ public class ConverterToInternal {
 			return null;
 		}
 
-		List<Field> fields = MyReflectionUtils.getInheritedNonStaticNonTransientNonNullFields(obj);
+		List<Field> fields = CustomReflectionUtils.getInheritedNonStaticNonTransientNonNullFields(obj);
 
 		InternalNode node = new InternalNode();
 		node.setBusinessId(extractBusinessId(obj, fields));
@@ -108,7 +108,7 @@ public class ConverterToInternal {
 		// rich REL
 		if (obj.getClass().isAnnotationPresent(RelationshipEntity.class)) {
 
-			List<Field> fields = MyReflectionUtils.getInheritedNonStaticNonTransientNonNullFields(obj);
+			List<Field> fields = CustomReflectionUtils.getInheritedNonStaticNonTransientNonNullFields(obj);
 
 			for (Field to : fields) {
 				if (to.isAnnotationPresent(EndNode.class)) {
@@ -127,7 +127,7 @@ public class ConverterToInternal {
 		}
 
 		String toId = extractBusinessId(toObject,
-				MyReflectionUtils.getInheritedNonStaticNonTransientNonNullFields(toObject));
+				CustomReflectionUtils.getInheritedNonStaticNonTransientNonNullFields(toObject));
 
 		if (nodes.containsKey(toId)) {
 			toNode = nodes.get(toId);
