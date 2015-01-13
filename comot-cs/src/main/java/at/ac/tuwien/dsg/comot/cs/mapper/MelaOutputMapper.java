@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.model.monitoring.ElementMonitoring;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.MelaOutputOrika;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitoringSnapshot;
@@ -24,7 +23,7 @@ public class MelaOutputMapper {
 
 		ElementMonitoring root = mapper.get().map(snapshot, ElementMonitoring.class);
 
-		log.debug("Final mapping: {}", Utils.asJsonString(root));
+		// log.debug("Final mapping: {}", Utils.asJsonString(root));
 
 		return root;
 	}

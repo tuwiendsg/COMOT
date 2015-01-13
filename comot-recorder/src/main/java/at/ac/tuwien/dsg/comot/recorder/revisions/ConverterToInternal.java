@@ -17,7 +17,7 @@ import org.springframework.data.neo4j.annotation.RelationshipEntity;
 import org.springframework.data.neo4j.fieldaccess.DynamicProperties;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.graph.BusinessId;
+import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 import at.ac.tuwien.dsg.comot.recorder.model.InternalNode;
 import at.ac.tuwien.dsg.comot.recorder.model.InternalRel;
 import at.ac.tuwien.dsg.comot.recorder.model.ManagedRegion;
@@ -88,6 +88,10 @@ public class ConverterToInternal {
 			} else if (field.get(obj) instanceof Set) {
 				Set<?> set = (Set<?>) field.get(obj);
 
+				if (CustomReflectionUtils.isPrimitiveOrWrapper(CustomReflectionUtils.classOfSet(field))) {
+					continue;
+				}
+
 				for (Object one : set) {
 					relSet.add(createRelationship(node, field.getName(), one));
 				}
@@ -125,7 +129,7 @@ public class ConverterToInternal {
 		if (obj.getClass().isAnnotationPresent(NodeEntity.class)) {
 			toObject = obj;
 		}
-
+		log.info("oooooooooooooo {} {} {}", from, relName, obj);
 		String toId = extractBusinessId(toObject,
 				CustomReflectionUtils.getInheritedNonStaticNonTransientNonNullFields(toObject));
 
@@ -166,10 +170,7 @@ public class ConverterToInternal {
 				continue;
 
 				// primitives and wrappers -> properties
-			} else if (clazz.equals(Byte.class) || clazz.equals(Short.class) || clazz.equals(Integer.class)
-					|| clazz.equals(Long.class) || clazz.equals(Float.class) || clazz.equals(Double.class)
-					|| clazz.equals(Character.class) || clazz.equals(String.class) || clazz.isPrimitive()) {
-
+			} else if (CustomReflectionUtils.isPrimitiveOrWrapper(clazz)) {
 				properties.put(field.getName(), fieldObj);
 
 				// DynamicProperties
@@ -184,6 +185,18 @@ public class ConverterToInternal {
 				// enum
 			} else if (clazz instanceof Class && ((Class<?>) clazz).isEnum()) {
 				properties.put(field.getName(), ((Enum<?>) fieldObj).name());
+
+				// collection of primitives
+			} else if (field.get(obj) instanceof Set) {
+				if (CustomReflectionUtils.isPrimitiveOrWrapper(CustomReflectionUtils.classOfSet(field))) {
+
+					Set<?> collection = (Set<?>) field.get(obj);
+					int i = 0;
+
+					for (Object oneOfCollection : collection) {
+						properties.put(field.getName() + "-" + i++, oneOfCollection);
+					}
+				}
 			}
 
 		}

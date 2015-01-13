@@ -9,17 +9,16 @@ import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
-import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.common.model.structure.ServicePart;
-import at.ac.tuwien.dsg.comot.common.model.structure.ServiceTopology;
-import at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.structure.ServicePart;
+import at.ac.tuwien.dsg.comot.model.structure.ServiceTopology;
+import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement.MonitoredElementLevel;
 
@@ -34,7 +33,6 @@ public class MelaOrika {
 	public void build() {
 
 		MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-		ConverterFactory converterFactory = mapperFactory.getConverterFactory();
 
 		mapperFactory.classMap(CloudService.class, MonitoredElement.class)
 				.field("id", "id")

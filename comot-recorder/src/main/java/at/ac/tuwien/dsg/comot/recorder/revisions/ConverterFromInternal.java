@@ -1,7 +1,6 @@
 package at.ac.tuwien.dsg.comot.recorder.revisions;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -19,8 +18,8 @@ import org.springframework.data.neo4j.annotation.StartNode;
 import org.springframework.data.neo4j.fieldaccess.DynamicProperties;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.graph.BusinessId;
+import at.ac.tuwien.dsg.comot.recorder.BusinessId;
+import at.ac.tuwien.dsg.comot.recorder.RecorderException;
 import at.ac.tuwien.dsg.comot.recorder.model.InternalNode;
 import at.ac.tuwien.dsg.comot.recorder.model.InternalRel;
 import at.ac.tuwien.dsg.comot.recorder.model.ManagedRegion;
@@ -40,19 +39,19 @@ public class ConverterFromInternal {
 	protected Map<String, Object> objects;
 	protected ManagedRegion region;
 
-	protected Class<?> resolveClassToInstantiate(String name) throws ClassNotFoundException, ComotException {
+	protected Class<?> resolveClassToInstantiate(String name) throws ClassNotFoundException, RecorderException {
 
 		String qualified = region.getClasses().get(name);
 
 		if (qualified == null) {
-			throw new ComotException("Could not find class for node/relationship '" + name + "'");
+			throw new RecorderException("Could not find class for node/relationship '" + name + "'");
 		}
 
 		return Class.forName(qualified);
 	}
 
 	public Object convertToObject(ManagedRegion region) throws IllegalArgumentException,
-			IllegalAccessException, InstantiationException, ClassNotFoundException, ComotException {
+			IllegalAccessException, InstantiationException, ClassNotFoundException, RecorderException {
 
 		this.region = region;
 		objects = new HashMap<>();
@@ -64,7 +63,7 @@ public class ConverterFromInternal {
 	}
 
 	public Object createObject(InternalNode node) throws IllegalArgumentException,
-			IllegalAccessException, InstantiationException, ClassNotFoundException, ComotException {
+			IllegalAccessException, InstantiationException, ClassNotFoundException, RecorderException {
 
 		Class<?> clazz = resolveClassToInstantiate(node.getLabel());
 		List<Field> fields = CustomReflectionUtils.getInheritedNonStaticNonTransientFields(clazz);
@@ -95,8 +94,12 @@ public class ConverterFromInternal {
 				// Set relationship
 			} else if (fc.equals(Set.class)) {
 
+				if (CustomReflectionUtils.isPrimitiveOrWrapper(CustomReflectionUtils.classOfSet(field))) {
+					continue;
+				}
+
 				Set<Object> relSet = new HashSet<>();
-				Class<?> setClass = (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+				Class<?> setClass = CustomReflectionUtils.classOfSet(field);
 
 				for (InternalRel rel : node.getRelationships()) {
 					if (rel.getType().equals(field.getName())) {
@@ -113,7 +116,7 @@ public class ConverterFromInternal {
 
 	protected Object doOneRel(Class<?> fc, InternalRel rel)
 			throws IllegalArgumentException,
-			IllegalAccessException, InstantiationException, ClassNotFoundException, ComotException {
+			IllegalAccessException, InstantiationException, ClassNotFoundException, RecorderException {
 
 		Object object = null;
 		Object other;
@@ -157,11 +160,11 @@ public class ConverterFromInternal {
 		return object;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected Object createObjectWithProperties(Class<?> objClazz, List<Field> fields,
 			Map<String, Object> properties)
 			throws IllegalArgumentException,
-			IllegalAccessException, InstantiationException, ClassNotFoundException, ComotException {
+			IllegalAccessException, InstantiationException, ClassNotFoundException, RecorderException {
 
 		Object obj = objClazz.newInstance();
 
@@ -174,10 +177,7 @@ public class ConverterFromInternal {
 				continue;
 
 				// primitives and wrappers
-			} else if (clazz.equals(Byte.class) || clazz.equals(Short.class) || clazz.equals(Integer.class)
-					|| clazz.equals(Long.class) || clazz.equals(Float.class) || clazz.equals(Double.class)
-					|| clazz.equals(Character.class) || clazz.equals(String.class) || clazz.isPrimitive()) {
-
+			} else if (CustomReflectionUtils.isPrimitiveOrWrapper(clazz)) {
 				field.set(obj, properties.get(field.getName()));
 
 				// DynamicProperties
@@ -200,6 +200,22 @@ public class ConverterFromInternal {
 				Object enumValue = properties.get(field.getName());
 				if (enumValue != null) {
 					field.set(obj, Enum.valueOf((Class<Enum>) field.getType(), enumValue.toString()));
+				}
+
+				// collection of primitives
+			} else if (field.get(obj) instanceof Set) {
+				if (CustomReflectionUtils.isPrimitiveOrWrapper(CustomReflectionUtils.classOfSet(field))) {
+
+					Set<Object> set = new HashSet<>();
+
+					String prefix = field.getName() + "-";
+
+					for (String name : properties.keySet()) {
+						if (name.startsWith(prefix)) {
+							set.add(properties.get(name));
+						}
+					}
+					field.set(obj, set);
 				}
 			}
 		}

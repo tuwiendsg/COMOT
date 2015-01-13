@@ -1,110 +1,21 @@
 {
-	"serviceTopologies" : [{
-			"nodes" : [{
-					"minInstances" : 1,
-					"maxInstances" : 1,
-					"type" : "WAR",
-					"requirements" : [],
-
-					"capabilities" : [],
-
-					"deploymentArtifacts" : [{
-							"type" : "WAR_FILE",
-							"artifactReferences" : [{
-									"uri" : "http://128.130.172.215/salsa/upload/files/ASE/PoliceDaaS.war"
-								}],
-
-							"id" : "deployWar",
-							"name" : "Deployment script"
-						}],
-
-					"properties" : [],
-
-					"instances" : [],
-
+	"id" : "comot_tomcat_id",
+	"entity" : "at.ac.tuwien.dsg.comot.common.model.structure.CloudService@762071af",
+	"children" : [{
+			"id" : "SampleService_test",
+			"entity" : "at.ac.tuwien.dsg.comot.common.model.structure.ServiceTopology@3006a3a2",
+			"children" : [{
 					"id" : "policeApp",
-					"name" : "policeApp"
+					"entity" : "at.ac.tuwien.dsg.comot.common.model.structure.StackNode@4729a8f4",
+					"children" : []
 				},{
-					"minInstances" : 1,
-					"maxInstances" : 1,
-					"type" : "TOMCAT",
-					"requirements" : [],
-
-					"capabilities" : [],
-
-					"deploymentArtifacts" : [],
-
-					"properties" : [{
-							"propertiesType" : "ACTION",
-							"properties" : {
-								"stop" : "service tomcat7 stop",
-								"start" : "service tomcat7 start",
-								"deploy" : "apt-get -y install tomcat7",
-								"undeploy" : "apt-get -y erase tomcat7"
-							}
-						}],
-
-					"instances" : [],
-
-					"id" : "tomcat_OF_policeApp"
+					"id" : "os_OF_tomcat_OF_policeApp",
+					"entity" : "at.ac.tuwien.dsg.comot.common.model.structure.StackNode@7de8b042",
+					"children" : []
 				},{
-					"minInstances" : 1,
-					"maxInstances" : 2147483647,
-					"type" : "OS",
-					"requirements" : [],
-
-					"capabilities" : [],
-
-					"deploymentArtifacts" : [],
-
-					"properties" : [{
-							"properties" : {
-								"provider" : "dsg@openstack",
-								"instanceType" : "000000960",
-								"baseImage" : "8f1428ac-f239-42e0-ab35-137f6e234101",
-								"packages" : "openjdk-7-jre"
-							}
-						},{
-							"propertiesType" : "OS",
-							"properties" : {
-								"provider" : "dsg@openstack",
-								"instanceType" : "000000960",
-								"baseImage" : "8f1428ac-f239-42e0-ab35-137f6e234101",
-								"packages" : ""
-							}
-						}],
-
-					"instances" : [],
-
-					"id" : "os_OF_tomcat_OF_policeApp"
-				}],
-
-			"serviceUnits" : [{
-					"directives" : [],
-
-					"id" : "policeApp"
-				}],
-
-			"serviceTopologies" : [],
-
-			"directives" : [],
-
-			"id" : "SampleService_test"
-		}],
-
-	"relationships" : [{
-			"type" : "HOST_ON",
-			"from" : "policeApp",
-			"to" : "tomcat_OF_policeApp",
-			"id" : "policeApp_HOSTON_tomcat_OF_policeApp"
-		},{
-			"type" : "HOST_ON",
-			"from" : "tomcat_OF_policeApp",
-			"to" : "os_OF_tomcat_OF_policeApp",
-			"id" : "tomcat_OF_policeApp_HOSTON_os_OF_tomcat_OF_policeApp"
-		}],
-
-	"directives" : [],
-
-	"id" : "SalsaExample_comot"
+					"id" : "tomcat_OF_policeApp",
+					"entity" : "at.ac.tuwien.dsg.comot.common.model.structure.StackNode@73d3a53d",
+					"children" : []
+				}]
+		}]
 }

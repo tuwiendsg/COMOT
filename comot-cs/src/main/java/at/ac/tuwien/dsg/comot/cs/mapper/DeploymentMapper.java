@@ -1,16 +1,21 @@
 package at.ac.tuwien.dsg.comot.cs.mapper;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceInstance;
 import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.model.logic.Navigator;
-import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.common.model.structure.StackNode;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.DeploymentOrika;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.StateOrika;
+import at.ac.tuwien.dsg.comot.model.node.NodeInstance;
+import at.ac.tuwien.dsg.comot.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.structure.StackNode;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 
 @Component
@@ -36,6 +41,7 @@ public class DeploymentMapper {
 			at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService serviceState) {
 
 		Navigator navigator = new Navigator(cloudService);
+		Map<String, String> hosts = new HashMap<>();
 
 		mapperState.get().map(serviceState, cloudService);
 
@@ -48,7 +54,24 @@ public class DeploymentMapper {
 
 				StackNode node = navigator.getNodeFor(unit.getId());
 				mapperState.get().map(unit, node);
+
+				// <instanceID, hostInstanceID> pairs
+				for (ServiceInstance instance : unit.getInstancesList()) {
+					if (instance.getHostedId_Integer() != Integer.MAX_VALUE) {
+						hosts.put(IdResolver.uniqueInstance(unit.getId(), instance.getInstanceId()),
+								IdResolver.uniqueInstance(unit.getHostedId(), instance.getHostedId_Integer()));
+					}
+				}
 			}
+		}
+
+		// set host to instance
+		for (String str : hosts.keySet()) {
+			NodeInstance node = navigator.getInstance(IdResolver.nodeFromInstance(str),
+					IdResolver.instanceFromInstance(str));
+			NodeInstance host = navigator.getInstance(IdResolver.nodeFromInstance(str),
+					IdResolver.instanceFromInstance(str));
+			node.setHostInstance(host);
 		}
 	}
 

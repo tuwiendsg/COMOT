@@ -13,22 +13,23 @@ public class ElementState {
 
 	protected String id;
 	protected Integer instanceId;
-	protected Type type;
-	protected State state;
+	protected String type;
+	protected String state;
 	// @XmlElementWrapper
 	// @XmlElement(name = "element")
 	protected List<ElementState> children = new ArrayList<>();
 	protected boolean serviceUnit;
 	protected List<String> connectToIds = new ArrayList<>();
 
-	public enum Type {
-		SERVICE,
-		TOPOLOGY,
-		OS, WAR, DOCKER, TOMCAT, SOFTWARE,
+	public ElementState() {
+
 	}
 
-	public enum State {
-		UNDEPLOYED, ALLOCATING, STAGING, STAGING_ACTION, CONFIGURING, INSTALLING, DEPLOYED, ERROR
+	public ElementState(String id, String type, String state) {
+		super();
+		this.id = id;
+		this.type = type;
+		this.state = state;
 	}
 
 	public void addChild(ElementState element) {
@@ -55,19 +56,19 @@ public class ElementState {
 		this.id = id;
 	}
 
-	public Type getType() {
+	public String getType() {
 		return type;
 	}
 
-	public void setType(Type type) {
+	public void setType(String type) {
 		this.type = type;
 	}
 
-	public State getState() {
+	public String getState() {
 		return state;
 	}
 
-	public void setState(State state) {
+	public void setState(String state) {
 		this.state = state;
 	}
 

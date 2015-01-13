@@ -12,18 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.common.Utils;
-import at.ac.tuwien.dsg.comot.common.model.EntityRelationship;
-import at.ac.tuwien.dsg.comot.common.model.SyblDirective;
 import at.ac.tuwien.dsg.comot.common.model.logic.Navigator;
 import at.ac.tuwien.dsg.comot.common.model.logic.RelationshipResolver;
-import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.common.model.structure.ServicePart;
-import at.ac.tuwien.dsg.comot.common.model.structure.StackNode;
-import at.ac.tuwien.dsg.comot.common.model.type.DirectiveType;
-import at.ac.tuwien.dsg.comot.common.model.type.RelationshipType;
-import at.ac.tuwien.dsg.comot.common.model.unit.NodeInstance;
-import at.ac.tuwien.dsg.comot.common.model.unit.NodeInstanceOs;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.MelaOrika;
+import at.ac.tuwien.dsg.comot.model.SyblDirective;
+import at.ac.tuwien.dsg.comot.model.node.NodeInstance;
+import at.ac.tuwien.dsg.comot.model.node.NodeInstanceOs;
+import at.ac.tuwien.dsg.comot.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.structure.ServicePart;
+import at.ac.tuwien.dsg.comot.model.structure.StackNode;
+import at.ac.tuwien.dsg.comot.model.type.DirectiveType;
+import at.ac.tuwien.dsg.comot.model.type.RelationshipType;
 import at.ac.tuwien.dsg.csdg.elasticityInformation.elasticityRequirements.BinaryRestriction;
 import at.ac.tuwien.dsg.csdg.elasticityInformation.elasticityRequirements.BinaryRestrictionsConjunction;
 import at.ac.tuwien.dsg.csdg.elasticityInformation.elasticityRequirements.Constraint;
@@ -48,7 +47,6 @@ public class MelaMapper {
 
 	public MonitoredElement extractMela(CloudService cloudService) throws ClassNotFoundException, IOException {
 
-		Relationship tempRel;
 		MonitoredElement vmElement;
 		StackNode node;
 		RelationshipResolver resolver = new RelationshipResolver(cloudService);
@@ -61,7 +59,7 @@ public class MelaMapper {
 		// add VMs
 		for (MonitoredElement element : map.values()) {
 			if (element.getLevel().equals(MonitoredElementLevel.SERVICE_UNIT)) {
-				node = resolver.getOsForServiceUnit(element.getId());
+				node = resolver.getOsForServiceUnit(IdResolver.nodeFromUnit(element.getId()));
 
 				for (NodeInstance instance : node.getInstances()) {
 					vmElement = new MonitoredElement();
@@ -73,32 +71,32 @@ public class MelaMapper {
 			}
 		}
 
-		// add relationships
-		for (EntityRelationship rel : cloudService.getRelationships()) {
-
-			log.trace("original from={} to={}", rel.getFrom(), rel.getTo());
-
-			if (resolver.isServicePartRelationship(rel)) {
-
-				String fromPartId = resolver.resolveToServicePart(rel.getFrom()).getId();
-				String toPartId = resolver.resolveToServicePart(rel.getTo()).getId();
-
-				log.trace("part from={} to={}", fromPartId, toPartId);
-
-				if (map.containsKey(fromPartId) && map.containsKey(toPartId)
-						&& !rel.getType().equals(RelationshipType.LOCAL)) {
-
-					tempRel = new Relationship()
-							.withFrom(new MonitoredElement(fromPartId))
-							.withTo(new MonitoredElement(toPartId))
-							.withType(resolveType(rel.getType()));
-
-					log.trace("inserted relationship from={} to={}", fromPartId, toPartId);
-
-					map.get(fromPartId).getRelationships().add(tempRel);
-				}
-			}
-		}
+		// add relationships TODO
+		// for (EntityRelationship rel : cloudService.getRelationships()) {
+		//
+		// log.trace("original from={} to={}", rel.getFrom(), rel.getTo());
+		//
+		// if (resolver.isServicePartRelationship(rel)) {
+		//
+		// String fromPartId = resolver.resolveToServicePart(rel.getFrom()).getId();
+		// String toPartId = resolver.resolveToServicePart(rel.getTo()).getId();
+		//
+		// log.trace("part from={} to={}", fromPartId, toPartId);
+		//
+		// if (map.containsKey(fromPartId) && map.containsKey(toPartId)
+		// && !rel.getType().equals(RelationshipType.LOCAL)) {
+		//
+		// tempRel = new Relationship()
+		// .withFrom(new MonitoredElement(fromPartId))
+		// .withTo(new MonitoredElement(toPartId))
+		// .withType(resolveType(rel.getType()));
+		//
+		// log.trace("inserted relationship from={} to={}", fromPartId, toPartId);
+		//
+		// map.get(fromPartId).getRelationships().add(tempRel);
+		// }
+		// }
+		// }
 
 		log.debug("Final mapping: {}", Utils.asXmlStringLog(root));
 
@@ -164,7 +162,7 @@ public class MelaMapper {
 		List<Requirement> requirements = new ArrayList<>();
 		Constraint rConstraint = SYBLDirectiveMappingFromXML.mapSYBLAnnotationToXMLConstraint(constraint);
 
-		log.trace("Constraint parsed from the string '{}' {}", constraint, Utils.asJsonString(rConstraint));
+		// log.trace("Constraint parsed from the string '{}' {}", constraint, Utils.asJsonString(rConstraint));
 
 		for (BinaryRestrictionsConjunction binaryRestrictions : rConstraint.getToEnforce().getBinaryRestriction()) {
 			for (BinaryRestriction binaryRestriction : binaryRestrictions.getBinaryRestrictions()) {

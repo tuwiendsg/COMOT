@@ -1,6 +1,6 @@
 package at.ac.tuwien.dsg.comot.cs.mapper.orika;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
@@ -17,10 +17,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.common.model.SyblDirective;
-import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.common.model.structure.ServiceTopology;
-import at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.SyblDirective;
+import at.ac.tuwien.dsg.comot.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.structure.ServiceTopology;
+import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.rsybl.CloudServiceXML;
 import at.ac.tuwien.dsg.comot.rsybl.SYBLDirective;
 
@@ -70,9 +70,10 @@ public class RsyblOrika {
 		facade = mapperFactory.getMapperFacade();
 	}
 
-	class SyblConverter extends CustomConverter<List, SYBLDirective> {
+	@SuppressWarnings("rawtypes")
+	class SyblConverter extends CustomConverter<Set, SYBLDirective> {
 		@Override
-		public SYBLDirective convert(List source, Type<? extends SYBLDirective> destinationType) {
+		public SYBLDirective convert(Set source, Type<? extends SYBLDirective> destinationType) {
 
 			SyblDirective directive;
 			SYBLDirective rDirecitve = new SYBLDirective();

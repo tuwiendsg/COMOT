@@ -1,23 +1,20 @@
 package at.ac.tuwien.dsg.comot.common.model.logic;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.ac.tuwien.dsg.comot.common.model.AbstractEntity;
-import at.ac.tuwien.dsg.comot.common.model.EntityRelationship;
-import at.ac.tuwien.dsg.comot.common.model.SyblDirective;
-import at.ac.tuwien.dsg.comot.common.model.node.ArtifactTemplate;
-import at.ac.tuwien.dsg.comot.common.model.node.Capability;
-import at.ac.tuwien.dsg.comot.common.model.node.Requirement;
-import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.common.model.structure.ServicePart;
-import at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.common.model.structure.StackNode;
-import at.ac.tuwien.dsg.comot.common.model.type.NodeType;
-import at.ac.tuwien.dsg.comot.common.model.type.RelationshipType;
+import at.ac.tuwien.dsg.comot.common.model.logic.Navigator.HelperNode;
+import at.ac.tuwien.dsg.comot.model.HasUniqueId;
+import at.ac.tuwien.dsg.comot.model.SyblDirective;
+import at.ac.tuwien.dsg.comot.model.relationship.ConnectToRel;
+import at.ac.tuwien.dsg.comot.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.structure.ServicePart;
+import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.structure.StackNode;
+import at.ac.tuwien.dsg.comot.model.type.NodeType;
 
 public class RelationshipResolver {
 
@@ -37,15 +34,14 @@ public class RelationshipResolver {
 	 * @param id
 	 * @return
 	 */
-	public List<String> getConnectToIds(String id) {
+	public Set<String> getConnectToIds(String id) {
 
-		StackNode node = navigator.getNode(id);
-		List<String> list = new ArrayList<>();
+		Set<String> list = new HashSet<>();
 
-		for (EntityRelationship rel : service.getRelationships()) {
-			if (rel.getType().equals(RelationshipType.CONNECT_TO)) {
-				if (navigator.getNodeFor(rel.getTo()).getId().equals(node.getId())) {
-					list.add(navigator.getNodeFor(rel.getFrom()).getId());
+		for (StackNode one : navigator.getAllNodes()) {
+			for (ConnectToRel rel : one.getConnectTo()) {
+				if (rel.getTo().getId().equals(id)) {
+					list.add(rel.getFrom().getId());
 				}
 			}
 		}
@@ -77,12 +73,10 @@ public class RelationshipResolver {
 			return false;
 		}
 
-		for (EntityRelationship rel : service.getRelationships()) {
-			if (rel.getType().equals(RelationshipType.HOST_ON)) {
-				if (rel.getTo().equals(node.getId())) {
-					log.debug("isServiceUnit(nodeId={} ): false", node.getId());
-					return false;
-				}
+		for (StackNode one : navigator.getAllNodes()) {
+			if (one.getHostNode() != null && one.getHostNode().getId().equals(node.getId())) {
+				log.debug("isServiceUnit(nodeId={} ): false", node.getId());
+				return false;
 			}
 		}
 
@@ -118,50 +112,41 @@ public class RelationshipResolver {
 
 	public StackNode getHost(String id) {
 
-		for (EntityRelationship rel : service.getRelationships()) {
-			if (rel.getType().equals(RelationshipType.HOST_ON)) {
-				if (rel.getFrom().equals(id)) {
-					log.debug("getHost(id={}): {}", id, rel.getTo());
-					return (StackNode) navigator.getNode(rel.getTo());
-				}
-			}
-		}
-		log.debug("getHost(id={}): {}", id, null);
-		return null;
-	}
+		StackNode host = ((StackNode) navigator.getNode(id));
 
-	public boolean isServicePartRelationship(EntityRelationship rel) {
-
-		ServicePart from = resolveToServicePart(rel.getFrom());
-		ServicePart to = resolveToServicePart(rel.getTo());
-
-		if (from != null && to != null) {
-			return true;
+		if (host == null || host.getHostNode() == null) {
+			log.warn("getHost(id={}): {}", id, null);
+			return null;
+		} else {
+			log.debug("getHost(id={}): {}", id, host.getHostNode().getTo());
+			return host.getHostNode().getTo();
 		}
 
-		return false;
 	}
+
+	// public boolean isServicePartRelationship(EntityRelationship rel) {
+	//
+	// ServicePart from = resolveToServicePart(rel.getFrom());
+	// ServicePart to = resolveToServicePart(rel.getTo());
+	//
+	// if (from != null && to != null) {
+	// return true;
+	// }
+	//
+	// return false;
+	// }
 
 	public ServicePart resolveToServicePart(String id) {
 
 		ServiceUnit unit;
 
-		AbstractEntity entity = navigator.getAbstractEntity(id);
+		HasUniqueId entity = navigator.getAbstractEntity(id);
 
 		if (entity instanceof StackNode) {
 			unit = navigator.getServiceUnit(entity.getId());
 
-		} else if (entity instanceof Capability) {
+		} else if (entity instanceof HelperNode) {
 			unit = navigator.getServiceUnit(navigator.getNodeFor(entity.getId()).getId());
-
-		} else if (entity instanceof Requirement) {
-			unit = navigator.getServiceUnit(navigator.getNodeFor(entity.getId()).getId());
-
-		} else if (entity instanceof ArtifactTemplate) {
-			unit = navigator.getServiceUnit(navigator.getNodeFor(entity.getId()).getId());
-
-		} else if (entity instanceof EntityRelationship) {
-			throw new UnsupportedOperationException();
 
 		} else if (entity instanceof SyblDirective) {
 			throw new UnsupportedOperationException();

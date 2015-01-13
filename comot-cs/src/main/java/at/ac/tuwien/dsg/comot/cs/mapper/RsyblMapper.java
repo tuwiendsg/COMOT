@@ -5,9 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.common.model.logic.Navigator;
-import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.RsyblOrika;
+import at.ac.tuwien.dsg.comot.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.rsybl.CloudServiceXML;
 
 @Component
@@ -20,10 +19,8 @@ public class RsyblMapper {
 
 	public CloudServiceXML extractRsybl(CloudService cloudService) {
 
-		Navigator navigator;
-
 		// cloudService = (CloudService) UtilsMapper.deepCopy(cloudService);
-		navigator = new Navigator(cloudService);
+		// Navigator navigator = new Navigator(cloudService);
 
 		// TODO check with Georgiana if SW units should really be removed
 		// ignore SOFTWARE nodes

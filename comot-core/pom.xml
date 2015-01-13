@@ -23,6 +23,10 @@
 		</dependency>
 		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
+			<artifactId>comot-tosca</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-cs</artifactId>
 			<version>0.2</version>
 			<type>test-jar</type>
@@ -35,7 +39,12 @@
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+		</dependency>
+
 		<!-- JPA, DB -->
 		<dependency>
 			<groupId>org.hibernate</groupId>

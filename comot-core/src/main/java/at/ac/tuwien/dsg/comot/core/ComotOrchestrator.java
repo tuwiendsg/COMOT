@@ -22,12 +22,12 @@ import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.monitoring.ElementMonitoring;
-import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.core.dal.JobRepo;
 import at.ac.tuwien.dsg.comot.core.dal.ServiceRepo;
 import at.ac.tuwien.dsg.comot.core.model.Job;
 import at.ac.tuwien.dsg.comot.core.model.ServiceEntity;
 import at.ac.tuwien.dsg.comot.core.model.ServiceEntityComparator;
+import at.ac.tuwien.dsg.comot.model.structure.CloudService;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
 @Component
@@ -56,6 +56,7 @@ public class ComotOrchestrator {
 	public void setUp() {
 		executor.setOrchestrator(this);
 		executor.start();
+		log.info("");
 	}
 
 	public List<ServiceEntity> getServices() {
@@ -196,14 +197,14 @@ public class ComotOrchestrator {
 		entity.setMcr(mcr);
 		serviceRepo.save(entity);
 	}
-	
+
 	public CompositionRulesConfiguration getMcr(String serviceId) throws CoreServiceException {
-		
+
 		ServiceEntity entity = getServiceEntity(serviceId);
-		
+
 		// TODO: could be taken only from DB
 		CompositionRulesConfiguration mcr = monitoring.getMcr(serviceId);
-		
+
 		return mcr;
 	}
 

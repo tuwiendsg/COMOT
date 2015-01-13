@@ -2,9 +2,9 @@
 <class-diagram version="1.1.6" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
   associations="true" dependencies="true" nesting-relationships="true">  
   <class id="1" language="java" name="at.ac.tuwien.dsg.comot.common.model.structure.ServiceTopology" 
-    project="comot-common" 
-    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/structure/ServiceTopology.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
+    project="comot-common-graph" 
+    file="/comot-common-graph/src/main/java/at/ac/tuwien/dsg/comot/common/model/structure/ServiceTopology.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="689" y="225"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -12,8 +12,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="at.ac.tuwien.dsg.comot.common.model.SyblDirective" project="comot-common" 
-    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/SyblDirective.java" binary="false" 
+  <class id="2" language="java" name="at.ac.tuwien.dsg.comot.common.model.SyblDirective" project="comot-common-graph" 
+    file="/comot-common-graph/src/main/java/at/ac/tuwien/dsg/comot/common/model/SyblDirective.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="202" y="199"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
@@ -22,9 +22,10 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="at.ac.tuwien.dsg.comot.common.model.structure.ServicePart" project="comot-common" 
-    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/structure/ServicePart.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
+  <class id="3" language="java" name="at.ac.tuwien.dsg.comot.common.model.structure.ServicePart" 
+    project="comot-common-graph" 
+    file="/comot-common-graph/src/main/java/at/ac/tuwien/dsg/comot/common/model/structure/ServicePart.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
     <position height="28" width="92" x="624" y="123"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -52,9 +53,10 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="6" language="java" name="at.ac.tuwien.dsg.comot.common.model.node.ArtifactTemplate" project="comot-common" 
-    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/node/ArtifactTemplate.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
+  <class id="6" language="java" name="at.ac.tuwien.dsg.comot.common.model.node.ArtifactTemplate" 
+    project="comot-common-graph" 
+    file="/comot-common-graph/src/main/java/at/ac/tuwien/dsg/comot/common/model/node/ArtifactTemplate.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="525" y="518"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -62,8 +64,9 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="7" language="java" name="at.ac.tuwien.dsg.comot.common.model.structure.StackNode" project="comot-common" 
-    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/structure/StackNode.java" binary="false" 
+  <class id="7" language="java" name="at.ac.tuwien.dsg.comot.common.model.structure.StackNode" 
+    project="comot-common-graph" 
+    file="/comot-common-graph/src/main/java/at/ac/tuwien/dsg/comot/common/model/structure/StackNode.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="82" width="110" x="624" y="373"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
@@ -82,9 +85,10 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="9" language="java" name="at.ac.tuwien.dsg.comot.common.model.structure.CloudService" project="comot-common" 
-    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/structure/CloudService.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
+  <class id="9" language="java" name="at.ac.tuwien.dsg.comot.common.model.structure.CloudService" 
+    project="comot-common-graph" 
+    file="/comot-common-graph/src/main/java/at/ac/tuwien/dsg/comot/common/model/structure/CloudService.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="915" y="225"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -92,9 +96,10 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="10" language="java" name="at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit" project="comot-common" 
-    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/structure/ServiceUnit.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
+  <class id="10" language="java" name="at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit" 
+    project="comot-common-graph" 
+    file="/comot-common-graph/src/main/java/at/ac/tuwien/dsg/comot/common/model/structure/ServiceUnit.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="460" y="225"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -102,10 +107,10 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="11" language="java" name="at.ac.tuwien.dsg.comot.common.model.unit.ElasticityCapability" 
-    project="comot-common" 
-    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/unit/ElasticityCapability.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
+  <class id="11" language="java" name="at.ac.tuwien.dsg.comot.common.model.ElasticityCapability" 
+    project="comot-common-graph" 
+    file="/comot-common-graph/src/main/java/at/ac/tuwien/dsg/comot/common/model/ElasticityCapability.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="202" y="294"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -113,8 +118,9 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="12" language="java" name="at.ac.tuwien.dsg.comot.common.model.unit.NodeInstanceOs" project="comot-common" 
-    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/unit/NodeInstanceOs.java" binary="false" 
+  <class id="12" language="java" name="at.ac.tuwien.dsg.comot.common.model.node.NodeInstanceOs" 
+    project="comot-common-graph" 
+    file="/comot-common-graph/src/main/java/at/ac/tuwien/dsg/comot/common/model/node/NodeInstanceOs.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="101" y="662"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
@@ -123,8 +129,9 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="13" language="java" name="at.ac.tuwien.dsg.comot.common.model.unit.NodeInstance" project="comot-common" 
-    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/unit/NodeInstance.java" binary="false" 
+  <class id="13" language="java" name="at.ac.tuwien.dsg.comot.common.model.node.NodeInstance" 
+    project="comot-common-graph" 
+    file="/comot-common-graph/src/main/java/at/ac/tuwien/dsg/comot/common/model/node/NodeInstance.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="104" y="518"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
@@ -133,8 +140,8 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="14" language="java" name="at.ac.tuwien.dsg.comot.common.model.node.Properties" project="comot-common" 
-    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/node/Properties.java" binary="false" 
+  <class id="14" language="java" name="at.ac.tuwien.dsg.comot.common.model.node.Properties" project="comot-common-graph" 
+    file="/comot-common-graph/src/main/java/at/ac/tuwien/dsg/comot/common/model/node/Properties.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="332" y="522"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
@@ -153,17 +160,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="16" language="java" name="at.ac.tuwien.dsg.comot.common.model.AbstractEntity" project="comot-common" 
-    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/AbstractEntity.java" binary="false" 
-    corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1240" y="621"/>    
-    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" accessors="true" 
-      visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
-      <operations public="false" package="false" protected="false" private="false" static="false"/>    
-    </display>  
-  </class>  
-  <class id="17" language="java" name="at.ac.tuwien.dsg.comot.common.model.monitoring.ElementMonitoring" 
+  <class id="16" language="java" name="at.ac.tuwien.dsg.comot.common.model.monitoring.ElementMonitoring" 
     project="comot-common" 
     file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/monitoring/ElementMonitoring.java" 
     binary="false" corner="BOTTOM_RIGHT">    
@@ -174,7 +171,7 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <class id="18" language="java" name="at.ac.tuwien.dsg.comot.common.model.monitoring.Metric" project="comot-common" 
+  <class id="17" language="java" name="at.ac.tuwien.dsg.comot.common.model.monitoring.Metric" project="comot-common" 
     file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/monitoring/Metric.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1337" y="245"/>    
@@ -184,42 +181,46 @@
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
-  <association id="19">    
+  <association id="18">    
+    <end type="SOURCE" refId="10" navigable="false">      
+      <attribute id="19" name="elasticityCapabilities"/>      
+      <multiplicity id="20" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="11" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="21">    
+    <end type="SOURCE" refId="9" navigable="false">      
+      <attribute id="22" name="serviceTopologies">        
+        <position height="18" width="97" x="753" y="195"/>      
+      </attribute>      
+      <multiplicity id="23" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="1" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="24">    
     <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="20" name="requirements"/>      
-      <multiplicity id="21" minimum="0" maximum="2147483647"/>    
+      <attribute id="25" name="instances"/>      
+      <multiplicity id="26" minimum="0" maximum="2147483647"/>    
     </end>    
-    <end type="TARGET" refId="8" navigable="true"/>    
+    <end type="TARGET" refId="13" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="22">    
-    <end type="SOURCE" refId="17" navigable="false">      
-      <attribute id="23" name="metrics"/>      
-      <multiplicity id="24" minimum="0" maximum="2147483647"/>    
+  <association id="27">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="28" name="serviceTopologies">        
+        <position height="18" width="97" x="758" y="213"/>      
+      </attribute>      
+      <multiplicity id="29" minimum="0" maximum="2147483647"/>    
     </end>    
-    <end type="TARGET" refId="18" navigable="true"/>    
+    <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="25">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="16"/>  
+  <generalization id="30">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="3"/>  
   </generalization>  
-  <generalization id="26">    
-    <end type="SOURCE" refId="12"/>    
-    <end type="TARGET" refId="13"/>  
-  </generalization>  
-  <generalization id="27">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="16"/>  
-  </generalization>  
-  <association id="28">    
-    <end type="SOURCE" refId="17" navigable="false">      
-      <attribute id="29" name="children"/>      
-      <multiplicity id="30" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="17" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
   <association id="31">    
     <end type="SOURCE" refId="1" navigable="false">      
       <attribute id="32" name="nodes"/>      
@@ -238,124 +239,52 @@
   </association>  
   <association id="37">    
     <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="38" name="instances"/>      
+      <attribute id="38" name="deploymentArtifacts"/>      
       <multiplicity id="39" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="13" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="40">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="41" name="capabilities"/>      
-      <multiplicity id="42" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="4" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="43">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="44" name="artifactReferences"/>      
-      <multiplicity id="45" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="46">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="47" name="deploymentArtifacts"/>      
-      <multiplicity id="48" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="6" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="49">    
+  <generalization id="40">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <association id="41">    
+    <end type="SOURCE" refId="16" navigable="false">      
+      <attribute id="42" name="metrics"/>      
+      <multiplicity id="43" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="17" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="44">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="50" name="serviceUnits"/>      
-      <multiplicity id="51" minimum="0" maximum="2147483647"/>    
+      <attribute id="45" name="serviceUnits"/>      
+      <multiplicity id="46" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="10" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="52">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="16"/>  
-  </generalization>  
-  <association id="53">    
-    <end type="SOURCE" refId="10" navigable="false">      
-      <attribute id="54" name="elasticityCapabilities"/>      
-      <multiplicity id="55" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="11" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="56">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="16"/>  
-  </generalization>  
-  <association id="57">    
-    <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="58" name="relationships"/>      
-      <multiplicity id="59" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="15" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="60">    
-    <end type="SOURCE" refId="15"/>    
-    <end type="TARGET" refId="16"/>  
-  </generalization>  
-  <association id="61">    
-    <end type="SOURCE" refId="9" navigable="false">      
-      <attribute id="62" name="serviceTopologies">        
-        <position height="18" width="97" x="753" y="195"/>      
-      </attribute>      
-      <multiplicity id="63" minimum="0" maximum="2147483647"/>    
-    </end>    
-    <end type="TARGET" refId="1" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <generalization id="64">    
-    <end type="SOURCE" refId="9"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <generalization id="65">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="16"/>  
-  </generalization>  
-  <generalization id="66">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="16"/>  
-  </generalization>  
-  <generalization id="67">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="3"/>  
-  </generalization>  
-  <association id="68">    
+  <association id="47">    
     <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="69" name="directives"/>      
-      <multiplicity id="70" minimum="0" maximum="2147483647"/>    
+      <attribute id="48" name="directives"/>      
+      <multiplicity id="49" minimum="0" maximum="2147483647"/>    
     </end>    
     <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="71">    
+  <generalization id="50">    
     <end type="SOURCE" refId="10"/>    
     <end type="TARGET" refId="3"/>  
   </generalization>  
-  <association id="72">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="73" name="serviceTopologies">        
-        <position height="18" width="97" x="758" y="213"/>      
-      </attribute>      
-      <multiplicity id="74" minimum="0" maximum="2147483647"/>    
+  <association id="51">    
+    <end type="SOURCE" refId="16" navigable="false">      
+      <attribute id="52" name="children"/>      
+      <multiplicity id="53" minimum="0" maximum="2147483647"/>    
     </end>    
-    <end type="TARGET" refId="1" navigable="true"/>    
+    <end type="TARGET" refId="16" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="75">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="16"/>  
-  </generalization>  
   <classifier-display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
     accessors="true" visibility="true">    
     <attributes public="true" package="true" protected="true" private="true" static="false"/>    

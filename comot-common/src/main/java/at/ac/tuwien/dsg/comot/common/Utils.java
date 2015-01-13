@@ -17,14 +17,13 @@ import javax.xml.bind.Marshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import at.ac.tuwien.dsg.comot.model.structure.CloudService;
 
 public class Utils {
 
 	protected static final Logger log = LoggerFactory.getLogger(Utils.class);
 
-	public static String asXmlStringLog(Object obj, Class... clazz) {
+	public static String asXmlStringLog(Object obj, Class<?>... clazz) {
 		try {
 			return asXmlString(obj, clazz);
 		} catch (JAXBException e) {
@@ -33,9 +32,9 @@ public class Utils {
 		}
 	}
 
-	public static String asXmlString(Object obj, Class... clazz) throws JAXBException {
+	public static String asXmlString(Object obj, Class<?>... clazz) throws JAXBException {
 
-		List<Class> list = new ArrayList(Arrays.asList(clazz));
+		List<Object> list = new ArrayList<Object>(Arrays.asList(clazz));
 		list.add(obj.getClass());
 
 		StringWriter w = new StringWriter();
@@ -60,11 +59,15 @@ public class Utils {
 		return w.toString();
 	}
 
-	public static String asJsonString(Object obj) {
+	// public static String asJsonString(Object obj) {
+	//
+	// Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	// return gson.toJson(obj);
+	//
+	// }
 
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		return gson.toJson(obj);
-
+	public static String asString(CloudService service) throws JAXBException {
+		return Utils.asXmlString(service);
 	}
 
 	static public Object deepCopy(Object oldObj) throws IOException, ClassNotFoundException {

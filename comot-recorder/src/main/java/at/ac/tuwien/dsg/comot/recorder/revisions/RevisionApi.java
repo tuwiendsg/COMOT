@@ -19,7 +19,7 @@ import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import at.ac.tuwien.dsg.comot.common.exception.ComotException;
+import at.ac.tuwien.dsg.comot.recorder.RecorderException;
 import at.ac.tuwien.dsg.comot.recorder.model.InternalNode;
 import at.ac.tuwien.dsg.comot.recorder.model.InternalRel;
 import at.ac.tuwien.dsg.comot.recorder.model.LabelTypes;
@@ -175,12 +175,12 @@ public class RevisionApi {
 				rel.setProperty(InternalRel.PROPERTY_TO, time);
 			}
 		}
-		
+
 	}
 
 	@Transactional
 	public Object getRevision(String regionId, String id, Long timestamp) throws InstantiationException,
-			IllegalAccessException, IllegalArgumentException, ClassNotFoundException, ComotException {
+			IllegalAccessException, IllegalArgumentException, ClassNotFoundException, RecorderException {
 
 		ManagedRegion region = extractFromDB(regionId, id, timestamp);
 
@@ -213,13 +213,13 @@ public class RevisionApi {
 
 		// create nodes
 		for (Node connectedNode : repo.getAllConnectedIdentityNodes(id, timestamp)) {
-	
+
 			businessId = connectedNode.getProperty(InternalNode.ID).toString();
 
 			internalNode = new InternalNode();
 			internalNode.setProperties(repo.extractProps(repo.getState(businessId, timestamp)));
 			internalNode.setBusinessId(businessId);
-			
+
 			// set label
 			for (Label label : connectedNode.getLabels()) {
 				if (label.toString().equals(LabelTypes._IDENTITY.name())) {
@@ -227,7 +227,7 @@ public class RevisionApi {
 				}
 				internalNode.setLabel(label.name());
 			}
-			
+
 			log.info("node: {}", internalNode);
 			nodes.put(connectedNode.getId(), internalNode);
 

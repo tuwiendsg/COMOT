@@ -15,13 +15,14 @@ import org.springframework.stereotype.Component;
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.SalsaEntity;
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceInstance;
 import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaInstanceDescription_VM;
-import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.common.model.structure.ServicePart;
-import at.ac.tuwien.dsg.comot.common.model.structure.ServiceTopology;
-import at.ac.tuwien.dsg.comot.common.model.structure.StackNode;
-import at.ac.tuwien.dsg.comot.common.model.type.NodeType;
-import at.ac.tuwien.dsg.comot.common.model.unit.NodeInstance;
-import at.ac.tuwien.dsg.comot.common.model.unit.NodeInstanceOs;
+import at.ac.tuwien.dsg.comot.cs.mapper.IdResolver;
+import at.ac.tuwien.dsg.comot.model.node.NodeInstance;
+import at.ac.tuwien.dsg.comot.model.node.NodeInstanceOs;
+import at.ac.tuwien.dsg.comot.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.structure.ServicePart;
+import at.ac.tuwien.dsg.comot.model.structure.ServiceTopology;
+import at.ac.tuwien.dsg.comot.model.structure.StackNode;
+import at.ac.tuwien.dsg.comot.model.type.NodeType;
 
 @Component
 public class StateOrika {
@@ -66,6 +67,7 @@ public class StateOrika {
 									} else {
 										nInst = facade.map(instance, NodeInstance.class);
 									}
+									nInst.setId(IdResolver.uniqueInstance(unit.getId(), instance.getInstanceId()));
 									node.addNodeInstance(nInst);
 								}
 							}
@@ -75,13 +77,11 @@ public class StateOrika {
 		mapperFactory
 				.classMap(NodeInstance.class, ServiceInstance.class)
 				.field("instanceId", "instanceId")
-				.field("hostedId", "hostedId_Integer")
 				.field("state", "state")
 				.register();
 
 		mapperFactory.classMap(NodeInstanceOs.class, ServiceInstance.class)
 				.field("instanceId", "instanceId")
-				.field("hostedId", "hostedId_Integer")
 				.field("state", "state")
 				.customize(
 						new CustomMapper<NodeInstanceOs, ServiceInstance>() {

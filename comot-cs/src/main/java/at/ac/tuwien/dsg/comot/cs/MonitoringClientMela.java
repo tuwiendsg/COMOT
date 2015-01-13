@@ -14,10 +14,10 @@ import at.ac.tuwien.dsg.comot.common.coreservices.MonitoringClient;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.monitoring.ElementMonitoring;
-import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.cs.connector.MelaClient;
 import at.ac.tuwien.dsg.comot.cs.mapper.MelaMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.MelaOutputMapper;
+import at.ac.tuwien.dsg.comot.model.structure.CloudService;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitoringSnapshot;
@@ -86,7 +86,7 @@ public class MonitoringClientMela implements MonitoringClient {
 	public void setMcr(String serviceId, CompositionRulesConfiguration mcr) throws CoreServiceException {
 		mela.sendMetricsCompositionRules(serviceId, mcr);
 	}
-	
+
 	@Override
 	public CompositionRulesConfiguration getMcr(String serviceId) throws CoreServiceException {
 		CompositionRulesConfiguration mcr = mela.getMetricsCompositionRules(serviceId);

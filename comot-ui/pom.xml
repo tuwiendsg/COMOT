@@ -26,11 +26,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>ma.glasnost.orika</groupId>
-			<artifactId>orika-core</artifactId>
-		</dependency>
-
-		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-core</artifactId>
 		</dependency>
@@ -56,6 +51,13 @@
 		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-cs</artifactId>
+			<version>0.2</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+				<dependency>
+			<groupId>at.ac.tuwien.dsg.comot</groupId>
+			<artifactId>comot-model</artifactId>
 			<version>0.2</version>
 			<type>test-jar</type>
 			<scope>test</scope>

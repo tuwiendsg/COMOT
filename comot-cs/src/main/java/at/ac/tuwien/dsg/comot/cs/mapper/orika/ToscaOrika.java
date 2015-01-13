@@ -1,8 +1,10 @@
 package at.ac.tuwien.dsg.comot.cs.mapper.orika;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
+import javax.xml.namespace.QName;
 
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFacade;
@@ -12,15 +14,11 @@ import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 
 import org.oasis.tosca.Definitions;
-import org.oasis.tosca.TArtifactReference;
 import org.oasis.tosca.TArtifactTemplate;
-import org.oasis.tosca.TCapability;
 import org.oasis.tosca.TDeploymentArtifact;
 import org.oasis.tosca.TEntityTemplate;
-import org.oasis.tosca.TExtensibleElements;
 import org.oasis.tosca.TNodeTemplate;
 import org.oasis.tosca.TPolicy;
-import org.oasis.tosca.TRequirement;
 import org.oasis.tosca.TServiceTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,23 +26,22 @@ import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties;
 import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties.SalsaMappingProperty;
-import at.ac.tuwien.dsg.comot.common.model.SyblDirective;
-import at.ac.tuwien.dsg.comot.common.model.node.ArtifactReference;
-import at.ac.tuwien.dsg.comot.common.model.node.ArtifactTemplate;
-import at.ac.tuwien.dsg.comot.common.model.node.Capability;
-import at.ac.tuwien.dsg.comot.common.model.node.Properties;
-import at.ac.tuwien.dsg.comot.common.model.node.Requirement;
-import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.common.model.structure.ServiceTopology;
-import at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.common.model.structure.StackNode;
-import at.ac.tuwien.dsg.comot.common.model.type.NodePropertiesType;
+import at.ac.tuwien.dsg.comot.cs.mapper.IdResolver;
+import at.ac.tuwien.dsg.comot.model.SyblDirective;
+import at.ac.tuwien.dsg.comot.model.node.ArtifactTemplate;
+import at.ac.tuwien.dsg.comot.model.node.Properties;
+import at.ac.tuwien.dsg.comot.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.structure.ServiceTopology;
+import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.structure.StackNode;
+import at.ac.tuwien.dsg.comot.model.type.NodePropertiesType;
 
 @Component
 public class ToscaOrika {
 
 	protected final Logger log = LoggerFactory.getLogger(ToscaOrika.class);
-	public static final String OS = "os";
+	// public static final String OS = "os";
+	public static final QName ATTRIBUTE_ID = new QName("id");
 
 	protected MapperFacade facade;
 
@@ -53,18 +50,25 @@ public class ToscaOrika {
 
 		MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
-		mapperFactory.classMap(CloudService.class, Definitions.class)
-				.byDefault()
-				.register();
-
 		mapperFactory.classMap(ServiceUnit.class, TNodeTemplate.Policies.class)
 				.field("directives", "policy")
-				.byDefault()
 				.register();
 
 		mapperFactory.classMap(SyblDirective.class, TPolicy.class)
 				.field("directive", "name")
 				.field("type", "policyType")
+				.customize(
+						new CustomMapper<SyblDirective, TPolicy>() {
+							@Override
+							public void mapAtoB(SyblDirective dir, TPolicy policy, MappingContext context) {
+								policy.getOtherAttributes().put(ATTRIBUTE_ID, dir.getId());
+							}
+
+							@Override
+							public void mapBtoA(TPolicy policy, SyblDirective dir, MappingContext context) {
+								dir.setId(policy.getOtherAttributes().get(ATTRIBUTE_ID));
+							}
+						})
 				.register();
 
 		mapperFactory.classMap(ArtifactTemplate.class, TDeploymentArtifact.class)
@@ -73,116 +77,37 @@ public class ToscaOrika {
 				.byDefault()
 				.register();
 
-		mapperFactory.classMap(Capability.class, TCapability.class)
-				.byDefault()
-				.register();
-
-		mapperFactory.classMap(Requirement.class, TRequirement.class);
-
-		mapperFactory.classMap(ArtifactTemplate.class, TDeploymentArtifact.class)
-				.field("type", "artifactType")
-				.field("id", "artifactRef")
-				.byDefault()
+		// artifact creation
+		mapperFactory.classMap(ArtifactTemplate.class, TArtifactTemplate.class)
+				.field("id", "id")
+				.field("type", "type")
 				.register();
 
 		mapperFactory.classMap(StackNode.class, TNodeTemplate.class)
 				.field("id", "id")
 				.field("name", "name")
 				.field("type", "type")
-				.field("capabilities", "capabilities.capability")
-				.field("requirements", "requirements.requirement")
 				.field("deploymentArtifacts", "deploymentArtifacts.deploymentArtifact")
 				.customize(new NodeMapper())
 				.register();
 
 		mapperFactory.classMap(ServiceTopology.class, TServiceTemplate.class)
+				.field("id", "id")
+				.field("name", "name")
 				.field("directives", "boundaryDefinitions.policies.policy")
 				.fieldAToB("nodes", "topologyTemplate.nodeTemplateOrRelationshipTemplate")
-				.customize(// custom mapper because of inheritance of TNodeTemplate
-						new CustomMapper<ServiceTopology, TServiceTemplate>() {
-
-							@Override
-							public void mapAtoB(ServiceTopology topology, TServiceTemplate tServiceTemplate,
-									MappingContext context) {
-
-								for (ServiceUnit unit : topology.getServiceUnits()) {
-									for (TEntityTemplate entity : tServiceTemplate.getTopologyTemplate()
-											.getNodeTemplateOrRelationshipTemplate()) {
-										if (entity instanceof TNodeTemplate) {
-											if (entity.getId().equals(unit.getId())) {
-
-												((TNodeTemplate) entity).setPolicies(facade.map(unit,
-														TNodeTemplate.Policies.class));
-											}
-										}
-									}
-								}
-
-							}
-
-							@Override
-							public void mapBtoA(TServiceTemplate tServiceTemplate, ServiceTopology topology,
-									MappingContext context) {
-								for (TExtensibleElements element : tServiceTemplate.getTopologyTemplate()
-										.getNodeTemplateOrRelationshipTemplate()) {
-									if (element instanceof TNodeTemplate) {
-										TNodeTemplate tNode = (TNodeTemplate) element;
-
-										// create StackNode
-										StackNode node = facade.map(element, StackNode.class);
-										topology.addNode(node);
-
-										// create ServiceUnit to store policies
-										if (tNode.getPolicies() == null || tNode.getPolicies().getPolicy() == null) {
-											continue;
-										}
-
-										ServiceUnit unit = new ServiceUnit(node);
-										facade.map(tNode.getPolicies(), unit);
-										topology.addServiceUnit(unit);
-
-									}
-								}
-							}
-						})
-				.byDefault()
 				.register();
 
 		mapperFactory.classMap(CloudService.class, Definitions.class)
+				.field("id", "id")
+				.field("name", "name")
 				.fieldAToB("serviceTopologies", "serviceTemplateOrNodeTypeOrNodeTypeImplementation")
-				.customize(// custom mapper because of inheritance of TServiceTemplate
-						new CustomMapper<CloudService, Definitions>() {
-							@Override
-							public void mapBtoA(Definitions definition, CloudService service, MappingContext context) {
-								for (TExtensibleElements element : definition
-										.getServiceTemplateOrNodeTypeOrNodeTypeImplementation()) {
-									if (element instanceof TServiceTemplate) {
-										service.addServiceTopology(facade.map(element, ServiceTopology.class));
-									}
-								}
-							}
-						})
-				.byDefault()
-				.register();
-
-		// artifact creation
-		mapperFactory.classMap(ArtifactTemplate.class, TArtifactTemplate.class)
-				.field("artifactReferences", "artifactReferences.artifactReference")
-				.exclude("name")
-				.byDefault()
-				.register();
-
-		mapperFactory.classMap(ArtifactReference.class, TArtifactReference.class)
-				.field("uri", "reference")
-				.byDefault()
 				.register();
 
 		ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-		converterFactory.registerConverter(new ToscaConverters.CapabilityTypeConverter());
 		converterFactory.registerConverter(new ToscaConverters.NodeTypeConverter());
 		converterFactory.registerConverter(new ToscaConverters.DirectiveTypeConverter());
 		converterFactory.registerConverter(new ToscaConverters.ArtifactTypeConverter());
-		converterFactory.registerConverter(new ToscaConverters.RequirementTypeConverter());
 		converterFactory.registerConverter(new ToscaConverters.RelationshipTypeConverter());
 
 		facade = mapperFactory.getMapperFacade();
@@ -205,11 +130,11 @@ public class ToscaOrika {
 			node.setMinInstances(unit.getMinInstances());
 
 			// inserting SalsaMappingProperties into Object
-			List<Properties> props = unit.getProperties();
+			Set<Properties> props = unit.getProperties();
 			SalsaMappingProperties salsaProps = new SalsaMappingProperties();
 			if (props != null) {
 				for (Properties oneProps : props) {
-					salsaProps.put(oneProps.getPropertiesType().toString(), oneProps.getProperties());
+					salsaProps.put(oneProps.getPropertiesType().toString(), oneProps.getPropertiesMap());
 				}
 				node.setProperties(new TEntityTemplate.Properties().withAny(salsaProps));
 			}
@@ -239,7 +164,7 @@ public class ToscaOrika {
 
 				if (list != null) {
 					for (SalsaMappingProperty property : list) {
-						unit.addProperties(new Properties(
+						unit.addProperties(new Properties(IdResolver.nodeToProperty(node.getId()),
 								NodePropertiesType.fromString(property.getType()),
 								property.getMapData()));
 					}

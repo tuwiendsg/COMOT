@@ -1,22 +1,25 @@
 package at.ac.tuwien.dsg.comot.cs.test.mapping;
 
-import java.io.IOException;
+import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 import javax.xml.bind.JAXBException;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.oasis.tosca.Definitions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.unitils.reflectionassert.ReflectionComparatorMode;
 
 import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
-import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.cs.mapper.DeploymentMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.ToscaOrika;
 import at.ac.tuwien.dsg.comot.cs.test.AbstractTest;
+import at.ac.tuwien.dsg.comot.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.test.model.examples.ServiceTemplates;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 
 public class ToscaMappingTest extends AbstractTest {
@@ -25,52 +28,63 @@ public class ToscaMappingTest extends AbstractTest {
 	protected ToscaMapper mapperTosca;
 	@Autowired
 	protected DeploymentMapper mapperDepl;
+	@Autowired
+	protected ToscaOrika toscaOrika;
+
+	protected CloudService serviceForMapping;
 
 	// test with https://github.com/tuwiendsg/SALSA/blob/master/examples/4-DeployWithTomcat.xml
 	protected static final String TEST_SERVICE_ID = "aaaa";
 
+	@Before
+	public void startup() {
+		serviceForMapping = ServiceTemplates.fullServiceWithoutInstances();
+	}
+
 	@Test
 	public void mapperTest() throws JAXBException {
 
-		log.info("original {}", Utils.asJsonString(serviceForMapping));
+		log.info("original {}", Utils.asString(serviceForMapping));
 
 		Definitions tosca1 = mapperTosca.extractTosca(serviceForMapping);
 		log.info("tosca1 {}", UtilsCs.asString(tosca1));
 
 		CloudService service2 = mapperTosca.createModel(tosca1);
-		log.info("service2 {}", Utils.asJsonString(service2));
+		log.info("service2 {}", Utils.asString(service2));
+		assertReflectionEquals(serviceForMapping, service2, ReflectionComparatorMode.LENIENT_ORDER);
 
 		Definitions tosca2 = mapperTosca.extractTosca(service2);
 		log.info("tosca2 {}", UtilsCs.asString(tosca2));
 
 		CloudService service3 = mapperTosca.createModel(tosca1);
-		log.info("service3 {}", Utils.asJsonString(service3));
+		log.info("service3 {}", Utils.asString(service3));
+		assertReflectionEquals(serviceForMapping, service3, ReflectionComparatorMode.LENIENT_ORDER);
 
 	}
 
 	@Test
 	public void orikaTest() throws JAXBException {
 
-		ToscaOrika toscaOrika = new ToscaOrika();
-
-		log.info("original {}", Utils.asJsonString(serviceForMapping));
+		log.info("original {} \n", Utils.asString(serviceForMapping));
 
 		Definitions tosca1 = toscaOrika.get().map(serviceForMapping, Definitions.class);
-		log.info("tosca1 {}", UtilsCs.asString(tosca1));
+		log.info("tosca1 {} \n", UtilsCs.asString(tosca1));
 
 		CloudService service2 = toscaOrika.get().map(tosca1, CloudService.class);
-		log.info("service2 {}", Utils.asJsonString(service2));
+		log.info("service2 {} \n", Utils.asString(service2));
 
 		Definitions tosca2 = toscaOrika.get().map(service2, Definitions.class);
-		log.info("tosca2 {}", UtilsCs.asString(tosca2));
+		log.info("tosca2 {} \n", UtilsCs.asString(tosca2));
 
 		CloudService service3 = toscaOrika.get().map(tosca2, CloudService.class);
-		log.info("service3 {}", Utils.asJsonString(service3));
+		log.info("service3 {}", Utils.asString(service3));
 
 	}
 
 	@Test
 	public void stateMapperTest() throws CoreServiceException, JAXBException, ComotException {
+
+		// ENRICH WITH STATE
 
 		Definitions def = salsaClient.getTosca(TEST_SERVICE_ID);
 		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService serviceState;
@@ -80,23 +94,12 @@ public class ToscaMappingTest extends AbstractTest {
 		log.info("state {}", UtilsCs.asString(serviceState));
 
 		CloudService service = mapperTosca.createModel(def);
-		// log.info("service {}", Utils.asJsonString(service));
+		log.info("service {}", Utils.asString(service));
 
 		mapperDepl.enrichModel(service, serviceState);
-		log.info("service enriched{}", Utils.asJsonString(service));
+		log.info("service enriched{}", Utils.asString(service));
 
-	}
-
-	@Test
-	public void deploymentTest() throws JAXBException, ClassNotFoundException, IOException, CoreServiceException,
-			ComotException {
-
-		Definitions def = salsaClient.getTosca(TEST_SERVICE_ID);
-		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService serviceState;
-		serviceState = salsaClient.getStatus(TEST_SERVICE_ID);
-
-		CloudService service = mapperTosca.createModel(def);
-		mapperDepl.enrichModel(service, serviceState);
+		// EXTRACT DEPLOYMENT DESCRIOPTION
 
 		DeploymentDescription descr = mapperDepl.extractDeployment(service);
 		log.info("depl {}", UtilsCs.asString(descr));

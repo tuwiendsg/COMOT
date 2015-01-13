@@ -21,7 +21,7 @@ import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.test.UtilsTest;
-import at.ac.tuwien.dsg.comot.common.test.example.ExampleDeployOneVM;
+import at.ac.tuwien.dsg.comot.test.model.examples.ExampleDeployOneVM;
 import at.ac.tuwien.dsg.comot.ui.model.UnifiedConfiguration;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 

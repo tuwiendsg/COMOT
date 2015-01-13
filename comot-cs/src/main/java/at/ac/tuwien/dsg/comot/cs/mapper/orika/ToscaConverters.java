@@ -4,12 +4,10 @@ import javax.xml.namespace.QName;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;
-import at.ac.tuwien.dsg.comot.common.model.type.ArtifactType;
-import at.ac.tuwien.dsg.comot.common.model.type.CapabilityType;
-import at.ac.tuwien.dsg.comot.common.model.type.DirectiveType;
-import at.ac.tuwien.dsg.comot.common.model.type.NodeType;
-import at.ac.tuwien.dsg.comot.common.model.type.RelationshipType;
-import at.ac.tuwien.dsg.comot.common.model.type.RequirementType;
+import at.ac.tuwien.dsg.comot.model.type.ArtifactType;
+import at.ac.tuwien.dsg.comot.model.type.DirectiveType;
+import at.ac.tuwien.dsg.comot.model.type.NodeType;
+import at.ac.tuwien.dsg.comot.model.type.RelationshipType;
 
 public class ToscaConverters {
 
@@ -18,19 +16,6 @@ public class ToscaConverters {
 
 	public static QName toSalsaQName(String name) {
 		return new QName(NS_SALSA, name, PREFIX_SALSA);
-	}
-
-	public static class CapabilityTypeConverter extends BidirectionalConverter<CapabilityType, QName> {
-
-		@Override
-		public QName convertTo(CapabilityType source, Type<QName> destinationType) {
-			return toSalsaQName(source.toString());
-		}
-
-		@Override
-		public CapabilityType convertFrom(QName source, Type<CapabilityType> destinationType) {
-			return CapabilityType.fromString(source.getLocalPart());
-		}
 	}
 
 	public static class NodeTypeConverter extends BidirectionalConverter<NodeType, QName> {
@@ -69,19 +54,6 @@ public class ToscaConverters {
 		@Override
 		public ArtifactType convertFrom(QName source, Type<ArtifactType> destinationType) {
 			return ArtifactType.fromString(source.getLocalPart());
-		}
-	}
-
-	public static class RequirementTypeConverter extends BidirectionalConverter<RequirementType, QName> {
-
-		@Override
-		public QName convertTo(RequirementType source, Type<QName> destinationType) {
-			return toSalsaQName(source.toString());
-		}
-
-		@Override
-		public RequirementType convertFrom(QName source, Type<RequirementType> destinationType) {
-			return RequirementType.fromString(source.getLocalPart());
 		}
 	}
 

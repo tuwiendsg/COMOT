@@ -7,6 +7,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.oasis.tosca.Definitions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,6 @@ import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.monitoring.ElementMonitoring;
-import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.cs.mapper.DeploymentMapper;
@@ -24,6 +24,8 @@ import at.ac.tuwien.dsg.comot.cs.mapper.MelaOutputMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.MelaOrika;
 import at.ac.tuwien.dsg.comot.cs.test.AbstractTest;
+import at.ac.tuwien.dsg.comot.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.test.model.examples.ServiceTemplates;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitoringSnapshot;
 import at.ac.tuwien.dsg.mela.common.requirements.Requirements;
@@ -44,6 +46,13 @@ public class MelaMappingTest extends AbstractTest {
 
 	protected static final String TEST_SERVICE_ID = "aaaa";
 
+	protected CloudService serviceForMapping;
+
+	@Before
+	public void startup() {
+		serviceForMapping = ServiceTemplates.fullService();
+	}
+
 	@Test
 	public void mapperTest() throws JAXBException, ClassNotFoundException, IOException, CoreServiceException,
 			ComotException {
@@ -57,7 +66,7 @@ public class MelaMappingTest extends AbstractTest {
 		CloudService service = mapperTosca.createModel(def);
 		mapperDepl.enrichModel(service, serviceState);
 
-		log.info("enriched {}", Utils.asJsonString(service));
+		// log.info("enriched {}", Utils.asJsonString(service));
 
 		MonitoredElement element = mapper.extractMela(service);
 		log.info("mela {}", UtilsCs.asString(element));
@@ -77,7 +86,7 @@ public class MelaMappingTest extends AbstractTest {
 	@Test
 	public void orikaTest() throws JAXBException {
 
-		log.info("original {}", Utils.asJsonString(serviceForMapping));
+		// log.info("original {}", Utils.asJsonString(serviceForMapping));
 
 		MonitoredElement element = orika.get().map(serviceForMapping, MonitoredElement.class);
 		log.info("element {}", UtilsCs.asString(element));
@@ -99,7 +108,6 @@ public class MelaMappingTest extends AbstractTest {
 				.unmarshal(reader);
 
 		ElementMonitoring element = mapperMelaOutput.extractOutput(def);
-		log.info("mela {}", Utils.asJsonString(element));
 
 	}
 

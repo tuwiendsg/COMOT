@@ -23,10 +23,10 @@ import org.springframework.stereotype.Service;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.monitoring.ElementMonitoring;
-import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.core.ComotOrchestrator;
 import at.ac.tuwien.dsg.comot.core.model.ServiceEntity;
 import at.ac.tuwien.dsg.comot.cs.mapper.ToscaMapper;
+import at.ac.tuwien.dsg.comot.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.ui.mapper.SalsaOutputMapper;
 import at.ac.tuwien.dsg.comot.ui.model.ElementState;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
@@ -191,7 +191,7 @@ public class ServicesResource {
 		ElementMonitoring element = orchestrator.getMonitoringData(serviceId);
 		return Response.ok(element).build();
 	}
-	
+
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Path("/{serviceId}/mcr")

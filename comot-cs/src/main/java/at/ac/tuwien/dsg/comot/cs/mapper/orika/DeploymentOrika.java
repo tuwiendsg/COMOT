@@ -14,11 +14,12 @@ import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.common.model.logic.Navigator;
 import at.ac.tuwien.dsg.comot.common.model.logic.RelationshipResolver;
-import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.common.model.structure.StackNode;
-import at.ac.tuwien.dsg.comot.common.model.unit.ElasticityCapability;
-import at.ac.tuwien.dsg.comot.common.model.unit.NodeInstanceOs;
+import at.ac.tuwien.dsg.comot.cs.mapper.IdResolver;
+import at.ac.tuwien.dsg.comot.model.ElasticityCapability;
+import at.ac.tuwien.dsg.comot.model.node.NodeInstanceOs;
+import at.ac.tuwien.dsg.comot.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.structure.StackNode;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.AssociatedVM;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentUnit;
@@ -76,7 +77,7 @@ public class DeploymentOrika {
 
 								for (ServiceUnit unit : navigator.getAllServiceUnits()) {
 
-									StackNode os = resolver.getOsForServiceUnit(unit.getId());
+									StackNode os = resolver.getOsForServiceUnit(IdResolver.nodeFromUnit(unit.getId()));
 
 									depl = facade.map(unit, DeploymentUnit.class);
 									facade.map(os, depl);

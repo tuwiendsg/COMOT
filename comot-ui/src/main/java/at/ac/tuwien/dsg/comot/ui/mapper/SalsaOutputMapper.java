@@ -3,15 +3,17 @@ package at.ac.tuwien.dsg.comot.ui.mapper;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.common.model.logic.Navigator;
 import at.ac.tuwien.dsg.comot.common.model.logic.RelationshipResolver;
-import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.node.NodeInstance;
+import at.ac.tuwien.dsg.comot.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.structure.ServiceTopology;
+import at.ac.tuwien.dsg.comot.model.structure.StackNode;
 import at.ac.tuwien.dsg.comot.ui.model.ElementState;
 
 @Component
@@ -19,32 +21,31 @@ public class SalsaOutputMapper {
 
 	protected final Logger log = LoggerFactory.getLogger(SalsaOutputMapper.class);
 
-	@Autowired
-	protected SalsaOutputOrika mapper;
+	public static final String SERVICE = "SERVICE";
+	public static final String TOPOLOGY = "TOPOLOGY";
 
-	public ElementState extractOutput(CloudService cloudService) {
+	public ElementState extractOutput(CloudService service) {
 
-		Navigator navigator = new Navigator(cloudService);
-		RelationshipResolver resolver = new RelationshipResolver(cloudService);
+		RelationshipResolver resolver = new RelationshipResolver(service);
 
-		ElementState root = mapper.get().map(cloudService, ElementState.class);
+		ElementState root = new ElementState(service.getId(), SERVICE, service.getState().toString());
+		List<ElementState> topologies = new ArrayList<>();
+
+		doTopologies(root, service.getServiceTopologies(), resolver, topologies);
 
 		List<ElementState> tempList = null;
 
 		// create hierarchical structure based on HOST_ON
-		for (ElementState eTopo : getAllTopologies(root)) {
+		for (ElementState eTopo : topologies) {
 			tempList = new ArrayList<>();
 
 			for (ElementState one : eTopo.getChildren()) {
-				// set ServiceUnits
-				if (resolver.isServiceUnit(one.getId())) {
-					one.setServiceUnit(true);
-				}
+
 				// temp list to point all elements
 				tempList.add(one);
 
 				// set CONNECT_TO
-				one.setConnectToId(resolver.getConnectToIds(one.getId()));
+				// one.setConnectToId(resolver.getConnectToIds(one.getId()));
 			}
 
 			for (Iterator<ElementState> iterator = eTopo.getChildren().iterator(); iterator.hasNext();) {
@@ -63,37 +64,65 @@ public class SalsaOutputMapper {
 		return root;
 	}
 
-	protected List<ElementState> getAllTopologies(ElementState element) {
+	protected void doTopologies(ElementState parent, Set<ServiceTopology> topologies, RelationshipResolver resolver,
+			List<ElementState> eTopos) {
 
-		List<ElementState> topologies = new ArrayList<>();
+		boolean isUnit;
 
-		if (element.getType().equals(ElementState.Type.TOPOLOGY)) {
-			topologies.add(element);
+		for (ServiceTopology topology : topologies) {
+
+			ElementState element = new ElementState(topology.getId(), TOPOLOGY, topology.getState().toString());
+			eTopos.add(element);
+			parent.addChild(element);
+
+			doTopologies(element, topology.getServiceTopologies(), resolver, eTopos);
+
+			for (StackNode node : topology.getNodes()) {
+				isUnit = resolver.isServiceUnit(node.getId());
+
+				if (node.getInstances().size() == 0) {
+					ElementState one = new ElementState(node.getId(), node.getType().toString(), topology
+							.getState().toString());
+					element.addChild(one);
+					element.setServiceUnit(isUnit);
+
+				} else {
+					for (NodeInstance instance : node.getInstances()) {
+						ElementState one = new ElementState(node.getId(), node.getType().toString(), topology
+								.getState().toString());
+						one.setInstanceId(instance.getInstanceId());
+						element.addChild(one);
+						element.setServiceUnit(isUnit);
+					}
+				}
+			}
+
 		}
-
-		for (ElementState child : element.getChildren()) {
-			topologies.addAll(getAllTopologies(child));
-		}
-		return topologies;
 	}
 
 	protected ElementState findHost(ElementState element, List<ElementState> list, RelationshipResolver resolver) {
 
 		String hostId = resolver.getHostId(element.getId());
+		if (hostId == null) {
+			return null;
+		}
 
-		if (element.getInstanceId() == null) {// no instances
+		if (element.getInstanceId() == null) {// stack node
 			for (ElementState temp : list) {
 				if (temp.getId().equals(hostId)) {
 					return temp;
 				}
 			}
 
-		} else {// with instances
-			int hostInstanceId = resolver.navigator().getInstance(element.getId(), element.getInstanceId())
-					.getHostedId();
+		} else {// instance
+			NodeInstance host = resolver.navigator().getInstance(element.getId(), element.getInstanceId())
+					.getHostInstance();
+			if (host == null) {
+				return null;
+			}
 
 			for (ElementState temp : list) {
-				if (temp.getId().equals(hostId) && temp.getInstanceId() == hostInstanceId) {
+				if (temp.getId().equals(hostId) && temp.getInstanceId() == host.getInstanceId()) {
 					return temp;
 				}
 			}

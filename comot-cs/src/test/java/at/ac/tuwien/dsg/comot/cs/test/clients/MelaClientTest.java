@@ -27,7 +27,7 @@ import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitorin
 
 public class MelaClientTest extends AbstractTest {
 
-	public static final String SERVICE_ID = "example_executableOnVM";//"example_executableOnVM"; //comot_tomcat_id
+	public static final String SERVICE_ID = "example_executableOnVM";// "example_executableOnVM"; //comot_tomcat_id
 	public static final String TOPOLOGY_ID = "example_topology";
 	public static final String NODE_ID = "example_OS_comot";
 
@@ -98,7 +98,7 @@ public class MelaClientTest extends AbstractTest {
 		// MCR
 		updateMCR();
 
-		//sendRequirements
+		// sendRequirements
 
 		removeService();
 
@@ -113,23 +113,23 @@ public class MelaClientTest extends AbstractTest {
 		assertNotNull(data);
 		log.info("getMonitoringData(SERVICE_ID) \n" + Utils.asXmlString(data));
 
-		 data = mela.getMonitoringData(SERVICE_ID, eVM);
-		 assertNotNull(data);
-		 log.info("getMonitoringData(SERVICE_ID, eVM) \n" + Utils.asXmlString(data));
-		
-		 MonitoredElementMonitoringSnapshots dataMultiple = mela.getAllAggregatedMonitoringData(SERVICE_ID);
-		 assertNotNull(dataMultiple);
-		 assertTrue(0 < dataMultiple.getChildren().size());
-		 log.info("getAllAggregatedMonitoringData \n" + Utils.asXmlString(dataMultiple));
-		
-		 // dataMultiple = mela.getAllAggregatedMonitoringDataInTimeInterval(SERVICE_ID, startTimestamp, endTimestamp);
-		 // assertNotNull(dataMultiple);
-		 // log.info("getAllAggregatedMonitoringDataInTimeInterval \n" + Utils.xmlObjToString(dataMultiple));
-		
-		 dataMultiple = mela.getLastXAggregatedMonitoringData(SERVICE_ID, 5);
-		 assertNotNull(dataMultiple);
-		 assertTrue(0 < dataMultiple.getChildren().size());
-		 log.info("getLastXAggregatedMonitoringData \n" + Utils.asXmlString(dataMultiple));
+		data = mela.getMonitoringData(SERVICE_ID, eVM);
+		assertNotNull(data);
+		log.info("getMonitoringData(SERVICE_ID, eVM) \n" + Utils.asXmlString(data));
+
+		MonitoredElementMonitoringSnapshots dataMultiple = mela.getAllAggregatedMonitoringData(SERVICE_ID);
+		assertNotNull(dataMultiple);
+		assertTrue(0 < dataMultiple.getChildren().size());
+		log.info("getAllAggregatedMonitoringData \n" + Utils.asXmlString(dataMultiple));
+
+		// dataMultiple = mela.getAllAggregatedMonitoringDataInTimeInterval(SERVICE_ID, startTimestamp, endTimestamp);
+		// assertNotNull(dataMultiple);
+		// log.info("getAllAggregatedMonitoringDataInTimeInterval \n" + Utils.xmlObjToString(dataMultiple));
+
+		dataMultiple = mela.getLastXAggregatedMonitoringData(SERVICE_ID, 5);
+		assertNotNull(dataMultiple);
+		assertTrue(0 < dataMultiple.getChildren().size());
+		log.info("getLastXAggregatedMonitoringData \n" + Utils.asXmlString(dataMultiple));
 	}
 
 	@Test

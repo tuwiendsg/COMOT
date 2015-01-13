@@ -38,6 +38,7 @@ public class SalsaClientTest extends AbstractTest {
 		xmlTosca = UtilsTest.loadFile("./xml/ExampleDeployOneVM.xml");
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testAutomated() throws CoreServiceException, InterruptedException, ComotException {
 
@@ -136,6 +137,7 @@ public class SalsaClientTest extends AbstractTest {
 		log.info(UtilsCs.asString(serviceInfo));
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testDeploymentDescription() throws CoreServiceException, JAXBException {
 		DeploymentDescription descr = salsa.getServiceDeploymentInfo("aaaa");
@@ -165,6 +167,7 @@ public class SalsaClientTest extends AbstractTest {
 		salsa.destroy(SERVICE_ID, TOPOLOGY_ID, NODE_ID, 1);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testGetAllServices() throws CoreServiceException, JAXBException, ComotException {
 		String def = salsa.getServices();

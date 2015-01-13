@@ -14,11 +14,11 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
-import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.core.dal.ServiceRepo;
 import at.ac.tuwien.dsg.comot.core.model.ServiceEntity;
 import at.ac.tuwien.dsg.comot.cs.connector.SalsaClient;
 import at.ac.tuwien.dsg.comot.cs.mapper.ToscaMapper;
+import at.ac.tuwien.dsg.comot.model.structure.CloudService;
 
 @Configuration
 @PropertySource({ "classpath:spring/properties/application.properties" })

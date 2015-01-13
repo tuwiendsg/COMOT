@@ -16,11 +16,11 @@ import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties;
 import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
-import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.cs.mapper.DeploymentMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.ToscaMapper;
+import at.ac.tuwien.dsg.comot.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.ui.mapper.SalsaOutputMapper;
 import at.ac.tuwien.dsg.comot.ui.model.ElementState;
 
@@ -35,7 +35,7 @@ public class OutputMappingTest extends AbstractTest {
 	protected SalsaOutputMapper mapperOutput;
 
 	// test with https://github.com/tuwiendsg/SALSA/blob/master/examples/4-DeployWithTomcat.xml
-	protected static final String TEST_SERVICE_ID = "ViennaChillerSensors";
+	protected static final String TEST_SERVICE_ID = "aaaa";
 
 	@Test
 	public void testSalsaOutputOffline() throws JAXBException, ClassNotFoundException, IOException,
@@ -43,7 +43,7 @@ public class OutputMappingTest extends AbstractTest {
 			ComotException {
 
 		String salsaTosca = UtilsTest.loadFile("./tomcat/tomcat_from_salsa.xml");
-		String salsaStatus = UtilsTest.loadFile("./tomcat/tomcat_status_multi.xml");
+		String salsaStatus = UtilsTest.loadFile("./tomcat/tomcat_status_multi.xml"); // TODO probably outdated
 
 		StringReader reader = new StringReader(salsaTosca);
 		JAXBContext jaxbContext = JAXBContext.newInstance(Definitions.class, SalsaMappingProperties.class);
@@ -64,6 +64,8 @@ public class OutputMappingTest extends AbstractTest {
 		CloudService service = mapperTosca.createModel(def);
 		mapperDepl.enrichModel(service, serviceState);
 
+		log.info("state {}", Utils.asString(service));
+
 		ElementState element = mapperOutput.extractOutput(service);
 		log.info("depl {}", Utils.asXmlString(element));
 
@@ -81,14 +83,11 @@ public class OutputMappingTest extends AbstractTest {
 		CloudService service = mapperTosca.createModel(def);
 		mapperDepl.enrichModel(service, serviceState);
 
+		log.info("state {}", Utils.asString(service));
+
 		ElementState element = mapperOutput.extractOutput(service);
 		log.info("depl {}", Utils.asXmlString(element));
 
 	}
-
-	// @Test
-	// public void aaaaa() throws IOException{
-	// log.info(IOUtils.toString(ClassLoader.getSystemResourceAsStream("./TOSCA-v1.0.xsd"), "UTF-8"));
-	// }
 
 }

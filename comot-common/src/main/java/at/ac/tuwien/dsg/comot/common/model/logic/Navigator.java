@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot.common.model.logic;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,16 +9,14 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.ac.tuwien.dsg.comot.common.model.AbstractEntity;
-import at.ac.tuwien.dsg.comot.common.model.node.ArtifactTemplate;
-import at.ac.tuwien.dsg.comot.common.model.node.Capability;
-import at.ac.tuwien.dsg.comot.common.model.node.Requirement;
-import at.ac.tuwien.dsg.comot.common.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.common.model.structure.ServicePart;
-import at.ac.tuwien.dsg.comot.common.model.structure.ServiceTopology;
-import at.ac.tuwien.dsg.comot.common.model.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.common.model.structure.StackNode;
-import at.ac.tuwien.dsg.comot.common.model.unit.NodeInstance;
+import at.ac.tuwien.dsg.comot.model.HasUniqueId;
+import at.ac.tuwien.dsg.comot.model.node.NodeInstance;
+import at.ac.tuwien.dsg.comot.model.relationship.ConnectToRel;
+import at.ac.tuwien.dsg.comot.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.structure.ServicePart;
+import at.ac.tuwien.dsg.comot.model.structure.ServiceTopology;
+import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.structure.StackNode;
 
 public class Navigator {
 
@@ -31,11 +30,17 @@ public class Navigator {
 		this.service = service;
 		root = new Node(service, null);
 		map.put(service.getId(), root);
+
+		for (StackNode node : getAllNodes()) {
+			for (ConnectToRel rel : node.getConnectTo()) {
+				map.get(rel.getTo().getId()).newNode(new HelperNode(rel.getRequirementId()));
+			}
+		}
 	}
 
 	public ServiceUnit getServiceUnit(String id) {
 		for (ServiceUnit unit : getParentTopologyFor(id).getServiceUnits()) {
-			if (unit.getId().equals(id)) {
+			if (unit.getNode().getId().equals(id)) {
 				return unit;
 			}
 		}
@@ -60,9 +65,7 @@ public class Navigator {
 				result = (ServiceTopology) node.parent.entity;
 			} else if (node.entity.getClass().equals(StackNode.class)) {
 				result = (ServiceTopology) node.parent.entity;
-			} else if (node.entity.getClass().equals(Capability.class) ||
-					node.entity.getClass().equals(Requirement.class) ||
-					node.entity.getClass().equals(ArtifactTemplate.class)) {
+			} else if (node.entity.getClass().equals(HelperNode.class)) {
 				result = (ServiceTopology) node.parent.parent.entity;
 			}
 		}
@@ -80,25 +83,24 @@ public class Navigator {
 	 */
 	public StackNode getNodeFor(String id) {
 
+		StackNode result = null;
 		Node node = map.get(id);
-		if (node != null) {
 
+		if (node != null) {
 			if (node.entity.getClass().equals(StackNode.class)) {
-				return (StackNode) node.entity;
-			} else if (node.entity.getClass().equals(Capability.class) ||
-					node.entity.getClass().equals(Requirement.class) ||
-					node.entity.getClass().equals(ArtifactTemplate.class)) {
-				return (StackNode) node.parent.entity;
+				result = (StackNode) node.entity;
+			} else if (node.entity.getClass().equals(HelperNode.class)) {
+				result = (StackNode) node.parent.entity;
 			}
 		}
-
-		return null;
+		log.debug("getNodeFor(id={}): {}", id, (result == null) ? null : result.getId());
+		return result;
 	}
 
-	public AbstractEntity getAbstractEntity(String id) {
+	public HasUniqueId getAbstractEntity(String id) {
 		Node node = map.get(id);
 		if (node != null) {
-			return (AbstractEntity) node.entity;
+			return (HasUniqueId) node.entity;
 		}
 		return null;
 	}
@@ -111,13 +113,18 @@ public class Navigator {
 		NodeInstance instance = node.getInstance(instanceId);
 
 		log.debug("getInstance(id={}, instanceId={}): {}", id, instanceId,
-				(instance == null) ? null : instance.getInstanceId());
+				(instance == null) ? null : instance.getId());
 		return instance;
 	}
 
 	public StackNode getNode(String id) {
-		if (map.get(id).entity instanceof StackNode) {
-			return (StackNode) map.get(id).entity;
+		Node node = map.get(id);
+		if (node == null) {
+			log.error("getNode(id={}): {} (There is no node with such id)", id, null);
+		} else {
+			if (map.get(id).entity instanceof StackNode) {
+				return (StackNode) map.get(id).entity;
+			}
 		}
 		return null;
 	}
@@ -166,10 +173,10 @@ public class Navigator {
 		return getAllNodes(cloudService.getServiceTopologies());
 	}
 
-	public static List<StackNode> getAllNodes(List<ServiceTopology> topologies) {
+	public static List<StackNode> getAllNodes(Collection<ServiceTopology> topologies) {
 
 		List<StackNode> units = new ArrayList<>();
-		List<StackNode> tempUnits;
+		Collection<StackNode> tempUnits;
 
 		for (ServiceTopology topology : topologies) {
 
@@ -189,7 +196,7 @@ public class Navigator {
 		return all;
 	}
 
-	public static List<ServiceTopology> getAllTopologies(List<ServiceTopology> topologies) {
+	public static List<ServiceTopology> getAllTopologies(Collection<ServiceTopology> topologies) {
 		List<ServiceTopology> all = new ArrayList<>();
 		for (ServiceTopology topology : topologies) {
 			all.addAll(getAllTopologies(topology.getServiceTopologies()));
@@ -202,12 +209,12 @@ public class Navigator {
 	private class Node {
 
 		private String id;
-		private AbstractEntity entity;
+		private HasUniqueId entity;
 
 		private Node parent;
 		private Map<String, Node> children = new HashMap<>();
 
-		private Node(AbstractEntity entity, Node parent) {
+		private Node(HasUniqueId entity, Node parent) {
 			this.id = entity.getId();
 			this.entity = entity;
 			this.parent = parent;
@@ -215,34 +222,28 @@ public class Navigator {
 			// set type
 			if (entity instanceof CloudService) {
 				for (ServiceTopology topology : ((CloudService) entity).getServiceTopologies()) {
-					newNode(topology, this);
+					newNode(topology);
 				}
 
 			} else if (entity instanceof ServiceTopology) {
 				for (ServiceTopology topology : ((ServiceTopology) entity).getServiceTopologies()) {
-					newNode(topology, this);
+					newNode(topology);
 				}
 				for (StackNode unit : ((ServiceTopology) entity).getNodes()) {
-					newNode(unit, this);
+					newNode(unit);
 				}
 
 			} else if (entity instanceof StackNode) {
 				StackNode stackNode = (StackNode) entity;
 
-				for (Capability one : stackNode.getCapabilities()) {
-					newNode(one, this);
-				}
-				for (Requirement one : stackNode.getRequirements()) {
-					newNode(one, this);
-				}
-				for (ArtifactTemplate one : stackNode.getDeploymentArtifacts()) {
-					newNode(one, this);
+				for (ConnectToRel one : stackNode.getConnectTo()) {
+					newNode(new HelperNode(one.getCapabilityId()));
 				}
 			}
 		}
 
-		private void newNode(AbstractEntity entity, Node parent) {
-			Node temp = new Node(entity, parent);
+		public void newNode(HasUniqueId entity) {
+			Node temp = new Node(entity, this);
 			children.put(temp.id, temp);
 			map.put(temp.id, temp);
 		}
@@ -250,8 +251,25 @@ public class Navigator {
 		@Override
 		public String toString() {
 
-			return "{ \"id\" : \"" + id + "\", \"children\" : " + children.values() + "}";
+			return "{ \"id\" : \"" + id + "\", \"entity\" : \"" + entity + "\", \"children\" : " + children.values()
+					+ "}";
 		}
+	}
+
+	protected class HelperNode implements HasUniqueId {
+
+		protected String id;
+
+		public HelperNode(String id) {
+			super();
+			this.id = id;
+		}
+
+		@Override
+		public String getId() {
+			return id;
+		}
+
 	}
 
 	@Override
