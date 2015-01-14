@@ -7,6 +7,7 @@ define(function(require) {
 		checkboxDepl : ko.observable(true),
 		checkboxMoni : ko.observable(),
 		checkboxCont : ko.observable(),
+		checkboxReco : ko.observable(),
 		tosca : ko.observable(""),
 		mcr : ko.observable(""),
 		effects : ko.observable(""),
@@ -23,9 +24,9 @@ define(function(require) {
 				notify.error(comot.errorBody(request.responseText));
 			})).done(
 					function(result) {
-						
+
 						// TODO router.navigate('#manager');
-						
+
 						if (model.checkboxMoni() === true) {// start monitoring
 							$.when(comot.startMonitoring(result, function() {
 								notify.success("Monitoring started for " + result);
@@ -41,6 +42,13 @@ define(function(require) {
 
 						if (model.checkboxCont() === true) { // start control
 							console.log("controllll")
+						}
+						if (model.checkboxReco() === true) {
+							comot.startRecording(result, function() {
+								notify.success("Recording stopped for " + result);
+							}, "Failed to stop recording for " + result);
+
+							console.log("reco")
 						}
 					});
 

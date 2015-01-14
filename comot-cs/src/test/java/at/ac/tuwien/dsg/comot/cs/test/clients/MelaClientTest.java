@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -16,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
-import at.ac.tuwien.dsg.comot.common.test.UtilsTest;
+import at.ac.tuwien.dsg.comot.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.cs.connector.MelaClient;
 import at.ac.tuwien.dsg.comot.cs.connector.SalsaClient;
 import at.ac.tuwien.dsg.comot.cs.test.AbstractTest;
@@ -48,7 +47,7 @@ public class MelaClientTest extends AbstractTest {
 	@Before
 	public void setup() throws IOException {
 
-		xmlTosca = UtilsTest.loadFile("./xml/ExampleExecutableOnVM.xml");
+		xmlTosca = Utils.loadFile("./../resources/test/xml/ExampleExecutableOnVM.xml");
 
 		// set up MonitoredElement
 		eVM = new MonitoredElement(NODE_IP);
@@ -76,7 +75,7 @@ public class MelaClientTest extends AbstractTest {
 	// 1. ExampleExecutableOnVM.xml is deployed to SALSA
 	// 2. NODE_IP is correct
 	@Test
-	public void testAutomated() throws CoreServiceException, InterruptedException, JAXBException, FileNotFoundException {
+	public void testAutomated() throws CoreServiceException, InterruptedException, JAXBException, IOException {
 
 		log.info(Utils.asXmlString(eService));
 
@@ -158,14 +157,14 @@ public class MelaClientTest extends AbstractTest {
 	}
 
 	@Test
-	public void updateMCR() throws CoreServiceException, InterruptedException, JAXBException, FileNotFoundException {
+	public void updateMCR() throws CoreServiceException, InterruptedException, JAXBException, IOException {
 
 		CompositionRulesConfiguration mcr = mela.getMetricsCompositionRules(SERVICE_ID);
 		log.info("old MCR \n" + Utils.asXmlString(mcr));
 		assertNotNull(mcr);
 
 		mela.sendMetricsCompositionRules(SERVICE_ID,
-				UtilsTest.loadMetricCompositionRules(SERVICE_ID, "./mela/defCompositionRules.xml"));
+				UtilsCs.loadMetricCompositionRules(SERVICE_ID, "./../resources/test/mela/defCompositionRules.xml"));
 
 		mcr = mela.getMetricsCompositionRules(SERVICE_ID);
 		log.info("new MCR \n" + Utils.asXmlString(mcr));

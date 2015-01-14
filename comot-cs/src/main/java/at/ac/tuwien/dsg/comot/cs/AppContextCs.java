@@ -17,7 +17,7 @@ import at.ac.tuwien.dsg.comot.cs.connector.SalsaClient;
 @Configuration
 // @ImportResource({"classpath:spring/dozerBean.xml"})
 // @PropertySource({ "classpath:spring/properties/application.properties" })
-@ComponentScan({ "at.ac.tuwien.dsg.comot" })
+@ComponentScan({ "at.ac.tuwien.dsg.comot.cs" })
 public class AppContextCs {
 
 	public static final String SALSA_IP = "128.130.172.215";

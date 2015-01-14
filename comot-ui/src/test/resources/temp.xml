@@ -1,9 +1,0 @@
-<bean id="jsonProvider" class="org.eclipse.persistence.jaxb.rs.MOXyJsonProvider">
-	<property name="attributePrefix" value="@" />
-	<property name="formattedOutput" value="true" />
-	<property name="includeRoot" value="true" />
-	<property name="marshalEmptyCollections" value="false" />
-	<property name="valueWrapper" value="$" />
-	<property name="namespaceSeparator" value="" />
-	<property name="namespacePrefixMapper" ref="jsonNamespaceMap" />
-</bean>

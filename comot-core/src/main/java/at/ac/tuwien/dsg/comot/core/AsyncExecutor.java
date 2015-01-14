@@ -9,8 +9,7 @@ import org.springframework.stereotype.Component;
 import at.ac.tuwien.dsg.comot.common.coreservices.ControlClient;
 import at.ac.tuwien.dsg.comot.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.common.coreservices.MonitoringClient;
-import at.ac.tuwien.dsg.comot.core.dal.JobRepo;
-import at.ac.tuwien.dsg.comot.core.dal.ServiceRepo;
+import at.ac.tuwien.dsg.comot.core.dal.ServiceRepoProxy;
 import at.ac.tuwien.dsg.comot.core.model.Job;
 import at.ac.tuwien.dsg.comot.core.model.Job.Type;
 import at.ac.tuwien.dsg.comot.core.model.ServiceEntity;
@@ -30,9 +29,9 @@ public class AsyncExecutor {
 	protected MonitoringClient monitoring;
 
 	@Autowired
-	protected ServiceRepo serviceRepo;
-	@Autowired
-	protected JobRepo jobRepo;
+	protected ServiceRepoProxy serviceRepo;
+	// @Autowired
+	// protected JobRepo jobRepo;
 
 	protected ComotOrchestrator orchestrator;
 
@@ -54,7 +53,8 @@ public class AsyncExecutor {
 
 	protected void oneIteration() {
 
-		for (Job job : jobRepo.findAll()) {
+		// for (Job job : jobRepo.findAll()) {
+		for (Job job : serviceRepo.findAllJobs()) {
 
 			try {
 
@@ -70,7 +70,8 @@ public class AsyncExecutor {
 						entity.setMonitoring(true);
 						serviceRepo.save(entity);
 
-						jobRepo.delete(job.getId());
+						// jobRepo.delete(job.getId());
+						serviceRepo.delete(job.getId());
 
 					} else if (job.getType().equals(Type.START_CONTROL)) {
 						log.debug("Executing {}", job);
@@ -81,7 +82,9 @@ public class AsyncExecutor {
 						entity.setControl(true);
 						serviceRepo.save(entity);
 
-						jobRepo.delete(job.getId());
+						// jobRepo.delete(job.getId());
+						serviceRepo.delete(job.getId());
+
 					} else if (job.getType().equals(Type.UPDATE_STRUCTURE_MONITORING)) {
 						log.debug("Executing {}", job);
 						monitoring.updateService(serviceId, orchestrator.getService(serviceId));

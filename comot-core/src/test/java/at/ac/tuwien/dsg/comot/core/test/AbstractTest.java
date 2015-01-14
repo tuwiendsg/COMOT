@@ -17,12 +17,13 @@ import at.ac.tuwien.dsg.comot.common.coreservices.ControlClient;
 import at.ac.tuwien.dsg.comot.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.common.coreservices.MonitoringClient;
 import at.ac.tuwien.dsg.comot.core.ComotOrchestrator;
-import at.ac.tuwien.dsg.comot.core.dal.ServiceRepo;
+import at.ac.tuwien.dsg.comot.core.dal.ServiceRepoProxy;
 import at.ac.tuwien.dsg.comot.core.spring.AppContextCore;
+import at.ac.tuwien.dsg.comot.cs.mapper.ToscaMapper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { AppContextCore.class })
-@ActiveProfiles({ AppContextCore.SPRING_PROFILE_TEST, AppContextCore.SPRING_PROFILE_INSERT_DATA })
+@ActiveProfiles({ AppContextCore.EMBEDDED_H2_DB, AppContextCore.INSERT_INIT_DATA })
 // @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 // @DatabaseSetup("classpath:iata_codes/airports_functional.xml")
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
@@ -34,7 +35,7 @@ public abstract class AbstractTest {
 	protected Environment env;
 
 	@Autowired
-	protected ServiceRepo serviceRepo;
+	protected ServiceRepoProxy serviceRepo;
 
 	@Autowired
 	protected ComotOrchestrator orchestrator;
@@ -46,4 +47,6 @@ public abstract class AbstractTest {
 	@Autowired
 	protected MonitoringClient monitoring;
 
+	@Autowired
+	protected ToscaMapper mapperTosca;
 }

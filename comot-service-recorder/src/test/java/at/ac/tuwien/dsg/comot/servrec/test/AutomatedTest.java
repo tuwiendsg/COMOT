@@ -27,6 +27,7 @@ public class AutomatedTest extends AbstractTest {
 
 		service = ServiceTemplates.simplifiedService();
 		oneVersion();
+
 	}
 
 	@Test

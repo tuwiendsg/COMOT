@@ -43,6 +43,11 @@
 		</dependency>
 		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
+			<artifactId>comot-service-recorder</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-common</artifactId>
 			<version>0.2</version>
 			<type>test-jar</type>
@@ -55,7 +60,7 @@
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
-				<dependency>
+		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-model</artifactId>
 			<version>0.2</version>

@@ -69,9 +69,9 @@ public class ServicesResource {
 	@PUT
 	@Path("/{serviceId}/deployment")
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response deploy(@PathParam("serviceId") String serviceId) throws CoreServiceException, ComotException {
+	public Response redeploy(@PathParam("serviceId") String serviceId) throws CoreServiceException, ComotException {
 
-		orchestrator.deploy(serviceId);
+		orchestrator.redeploy(serviceId);
 		return Response.ok().build();
 	}
 

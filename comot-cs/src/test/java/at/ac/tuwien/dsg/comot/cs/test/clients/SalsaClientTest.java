@@ -15,9 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityState;
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityType;
+import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
-import at.ac.tuwien.dsg.comot.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.cs.connector.SalsaClient;
 import at.ac.tuwien.dsg.comot.cs.test.AbstractTest;
@@ -35,7 +35,7 @@ public class SalsaClientTest extends AbstractTest {
 
 	@Before
 	public void setup() throws IOException {
-		xmlTosca = UtilsTest.loadFile("./xml/ExampleDeployOneVM.xml");
+		xmlTosca = Utils.loadFile("./../resources/test/xml/ExampleDeployOneVM.xml");
 	}
 
 	@SuppressWarnings("deprecation")

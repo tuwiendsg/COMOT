@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
-import at.ac.tuwien.dsg.comot.core.dal.ServiceRepo;
+import at.ac.tuwien.dsg.comot.core.dal.ServiceRepoProxy;
 import at.ac.tuwien.dsg.comot.core.model.ServiceEntity;
 import at.ac.tuwien.dsg.comot.cs.connector.SalsaClient;
 import at.ac.tuwien.dsg.comot.cs.mapper.ToscaMapper;
@@ -22,10 +22,10 @@ import at.ac.tuwien.dsg.comot.model.structure.CloudService;
 
 @Configuration
 @PropertySource({ "classpath:spring/properties/application.properties" })
-@Profile(AppContextCore.SPRING_PROFILE_INSERT_DATA)
-public class AppContextInsertData {
+@Profile(AppContextCore.INSERT_INIT_DATA)
+public class AppContextCoreInsertData {
 
-	public static final Logger log = LoggerFactory.getLogger(AppContextInsertData.class);
+	public static final Logger log = LoggerFactory.getLogger(AppContextCoreInsertData.class);
 
 	@Resource
 	public Environment env;
@@ -35,12 +35,15 @@ public class AppContextInsertData {
 	@Autowired
 	protected ToscaMapper mapperTosca;
 	@Autowired
-	protected ServiceRepo serviceRepo;
+	protected ServiceRepoProxy serviceRepo;
 
 	@Bean
 	public Object insertDeployedInSalsa() {
 
 		try {
+
+			serviceRepo.setFake(true); // XXX remove to use DB
+
 			String serviceId;
 			String msg = salsaClient.getServices();
 

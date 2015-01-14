@@ -16,7 +16,6 @@ import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties;
 import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
-import at.ac.tuwien.dsg.comot.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.cs.mapper.DeploymentMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.ToscaMapper;
@@ -42,8 +41,8 @@ public class OutputMappingTest extends AbstractTest {
 			CoreServiceException,
 			ComotException {
 
-		String salsaTosca = UtilsTest.loadFile("./tomcat/tomcat_from_salsa.xml");
-		String salsaStatus = UtilsTest.loadFile("./tomcat/tomcat_status_multi.xml"); // TODO probably outdated
+		String salsaTosca = Utils.loadFile("./tomcat/tomcat_from_salsa.xml");
+		String salsaStatus = Utils.loadFile("./tomcat/tomcat_status_multi.xml"); // TODO probably outdated
 
 		StringReader reader = new StringReader(salsaTosca);
 		JAXBContext jaxbContext = JAXBContext.newInstance(Definitions.class, SalsaMappingProperties.class);

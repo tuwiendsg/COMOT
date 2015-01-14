@@ -14,6 +14,16 @@
 	<dependencies>
 
 		<dependency>
+			<!-- just forcing the same version as in comot-cs -->
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-moxy</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-common</artifactId>
 		</dependency>
@@ -49,12 +59,12 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
-			<version>4.1.12.Final</version>
+			<version>4.1.12.Final</version><!-- 4.1.12.Final -->
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-			<version>1.4.180</version>
+			<version>1.4.184</version>
 		</dependency>
 
 		<!-- SPRING DATA -->
@@ -63,12 +73,13 @@
 			<artifactId>spring-data-jpa</artifactId>
 			<version>1.7.1.RELEASE</version>
 		</dependency>
+		<!-- 
 		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib</artifactId>
 			<version>2.2.2</version>
 		</dependency>
-
+-->
 
 		<dependency>
 			<groupId>org.springframework</groupId>

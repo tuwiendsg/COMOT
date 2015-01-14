@@ -12,14 +12,10 @@
 	</parent>
 
 	<dependencies>
-
-
 	</dependencies>
-
 
 	<build>
 		<plugins>
-
 		</plugins>
 	</build>
 

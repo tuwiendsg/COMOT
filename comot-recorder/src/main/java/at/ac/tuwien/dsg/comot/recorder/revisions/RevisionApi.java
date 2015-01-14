@@ -62,19 +62,12 @@ public class RevisionApi {
 
 	protected void insertToDB(ManagedRegion region, String regionId, String changeType) {
 
-		RegionRepo repo = context.getBean(RegionRepo.class);
-
-		repo.setRegionId(regionId);
+		Node regionNode, revisionNode, lastRevisionNode;
+		Revision revision;
 
 		Long time = System.currentTimeMillis();
-
-		Map<InternalNode, Node> savedNodes = new HashMap<>();
-		Set<Long> currentRels = new HashSet<>();
-		Node identityNode, regionNode, currentState, stateNode, revisionNode, lastRevisionNode;
-		Relationship stateRel, oldRel, newRel;
-
-		Boolean update;
-		Revision revision;
+		RegionRepo repo = context.getBean(RegionRepo.class);
+		repo.setRegionId(regionId);
 
 		// create REGION
 		if ((regionNode = repo.getRegion()) == null) {
@@ -89,8 +82,14 @@ public class RevisionApi {
 			revisionNode.setProperty(Revision.PROP_ID, UUID.randomUUID().toString());
 
 			neo.createRelationshipBetween(regionNode, revisionNode, RelTypes._FIRST_REV.toString(), null);
+			neo.createRelationshipBetween(regionNode, revisionNode, RelTypes._LAST_REV.toString(), null);
 
-		} else {
+		}
+
+		boolean modified = modifyEntities(region, repo, regionNode, time);
+
+		// mark new version
+		if (modified && regionNode != null) {
 			lastRevisionNode = repo.getLastRevision();
 			log.info("lastRevisionNode.getId() {}", lastRevisionNode.getId());
 			Revision lastRevision = revisionRepo.findOne(lastRevisionNode.getId());
@@ -102,14 +101,25 @@ public class RevisionApi {
 			for (Relationship rel : lastRevisionNode.getRelationships(RelTypes._LAST_REV)) {
 				rel.delete();
 			}
+			// create new _LAST_REV
+			neo.createRelationshipBetween(regionNode, revisionNode, RelTypes._LAST_REV.toString(), null);
 		}
-
-		// create new _LAST_REV
-		neo.createRelationshipBetween(regionNode, revisionNode, RelTypes._LAST_REV.toString(), null);
 
 		for (String label : region.getClasses().keySet()) {
 			regionNode.setProperty(label, region.getClasses().get(label));
 		}
+
+	}
+
+	protected boolean modifyEntities(ManagedRegion region, RegionRepo repo, Node regionNode, Long time) {
+
+		boolean modified = false;
+		Map<InternalNode, Node> savedNodes = new HashMap<>();
+		Set<Long> currentRels = new HashSet<>();
+		Node identityNode, currentState, stateNode;
+		Relationship stateRel, oldRel, newRel;
+
+		Boolean update;
 
 		for (InternalNode node : region.getNodes()) {
 
@@ -117,6 +127,8 @@ public class RevisionApi {
 
 			// IDENTITY node
 			if ((identityNode = repo.getIdentityNode(node.getBusinessId())) == null) {
+				modified = true;
+
 				identityNode = neo.createNode(node.getBusinessIdAsMap(), node.getLablesForIdentityNode());
 
 				// connect identity node with the region
@@ -129,6 +141,7 @@ public class RevisionApi {
 			update = repo.needUpdateState(currentState, node);
 
 			if (currentState == null || update) {
+				modified = true;
 
 				stateNode = neo.createNode(node.getProperties(), node.getLablesForStateNode());
 
@@ -154,6 +167,7 @@ public class RevisionApi {
 			log.info("old: {}, update: {} - {}", oldRel, update, rel);
 
 			if (oldRel == null || update) {
+				modified = true;
 				newRel = neo.createRelationshipBetween(savedNodes.get(rel.getStartNode()),
 						savedNodes.get(rel.getEndNode()),
 						rel.getType(), rel.getProperties());
@@ -172,9 +186,12 @@ public class RevisionApi {
 		// set outdated rels
 		for (Relationship rel : repo.getAllCurrentStructuralRels()) {
 			if (!currentRels.contains(rel.getId())) {
+				modified = true;
 				rel.setProperty(InternalRel.PROPERTY_TO, time);
 			}
 		}
+
+		return modified;
 
 	}
 

@@ -17,8 +17,8 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 @Configuration
 @PropertySource({ "classpath:spring/properties/test.properties" })
-@Profile(AppContextCore.SPRING_PROFILE_TEST)
-public class TestApplicationContext {
+@Profile(AppContextCore.EMBEDDED_H2_DB)
+public class AppContextCoreEmbeddedDb {
 
 	@Resource
 	protected Environment env;
@@ -43,13 +43,13 @@ public class TestApplicationContext {
 		};
 	}
 
-	@Bean
+	@Bean(destroyMethod = "stop")
 	public Server hTwoServer() throws SQLException {
 		return Server.createTcpServer().start();
 
 	}
 
-	@Bean
+	@Bean(destroyMethod = "stop")
 	public Server hTwoServerWeb() throws SQLException {
 		return Server.createWebServer().start();
 

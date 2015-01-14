@@ -1,5 +1,7 @@
 package at.ac.tuwien.dsg.comot.model;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -11,7 +13,9 @@ import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @NodeEntity
-public class ElasticityCapability {
+public class ElasticityCapability implements Serializable {
+
+	private static final long serialVersionUID = 7875588761489314170L;
 
 	@GraphId
 	protected Long nodeId;
@@ -23,6 +27,10 @@ public class ElasticityCapability {
 	protected String name;
 	@XmlAttribute
 	protected String script;
+
+	public ElasticityCapability() {
+
+	}
 
 	public ElasticityCapability(String name, String script) {
 		super();

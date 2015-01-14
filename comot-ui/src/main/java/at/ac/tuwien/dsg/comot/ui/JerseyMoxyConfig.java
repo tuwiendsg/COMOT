@@ -3,6 +3,7 @@ package at.ac.tuwien.dsg.comot.ui;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.spring.scope.RequestContextFilter;
 
+import at.ac.tuwien.dsg.comot.ui.service.RevisionResource;
 import at.ac.tuwien.dsg.comot.ui.service.ServicesResource;
 
 /**
@@ -14,9 +15,11 @@ import at.ac.tuwien.dsg.comot.ui.service.ServicesResource;
 public class JerseyMoxyConfig extends ResourceConfig {
 
 	public JerseyMoxyConfig() {
-
-		register(RequestContextFilter.class);
+		// REST RESOURCES
 		register(ServicesResource.class);
+		register(RevisionResource.class);
+		// CONFIGURATION
+		register(RequestContextFilter.class);
 		register(DefinitionsContextResolver.class);
 		// register(ToscaValidatingReader.class);
 		register(ComotExceptionMapper.class);

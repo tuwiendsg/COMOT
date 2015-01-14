@@ -2,7 +2,9 @@ package at.ac.tuwien.dsg.comot.common;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.StringWriter;
@@ -14,6 +16,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,5 +96,17 @@ public class Utils {
 			if (ois != null)
 				ois.close();
 		}
+	}
+
+	public static String loadFile(String path) throws IOException {
+		return IOUtils.toString(loadFileFromSystem(path), "UTF-8");
+	}
+
+	public static InputStream loadFileFromSystem(String path) throws IOException {
+		return FileUtils.openInputStream(new File(path));
+	}
+
+	public static InputStream loadFileFromClassPath(String path) throws IOException {
+		return ClassLoader.getSystemResourceAsStream(path);
 	}
 }

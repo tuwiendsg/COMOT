@@ -13,13 +13,11 @@
 	</context-param>
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>
-	    at.ac.tuwien.dsg.comot.core.spring.AppContextCore
-	    </param-value>
+		<param-value>at.ac.tuwien.dsg.comot.ui.AppContextUi</param-value>
 	</context-param>
 	<context-param>
 		<param-name>spring.profiles.default</param-name>
-		<param-value>test,insert_data</param-value>
+		<param-value>INSERT_INIT_DATA,IMPERMANENT_NEO4J_DB,EMBEDDED_H2_DB</param-value>
 	</context-param>
 
 	<listener>

@@ -129,7 +129,7 @@ public class ConverterToInternal {
 		if (obj.getClass().isAnnotationPresent(NodeEntity.class)) {
 			toObject = obj;
 		}
-		log.info("oooooooooooooo {} {} {}", from, relName, obj);
+
 		String toId = extractBusinessId(toObject,
 				CustomReflectionUtils.getInheritedNonStaticNonTransientNonNullFields(toObject));
 

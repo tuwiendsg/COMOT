@@ -14,6 +14,7 @@
 
 	var base = "rest/";
 	var services = base + "services/";
+	var revisions = "/revisions";
 
 	function getRequestCore(onSuccess, onError) {
 
@@ -195,6 +196,45 @@
 			success : onSuccess,
 			error : onError
 		});
+	}
+
+	// //////////////////////////////// REVISIONS
+
+	exports.startRecording = function(serviceId, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "PUT";
+		request.url = services + serviceId + revisions + "/recording";
+		return $.ajax(request);
+
+	}
+
+	exports.stopRecording = function(serviceId, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "DELETE";
+		request.url = services + serviceId + revisions+ "/recording";
+		return $.ajax(request);
+
+	}
+	
+	exports.stopRecordingAndDeleteData = function(serviceId, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "DELETE";
+		request.url = services + serviceId + revisions;
+		return $.ajax(request);
+
+	}
+	
+	exports.getLastRevision = function(serviceId, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "GET";
+		request.dataType = "json"
+		request.url = services + serviceId + revisions+ "/last";
+		return $.ajax(request);
+
 	}
 
 }));

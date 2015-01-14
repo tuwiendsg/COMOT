@@ -2,13 +2,19 @@ package at.ac.tuwien.dsg.comot.servrec.test;
 
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
+import java.io.IOException;
+
+import javax.xml.bind.JAXBException;
+
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.unitils.reflectionassert.ReflectionComparatorMode;
 
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.model.repo.CloudServiceRepo;
+import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.common.test.UtilsTest;
+import at.ac.tuwien.dsg.comot.core.model.ServiceEntity;
+import at.ac.tuwien.dsg.comot.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.structure.ServiceTopology;
 import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
@@ -20,17 +26,34 @@ public class RecorderTest extends AbstractTest {
 
 	protected CloudService service;
 
-	@Autowired
-	protected CloudServiceRepo cloudServiceRepo;
-
 	@Before
 	public void startup() {
 		service = ServiceTemplates.fullService();
 	}
 
 	@Test
-	public void aaaaa() {
-		cloudServiceRepo.save(service);
+	public void testRecordingManager() throws IOException, JAXBException, CoreServiceException, ComotException,
+			IllegalArgumentException, IllegalAccessException {
+
+		CloudService service = mapperTosca.createModel(UtilsCs
+				.loadTosca(UtilsTest.TEST_FILE_BASE + "tomcat/tomcat.xml"));
+
+		// deploy
+		orchestrator.deployNew(service);
+
+		ServiceEntity entity = serviceRepo.findOne(service.getId());
+		log.info("entity: {}", entity);
+		log.info("recordingManager: {}", recordingManager);
+
+		recordingManager.addService(service.getId(), deployment, control, monitoring);
+
+		recordingManager.insertVersion(entity.getServiceOriginal());
+		recordingManager.insertVersion(entity.getServiceDeployed());
+
+		recordingManager.startRecording(service.getId());
+
+		UtilsTest.sleepInfinit();
+
 	}
 
 	@Test

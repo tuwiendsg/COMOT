@@ -16,7 +16,6 @@ import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.monitoring.ElementMonitoring;
-import at.ac.tuwien.dsg.comot.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.cs.mapper.DeploymentMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.MelaMapper;
@@ -98,7 +97,7 @@ public class MelaMappingTest extends AbstractTest {
 			CoreServiceException,
 			ComotException {
 
-		String melaData = UtilsTest.loadFile("./xml/ViennaChillerSensors_monitoringData.xml");
+		String melaData = Utils.loadFile("./../resources/test/xml/ViennaChillerSensors_monitoringData.xml");
 
 		StringReader reader = new StringReader(melaData);
 		JAXBContext jaxbContext = JAXBContext.newInstance(MonitoredElementMonitoringSnapshot.class);

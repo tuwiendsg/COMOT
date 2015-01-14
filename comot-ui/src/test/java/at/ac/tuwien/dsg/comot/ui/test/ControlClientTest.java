@@ -21,6 +21,7 @@ import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.test.UtilsTest;
+import at.ac.tuwien.dsg.comot.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.test.model.examples.ExampleDeployOneVM;
 import at.ac.tuwien.dsg.comot.ui.model.UnifiedConfiguration;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
@@ -36,8 +37,8 @@ public class ControlClientTest extends AbstractTest {
 	@Test
 	public void testJaxb() throws CoreServiceException, JAXBException, IOException {
 
-		CompositionRulesConfiguration mcr = UtilsTest.loadMetricCompositionRules("aaaa",
-				"./mela/defCompositionRules.xml");
+		CompositionRulesConfiguration mcr = UtilsCs.loadMetricCompositionRules("aaaa",
+				UtilsTest.TEST_FILE_BASE + "mela/defCompositionRules.xml");
 
 		UnifiedConfiguration unified = new UnifiedConfiguration();
 		unified.setEffects("effects");
@@ -83,7 +84,7 @@ public class ControlClientTest extends AbstractTest {
 	@Test
 	public void testTosca() throws FileNotFoundException, JAXBException {
 
-		TDefinitions tosca = loadTosca("./tomcat/tomcat.xml");
+		TDefinitions tosca = loadTosca("./../resources/test/tomcat/tomcat.xml");
 
 		TServiceTemplate serviceTemplate = (TServiceTemplate) tosca
 				.getServiceTemplateOrNodeTypeOrNodeTypeImplementation().get(0);

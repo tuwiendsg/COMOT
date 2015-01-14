@@ -3,6 +3,7 @@ define(function(require) {
 
 	var moduleStructure = require('details/structure');
 	var moduleMonitoring = require('details/monitoring');
+	var moduleRevisions = require('details/revisions');
 	var notify = require('notify');
 	var repeater = require('repeater');
 
@@ -22,6 +23,7 @@ define(function(require) {
 		services : ko.observableArray(),
 		switchMonitoring : switchMonitoring,
 		switchControl : switchControl,
+		switchRecording : switchRecording,
 		deployment : deployment,
 		selectedServiceId : ko.observable(),
 		assignSelected : function(serviceId) {
@@ -41,6 +43,11 @@ define(function(require) {
 			module : 'details/monitoring',
 			show : ko.observable(false),
 			instance : moduleMonitoring
+		},{
+			name : 'Revisions',
+			module : 'details/revisions',
+			show : ko.observable(false),
+			instance : moduleRevisions
 		} ]),
 
 		activateTab : function() {
@@ -85,6 +92,22 @@ define(function(require) {
 				that.monitoring(true);
 				notify.success("Monitoring started for " + that.id());
 			}, "Failed to start monitoring for " + that.id())
+		}
+	}
+	
+	function switchRecording() {
+		var that = this;
+
+		if (this.recording()) {
+			comot.stopRecording(this.id(), function() {
+				that.recording(false);
+				notify.success("Recording stopped for " + that.id());
+			}, "Failed to stop recording for " + that.id());
+		} else {
+			comot.startRecording(this.id(), function() {
+				that.recording(true);
+				notify.success("Recording started for " + that.id());
+			}, "Failed to start recording for " + that.id());
 		}
 	}
 

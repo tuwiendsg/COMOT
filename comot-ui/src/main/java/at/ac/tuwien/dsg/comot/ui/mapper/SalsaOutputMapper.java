@@ -67,32 +67,35 @@ public class SalsaOutputMapper {
 	protected void doTopologies(ElementState parent, Set<ServiceTopology> topologies, RelationshipResolver resolver,
 			List<ElementState> eTopos) {
 
+		ElementState eTopo, eNode, eInstance;
 		boolean isUnit;
 
 		for (ServiceTopology topology : topologies) {
+			log.info("topology.getState() {}", topology.getState());
+			eTopo = new ElementState(topology.getId(), TOPOLOGY, topology.getState().toString());
+			eTopos.add(eTopo);
+			parent.addChild(eTopo);
 
-			ElementState element = new ElementState(topology.getId(), TOPOLOGY, topology.getState().toString());
-			eTopos.add(element);
-			parent.addChild(element);
-
-			doTopologies(element, topology.getServiceTopologies(), resolver, eTopos);
+			doTopologies(eTopo, topology.getServiceTopologies(), resolver, eTopos);
 
 			for (StackNode node : topology.getNodes()) {
 				isUnit = resolver.isServiceUnit(node.getId());
 
 				if (node.getInstances().size() == 0) {
-					ElementState one = new ElementState(node.getId(), node.getType().toString(), topology
+					eNode = new ElementState(node.getId(), node.getType().toString(), node
 							.getState().toString());
-					element.addChild(one);
-					element.setServiceUnit(isUnit);
+					eNode.setServiceUnit(isUnit);
+
+					eTopo.addChild(eNode);
 
 				} else {
 					for (NodeInstance instance : node.getInstances()) {
-						ElementState one = new ElementState(node.getId(), node.getType().toString(), topology
+						eInstance = new ElementState(node.getId(), node.getType().toString(), instance
 								.getState().toString());
-						one.setInstanceId(instance.getInstanceId());
-						element.addChild(one);
-						element.setServiceUnit(isUnit);
+						eInstance.setInstanceId(instance.getInstanceId());
+						eInstance.setServiceUnit(isUnit);
+
+						eTopo.addChild(eInstance);
 					}
 				}
 			}

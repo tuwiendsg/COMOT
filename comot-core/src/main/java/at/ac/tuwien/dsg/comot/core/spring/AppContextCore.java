@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
@@ -23,11 +24,14 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import at.ac.tuwien.dsg.comot.cs.AppContextCs;
+
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories("at.ac.tuwien.dsg.comot.core.dal")
 @PropertySource({ "classpath:spring/properties/application.properties" })
-@ComponentScan({ "at.ac.tuwien.dsg.comot" })
+@ComponentScan({ "at.ac.tuwien.dsg.comot.core" })
+@Import(AppContextCs.class)
 @EnableAsync
 public class AppContextCore {
 
@@ -36,9 +40,8 @@ public class AppContextCore {
 	public static final String ENTITYMANAGER_PACKAGES_TO_SCAN = "at.ac.tuwien.dsg.comot.core.model";
 	public static final String PERSISTENCE_NAME = "comot_persist";
 
-	public static final String SPRING_PROFILE_PROD = "prod";
-	public static final String SPRING_PROFILE_TEST = "test";
-	public static final String SPRING_PROFILE_INSERT_DATA = "insert_data";
+	public static final String EMBEDDED_H2_DB = "EMBEDDED_H2_DB";
+	public static final String INSERT_INIT_DATA = "INSERT_INIT_DATA";
 
 	public static final String DATABASE_DRIVER = "db.driver";
 	public static final String DATABASE_PASSWORD = "db.password";

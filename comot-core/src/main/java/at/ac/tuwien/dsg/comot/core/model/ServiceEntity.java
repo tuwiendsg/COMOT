@@ -30,9 +30,11 @@ public class ServiceEntity implements Serializable {
 	protected String id;
 	protected String name;
 	protected Date dateCreated;
+
 	protected Boolean deployment;
 	protected Boolean monitoring;
 	protected Boolean control;
+	protected Boolean recording;
 
 	@XmlTransient
 	@Lob
@@ -64,23 +66,8 @@ public class ServiceEntity implements Serializable {
 		deployment = true;
 		monitoring = false;
 		control = false;
+		recording = false;
 	}
-
-	// public void addJob(Job.Type type) {
-	// Job temp = new Job(type, this);
-	//
-	// if (jobs == null) {
-	// jobs = new ArrayList<>();
-	// }
-	// jobs.add(temp);
-	// }
-
-	// public void removeJob(Job job) {
-	// if (jobs == null) {
-	// return;
-	// }
-	// jobs.remove(job);
-	// }
 
 	// GENERATED METHODS
 
@@ -170,6 +157,23 @@ public class ServiceEntity implements Serializable {
 
 	public void setJobs(List<Job> jobs) {
 		this.jobs = jobs;
+	}
+
+	public Boolean getRecording() {
+		return recording;
+	}
+
+	public void setRecording(Boolean recording) {
+		this.recording = recording;
+	}
+
+	@Override
+	public String toString() {
+		return "ServiceEntity [id=" + id + ", name=" + name + ", dateCreated=" + dateCreated + ", deployment="
+				+ deployment + ", monitoring=" + monitoring + ", control=" + control + ", recording=" + recording
+				+ ", serviceOriginal=" + ((serviceOriginal == null) ? null : "data") + ", serviceDeployed="
+				+ ((serviceDeployed == null) ? null : "data") + ", mcr=" + ((mcr == null) ? null : "data")
+				+ ", effects=" + ((effects == null) ? null : "data") + "]";
 	}
 
 }

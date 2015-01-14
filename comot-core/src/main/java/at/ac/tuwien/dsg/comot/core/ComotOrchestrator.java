@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import at.ac.tuwien.dsg.comot.common.coreservices.ControlClient;
 import at.ac.tuwien.dsg.comot.common.coreservices.DeploymentClient;
@@ -22,8 +23,7 @@ import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.monitoring.ElementMonitoring;
-import at.ac.tuwien.dsg.comot.core.dal.JobRepo;
-import at.ac.tuwien.dsg.comot.core.dal.ServiceRepo;
+import at.ac.tuwien.dsg.comot.core.dal.ServiceRepoProxy;
 import at.ac.tuwien.dsg.comot.core.model.Job;
 import at.ac.tuwien.dsg.comot.core.model.ServiceEntity;
 import at.ac.tuwien.dsg.comot.core.model.ServiceEntityComparator;
@@ -43,9 +43,9 @@ public class ComotOrchestrator {
 	protected MonitoringClient monitoring;
 
 	@Autowired
-	protected ServiceRepo serviceRepo;
-	@Autowired
-	protected JobRepo jobRepo;
+	protected ServiceRepoProxy serviceRepo;
+	// @Autowired
+	// protected JobRepo jobRepo;
 
 	@Autowired
 	protected AsyncExecutor executor;
@@ -56,7 +56,6 @@ public class ComotOrchestrator {
 	public void setUp() {
 		executor.setOrchestrator(this);
 		executor.start();
-		log.info("");
 	}
 
 	public List<ServiceEntity> getServices() {
@@ -76,6 +75,7 @@ public class ComotOrchestrator {
 		return updated;
 	}
 
+	@Transactional
 	public void deployNew(CloudService service) throws CoreServiceException, ComotException {
 
 		CloudService deployedService = deployment.deploy(service);
@@ -85,7 +85,7 @@ public class ComotOrchestrator {
 
 	}
 
-	public void deploy(String serviceId) throws CoreServiceException, ComotException {
+	public void redeploy(String serviceId) throws CoreServiceException, ComotException {
 
 		ServiceEntity entity = getServiceEntity(serviceId);
 
@@ -122,7 +122,8 @@ public class ComotOrchestrator {
 		entity.setMonitoring(true);
 		serviceRepo.save(entity);
 
-		jobRepo.save(new Job(Job.Type.UPDATE_STRUCTURE_MONITORING, entity));
+		// jobRepo.save(new Job(Job.Type.UPDATE_STRUCTURE_MONITORING, entity));
+		serviceRepo.save(new Job(Job.Type.UPDATE_STRUCTURE_MONITORING, entity));
 
 		// TODO keep monitoring updated
 
@@ -147,7 +148,8 @@ public class ComotOrchestrator {
 			// TODO keep control updated
 
 		} else {
-			jobRepo.save(new Job(Job.Type.START_CONTROL, entity));
+			// jobRepo.save(new Job(Job.Type.START_CONTROL, entity));
+			serviceRepo.save(new Job(Job.Type.START_CONTROL, entity));
 		}
 
 	}
