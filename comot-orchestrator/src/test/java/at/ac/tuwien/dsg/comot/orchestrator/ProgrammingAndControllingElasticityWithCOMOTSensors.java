@@ -1,6 +1,6 @@
 package at.ac.tuwien.dsg.comot.orchestrator;
 
- 
+import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.ServiceArtifact;
 import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifact;
 import at.ac.tuwien.dsg.comot.common.model.Capability;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;
@@ -34,7 +34,7 @@ public class ProgrammingAndControllingElasticityWithCOMOTSensors {
         //specify service units in terms of software
 
         //need to specify details of VM and operating system to deploy the software servide units on
-        OperatingSystemUnit dataControllerVM = OperatingSystemUnit("DataControllerUnitVM")
+        OperatingSystemUnit dataControllerVM = OperatingSystemUnit("SensorVM")
                 .providedBy(OpenstackSmall()
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
@@ -44,9 +44,8 @@ public class ProgrammingAndControllingElasticityWithCOMOTSensors {
         //start with Data End, and first with Data Controller
         ServiceUnit dataControllerUnit = SingleSoftwareUnit("sensor_gas")
                 //software artifacts needed for unit deployment   = script to deploy Cassandra
-                .deployedBy(SingleScriptArtifact("deployDataControllerArtifact", "http://128.130.172.215/salsa/upload/files/DaasService/deployCassandraSeed.sh"))
-                //data controller exposed its IP 
-                .exposes(Capability.Variable("DataController_IP_information"));
+                .deployedBy(ServiceArtifact("http://128.130.172.215/salsa/upload/files/DaasService/IoT/run_sensor_gas.sh")) //data controller exposed its IP 
+                ;
 
         ServiceTopology sensors = ServiceTopology("sensors").withServiceUnits(dataControllerUnit);
 
@@ -64,8 +63,8 @@ public class ProgrammingAndControllingElasticityWithCOMOTSensors {
         COMOTOrchestrator orchestrator = new COMOTOrchestrator()
                 //we have SALSA as cloud management tool
                 //curently deployed separately
-                .withSalsaIP("128.130.172.215")
-                .withSalsaPort(8080)
+                .withSalsaIP("128.130.172.214")
+                .withSalsaPort(8380)
                 //we have rSYBL elasticity control service and MELA 
                 //deployed separately
                 .withRsyblIP("128.130.172.214")

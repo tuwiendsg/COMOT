@@ -1,6 +1,5 @@
 package at.ac.tuwien.dsg.comot.visualisation.service.cfx;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -39,17 +38,14 @@ public class ComotVisServiceExceptionMapper implements ExceptionMapper<Exception
 
         private String documentationUri;
 
-        @JsonProperty("error-code")
         public int getCode() {
             return code;
         }
 
-        @JsonProperty("error-message")
         public String getMessage() {
             return message;
         }
 
-        @JsonProperty("documentation-uri")
         public String getDocumentationUri() {
             return documentationUri;
         }

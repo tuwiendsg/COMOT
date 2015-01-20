@@ -5,8 +5,6 @@ import static at.ac.tuwien.dsg.comot.common.model.BASHAction.BASHAction;
 import at.ac.tuwien.dsg.comot.common.model.Capability;
 import static at.ac.tuwien.dsg.comot.common.model.CapabilityEffect.CapabilityEffect;
 import static at.ac.tuwien.dsg.comot.common.model.MetricEffect.MetricEffect;
-import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackMicro;
-import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackSmall;
 import at.ac.tuwien.dsg.comot.common.model.Constraint;
 import at.ac.tuwien.dsg.comot.common.model.Constraint.Metric;
 import static at.ac.tuwien.dsg.comot.common.model.EntityRelationship.ConnectToRelation;
@@ -16,9 +14,12 @@ import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingS
 import at.ac.tuwien.dsg.comot.common.model.Requirement;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;
 import static at.ac.tuwien.dsg.comot.common.model.CloudService.ServiceTemplate;
+import at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification;
+import static at.ac.tuwien.dsg.comot.common.model.CommonOperatingSystemSpecification.OpenstackSmall;
 import at.ac.tuwien.dsg.comot.common.model.ElasticityCapability;
 import at.ac.tuwien.dsg.comot.common.model.LifecyclePhase;
 import at.ac.tuwien.dsg.comot.common.model.MetricEffect;
+import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingSystemUnit;
 import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
 import static at.ac.tuwien.dsg.comot.common.model.ServiceTopology.ServiceTopology;
 import at.ac.tuwien.dsg.comot.common.model.ServiceUnit;
@@ -30,67 +31,35 @@ import at.ac.tuwien.dsg.orchestrator.interraction.COMOTOrchestrator;
  *
  * @author http://dsg.tuwien.ac.at
  */
-public class ProgrammingAndControllingElasticityWithCOMOT {
+public class ProgrammingAndControllingElasticityWithCOMOTFlexiant {
 
     public static void main(String[] args) {
         //specify service units in terms of software
 
-        String salsaRepo = "http://128.130.172.215/salsa/upload/files/ElasticIoT/";
+        String salsaRepo = "http://128.130.172.215/salsa/upload/files/DaaS_Flexiant/";
 
         //need to specify details of VM and operating system to deploy the software servide units on
         OperatingSystemUnit dataControllerVM = OperatingSystemUnit("DataControllerUnitVM")
-                .providedBy(OpenstackSmall()
-                        .addSoftwarePackage("openjdk-7-jre")
-                        .addSoftwarePackage("ganglia-monitor")
-                        .addSoftwarePackage("gmetad")
+                .providedBy(CommonOperatingSystemSpecification.FlexiantSmall()
                 );
 
         OperatingSystemUnit dataNodeVM = OperatingSystemUnit("DataNodeUnitVM")
-                .providedBy(OpenstackMicro()
-                        .addSoftwarePackage("openjdk-7-jre")
-                        .addSoftwarePackage("ganglia-monitor")
-                        .addSoftwarePackage("gmetad")
+                .providedBy(CommonOperatingSystemSpecification.FlexiantSmall()
                 );
 
         //finally, we define Vm types for event processing
         OperatingSystemUnit loadbalancerVM = OperatingSystemUnit("LoadBalancerUnitVM")
-                .providedBy(OpenstackSmall()
-                        .addSoftwarePackage("openjdk-7-jre")
-                        .addSoftwarePackage("ganglia-monitor")
-                        .addSoftwarePackage("gmetad")
+                .providedBy(CommonOperatingSystemSpecification.FlexiantSmall()
                 );
 
         OperatingSystemUnit eventProcessingVM = OperatingSystemUnit("EventProcessingUnitVM")
-                .providedBy(OpenstackSmall()
-                        .withBaseImage("be6ae07b-7deb-4926-bfd7-b11afe228d6a")
-                        .addSoftwarePackage("openjdk-7-jre")
-                        .addSoftwarePackage("ganglia-monitor")
-                        .addSoftwarePackage("gmetad")
+                .providedBy(CommonOperatingSystemSpecification.FlexiantSmall()
+                );
+        
+         OperatingSystemUnit momVM = OperatingSystemUnit("MoMVM")
+                 .providedBy(CommonOperatingSystemSpecification.FlexiantSmall()
                 );
 
-        OperatingSystemUnit localProcessingVM = OperatingSystemUnit("LocalProcessingUnitVM")
-                .providedBy(OpenstackSmall()
-                        .withBaseImage("be6ae07b-7deb-4926-bfd7-b11afe228d6a")
-                        .addSoftwarePackage("openjdk-7-jre")
-                        .addSoftwarePackage("ganglia-monitor")
-                        .addSoftwarePackage("gmetad")
-                ).andMinInstances(2);
-
-        OperatingSystemUnit mqttQueueVM = OperatingSystemUnit("MqttQueueVM")
-                .providedBy(OpenstackSmall()
-                        .withBaseImage("17ffd200-315f-4ba8-9e77-c294efc772bd")
-                        .addSoftwarePackage("openjdk-7-jre")
-                        .addSoftwarePackage("ganglia-monitor")
-                        .addSoftwarePackage("gmetad")
-                );
-
-        OperatingSystemUnit momVM = OperatingSystemUnit("MoMVM")
-                .providedBy(OpenstackSmall()
-                        .withBaseImage("be6ae07b-7deb-4926-bfd7-b11afe228d6a")
-                        .addSoftwarePackage("openjdk-7-jre")
-                        .addSoftwarePackage("ganglia-monitor")
-                        .addSoftwarePackage("gmetad")
-                );
 
         //start with Data End, and first with Data Controller
         ServiceUnit dataControllerUnit = SingleSoftwareUnit("DataControllerUnit")
@@ -98,7 +67,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 .deployedBy(SingleScriptArtifact("deployDataControllerArtifact", salsaRepo + "deployCassandraSeed.sh"))
                 //data controller exposed its IP 
                 .exposes(Capability.Variable("DataController_IP_information"));
-
+//
         ElasticityCapability dataNodeUnitScaleIn = ElasticityCapability.ScaleIn().withPrimitiveOperations("M2MDaaS.decommissionNode", "Salsa.scaleIn");
         ElasticityCapability dataNodeUnitScaleOut = ElasticityCapability.ScaleOut().withPrimitiveOperations("Salsa.scaleOut");
 
@@ -112,7 +81,10 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 .controlledBy(Strategy("DN_ST1")
                         .when(Constraint.MetricConstraint("DN_ST1_CO1", new Metric("cpuUsage", "%")).lessThan("40"))
                         .enforce(dataNodeUnitScaleIn)
-                );
+                )
+//              
+                .withLifecycleAction(LifecyclePhase.STOP, BASHAction("sudo /bin/decommission"));
+                ;
 
         //add the service units belonging to the event processing topology
         ServiceUnit momUnit = SingleSoftwareUnit("MOMUnit")
@@ -150,17 +122,11 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 //load balancer must provide IP
                 .exposes(Capability.Variable("brokerIp_Capability"))
                 .deployedBy(SingleScriptArtifact("deployMQTTBroker", salsaRepo + "run_mqtt_broker.sh"));
-
+//
         ElasticityCapability localProcessingUnitScaleIn = ElasticityCapability.ScaleIn().withPrimitiveOperations("Salsa.scaleIn");
         ElasticityCapability localProcessingUnitScaleOut = ElasticityCapability.ScaleOut().withPrimitiveOperations("Salsa.scaleOut");
 
-        ServiceUnit localProcessingUnit = SingleSoftwareUnit("LocalProcessingUnit")
-                //load balancer must provide IP
-                .requires(Requirement.Variable("brokerIp_Requirement"))
-                .requires(Requirement.Variable("loadBalancerIp_Requirement"))
-                .provides(localProcessingUnitScaleIn, localProcessingUnitScaleOut)
-                .deployedBy(SingleScriptArtifact("deployLocalProcessing", salsaRepo + "install-local-analysis-service.sh"));
-
+        
         //Describe a Data End service topology containing the previous 2 software service units
         ServiceTopology dataEndTopology = ServiceTopology("DataEndTopology")
                 .withServiceUnits(dataControllerUnit, dataNodeUnit //add also OS units to topology
@@ -177,17 +143,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                         , loadbalancerVM, eventProcessingVM, momVM
                 );
 
-        ServiceTopology localProcessinTopology = ServiceTopology("Gateway")
-                .withServiceUnits(mqttQueueVM, mqttUnit, localProcessingUnit, localProcessingVM
-                );
-
-        localProcessingUnit.
-                controlledBy(Strategy("LPT_ST1").when(Constraint.MetricConstraint("LPT_ST1_CO1", new Metric("avgBufferSize", "#")).lessThan("50"))
-                        .enforce(localProcessingUnitScaleIn));
-
-        localProcessingUnit.constrainedBy(Constraint.MetricConstraint("LPT_CO1", new Metric("avgBufferSize", "#")).lessThan("200"));
-
-        //TODO: de verificat de ce nu converteste ok daca pun si constraints si strategies pe topology
+        
         eventProcessingTopology.constrainedBy(
                 Constraint.MetricConstraint("EPT_CO1", new Metric("responseTime", "ms")).lessThan("20"));
 
@@ -216,30 +172,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                         .withMetricEffect(
                                 MetricEffect().withMetric(new Metric("cpuUsage", "%")).withType(MetricEffect.Type.ADD).withValue(30.0)));
 
-        localProcessingUnitScaleOut
-                .withCapabilityEffect(CapabilityEffect(localProcessingUnit)
-                        .withMetricEffect(
-                                MetricEffect().withMetric(new Metric("avgBufferSize", "#")).withType(MetricEffect.Type.SUB).withValue(200.0))
-                        .withMetricEffect(
-                                MetricEffect().withMetric(new Metric("bufferSize", "#")).withType(MetricEffect.Type.ADD).withValue(500.0)))
-                .withCapabilityEffect(CapabilityEffect(localProcessinTopology)
-                        .withMetricEffect(
-                                MetricEffect().withMetric(new Metric("avgBufferSize", "#")).withType(MetricEffect.Type.SUB).withValue(200.0))
-                        .withMetricEffect(
-                                MetricEffect().withMetric(new Metric("bufferSize", "#")).withType(MetricEffect.Type.ADD).withValue(500.0)));
-
-        localProcessingUnitScaleIn
-                .withCapabilityEffect(CapabilityEffect(localProcessingUnit)
-                        .withMetricEffect(
-                                MetricEffect().withMetric(new Metric("avgBufferSize", "#")).withType(MetricEffect.Type.ADD).withValue(90.0))
-                        .withMetricEffect(
-                                MetricEffect().withMetric(new Metric("bufferSize", "#")).withType(MetricEffect.Type.SUB).withValue(200.0)))
-                .withCapabilityEffect(CapabilityEffect(localProcessinTopology)
-                        .withMetricEffect(
-                                MetricEffect().withMetric(new Metric("avgBufferSize", "#")).withType(MetricEffect.Type.ADD).withValue(90.0))
-                        .withMetricEffect(
-                                MetricEffect().withMetric(new Metric("bufferSize", "#")).withType(MetricEffect.Type.SUB).withValue(200.0)));
-
+ 
         eventProcessingUnitScaleOut
                 .withCapabilityEffect(CapabilityEffect(eventProcessingUnit)
                         .withMetricEffect(
@@ -285,10 +218,9 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 );
 
         //describe the service template which will hold more topologies
-        CloudService serviceTemplate = ServiceTemplate("ElasticIoTPlatform")
+        CloudService serviceTemplate = ServiceTemplate("ElasticIoT")
                 .consistsOfTopologies(dataEndTopology)
                 .consistsOfTopologies(eventProcessingTopology)
-                .consistsOfTopologies(localProcessinTopology)
                 //defining CONNECT_TO and HOSTED_ON relationships
                 .andRelationships(
                         //Data Controller IP send to Data Node
@@ -310,14 +242,9 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                         .from(momUnit.getContext().get("MOM_IP_information"))
                         .to(eventProcessingUnit.getContext().get("EventProcessingUnit_MOM_IP_Req")) //specify which software unit goes to which VM
                         ,
-                        ConnectToRelation("mqtt_broker")
-                        .from(mqttUnit.getContext().get("brokerIp_Capability"))
-                        .to(localProcessingUnit.getContext().get("brokerIp_Requirement")) //specify which software unit goes to which VM
-                        ,
-                        ConnectToRelation("load_balancer")
-                        .from(loadbalancerUnit.getContext().get("LoadBalancer_IP_information"))
-                        .to(localProcessingUnit.getContext().get("loadBalancerIp_Requirement")) //specify which software unit goes to which VM
-                        ,
+                        HostedOnRelation("momToVM")
+                        .from(momUnit)
+                        .to(momVM),
                         HostedOnRelation("dataControllerToVM")
                         .from(dataControllerUnit)
                         .to(dataControllerVM),
@@ -329,16 +256,8 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                         .to(loadbalancerVM),
                         HostedOnRelation("eventProcessingToVM")
                         .from(eventProcessingUnit)
-                        .to(eventProcessingVM),
-                        HostedOnRelation("momToVM")
-                        .from(momUnit)
-                        .to(momVM),
-                        HostedOnRelation("localProcessingToVM")
-                        .from(localProcessingUnit)
-                        .to(localProcessingVM),
-                        HostedOnRelation("mqttToVM")
-                        .from(mqttUnit)
-                        .to(mqttQueueVM)
+                        .to(eventProcessingVM)
+                        
                 )
                 // as we have horizontally scalable distributed systems (one service unit can have more instances)
                 //metrics must be aggregated among VMs
@@ -351,14 +270,14 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
         COMOTOrchestrator orchestrator = new COMOTOrchestrator()
                 //we have SALSA as cloud management tool
                 //curently deployed separately
-                .withSalsaIP("128.130.172.214")
+                .withSalsaIP("109.231.122.193")
                 .withSalsaPort(8380)
                 //we have rSYBL elasticity control service and MELA 
                 //deployed separately
                 //                .withRsyblIP("109.231.121.26")
                 //                .withRsyblIP("localhost")
                 //                                .withRsyblIP("109.231.121.104")
-                .withRsyblIP("128.130.172.214")
+                .withRsyblIP("109.231.122.193")
                 //                .withRsyblIP("128.131.172.4118")
                 .withRsyblPort(8280);
 //                .withRsyblPort(8080);
@@ -366,6 +285,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
         //deploy, monitor and control
 //        orchestrator.deployAndControl(serviceTemplate);
 //        orchestrator.deploy(serviceTemplate);
+//        orchestrator.deploy(serviceTemplate);;
         orchestrator.controlExisting(serviceTemplate);
 
     }
