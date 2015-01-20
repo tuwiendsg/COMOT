@@ -147,7 +147,7 @@ public class ToscaMapper {
 
 						// service unit
 						if (resolver.isServiceUnit(tNode.getId())) {
-							tNode.setPolicies(mapper.get().map(navigator.getServiceUnit(tNode.getId()),
+							tNode.setPolicies(mapper.get().map(navigator.getServiceUnitFor(tNode.getId()),
 									TNodeTemplate.Policies.class));
 						}
 
@@ -278,7 +278,7 @@ public class ToscaMapper {
 			log.info("node: " + node);
 			log.info("n id: " + ((node != null) ? node.getId() : "null"));
 
-			unit = navigator.getServiceUnit(node.getId());
+			unit = navigator.getServiceUnitFor(node.getId());
 
 			if (resolver.isServiceUnit(node)) {
 				if (unit == null) {

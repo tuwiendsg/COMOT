@@ -7,7 +7,9 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
 public class ServiceTopology extends ServicePart {
 
 	private static final long serialVersionUID = 7319253967027446687L;
@@ -66,7 +68,7 @@ public class ServiceTopology extends ServicePart {
 		return new ArrayList<ServiceUnit>(serviceUnits);
 	}
 
-	public List<StackNode> getStackNodeList() {
+	public List<StackNode> getNodeList() {
 		return new ArrayList<StackNode>(nodes);
 	}
 

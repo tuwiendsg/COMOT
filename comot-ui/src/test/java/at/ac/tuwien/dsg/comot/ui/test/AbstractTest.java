@@ -24,7 +24,7 @@ import at.ac.tuwien.dsg.comot.core.ComotOrchestrator;
 import at.ac.tuwien.dsg.comot.core.spring.AppContextCore;
 import at.ac.tuwien.dsg.comot.cs.connector.SalsaClient;
 import at.ac.tuwien.dsg.comot.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.test.model.examples.ServiceTemplates;
+import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
 import at.ac.tuwien.dsg.comot.ui.service.ServicesResource;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.AssociatedVM;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
@@ -67,7 +67,7 @@ public abstract class AbstractTest {
 	@Before
 	public void startup() {
 
-		serviceForMapping = ServiceTemplates.fullService();
+		serviceForMapping = STemplates.fullService();
 		// Deployment description
 
 		AssociatedVM vm = new AssociatedVM();

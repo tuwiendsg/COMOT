@@ -4,18 +4,19 @@ import static org.junit.Assert.assertEquals;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.junit.Test;
 import org.unitils.reflectionassert.ReflectionComparatorMode;
 
-import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
+import at.ac.tuwien.dsg.comot.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.structure.ServiceTopology;
 import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.model.structure.StackNode;
 import at.ac.tuwien.dsg.comot.recorder.RecorderException;
-import at.ac.tuwien.dsg.comot.test.model.examples.ServiceTemplates;
+import at.ac.tuwien.dsg.comot.recorder.model.Change;
+import at.ac.tuwien.dsg.comot.recorder.out.ManagedObject;
+import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
 
 public class AutomatedTest extends AbstractTest {
 
@@ -25,8 +26,28 @@ public class AutomatedTest extends AbstractTest {
 	public void testSimpleServiceOneVersion() throws IllegalArgumentException, IllegalAccessException,
 			InstantiationException, ClassNotFoundException, ComotException, InterruptedException, RecorderException {
 
-		service = ServiceTemplates.simplifiedService();
+		service = STemplates.simplifiedService();
 		oneVersion();
+
+	}
+
+	@Test
+	public void testFullServiceOneVersion() throws IllegalArgumentException, IllegalAccessException,
+			InstantiationException, ClassNotFoundException, ComotException, InterruptedException, RecorderException {
+
+		service = STemplates.fullService();
+		oneVersion();
+	}
+
+	public void oneVersion() throws IllegalArgumentException, IllegalAccessException, InstantiationException,
+			ClassNotFoundException, ComotException, RecorderException {
+
+		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, "init");
+
+		CloudService sResult = (CloudService) revisionApi.getRevision(STemplates.serviceId,
+				STemplates.serviceId, System.currentTimeMillis());
+
+		assertReflectionEquals(service, sResult, ReflectionComparatorMode.LENIENT_ORDER);
 
 	}
 
@@ -35,16 +56,10 @@ public class AutomatedTest extends AbstractTest {
 			InstantiationException, ClassNotFoundException, ComotException, InterruptedException, IOException,
 			RecorderException {
 
-		service = ServiceTemplates.simplifiedService();
+		service = STemplates.simplifiedService();
 		multipleVersions();
-	}
 
-	@Test
-	public void testFullServiceOneVersion() throws IllegalArgumentException, IllegalAccessException,
-			InstantiationException, ClassNotFoundException, ComotException, InterruptedException, RecorderException {
-
-		service = ServiceTemplates.fullService();
-		oneVersion();
+		// UtilsTest.sleepInfinit();
 	}
 
 	@Test
@@ -52,107 +67,132 @@ public class AutomatedTest extends AbstractTest {
 			InstantiationException, ClassNotFoundException, ComotException, InterruptedException, IOException,
 			RecorderException {
 
-		service = ServiceTemplates.fullService();
+		service = STemplates.fullService();
 		multipleVersions();
-	}
 
-	public void oneVersion() throws IllegalArgumentException, IllegalAccessException, InstantiationException,
-			ClassNotFoundException, ComotException, RecorderException {
-
-		revisionApi.createOrUpdateRegion(service, ServiceTemplates.serviceId, "init");
-
-		CloudService sResult = (CloudService) revisionApi.getRevision(ServiceTemplates.serviceId,
-				ServiceTemplates.serviceId, System.currentTimeMillis());
-
-		assertReflectionEquals(service, sResult, ReflectionComparatorMode.LENIENT_ORDER);
-
+		// UtilsTest.sleepInfinit();
 	}
 
 	public void multipleVersions() throws IllegalArgumentException, IllegalAccessException, ClassNotFoundException,
 			IOException, InstantiationException, ComotException, RecorderException {
 
-		// ///////////////////////////
+		ServiceUnit unitV1 = UtilsTest.getServiceUnit(service, STemplates.swId_unit);
+
 		// VERSION 1
-		revisionApi.createOrUpdateRegion(service, ServiceTemplates.serviceId, "init");
+		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, "init");
 
 		Long version1Time = System.currentTimeMillis();
 
-		// ///////////////////////////
 		// VERSION 2
-		CloudService updatedService = (CloudService) Utils.deepCopy(service);// createService();
-
-		// add parameter -> create new state & update relation to the old one
-		updatedService.setName("UPDATED");
-
-		ServiceTopology topo = updatedService.getServiceTopologiesList().get(0);
-		ServiceUnit unit = topo.getServiceUnitsList().get(0);
-
-		// remove relationship -> update timestamp
-		topo.getServiceUnits().remove(unit);
-
-		// add node
-		ServiceTopology newTopo = new ServiceTopology("newTopo_UPDATED");
-
-		// add relationship s
-		newTopo.addServiceUnit(unit);
-		updatedService.addServiceTopology(newTopo);
-
-		// change parameter of relationship -> create new one & update state of the old
-		for (StackNode node : topo.getNodes()) {
-			if (node.getId().equals(ServiceTemplates.swNodeId2) && node.getConnectToList().size() > 0) {
-				node.getConnectToList().get(0).setVariableValue("variableValue_UPDATED");
-			}
-		}
-
-		revisionApi.createOrUpdateRegion(updatedService, ServiceTemplates.serviceId, "config_change");
+		CloudService updatedService = update1(service);
+		ServiceUnit unitV2 = UtilsTest.getServiceUnit(updatedService, STemplates.swId_unit);
+		revisionApi.createOrUpdateRegion(updatedService, STemplates.serviceId, "config_change");
 
 		Long version2Time = System.currentTimeMillis();
 
-		// ///////////////////////////
 		// VERSION 3
-		CloudService finalService = (CloudService) Utils.deepCopy(updatedService);
-
-		// add parameter -> create new state & update relation to the old one
-		finalService.setName("UPDATE_2");
-
-		ServiceTopology topo1 = finalService.getServiceTopologiesList().get(0);
-		ServiceTopology topo2 = finalService.getServiceTopologiesList().get(1);
-		ServiceUnit unit2 = topo1.getServiceUnitsList().get(0);
-
-		// remove relationship -> update timestamp
-		topo1.getServiceUnits().remove(unit2);
-		finalService.getServiceTopologies().remove(topo1);
-
-		// add relationship s
-		topo2.addTopology(topo1);
-
-		revisionApi.createOrUpdateRegion(finalService, ServiceTemplates.serviceId, "config_change");
+		CloudService finalService = update2(updatedService);
+		ServiceUnit unitV3 = UtilsTest.getServiceUnit(finalService, STemplates.swId_unit);
+		revisionApi.createOrUpdateRegion(finalService, STemplates.serviceId, "config_change");
 
 		// ///////////////////////////
 		// READ VERSION 1
-		CloudService sResult = (CloudService) revisionApi.getRevision(ServiceTemplates.serviceId,
-				ServiceTemplates.serviceId, version1Time);
+		CloudService sResult = (CloudService) revisionApi.getRevision(STemplates.serviceId,
+				STemplates.serviceId, version1Time);
 		assertReflectionEquals(service, sResult, ReflectionComparatorMode.LENIENT_ORDER);
 
 		// READ VERSION 2
-		CloudService sResult2 = (CloudService) revisionApi.getRevision(ServiceTemplates.serviceId,
-				ServiceTemplates.serviceId, version2Time);
+		CloudService sResult2 = (CloudService) revisionApi.getRevision(STemplates.serviceId,
+				STemplates.serviceId, version2Time);
 		assertReflectionEquals(updatedService, sResult2, ReflectionComparatorMode.LENIENT_ORDER);
 
 		// READ VERSION 3
-		CloudService sResult3 = (CloudService) revisionApi.getRevision(ServiceTemplates.serviceId,
-				ServiceTemplates.serviceId, Long.MAX_VALUE);
+		CloudService sResult3 = (CloudService) revisionApi.getRevision(STemplates.serviceId,
+				STemplates.serviceId, Long.MAX_VALUE);
 		assertReflectionEquals(finalService, sResult3, ReflectionComparatorMode.LENIENT_ORDER);
 
+		// READ ServiceUnit
+
+		ServiceUnit unitV1Res = (ServiceUnit) revisionApi.getRevision(STemplates.serviceId,
+				STemplates.swId_unit, version1Time);
+		assertReflectionEquals(unitV1, unitV1Res, ReflectionComparatorMode.LENIENT_ORDER);
+
+		// READ VERSION 2
+		ServiceUnit unitV2Res = (ServiceUnit) revisionApi.getRevision(STemplates.serviceId,
+				STemplates.swId_unit, version2Time);
+		assertReflectionEquals(unitV2, unitV2Res, ReflectionComparatorMode.LENIENT_ORDER);
+
+		// READ VERSION 3
+		ServiceUnit unitV3Res = (ServiceUnit) revisionApi.getRevision(STemplates.serviceId,
+				STemplates.swId_unit, Long.MAX_VALUE);
+		assertReflectionEquals(unitV3, unitV3Res, ReflectionComparatorMode.LENIENT_ORDER);
+
 	}
 
-	public void assertLabels(Long expected, Class<?> clazz) {
-		assertLabels(expected, clazz.getSimpleName());
-	}
+	@Test
+	public void testRevisionFiltering() throws IllegalArgumentException, IllegalAccessException,
+			ClassNotFoundException, IOException, InstantiationException, RecorderException {
 
-	public void assertLabels(Long expected, String label) {
-		Long count = testBean.countLabel(label);
-		assertEquals(expected, count);
+		service = STemplates.simplifiedService();
+		Long change1Time;
+		Long change3Time;
+
+		// VERSION 1
+		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, "init");
+
+		// VERSION 2
+		CloudService updatedService = update1(service);
+		revisionApi.createOrUpdateRegion(updatedService, STemplates.serviceId, "config_change");
+
+		// VERSION 3
+		CloudService finalService = update2(updatedService);
+		revisionApi.createOrUpdateRegion(finalService, STemplates.serviceId, "config_change");
+
+		// UtilsTest.sleepInfinit();
+
+		// READ CHANGES - WHOLE TIME
+		Change change = revisionApi.getAllChanges(STemplates.serviceId, STemplates.serviceId, 0L, Long.MAX_VALUE);
+		assertEquals(3, countChanges(change));
+
+		change1Time = change.getTimestamp();
+		change3Time = change.getTo().getEnd().getTo().getEnd().getTimestamp();
+
+		change = revisionApi.getAllChanges(STemplates.serviceId, STemplates.swId_unit, 0L, Long.MAX_VALUE);
+		assertEquals(2, countChanges(change));
+		change = revisionApi.getAllChanges(STemplates.serviceId, STemplates.swId2_unit, 0L, Long.MAX_VALUE);
+		assertEquals(3, countChanges(change));// because of connect to relationship
+		change = revisionApi.getAllChanges(STemplates.serviceId, STemplates.swNodeId, 0L, Long.MAX_VALUE);
+		assertEquals(1, countChanges(change));
+
+		// READ CHANGES - SELECTED PERIOD
+
+		change = revisionApi.getAllChanges(STemplates.serviceId, STemplates.serviceId, change1Time, Long.MAX_VALUE);
+		assertEquals(3, countChanges(change));
+		change = revisionApi.getAllChanges(STemplates.serviceId, STemplates.serviceId, change1Time + 1, Long.MAX_VALUE);
+		assertEquals(2, countChanges(change));
+		change = revisionApi.getAllChanges(STemplates.serviceId, STemplates.serviceId, 0L, change3Time);
+		assertEquals(3, countChanges(change));
+		change = revisionApi.getAllChanges(STemplates.serviceId, STemplates.serviceId, 0L, change3Time - 1);
+		assertEquals(2, countChanges(change));
+		change = revisionApi
+				.getAllChanges(STemplates.serviceId, STemplates.serviceId, change1Time + 1, change3Time - 1);
+		assertEquals(1, countChanges(change));
+
+		change = revisionApi.getAllChanges(STemplates.serviceId, STemplates.serviceId, 0L, change1Time - 1);
+		assertEquals(0, countChanges(change));
+
+		// READ REVISION AT SPECIFIC TIME
+
+		CloudService sResult2 = (CloudService) revisionApi.getRevision(STemplates.serviceId,
+				STemplates.serviceId, change1Time + 1);
+		assertReflectionEquals(service, sResult2, ReflectionComparatorMode.LENIENT_ORDER);
+
+		// GET ALL IDs
+
+		List<ManagedObject> list = revisionApi.getManagedObjects(STemplates.serviceId);
+		assertEquals(9, list.size());
+		log.info("{}", list);
+
 	}
 
 }

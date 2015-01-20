@@ -5,12 +5,14 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
 import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @NodeEntity
 public class ElasticityCapability implements Serializable {

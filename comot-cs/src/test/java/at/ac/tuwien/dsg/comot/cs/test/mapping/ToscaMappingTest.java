@@ -19,7 +19,7 @@ import at.ac.tuwien.dsg.comot.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.ToscaOrika;
 import at.ac.tuwien.dsg.comot.cs.test.AbstractTest;
 import at.ac.tuwien.dsg.comot.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.test.model.examples.ServiceTemplates;
+import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 
 public class ToscaMappingTest extends AbstractTest {
@@ -38,7 +38,7 @@ public class ToscaMappingTest extends AbstractTest {
 
 	@Before
 	public void startup() {
-		serviceForMapping = ServiceTemplates.fullServiceWithoutInstances();
+		serviceForMapping = STemplates.fullServiceWithoutInstances();
 	}
 
 	@Test

@@ -1,7 +1,10 @@
 package at.ac.tuwien.dsg.comot.model.node;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import at.ac.tuwien.dsg.comot.model.type.State;
 
+@XmlRootElement
 public class NodeInstanceOs extends NodeInstance {
 
 	private static final long serialVersionUID = 7489425455903961743L;

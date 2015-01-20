@@ -10,8 +10,6 @@ import org.springframework.context.annotation.Profile;
 @Profile(AppContextServrec.IMPERMANENT_NEO4J_DB)
 public class AppContextServrecImpermanentDb {
 
-	private static final String DB_PATH = "target/data/db";
-
 	@Bean(destroyMethod = "shutdown")
 	public GraphDatabaseService graphDatabaseService() {
 		return new TestGraphDatabaseFactory().newImpermanentDatabase();

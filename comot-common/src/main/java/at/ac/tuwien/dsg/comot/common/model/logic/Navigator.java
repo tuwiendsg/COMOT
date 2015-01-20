@@ -38,7 +38,7 @@ public class Navigator {
 		}
 	}
 
-	public ServiceUnit getServiceUnit(String id) {
+	public ServiceUnit getServiceUnitFor(String id) {
 		for (ServiceUnit unit : getParentTopologyFor(id).getServiceUnits()) {
 			if (unit.getNode().getId().equals(id)) {
 				return unit;
@@ -151,7 +151,7 @@ public class Navigator {
 		ServiceUnit unit;
 
 		for (StackNode node : getAllNodes()) {
-			unit = getServiceUnit(node.getId());
+			unit = getServiceUnitFor(node.getId());
 			if (unit != null) {
 				list.add(unit);
 			}

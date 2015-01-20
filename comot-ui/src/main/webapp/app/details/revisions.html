@@ -1,4 +1,139 @@
-<div class="container">
+<div class="container-fluid">
 
-	<div id="output_revisions"></div>
+	<div class="col-md-3">
+
+		<h4>Changes</h4>
+
+		<table class="table table-hover table-condensed">
+			<thead>
+				<tr>
+					<th>Time</th>
+					<th>Type</th>
+				</tr>
+			</thead>
+			<tbody data-bind="foreach: changes">
+				<tr data-bind="css: {active : $parent.selectedTime() == timestamp}">
+					<td data-bind="text: time, click: function() { $parent.revisionsForChange(timestamp) }"></td>
+					<td data-bind="text: type, click: function() { $parent.revisionsForChange(timestamp) }"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="col-md-9">
+	<h4>Cloud service components</h4>
+	
+		<h5>Service</h5>
+
+		<div data-bind="foreach: serviceObj">
+			<button type="button" class="btn btn-default"
+				data-bind="text: $data, click: function() { $parent.revisionsForObject($data)}, css: { active: $parent.selectedObjectId() == $data}"></button>
+		</div>
+
+		<h5>Topologies</h5>
+		<div data-bind="foreach: topologiesObj">
+			<button type="button" class="btn btn-default"
+				data-bind="text: $data, click: function() { $parent.revisionsForObject($data)}, css: { active: $parent.selectedObjectId() == $data}"></button>
+		</div>
+
+		<h5>Units</h5>
+		<div data-bind="foreach: unitsObj">
+			<button type="button" class="btn btn-default"
+				data-bind="text: $data, click: function() { $parent.revisionsForObject($data)}, css: { active: $parent.selectedObjectId() == $data}"></button>
+		</div>
+
+		<h5>Other</h5>
+		<div data-bind="foreach: otherObj">
+			<button type="button" class="btn btn-default"
+				data-bind="text: $data, click: function() { $parent.revisionsForObject($data)}, css: { active: $parent.selectedObjectId() == $data}"></button>
+		</div>
+
+	</div>
+
+
+	<div id="output_revisions" class="col-md-12"></div>
+	<!-- 
+	<div class="tree well"></div>
+
+	<div class="tree well">
+		<ul>
+			<li><span><i class="glyphicon glyphicon-folder-open"></i> Parent</span> <a href="">Goes somewhere</a>
+				<ul>
+					<li><span><i class="glyphicon glyphicon-minus-sign"></i> Child</span> <a href="">Goes somewhere</a>
+						<ul>
+							<li><span><i class="glyphicon glyphicon-leaf"></i> Grand Child</span> <a href="">Goes somewhere</a></li>
+						</ul></li>
+					<li><span><i class="glyphicon glyphicon-minus-sign"></i> Child</span> <a href="">Goes somewhere</a>
+						<ul>
+							<li><span><i class="glyphicon glyphicon-leaf"></i> Grand Child</span> <a href="">Goes somewhere</a></li>
+							<li><span><i class="glyphicon glyphicon-minus-sign"></i> Grand Child</span> <a href="">Goes somewhere</a>
+								<ul>
+									<li><span><i class="glyphicon glyphicon-minus-sign"></i> Great Grand Child</span> <a href="">Goes
+											somewhere</a>
+										<ul>
+											<li><span><i class="glyphicon glyphicon-leaf"></i> Great great Grand Child</span> <a href="">Goes
+													somewhere</a></li>
+											<li><span><i class="glyphicon glyphicon-leaf"></i> Great great Grand Child</span> <a href="">Goes
+													somewhere</a></li>
+										</ul></li>
+									<li><span><i class="glyphicon glyphicon-leaf"></i> Great Grand Child</span> <a href="">Goes somewhere</a></li>
+									<li><span><i class="glyphicon glyphicon-leaf"></i> Great Grand Child</span> <a href="">Goes somewhere</a></li>
+								</ul></li>
+							<li><span><i class="glyphicon glyphicon-leaf"></i> Grand Child</span> <a href="">Goes somewhere</a></li>
+						</ul></li>
+				</ul></li>
+			<li><span><i class="glyphicon glyphicon-folder-open"></i> Parent2</span> <a href="">Goes somewhere</a>
+				<ul>
+					<li><span><i class="glyphicon glyphicon-leaf"></i> Child</span> <a href="">Goes somewhere</a></li>
+				</ul></li>
+		</ul>
+	</div>
+
+	<div class="tree">
+		<ul>
+			<li><span><i class="glyphicon glyphicon-calendar"></i> 2013, Week 2</span>
+				<ul>
+					<li><span class="badge alert-success"><i class="glyphicon glyphicon-minus-sign"></i> Monday, January 7:
+							8.00 hours</span>
+						<ul>
+							<li><a href=""><span><i class="glyphicon glyphicon-time"></i> 8.00</span> &ndash; Changed CSS to
+									accomodate...</a></li>
+						</ul></li>
+					<li><span class="badge badge-success"><i class="glyphicon glyphicon-minus-sign"></i> Tuesday, January
+							8: 8.00 hours</span>
+						<ul>
+							<li><span><i class="glyphicon glyphicon-time"></i> 6.00</span> &ndash; <a href="">Altered code...</a></li>
+							<li><span><i class="glyphicon glyphicon-time"></i> 2.00</span> &ndash; <a href="">Simplified our
+									approach to...</a></li>
+						</ul></li>
+					<li><span class="badge badge-warning"><i class="glyphicon glyphicon-minus-sign"></i> Wednesday, January
+							9: 6.00 hours</span>
+						<ul>
+							<li><a href=""><span><i class="glyphicon glyphicon-time"></i> 3.00</span> &ndash; Fixed bug caused by...</a></li>
+							<li><a href=""><span><i class="glyphicon glyphicon-time"></i> 3.00</span> &ndash; Comitting latest code
+									to Git...</a></li>
+						</ul></li>
+					<li><span class="badge badge-important"><i class="glyphicon glyphicon-minus-sign"></i> Wednesday,
+							January 9: 4.00 hours</span>
+						<ul>
+							<li><a href=""><span><i class="glyphicon glyphicon-time"></i> 2.00</span> &ndash; Create component
+									that...</a></li>
+						</ul></li>
+				</ul></li>
+			<li><span><i class="glyphicon glyphicon-calendar"></i> 2013, Week 3</span>
+				<ul>
+					<li><span class="badge badge-success"><i class="glyphicon glyphicon-minus-sign"></i> Monday, January
+							14: 8.00 hours</span>
+						<ul>
+							<li><span><i class="glyphicon glyphicon-time"></i> 7.75</span> &ndash; <a href="">Writing
+									documentation...</a></li>
+							<li><span><i class="glyphicon glyphicon-time"></i> 0.25</span> &ndash; <a href="">Reverting code back
+									to...</a></li>
+						</ul></li>
+				</ul></li>
+		</ul>
+	</div>
+
+-->
+
+
 </div>

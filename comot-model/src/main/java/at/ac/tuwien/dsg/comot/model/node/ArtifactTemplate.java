@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
@@ -17,6 +18,7 @@ import at.ac.tuwien.dsg.comot.model.HasUniqueId;
 import at.ac.tuwien.dsg.comot.model.type.ArtifactType;
 import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @NodeEntity
 public class ArtifactTemplate implements HasUniqueId, Serializable {

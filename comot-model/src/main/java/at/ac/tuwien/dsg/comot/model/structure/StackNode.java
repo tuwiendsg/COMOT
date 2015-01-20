@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
@@ -29,6 +30,7 @@ import at.ac.tuwien.dsg.comot.model.type.NodeType;
 import at.ac.tuwien.dsg.comot.model.type.State;
 import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @NodeEntity
 public class StackNode implements HasUniqueId, Serializable {

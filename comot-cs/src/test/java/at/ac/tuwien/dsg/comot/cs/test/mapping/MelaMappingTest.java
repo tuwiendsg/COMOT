@@ -16,6 +16,7 @@ import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.monitoring.ElementMonitoring;
+import at.ac.tuwien.dsg.comot.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.cs.mapper.DeploymentMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.MelaMapper;
@@ -24,7 +25,7 @@ import at.ac.tuwien.dsg.comot.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.MelaOrika;
 import at.ac.tuwien.dsg.comot.cs.test.AbstractTest;
 import at.ac.tuwien.dsg.comot.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.test.model.examples.ServiceTemplates;
+import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitoringSnapshot;
 import at.ac.tuwien.dsg.mela.common.requirements.Requirements;
@@ -49,7 +50,7 @@ public class MelaMappingTest extends AbstractTest {
 
 	@Before
 	public void startup() {
-		serviceForMapping = ServiceTemplates.fullService();
+		serviceForMapping = STemplates.fullService();
 	}
 
 	@Test
@@ -97,7 +98,7 @@ public class MelaMappingTest extends AbstractTest {
 			CoreServiceException,
 			ComotException {
 
-		String melaData = Utils.loadFile("./../resources/test/xml/ViennaChillerSensors_monitoringData.xml");
+		String melaData = Utils.loadFile(UtilsTest.TEST_FILE_BASE + "xml/ViennaChillerSensors_monitoringData.xml");
 
 		StringReader reader = new StringReader(melaData);
 		JAXBContext jaxbContext = JAXBContext.newInstance(MonitoredElementMonitoringSnapshot.class);

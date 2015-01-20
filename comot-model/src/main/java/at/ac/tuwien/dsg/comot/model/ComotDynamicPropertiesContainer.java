@@ -8,9 +8,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.springframework.data.neo4j.fieldaccess.DynamicProperties;
 import org.springframework.data.neo4j.fieldaccess.DynamicPropertiesContainer;
+
+import at.ac.tuwien.dsg.comot.model.jaxb.XmlStringMapAdapter;
 
 /**
  * Custom implementation of DynamicProperties, because DinamicPropertiesContainer is not serializable
@@ -22,7 +25,7 @@ import org.springframework.data.neo4j.fieldaccess.DynamicPropertiesContainer;
 public class ComotDynamicPropertiesContainer implements DynamicProperties, Serializable {
 
 	private static final long serialVersionUID = 8591988617476025361L;
-
+	@XmlJavaTypeAdapter(XmlStringMapAdapter.class)
 	private final Map<String, Object> map = new HashMap<String, Object>();
 	@XmlTransient
 	private boolean dirty;

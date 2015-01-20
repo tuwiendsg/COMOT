@@ -1,26 +1,22 @@
 package at.ac.tuwien.dsg.comot.servrec.test;
 
-import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
-
 import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.unitils.reflectionassert.ReflectionComparatorMode;
+import org.oasis.tosca.Definitions;
 
+import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.core.model.ServiceEntity;
 import at.ac.tuwien.dsg.comot.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.structure.ServiceTopology;
-import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.model.structure.StackNode;
 import at.ac.tuwien.dsg.comot.recorder.RecorderException;
-import at.ac.tuwien.dsg.comot.test.model.examples.ServiceTemplates;
+import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
 
 public class RecorderTest extends AbstractTest {
 
@@ -28,7 +24,7 @@ public class RecorderTest extends AbstractTest {
 
 	@Before
 	public void startup() {
-		service = ServiceTemplates.fullService();
+		service = STemplates.fullService();
 	}
 
 	@Test
@@ -57,63 +53,22 @@ public class RecorderTest extends AbstractTest {
 	}
 
 	@Test
-	public void testTemp() throws InstantiationException, IllegalAccessException, IllegalArgumentException,
-			ClassNotFoundException, ComotException, RecorderException {
+	public void testAtTomcat() throws JAXBException, IOException, IllegalArgumentException, IllegalAccessException,
+			InstantiationException, ClassNotFoundException, RecorderException {
+
+		Definitions def = UtilsCs.loadTosca(UtilsTest.TEST_FILE_BASE + "tomcat/tomcat.xml");
+		CloudService service = mapperTosca.createModel(def);
+
+		log.info("{}", Utils.asString(service));
 
 		revisionApi.createOrUpdateRegion(service, service.getId(), "init");
 
-		CloudService service2 = (CloudService) revisionApi.getRevision(service.getId(), "serviceId",
-				System.currentTimeMillis());
+		Object oResult = revisionApi.getRevision(service.getId(), "deployWar",
+				Long.MAX_VALUE);
+		log.info("oResult {}", oResult);
+		log.info("oResult XML {}", Utils.asXmlString(oResult));
 
-		assertReflectionEquals(service, service2, ReflectionComparatorMode.LENIENT_ORDER);
-
-	}
-
-	@Test
-	public void testTemplate() throws InterruptedException, IllegalArgumentException, IllegalAccessException {
-
-		revisionApi.createOrUpdateRegion(service, service.getId(), "init");
-
-		sleepSeconds(0);
-
-		log.info("EXECUTE UPDATE");
-
-		// UPDATE
-		service.setName("UPDATED");
-
-		ServiceTopology topo = service.getServiceTopologiesList().get(0);
-		ServiceUnit unit = topo.getServiceUnitsList().get(0);
-
-		topo.getServiceUnits().remove(unit);
-		ServiceTopology newTopo = new ServiceTopology("newTopo_UPDATED");
-		newTopo.addServiceUnit(unit);
-
-		service.addServiceTopology(newTopo);
-
-		for (StackNode node : topo.getNodes()) {
-			if (node.getId().equals(ServiceTemplates.swNodeId2)) {
-				node.getConnectToList().get(0).setVariableValue("variableValue_UPDATED");
-			}
-		}
-
-		revisionApi.createOrUpdateRegion(service, service.getId(), "mychange");
-
-		testBean.test();
-
-		while (true) {
-			Thread.sleep(1000);
-		}
-
-	}
-
-	public void sleepSeconds(int seconds) {
-		try {
-			log.debug("Waiting {} seconds", seconds);
-			Thread.sleep(seconds * 1000);
-
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		UtilsTest.sleepInfinit();
 	}
 
 }

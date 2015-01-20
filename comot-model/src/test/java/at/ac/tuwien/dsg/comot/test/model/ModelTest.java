@@ -6,7 +6,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.GraphDatabaseAPI;
 import org.neo4j.server.WrappingNeoServerBootstrapper;
@@ -24,7 +23,7 @@ import at.ac.tuwien.dsg.comot.model.AppContextModel;
 import at.ac.tuwien.dsg.comot.model.repo.CloudServiceRepo;
 import at.ac.tuwien.dsg.comot.model.repo.CloudServiceRepoWorkaround;
 import at.ac.tuwien.dsg.comot.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.test.model.examples.ServiceTemplates;
+import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
 
 @SuppressWarnings("deprecation")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -38,11 +37,9 @@ public class ModelTest {
 	protected ApplicationContext context;
 	@Resource
 	protected Environment env;
-
 	@Autowired
 	protected GraphDatabaseService db;
-	@Autowired
-	protected ExecutionEngine engine;
+
 	protected WrappingNeoServerBootstrapper srv;
 
 	@Autowired
@@ -57,8 +54,6 @@ public class ModelTest {
 		// http://127.0.0.1:7474/
 		srv = new WrappingNeoServerBootstrapper((GraphDatabaseAPI) db);
 		srv.start();
-
-		engine = new ExecutionEngine(db);
 	}
 
 	@After
@@ -71,7 +66,7 @@ public class ModelTest {
 	 */
 	@Test
 	public void testModel() throws InterruptedException {
-		CloudService service = ServiceTemplates.fullServiceWithoutInstances();
+		CloudService service = STemplates.fullServiceWithoutInstances();
 		// log.info("");
 
 		testBeanBean.save(service);

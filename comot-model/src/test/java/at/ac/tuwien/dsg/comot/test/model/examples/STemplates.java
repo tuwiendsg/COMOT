@@ -17,11 +17,13 @@ import at.ac.tuwien.dsg.comot.model.type.NodePropertiesType;
 import at.ac.tuwien.dsg.comot.model.type.NodeType;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
-public class ServiceTemplates {
+public class STemplates {
 
 	public static final String swNodeId = "nodeId";
 	public static final String swNodeId2 = "nodeId2";
 	public static final String osNodeId = "osId";
+	public static final String swId_unit = swNodeId + "_unit";
+	public static final String swId2_unit = swNodeId2 + "_unit";
 	public static final String topologyId = "topologyId";
 	public static final String serviceId = "serviceId";
 
@@ -53,14 +55,14 @@ public class ServiceTemplates {
 		swNode2.addConnectTo(rel);
 
 		// UNITS
-		ServiceUnit unit = new ServiceUnit(swNode + "_unit", swNode);
-		ServiceUnit unit2 = new ServiceUnit(swNode2 + "_unit", swNode2);
+		ServiceUnit unit = new ServiceUnit(swId_unit, swNode);
+		ServiceUnit unit2 = new ServiceUnit(swId2_unit, swNode2);
 
 		// TOPOLOGY
 		ServiceTopology topology = new ServiceTopology(topologyId);
 		topology.addNode(swNode);
-		topology.addNode(osNode);
 		topology.addNode(swNode2);
+		topology.addNode(osNode);
 		topology.addServiceUnit(unit);
 		topology.addServiceUnit(unit2);
 
@@ -89,7 +91,7 @@ public class ServiceTemplates {
 		StackNode swNode = new StackNode(swNodeId, "Test node unit", 2, 5, NodeType.SOFTWARE);
 		swNode.addDeploymentArtifact(artTemplate);
 
-		ServiceUnit unit = new ServiceUnit(swNodeId + "_unit", swNode);
+		ServiceUnit unit = new ServiceUnit(swId_unit, swNode);
 		unit.addDirective(new SyblDirective("str1", DirectiveType.STRATEGY,
 				"ST1: STRATEGY CASE cpuUsage < 40 % : scalein"));
 		unit.addDirective(new SyblDirective("con1", DirectiveType.CONSTRAINT,
@@ -99,7 +101,7 @@ public class ServiceTemplates {
 		StackNode swNode2 = new StackNode(swNodeId2, "Test node unit 2",
 				2, 5, NodeType.SOFTWARE);
 
-		ServiceUnit unit2 = new ServiceUnit(swNodeId2 + "_unit", swNode2);
+		ServiceUnit unit2 = new ServiceUnit(swId2_unit, swNode2);
 
 		// HOST ON
 		HostOnRel hostOn1 = new HostOnRel("hostOn1ID", swNode, osNode);

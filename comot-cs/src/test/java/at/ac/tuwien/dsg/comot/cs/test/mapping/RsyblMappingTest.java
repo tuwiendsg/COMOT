@@ -15,7 +15,7 @@ import at.ac.tuwien.dsg.comot.cs.mapper.orika.RsyblOrika;
 import at.ac.tuwien.dsg.comot.cs.test.AbstractTest;
 import at.ac.tuwien.dsg.comot.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.rsybl.CloudServiceXML;
-import at.ac.tuwien.dsg.comot.test.model.examples.ServiceTemplates;
+import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
 
 public class RsyblMappingTest extends AbstractTest {
 
@@ -28,7 +28,7 @@ public class RsyblMappingTest extends AbstractTest {
 
 	@Before
 	public void startup() {
-		serviceForMapping = ServiceTemplates.fullServiceWithoutInstances();
+		serviceForMapping = STemplates.fullServiceWithoutInstances();
 	}
 
 	@Test

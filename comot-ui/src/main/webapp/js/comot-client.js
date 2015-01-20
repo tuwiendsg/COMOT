@@ -20,8 +20,6 @@
 
 		var core = {};
 
-		console.log(onSuccess + " --- " + onError);
-
 		// SUCCESS
 		if (isFunction(onSuccess)) {
 			core.success = onSuccess;
@@ -55,8 +53,7 @@
 		return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
 	}
 
-	exports.errorBody = function(error) {
-
+	function errorBody(error) {
 		var msg = "";
 
 		if (typeof onError === 'string') {
@@ -75,6 +72,10 @@
 			msg = error;
 		}
 		return msg;
+	}
+
+	exports.errorBody = function(error) {
+		return errorBody(error);
 	}
 
 	// API
@@ -213,11 +214,11 @@
 
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "DELETE";
-		request.url = services + serviceId + revisions+ "/recording";
+		request.url = services + serviceId + revisions + "/recording";
 		return $.ajax(request);
 
 	}
-	
+
 	exports.stopRecordingAndDeleteData = function(serviceId, onSuccess, onError) {
 
 		var request = getRequestCore(onSuccess, onError);
@@ -226,15 +227,34 @@
 		return $.ajax(request);
 
 	}
-	
-	exports.getLastRevision = function(serviceId, onSuccess, onError) {
+
+	exports.getRevision = function(serviceId, objectId, timestamp, onSuccess, onError) {
 
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "GET";
 		request.dataType = "json"
-		request.url = services + serviceId + revisions+ "/last";
+		request.url = services + serviceId + revisions + "/" + objectId + "/" + timestamp;
 		return $.ajax(request);
 
 	}
 
+	exports.getChanges = function(serviceId, objectId, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "GET";
+		request.dataType = "json"
+		request.url = services + serviceId + revisions + "/changes/" + objectId;
+		return $.ajax(request);
+
+	}
+
+	exports.getObjects = function(serviceId, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "GET";
+		request.dataType = "json"
+		request.url = services + serviceId + revisions + "/objects";
+		return $.ajax(request);
+
+	}
 }));

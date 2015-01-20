@@ -1,18 +1,9 @@
 package at.ac.tuwien.dsg.comot.common.model.logic;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.ac.tuwien.dsg.comot.common.model.logic.Navigator.HelperNode;
-import at.ac.tuwien.dsg.comot.model.HasUniqueId;
-import at.ac.tuwien.dsg.comot.model.SyblDirective;
-import at.ac.tuwien.dsg.comot.model.relationship.ConnectToRel;
 import at.ac.tuwien.dsg.comot.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.structure.ServicePart;
-import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.model.structure.StackNode;
 import at.ac.tuwien.dsg.comot.model.type.NodeType;
 
@@ -28,26 +19,26 @@ public class RelationshipResolver {
 		navigator = new Navigator(service);
 	}
 
-	/**
-	 * In inverse direction then in tosca.
-	 * 
-	 * @param id
-	 * @return
-	 */
-	public Set<String> getConnectToIds(String id) {
-
-		Set<String> list = new HashSet<>();
-
-		for (StackNode one : navigator.getAllNodes()) {
-			for (ConnectToRel rel : one.getConnectTo()) {
-				if (rel.getTo().getId().equals(id)) {
-					list.add(rel.getFrom().getId());
-				}
-			}
-		}
-
-		return list;
-	}
+	// /**
+	// * In inverse direction then in tosca.
+	// *
+	// * @param id
+	// * @return
+	// */
+	// public Set<String> getConnectToIds(String id) {
+	//
+	// Set<String> list = new HashSet<>();
+	//
+	// for (StackNode one : navigator.getAllNodes()) {
+	// for (ConnectToRel rel : one.getConnectTo()) {
+	// if (rel.getTo().getId().equals(id)) {
+	// list.add(rel.getFrom().getId());
+	// }
+	// }
+	// }
+	//
+	// return list;
+	// }
 
 	public boolean isServiceUnit(String id) {
 		if (navigator.getNode(id) != null) {
@@ -136,28 +127,28 @@ public class RelationshipResolver {
 	// return false;
 	// }
 
-	public ServicePart resolveToServicePart(String id) {
-
-		ServiceUnit unit;
-
-		HasUniqueId entity = navigator.getAbstractEntity(id);
-
-		if (entity instanceof StackNode) {
-			unit = navigator.getServiceUnit(entity.getId());
-
-		} else if (entity instanceof HelperNode) {
-			unit = navigator.getServiceUnit(navigator.getNodeFor(entity.getId()).getId());
-
-		} else if (entity instanceof SyblDirective) {
-			throw new UnsupportedOperationException();
-
-		} else {
-			throw new UnsupportedOperationException();
-		}
-		log.debug("resolveToServicePart(entityId={} ): servicePartId={}", entity.getId(),
-				(unit == null) ? null : unit.getId());
-		return unit;
-	}
+	// public ServicePart resolveToServicePart(String id) {
+	//
+	// ServiceUnit unit;
+	//
+	// HasUniqueId entity = navigator.getAbstractEntity(id);
+	//
+	// if (entity instanceof StackNode) {
+	// unit = navigator.getServiceUnit(entity.getId());
+	//
+	// } else if (entity instanceof HelperNode) {
+	// unit = navigator.getServiceUnit(navigator.getNodeFor(entity.getId()).getId());
+	//
+	// } else if (entity instanceof SyblDirective) {
+	// throw new UnsupportedOperationException();
+	//
+	// } else {
+	// throw new UnsupportedOperationException();
+	// }
+	// log.debug("resolveToServicePart(entityId={} ): servicePartId={}", entity.getId(),
+	// (unit == null) ? null : unit.getId());
+	// return unit;
+	// }
 
 	public Navigator navigator() {
 		return navigator;

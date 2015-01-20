@@ -1,6 +1,8 @@
 package at.ac.tuwien.dsg.comot.servrec;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -13,11 +15,14 @@ import at.ac.tuwien.dsg.comot.common.coreservices.ControlClient;
 import at.ac.tuwien.dsg.comot.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.common.coreservices.MonitoringClient;
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
+import at.ac.tuwien.dsg.comot.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.core.dal.ServiceRepoProxy;
 import at.ac.tuwien.dsg.comot.core.model.ServiceEntity;
 import at.ac.tuwien.dsg.comot.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.recorder.RecorderException;
+import at.ac.tuwien.dsg.comot.recorder.model.Change;
+import at.ac.tuwien.dsg.comot.recorder.out.ManagedObject;
 import at.ac.tuwien.dsg.comot.recorder.revisions.RevisionApi;
 
 @Component
@@ -56,7 +61,7 @@ public class RecordingManager {
 	public void removeService(String serviceId) throws ComotException {
 
 		if (!services.containsKey(serviceId)) {
-			throw new ComotException("The service " + serviceId + " is not managed by RecordingManager");
+			throw new ComotIllegalArgumentException("The service " + serviceId + " is not managed by RecordingManager");
 		}
 
 		stopRecording(serviceId);
@@ -69,7 +74,7 @@ public class RecordingManager {
 	public void startRecording(String serviceId) throws ComotException {
 
 		if (!services.containsKey(serviceId)) {
-			throw new ComotException("The service " + serviceId + " is not managed by RecordingManager");
+			throw new ComotIllegalArgumentException("The service " + serviceId + " is not managed by RecordingManager");
 		}
 
 		ServiceEntity entity = serviceRepo.findOne(serviceId);
@@ -90,7 +95,7 @@ public class RecordingManager {
 	public void stopRecording(String serviceId) throws ComotException {
 
 		if (!services.containsKey(serviceId)) {
-			throw new ComotException("The service " + serviceId + " is not managed by RecordingManager");
+			throw new ComotIllegalArgumentException("The service " + serviceId + " is not managed by RecordingManager");
 		}
 
 		ServiceEntity entity = serviceRepo.findOne(serviceId);
@@ -103,22 +108,70 @@ public class RecordingManager {
 			ComotException {
 
 		if (!services.containsKey(service.getId())) {
-			throw new ComotException("The service " + service.getId() + " is not managed by RecordingManager");
+			throw new ComotIllegalArgumentException("The service " + service.getId()
+					+ " is not managed by RecordingManager");
 		}
 
 		revisionApi.createOrUpdateRegion(service, service.getId(), ChangeType.INSERTED.toString());
 
 	}
 
-	public CloudService getRevision(String serviceId, Long timestamp) throws InstantiationException,
+	public Object getRevision(String serviceId, String objectId, Long timestamp) throws InstantiationException,
 			IllegalAccessException, IllegalArgumentException, ClassNotFoundException, RecorderException, ComotException {
 
 		if (!services.containsKey(serviceId)) {
-			throw new ComotException("The service " + serviceId + " is not managed by RecordingManager");
+			throw new ComotIllegalArgumentException("The service " + serviceId + " is not managed by RecordingManager");
 		}
 
-		CloudService service = (CloudService) revisionApi.getRevision(serviceId, serviceId, timestamp);
-		return service;
+		if (!revisionApi.verifyObject(serviceId, objectId)) {
+			throw new ComotIllegalArgumentException("For service " + serviceId + " there is no managed object "
+					+ objectId);
+		}
+
+		Object obj = revisionApi.getRevision(serviceId, objectId, timestamp);
+
+		if (obj == null) {
+			throw new ComotIllegalArgumentException("There is no revision of service" + serviceId + ", object="
+					+ objectId + " at time=" + timestamp + " ");
+
+		}
+
+		return obj;
+	}
+
+	public List<Change> getAllChanges(String serviceId, String objectId, Long from, Long to)
+			throws InstantiationException,
+			IllegalAccessException, IllegalArgumentException, ClassNotFoundException, RecorderException, ComotException {
+
+		if (!services.containsKey(serviceId)) {
+			throw new ComotIllegalArgumentException("The service " + serviceId + " is not managed by RecordingManager");
+		}
+
+		if (!revisionApi.verifyObject(serviceId, objectId)) {
+			throw new ComotIllegalArgumentException("For service " + serviceId + " there is no managed object "
+					+ objectId);
+		}
+
+		Change change = revisionApi.getAllChanges(serviceId, objectId, from, to);
+
+		List<Change> list = new ArrayList<>();
+
+		while (change != null) {
+			list.add(change);
+			change = change.getTo().getEnd();
+		}
+
+		return list;
+	}
+
+	public List<ManagedObject> getManagedObjects(String serviceId) {
+		if (!services.containsKey(serviceId)) {
+			throw new ComotIllegalArgumentException("The service " + serviceId + " is not managed by RecordingManager");
+		}
+
+		List<ManagedObject> list = revisionApi.getManagedObjects(serviceId);
+		return list;
+
 	}
 
 }

@@ -23,7 +23,7 @@ public class AppContextCs {
 	public static final String SALSA_IP = "128.130.172.215";
 	public static final String MELA_RSYBL_IP = "128.130.172.191";
 	public static final int MELA_PORT = 8180;
-	public static final int SALSA_PORT = 8080;
+	public static final int SALSA_PORT = 8380;
 	public static final int RSYBL_PORT = 8020;
 
 	@Resource

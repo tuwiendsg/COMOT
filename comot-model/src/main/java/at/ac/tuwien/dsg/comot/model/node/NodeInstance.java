@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.springframework.data.neo4j.annotation.GraphId;
@@ -15,6 +16,7 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 import at.ac.tuwien.dsg.comot.model.type.State;
 import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 
+@XmlRootElement
 @XmlSeeAlso({ NodeInstanceOs.class })
 @XmlAccessorType(XmlAccessType.FIELD)
 @NodeEntity

@@ -1,7 +1,9 @@
 package at.ac.tuwien.dsg.comot.recorder.revisions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.neo4j.cypher.javacompat.ExecutionEngine;
@@ -45,7 +47,7 @@ public class RegionRepo {
 	}
 
 	protected String identityNode(String id) {
-		return "match (r:_REGION {_id: '" + regionId + "'})-[_MANAGE]->(n {_id: '" + id + "'}) ";
+		return " match (r:_REGION {_id: '" + regionId + "'})-[_MANAGE]->(n {_id: '" + id + "'}) ";
 	}
 
 	@Transactional
@@ -170,7 +172,7 @@ public class RegionRepo {
 	public Iterable<Node> getAllConnectedIdentityNodes(String id, Long timestamp) {
 
 		Iterator<Node> iter = engine.execute(
-				identityNode(id) + " match p=(n)-[*]->(m:_IDENTITY) where all(x IN relationships(p) WHERE x.from < "
+				identityNode(id) + " match p=(n)-[*0..]->(m:_IDENTITY) where all(x IN relationships(p) WHERE x.from < "
 						+ timestamp
 						+ " AND x.to >= " + timestamp + " ) unwind nodes(p) as w return distinct w").columnAs("w");
 
@@ -233,7 +235,7 @@ public class RegionRepo {
 				throw new RuntimeException("getIdentityNode( id=" + id + ", region=" + regionId
 						+ ") returned multiple nodes! ");
 			} else {
-				log.debug("getIdentityNode(regionId={}, id={}): {}", regionId, id, node);
+				log.trace("getIdentityNode(regionId={}, id={}): {}", regionId, id, node);
 				return node;
 			}
 		} else {
@@ -242,4 +244,29 @@ public class RegionRepo {
 
 	}
 
+	@Transactional
+	public List<Long> getAllChangeIdsThatInfluencedIdentityNode(String id, Long from, Long to) {
+
+		String query = identityNode(id) +
+				"MATCH p=(n)-[*0..]->(:_IDENTITY) UNWIND nodes(p) AS w WITH DISTINCT w AS m"
+				+ " match (m)-[rel]->() where rel.from < " + to + " AND rel.from >= " + from
+				+ " return distinct rel.from as time "
+				+ " UNION "
+				+ identityNode(id)
+				+ " MATCH p=(n)-[*0..]->(:_IDENTITY) UNWIND nodes(p) AS w WITH DISTINCT w AS m"
+				+ " match (m)-[rel]->() where rel.to <= " + to + " AND rel.to >= " + from
+				+ " return distinct rel.to as time";
+
+		log.info("getAllChangeIdsThatInfluencedIdentityNode(id={}, from={}, to={}) {} ", id, from, to, query);
+
+		Iterator<Long> iter = engine.execute(query).columnAs("time");
+		List<Long> list = new ArrayList<>();
+
+		for (Long one : IteratorUtil.asIterable(iter)) {
+			list.add(one);
+		}
+
+		return list;
+
+	}
 }

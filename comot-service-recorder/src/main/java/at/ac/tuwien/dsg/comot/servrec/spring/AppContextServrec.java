@@ -1,9 +1,7 @@
 package at.ac.tuwien.dsg.comot.servrec.spring;
 
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -23,15 +21,10 @@ import at.ac.tuwien.dsg.comot.recorder.AppContextRecorder;
 @Transactional
 public class AppContextServrec {
 
+	protected final Logger log = LoggerFactory.getLogger(getClass());
+
 	public static final String IMPERMANENT_NEO4J_DB = "IMPERMANENT_NEO4J_DB";
 	public static final String STANDALONE_NEO4J_DB = "STANDALONE_NEO4J_DB";
-
-	@Autowired
-	protected GraphDatabaseService db;
-
-	@Bean
-	public ExecutionEngine executionEngine() {
-		return new ExecutionEngine(db);
-	}
+	public static final String EMBEDDED_NEO4J_DB = "EMBEDDED_NEO4J_DB";
 
 }

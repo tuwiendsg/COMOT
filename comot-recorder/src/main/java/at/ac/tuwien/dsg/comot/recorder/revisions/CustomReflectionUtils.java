@@ -39,8 +39,6 @@ public class CustomReflectionUtils {
 			}
 
 			field.setAccessible(true);
-
-			log.debug("name: {}, type: {}", field.getName(), field.getType());
 			list.add(field);
 		}
 

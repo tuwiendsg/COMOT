@@ -37,7 +37,7 @@ public class ServiceRepoProxy {
 
 	public ServiceEntity save(ServiceEntity entity) {
 
-		log.info("PROXY({}) save({}) ", beFake, entity);
+		log.trace("PROXY({}) save({}) ", beFake, entity);
 
 		if (beFake) {
 			return entities.put(entity.getId(), entity);
