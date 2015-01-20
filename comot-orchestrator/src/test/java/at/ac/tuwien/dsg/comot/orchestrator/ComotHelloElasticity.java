@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.cloudcom.elasticitytutorial;
+package at.ac.tuwien.dsg.comot.orchestrator;
 
 import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifact;
 import static at.ac.tuwien.dsg.comot.common.model.BASHAction.BASHAction;

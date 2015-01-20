@@ -67,7 +67,7 @@ public class SalsaConnectorTest {
 //      
 //        URI spawnUri = UriBuilder.fromPath(configuration.getSpawnPath()).build(serviceId, topologyId, nodeId, instanceCount);
 //        HttpPost method = new HttpPost(spawnUri);
-//       HttpHost endpoint = new HttpHost("128.130.172.215", 8080);
+//       HttpHost endpoint = new HttpHost("localhost", 8080);
 //        try {
 //            return handleResponse(httpClient.execute(endpoint, method), salsaAction);
 //            

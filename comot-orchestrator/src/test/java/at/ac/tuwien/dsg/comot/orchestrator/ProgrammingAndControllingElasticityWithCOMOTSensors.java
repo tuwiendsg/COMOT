@@ -63,14 +63,17 @@ public class ProgrammingAndControllingElasticityWithCOMOTSensors {
         COMOTOrchestrator orchestrator = new COMOTOrchestrator()
                 //we have SALSA as cloud management tool
                 //curently deployed separately
-                .withSalsaIP("128.130.172.214")
-                .withSalsaPort(8380)
+ 
+ 
+                .withSalsaIP("localhost")
+                .withSalsaPort(8080)
+ 
                 //we have rSYBL elasticity control service and MELA 
                 //deployed separately
-                .withRsyblIP("128.130.172.214")
+                .withRsyblIP("localhost")
                 //                .withRsyblIP("localhost")
-                //                .withRsyblIP("109.231.121.66")
-                .withRsyblPort(8280);
+                //                .withRsyblIP("localhost")
+                .withRsyblPort(8080);
 
         //deploy, monitor and control
 //        orchestrator.deployAndControl(serviceTemplate);
