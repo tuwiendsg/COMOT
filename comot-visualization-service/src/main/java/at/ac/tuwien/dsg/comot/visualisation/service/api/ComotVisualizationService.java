@@ -19,7 +19,6 @@
  */
 package at.ac.tuwien.dsg.comot.visualisation.service.api;
 
-import com.wordnik.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +32,6 @@ import org.slf4j.LoggerFactory;
 @Service
 @Provider
 @Path("/")
-@Api(value = "/", description = "The ComotVisualizationService is the entry point for all comot vis")
 public class ComotVisualizationService {
 
     static final org.slf4j.Logger log = LoggerFactory.getLogger(ComotVisualizationService.class);

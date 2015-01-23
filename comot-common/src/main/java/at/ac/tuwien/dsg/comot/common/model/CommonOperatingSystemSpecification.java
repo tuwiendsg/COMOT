@@ -63,8 +63,8 @@ public final class CommonOperatingSystemSpecification {
        public static OperatingSystemSpecification FlexiantSmall() {
         return new OperatingSystemSpecification("FlexiantSmall" + UUID.randomUUID())
                 .withProvider("celar@flexiant")
-                .withInstanceType("1/2048") //.withInstanceType("m1.small")
-                .withBaseImage("a064bd97-c84c-38ef-aa37-c7391a8c8259"); //.withBaseImage("ami-00000163");
+                .withInstanceType("1/2048") 
+                .withBaseImage("229b0223-0ab0-3a28-80f1-38f93309447e");  
     }
 
 }

@@ -17,18 +17,18 @@
     <jaxrs:server id="api" address="/">
         <jaxrs:serviceBeans>
             <ref bean="comotVisualizationService"/>
-            <bean id="swaggerResourceJSON" class="com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON"/>
+            <!--<bean id="swaggerResourceJSON" class="com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON"/>-->
         </jaxrs:serviceBeans>
         <jaxrs:features>
             <cxf:logging/>
         </jaxrs:features>
         <jaxrs:providers>
-            <bean class="at.ac.tuwien.dsg.comot.visualisation.service.cfx.ComotVisServiceExceptionMapper"/>
+<!--            <bean class="at.ac.tuwien.dsg.comot.visualisation.service.cfx.ComotVisServiceExceptionMapper"/>
             <bean class="com.wordnik.swagger.jaxrs.listing.ResourceListingProvider"/>
-            <bean class="com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider"/>
+            <bean class="com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider"/>-->
         </jaxrs:providers>
     </jaxrs:server>
-
+<!--
     <bean id="swaggerConfig" class="com.wordnik.swagger.jaxrs.config.BeanConfig">
         <property name="resourcePackage" value="at.ac.tuwien.dsg.mela.analysisservice.api"/>
         <property name="version" value="0.1.0"/>
@@ -39,7 +39,7 @@
         <property name="license" value="Apache 2.0 License"/>
         <property name="licenseUrl" value="http://www.apache.org/licenses/LICENSE-2.0.html"/>
         <property name="scan" value="true"/>
-    </bean>
+    </bean>-->
  
     <!--Import externally defined modules-->
     <import resource="file:./config/modules.xml"/>
