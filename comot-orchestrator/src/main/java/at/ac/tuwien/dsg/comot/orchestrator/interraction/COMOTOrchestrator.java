@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package at.ac.tuwien.dsg.orchestrator.interraction;
+package at.ac.tuwien.dsg.comot.orchestrator.interraction;
 
 import at.ac.tuwien.dsg.comot.client.DefaultSalsaClient;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;
@@ -11,8 +11,8 @@ import static at.ac.tuwien.dsg.comot.common.model.CloudService.CloudService;
 import at.ac.tuwien.dsg.comot.common.model.CloudService;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.abstractModelXML.CloudServiceXML;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
-import at.ac.tuwien.dsg.orchestrator.interraction.rsybl.rSYBLInterraction;
-import at.ac.tuwien.dsg.orchestrator.interraction.salsa.SalsaInterraction;
+import at.ac.tuwien.dsg.comot.orchestrator.interraction.rsybl.rSYBLInterraction;
+import at.ac.tuwien.dsg.comot.orchestrator.interraction.salsa.SalsaInterraction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

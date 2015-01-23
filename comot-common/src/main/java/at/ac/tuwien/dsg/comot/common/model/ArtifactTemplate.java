@@ -21,7 +21,8 @@ public class ArtifactTemplate extends AbstractCloudEntity {
     public enum ArtifactType {
 
         RunOnceScript("sh"),
-        RunContinuousScript("shcont");
+        RunContinuousScript("shcont"),
+        WarArtifact("war");
 
         private final String type;
 
@@ -62,6 +63,16 @@ public class ArtifactTemplate extends AbstractCloudEntity {
         return new ArtifactTemplate(id).ofType(ArtifactType.RunOnceScript)
                 .consistsOf(ArtifactReference.ArtifactReference(scriptUri).locatedAt(scriptUri));
     }
+    
+    public static ArtifactTemplate WarArtifact(String warUri) {
+        return new ArtifactTemplate().ofType(ArtifactType.WarArtifact)
+                .consistsOf(ArtifactReference.ArtifactReference(warUri).locatedAt(warUri));
+    }
+    public static ArtifactTemplate WarArtifact(String id, String warUri) {
+        return new ArtifactTemplate(id).ofType(ArtifactType.WarArtifact)
+                .consistsOf(ArtifactReference.ArtifactReference(warUri).locatedAt(warUri));
+    }
+    
     public static ArtifactTemplate ServiceArtifact(String scriptUri) {
         return new ArtifactTemplate().ofType(ArtifactType.RunContinuousScript)
                 .consistsOf(ArtifactReference.ArtifactReference(scriptUri).locatedAt(scriptUri));
