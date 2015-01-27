@@ -13,7 +13,7 @@ import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.RelationshipEntity;
 import org.springframework.data.neo4j.annotation.StartNode;
 
-import at.ac.tuwien.dsg.comot.model.structure.StackNode;
+import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @RelationshipEntity
@@ -31,30 +31,30 @@ public abstract class Relationship implements Serializable {
 	@StartNode
 	@XmlIDREF
 	@XmlAttribute
-	protected StackNode from;
+	protected ServiceUnit from;
 	@EndNode
 	@XmlIDREF
 	@XmlAttribute
-	protected StackNode to;
+	protected ServiceUnit to;
 
 	public Relationship() {
 	}
 
 	// GENERATED METHODS
 
-	public StackNode getFrom() {
+	public ServiceUnit getFrom() {
 		return from;
 	}
 
-	public void setFrom(StackNode from) {
+	public void setFrom(ServiceUnit from) {
 		this.from = from;
 	}
 
-	public StackNode getTo() {
+	public ServiceUnit getTo() {
 		return to;
 	}
 
-	public void setTo(StackNode to) {
+	public void setTo(ServiceUnit to) {
 		this.to = to;
 	}
 

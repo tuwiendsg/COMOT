@@ -13,14 +13,13 @@ import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.model.logic.Navigator;
-import at.ac.tuwien.dsg.comot.common.model.logic.RelationshipResolver;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.MelaOrika;
 import at.ac.tuwien.dsg.comot.model.SyblDirective;
-import at.ac.tuwien.dsg.comot.model.node.NodeInstance;
-import at.ac.tuwien.dsg.comot.model.node.NodeInstanceOs;
+import at.ac.tuwien.dsg.comot.model.node.UnitInstance;
+import at.ac.tuwien.dsg.comot.model.node.UnitInstanceOs;
 import at.ac.tuwien.dsg.comot.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.structure.ServicePart;
-import at.ac.tuwien.dsg.comot.model.structure.StackNode;
+import at.ac.tuwien.dsg.comot.model.structure.ServiceEntity;
+import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.model.type.DirectiveType;
 import at.ac.tuwien.dsg.comot.model.type.RelationshipType;
 import at.ac.tuwien.dsg.csdg.elasticityInformation.elasticityRequirements.BinaryRestriction;
@@ -48,23 +47,29 @@ public class MelaMapper {
 	public MonitoredElement extractMela(CloudService cloudService) throws ClassNotFoundException, IOException {
 
 		MonitoredElement vmElement;
-		StackNode node;
-		RelationshipResolver resolver = new RelationshipResolver(cloudService);
+		ServiceUnit node;
+		Navigator navigator = new Navigator(cloudService);
 
 		MonitoredElement root = mapper.get().map(cloudService, MonitoredElement.class);
-		Map<String, MonitoredElement> map = extractAllElements(root);
+		Map<MonitoredElement, MonitoredElement> map = extractAllElements(root, new MonitoredElement());
 
 		log.trace("Orika mapping: {}", Utils.asXmlStringLog(root));
 
 		// add VMs
-		for (MonitoredElement element : map.values()) {
+		for (MonitoredElement element : map.keySet()) {
 			if (element.getLevel().equals(MonitoredElementLevel.SERVICE_UNIT)) {
-				node = resolver.getOsForServiceUnit(IdResolver.nodeFromUnit(element.getId()));
 
-				for (NodeInstance instance : node.getInstances()) {
+				if (!navigator.isTrueServiceUnit(element.getId())) {
+					map.get(element).removeElement(element);
+					continue;
+				}
+
+				node = navigator.getOsForServiceUnit(element.getId());
+
+				for (UnitInstance instance : node.getInstances()) {
 					vmElement = new MonitoredElement();
 					vmElement.setLevel(MonitoredElementLevel.VM);
-					vmElement.setId(((NodeInstanceOs) instance).getIp());
+					vmElement.setId(((UnitInstanceOs) instance).getIp());
 
 					element.addElement(vmElement);
 				}
@@ -103,13 +108,20 @@ public class MelaMapper {
 		return root;
 	}
 
-	protected Map<String, MonitoredElement> extractAllElements(MonitoredElement element) {
+	/**
+	 * 
+	 * @param parent
+	 * @param element
+	 * @return returns map where key is an element and the value is its parent
+	 */
+	protected Map<MonitoredElement, MonitoredElement> extractAllElements(MonitoredElement element,
+			MonitoredElement parent) {
 
-		Map<String, MonitoredElement> map = new HashMap<>();
-		map.put(element.getId(), element);
+		Map<MonitoredElement, MonitoredElement> map = new HashMap<>();
+		map.put(element, parent);
 
 		for (MonitoredElement child : element.getContainedElements()) {
-			map.putAll(extractAllElements(child));
+			map.putAll(extractAllElements(child, element));
 		}
 		return map;
 	}
@@ -140,7 +152,7 @@ public class MelaMapper {
 		requirements.setTargetServiceID(cloudService.getId());
 		requirements.setRequirements(requirementList);
 
-		for (ServicePart part : navigator.getAllServiceParts()) {
+		for (ServiceEntity part : navigator.getAllServiceParts()) {
 			for (SyblDirective directive : part.getDirectives()) {
 				if (directive.getType().equals(DirectiveType.CONSTRAINT)) {
 					requirementList.addAll(parseToRequirement(part, directive.getDirective()));
@@ -154,7 +166,7 @@ public class MelaMapper {
 	// see
 	// at.ac.tuwien.dsg.rSybl.dataProcessingUnit.monitoringPlugins.melaPlugin.MELA_API3.submitElasticityRequirements()
 	// !!! number must be on the right side, there is a bug in rsybl
-	protected List<Requirement> parseToRequirement(ServicePart servicePart, String constraint) {
+	protected List<Requirement> parseToRequirement(ServiceEntity servicePart, String constraint) {
 
 		log.trace("parsing constraint: {}", constraint);
 

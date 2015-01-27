@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.structure.ServicePart;
+import at.ac.tuwien.dsg.comot.model.structure.ServiceEntity;
 import at.ac.tuwien.dsg.comot.model.structure.ServiceTopology;
 import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement;
@@ -96,7 +96,7 @@ public class MelaOrika {
 		return facade;
 	}
 
-	public static MonitoredElementLevel decideLevel(ServicePart part) {
+	public static MonitoredElementLevel decideLevel(ServiceEntity part) {
 
 		if (part instanceof CloudService) {
 			return MonitoredElementLevel.SERVICE;

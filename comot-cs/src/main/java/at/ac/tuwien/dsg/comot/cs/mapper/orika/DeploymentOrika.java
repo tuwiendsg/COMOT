@@ -13,13 +13,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.common.model.logic.Navigator;
-import at.ac.tuwien.dsg.comot.common.model.logic.RelationshipResolver;
-import at.ac.tuwien.dsg.comot.cs.mapper.IdResolver;
 import at.ac.tuwien.dsg.comot.model.ElasticityCapability;
-import at.ac.tuwien.dsg.comot.model.node.NodeInstanceOs;
+import at.ac.tuwien.dsg.comot.model.node.UnitInstanceOs;
 import at.ac.tuwien.dsg.comot.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.model.structure.StackNode;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.AssociatedVM;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentUnit;
@@ -39,15 +36,10 @@ public class DeploymentOrika {
 		mapperFactory.classMap(ServiceUnit.class, DeploymentUnit.class)
 				.field("elasticityCapabilities", "elasticityCapabilities")
 				.field("id", "serviceUnitID")
-				.register();
-
-		mapperFactory.classMap(StackNode.class, DeploymentUnit.class)
-				// .field("deploymentInfo.defaultImage", "defaultImage")
-				// .field("deploymentInfo.defaultFlavor", "defaultFlavor")
 				.field("instances", "associatedVMs")
 				.register();
 
-		mapperFactory.classMap(NodeInstanceOs.class, AssociatedVM.class)
+		mapperFactory.classMap(UnitInstanceOs.class, AssociatedVM.class)
 				.field("ip", "ip")
 				.field("uuid", "uuid")
 				.register();
@@ -71,13 +63,16 @@ public class DeploymentOrika {
 									MappingContext context) {
 
 								Navigator navigator = new Navigator(service);
-								RelationshipResolver resolver = new RelationshipResolver(service);
 
 								DeploymentUnit depl;
 
-								for (ServiceUnit unit : navigator.getAllServiceUnits()) {
+								for (ServiceUnit unit : navigator.getAllUnits()) {
 
-									StackNode os = resolver.getOsForServiceUnit(IdResolver.nodeFromUnit(unit.getId()));
+									if (!navigator.isTrueServiceUnit(unit.getId())) {
+										continue;
+									}
+
+									ServiceUnit os = navigator.getOsForServiceUnit(unit.getId());
 
 									depl = facade.map(unit, DeploymentUnit.class);
 									facade.map(os, depl);

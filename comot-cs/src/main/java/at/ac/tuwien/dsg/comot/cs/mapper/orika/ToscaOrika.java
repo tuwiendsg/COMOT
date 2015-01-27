@@ -33,7 +33,6 @@ import at.ac.tuwien.dsg.comot.model.node.Properties;
 import at.ac.tuwien.dsg.comot.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.structure.ServiceTopology;
 import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.model.structure.StackNode;
 import at.ac.tuwien.dsg.comot.model.type.NodePropertiesType;
 
 @Component
@@ -49,10 +48,6 @@ public class ToscaOrika {
 	public void build() {
 
 		MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-
-		mapperFactory.classMap(ServiceUnit.class, TNodeTemplate.Policies.class)
-				.field("directives", "policy")
-				.register();
 
 		mapperFactory.classMap(SyblDirective.class, TPolicy.class)
 				.field("directive", "name")
@@ -83,10 +78,11 @@ public class ToscaOrika {
 				.field("type", "type")
 				.register();
 
-		mapperFactory.classMap(StackNode.class, TNodeTemplate.class)
+		mapperFactory.classMap(ServiceUnit.class, TNodeTemplate.class)
 				.field("id", "id")
 				.field("name", "name")
 				.field("type", "type")
+				.field("directives", "policies.policy")
 				.field("deploymentArtifacts", "deploymentArtifacts.deploymentArtifact")
 				.customize(new NodeMapper())
 				.register();
@@ -95,7 +91,7 @@ public class ToscaOrika {
 				.field("id", "id")
 				.field("name", "name")
 				.field("directives", "boundaryDefinitions.policies.policy")
-				.fieldAToB("nodes", "topologyTemplate.nodeTemplateOrRelationshipTemplate")
+				.fieldAToB("serviceUnits", "topologyTemplate.nodeTemplateOrRelationshipTemplate")
 				.register();
 
 		mapperFactory.classMap(CloudService.class, Definitions.class)
@@ -117,9 +113,9 @@ public class ToscaOrika {
 		return facade;
 	}
 
-	class NodeMapper extends CustomMapper<StackNode, TNodeTemplate> {
+	class NodeMapper extends CustomMapper<ServiceUnit, TNodeTemplate> {
 		@Override
-		public void mapAtoB(StackNode unit, TNodeTemplate node, MappingContext context) {
+		public void mapAtoB(ServiceUnit unit, TNodeTemplate node, MappingContext context) {
 
 			if (unit.getMaxInstances() == Integer.MAX_VALUE) {
 				node.setMaxInstances("unbounded");
@@ -138,13 +134,10 @@ public class ToscaOrika {
 				}
 				node.setProperties(new TEntityTemplate.Properties().withAny(salsaProps));
 			}
-
-			// map type
-			node.setType(ToscaConverters.toSalsaQName(((StackNode) unit).getType().toString()));
 		}
 
 		@Override
-		public void mapBtoA(TNodeTemplate node, StackNode unit, MappingContext context) {
+		public void mapBtoA(TNodeTemplate node, ServiceUnit unit, MappingContext context) {
 
 			// min / max
 			if (("unbounded").equals(node.getMaxInstances())) {

@@ -19,7 +19,6 @@ public class AppContextModelTest {
 	public GraphDatabaseService graphDatabaseService() {
 		// return new GraphDatabaseFactory().newEmbeddedDatabase(DB_PATH); // DB will be created in the directory
 		// DB_PATH
-		log.info("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 		return new ImpermanentGraphDatabase(DB_PATH); // directory seems irrelevant, probably just in-memory DB
 	}
 

@@ -34,7 +34,7 @@ public class ToscaMappingTest extends AbstractTest {
 	protected CloudService serviceForMapping;
 
 	// test with https://github.com/tuwiendsg/SALSA/blob/master/examples/4-DeployWithTomcat.xml
-	protected static final String TEST_SERVICE_ID = "aaaa";
+	protected static final String TEST_SERVICE_ID = "comot_tomcat_id";
 
 	@Before
 	public void startup() {
@@ -42,7 +42,7 @@ public class ToscaMappingTest extends AbstractTest {
 	}
 
 	@Test
-	public void mapperTest() throws JAXBException {
+	public void automatedMapperTest() throws JAXBException {
 
 		log.info("original {}", Utils.asString(serviceForMapping));
 

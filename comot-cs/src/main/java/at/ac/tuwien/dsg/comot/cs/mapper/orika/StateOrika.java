@@ -16,12 +16,12 @@ import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.SalsaEntity;
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceInstance;
 import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaInstanceDescription_VM;
 import at.ac.tuwien.dsg.comot.cs.mapper.IdResolver;
-import at.ac.tuwien.dsg.comot.model.node.NodeInstance;
-import at.ac.tuwien.dsg.comot.model.node.NodeInstanceOs;
+import at.ac.tuwien.dsg.comot.model.node.UnitInstance;
+import at.ac.tuwien.dsg.comot.model.node.UnitInstanceOs;
 import at.ac.tuwien.dsg.comot.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.structure.ServicePart;
+import at.ac.tuwien.dsg.comot.model.structure.ServiceEntity;
 import at.ac.tuwien.dsg.comot.model.structure.ServiceTopology;
-import at.ac.tuwien.dsg.comot.model.structure.StackNode;
+import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.model.type.NodeType;
 
 @Component
@@ -36,7 +36,7 @@ public class StateOrika {
 
 		MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
-		mapperFactory.classMap(ServicePart.class, SalsaEntity.class)
+		mapperFactory.classMap(ServiceEntity.class, SalsaEntity.class)
 				.field("state", "state")
 				.register();
 
@@ -49,23 +49,23 @@ public class StateOrika {
 				.register();
 
 		mapperFactory
-				.classMap(StackNode.class, at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceUnit.class)
+				.classMap(ServiceUnit.class, at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceUnit.class)
 				.field("state", "state")
 				.customize(
-						new CustomMapper<StackNode, at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceUnit>() {
+						new CustomMapper<ServiceUnit, at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceUnit>() {
 
 							@Override
 							public void mapBtoA(
 									at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceUnit unit,
-									StackNode node, MappingContext context) {
+									ServiceUnit node, MappingContext context) {
 
-								NodeInstance nInst;
+								UnitInstance nInst;
 
 								for (ServiceInstance instance : unit.getInstancesList()) {
 									if (node.getType().equals(NodeType.OS)) {
-										nInst = facade.map(instance, NodeInstanceOs.class);
+										nInst = facade.map(instance, UnitInstanceOs.class);
 									} else {
-										nInst = facade.map(instance, NodeInstance.class);
+										nInst = facade.map(instance, UnitInstance.class);
 									}
 									nInst.setId(IdResolver.uniqueInstance(unit.getId(), instance.getInstanceId()));
 									node.addNodeInstance(nInst);
@@ -75,18 +75,18 @@ public class StateOrika {
 				.register();
 
 		mapperFactory
-				.classMap(NodeInstance.class, ServiceInstance.class)
+				.classMap(UnitInstance.class, ServiceInstance.class)
 				.field("instanceId", "instanceId")
 				.field("state", "state")
 				.register();
 
-		mapperFactory.classMap(NodeInstanceOs.class, ServiceInstance.class)
+		mapperFactory.classMap(UnitInstanceOs.class, ServiceInstance.class)
 				.field("instanceId", "instanceId")
 				.field("state", "state")
 				.customize(
-						new CustomMapper<NodeInstanceOs, ServiceInstance>() {
+						new CustomMapper<UnitInstanceOs, ServiceInstance>() {
 							@Override
-							public void mapBtoA(ServiceInstance inst, NodeInstanceOs nodeInst, MappingContext context) {
+							public void mapBtoA(ServiceInstance inst, UnitInstanceOs nodeInst, MappingContext context) {
 								if (inst.getProperties() != null && inst.getProperties().getAny() != null) {
 									facade.map(((SalsaInstanceDescription_VM) inst.getProperties().getAny()), nodeInst);
 								}
@@ -94,7 +94,7 @@ public class StateOrika {
 						})
 				.register();
 
-		mapperFactory.classMap(NodeInstanceOs.class, SalsaInstanceDescription_VM.class)
+		mapperFactory.classMap(UnitInstanceOs.class, SalsaInstanceDescription_VM.class)
 				.field("provider", "provider")
 				.field("baseImage", "baseImage")
 				.field("instanceType", "instanceType")

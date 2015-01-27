@@ -44,7 +44,7 @@ public class MelaMappingTest extends AbstractTest {
 	@Autowired
 	protected MelaOutputMapper mapperMelaOutput;
 
-	protected static final String TEST_SERVICE_ID = "aaaa";
+	protected static final String TEST_SERVICE_ID = "comot_tomcat_id";
 
 	protected CloudService serviceForMapping;
 
@@ -80,16 +80,6 @@ public class MelaMappingTest extends AbstractTest {
 
 		Requirements element = mapper.extractRequirements(serviceForMapping);
 		log.info("mela {}", Utils.asXmlString(element));
-
-	}
-
-	@Test
-	public void orikaTest() throws JAXBException {
-
-		// log.info("original {}", Utils.asJsonString(serviceForMapping));
-
-		MonitoredElement element = orika.get().map(serviceForMapping, MonitoredElement.class);
-		log.info("element {}", UtilsCs.asString(element));
 
 	}
 

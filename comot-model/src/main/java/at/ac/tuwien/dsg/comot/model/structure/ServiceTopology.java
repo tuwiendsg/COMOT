@@ -10,18 +10,15 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class ServiceTopology extends ServicePart {
+public class ServiceTopology extends ServiceEntity {
 
 	private static final long serialVersionUID = 7319253967027446687L;
 
-	@XmlElementWrapper(name = "StackNodes")
-	@XmlElement(name = "Node")
-	protected Set<StackNode> nodes = new HashSet<>();
-	@XmlElementWrapper(name = "Units")
-	@XmlElement(name = "ServiceUnits")
+	@XmlElementWrapper(name = "ServiceUnits")
+	@XmlElement(name = "Unit")
 	protected Set<ServiceUnit> serviceUnits = new HashSet<>();
-	@XmlElementWrapper(name = "Topologies")
-	@XmlElement(name = "ServiceTopologies")
+	@XmlElementWrapper(name = "ServiceTopologies")
+	@XmlElement(name = "Topology")
 	protected Set<ServiceTopology> serviceTopologies = new HashSet<>();
 
 	public ServiceTopology() {
@@ -33,9 +30,9 @@ public class ServiceTopology extends ServicePart {
 
 	public ServiceTopology(
 			String id,
-			Set<StackNode> nodes,
+			Set<ServiceUnit> serviceUnits,
 			Set<ServiceTopology> serviceTopologies) {
-		this.nodes = nodes;
+		this.serviceUnits = serviceUnits;
 		this.serviceTopologies = serviceTopologies;
 	}
 
@@ -44,13 +41,6 @@ public class ServiceTopology extends ServicePart {
 			serviceUnits = new HashSet<>();
 		}
 		serviceUnits.add(serviceUnit);
-	}
-
-	public void addNode(StackNode node) {
-		if (nodes == null) {
-			nodes = new HashSet<>();
-		}
-		nodes.add(node);
 	}
 
 	public void addTopology(ServiceTopology serviceTopology) {
@@ -68,8 +58,8 @@ public class ServiceTopology extends ServicePart {
 		return new ArrayList<ServiceUnit>(serviceUnits);
 	}
 
-	public List<StackNode> getNodeList() {
-		return new ArrayList<StackNode>(nodes);
+	public List<ServiceUnit> getServiceUnitList() {
+		return new ArrayList<ServiceUnit>(serviceUnits);
 	}
 
 	// GENERATED METHODS
@@ -84,14 +74,6 @@ public class ServiceTopology extends ServicePart {
 
 	public void setServiceUnits(Set<ServiceUnit> serviceUnits) {
 		this.serviceUnits = serviceUnits;
-	}
-
-	public Set<StackNode> getNodes() {
-		return nodes;
-	}
-
-	public void setNodes(Set<StackNode> nodes) {
-		this.nodes = nodes;
 	}
 
 	public void setServiceTopologies(Set<ServiceTopology> serviceTopologies) {

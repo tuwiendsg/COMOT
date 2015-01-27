@@ -1,6 +1,6 @@
 package at.ac.tuwien.dsg.comot.model.relationship;
 
-import at.ac.tuwien.dsg.comot.model.structure.StackNode;
+import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
 
 public class HostOnRel extends Relationship {
 
@@ -9,7 +9,7 @@ public class HostOnRel extends Relationship {
 	public HostOnRel() {
 	}
 
-	public HostOnRel(String id, StackNode from, StackNode to) {
+	public HostOnRel(String id, ServiceUnit from, ServiceUnit to) {
 		super();
 		this.id = id;
 		this.from = from;

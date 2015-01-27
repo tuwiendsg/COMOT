@@ -21,7 +21,7 @@ import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @NodeEntity
-public abstract class ServicePart implements HasUniqueId, Serializable {
+public abstract class ServiceEntity implements HasUniqueId, Serializable {
 
 	private static final long serialVersionUID = -889982124609754463L;
 
@@ -41,14 +41,14 @@ public abstract class ServicePart implements HasUniqueId, Serializable {
 	@XmlElement(name = "Directive")
 	protected Set<SyblDirective> directives = new HashSet<>();
 
-	public ServicePart() {
+	public ServiceEntity() {
 	}
 
-	public ServicePart(String id) {
+	public ServiceEntity(String id) {
 		this.id = id;
 	}
 
-	public ServicePart(String id, String name) {
+	public ServiceEntity(String id, String name) {
 		this.id = id;
 		this.name = name;
 	}
@@ -118,7 +118,7 @@ public abstract class ServicePart implements HasUniqueId, Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ServicePart other = (ServicePart) obj;
+		ServiceEntity other = (ServiceEntity) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

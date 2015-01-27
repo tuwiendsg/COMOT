@@ -2,7 +2,7 @@ package at.ac.tuwien.dsg.comot.model.relationship;
 
 import javax.xml.bind.annotation.XmlAttribute;
 
-import at.ac.tuwien.dsg.comot.model.structure.StackNode;
+import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
 
 public class ConnectToRel extends Relationship {
 
@@ -20,7 +20,7 @@ public class ConnectToRel extends Relationship {
 
 	// GENERATED METHODS
 
-	public ConnectToRel(String id, String capabilityId, String requirementId, StackNode from, StackNode to) {
+	public ConnectToRel(String id, String capabilityId, String requirementId, ServiceUnit from, ServiceUnit to) {
 		super();
 		this.id = id;
 		this.capabilityId = capabilityId;

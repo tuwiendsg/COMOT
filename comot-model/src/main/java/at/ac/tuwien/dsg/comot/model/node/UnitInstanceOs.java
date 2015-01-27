@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 @XmlRootElement
-public class NodeInstanceOs extends NodeInstance {
+public class UnitInstanceOs extends UnitInstance {
 
 	private static final long serialVersionUID = 7489425455903961743L;
 
@@ -15,11 +15,11 @@ public class NodeInstanceOs extends NodeInstance {
 	protected String uuid;
 	protected String ip;
 
-	public NodeInstanceOs() {
+	public UnitInstanceOs() {
 
 	}
 
-	public NodeInstanceOs(String id, int instanceId, NodeInstance hostInstance, State state,
+	public UnitInstanceOs(String id, int instanceId, UnitInstance hostInstance, State state,
 			String provider,
 			String baseImage,
 			String instanceType, String uuid, String ip) {

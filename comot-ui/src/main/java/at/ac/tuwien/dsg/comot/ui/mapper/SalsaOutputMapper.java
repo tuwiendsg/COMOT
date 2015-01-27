@@ -9,11 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.common.model.logic.RelationshipResolver;
-import at.ac.tuwien.dsg.comot.model.node.NodeInstance;
+import at.ac.tuwien.dsg.comot.common.model.logic.Navigator;
+import at.ac.tuwien.dsg.comot.model.node.UnitInstance;
 import at.ac.tuwien.dsg.comot.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.structure.ServiceTopology;
-import at.ac.tuwien.dsg.comot.model.structure.StackNode;
+import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.ui.model.ElementState;
 
 @Component
@@ -26,12 +26,12 @@ public class SalsaOutputMapper {
 
 	public ElementState extractOutput(CloudService service) {
 
-		RelationshipResolver resolver = new RelationshipResolver(service);
+		Navigator navigator = new Navigator(service);
 
 		ElementState root = new ElementState(service.getId(), SERVICE, service.getState().toString());
 		List<ElementState> topologies = new ArrayList<>();
 
-		doTopologies(root, service.getServiceTopologies(), resolver, topologies);
+		doTopologies(root, service.getServiceTopologies(), navigator, topologies);
 
 		List<ElementState> tempList = null;
 
@@ -50,7 +50,7 @@ public class SalsaOutputMapper {
 
 			for (Iterator<ElementState> iterator = eTopo.getChildren().iterator(); iterator.hasNext();) {
 				ElementState one = iterator.next();
-				ElementState host = findHost(one, tempList, resolver);
+				ElementState host = findHost(one, tempList, navigator);
 
 				log.debug("element={}, host={}", one.getId(), ((host == null) ? null : host.getId()));
 
@@ -64,7 +64,7 @@ public class SalsaOutputMapper {
 		return root;
 	}
 
-	protected void doTopologies(ElementState parent, Set<ServiceTopology> topologies, RelationshipResolver resolver,
+	protected void doTopologies(ElementState parent, Set<ServiceTopology> topologies, Navigator navigator,
 			List<ElementState> eTopos) {
 
 		ElementState eTopo, eNode, eInstance;
@@ -76,10 +76,10 @@ public class SalsaOutputMapper {
 			eTopos.add(eTopo);
 			parent.addChild(eTopo);
 
-			doTopologies(eTopo, topology.getServiceTopologies(), resolver, eTopos);
+			doTopologies(eTopo, topology.getServiceTopologies(), navigator, eTopos);
 
-			for (StackNode node : topology.getNodes()) {
-				isUnit = resolver.isServiceUnit(node.getId());
+			for (ServiceUnit node : topology.getServiceUnits()) {
+				isUnit = navigator.isTrueServiceUnit(node.getId());
 
 				if (node.getInstances().size() == 0) {
 					eNode = new ElementState(node.getId(), node.getType().toString(), node
@@ -89,7 +89,7 @@ public class SalsaOutputMapper {
 					eTopo.addChild(eNode);
 
 				} else {
-					for (NodeInstance instance : node.getInstances()) {
+					for (UnitInstance instance : node.getInstances()) {
 						eInstance = new ElementState(node.getId(), node.getType().toString(), instance
 								.getState().toString());
 						eInstance.setInstanceId(instance.getInstanceId());
@@ -103,29 +103,29 @@ public class SalsaOutputMapper {
 		}
 	}
 
-	protected ElementState findHost(ElementState element, List<ElementState> list, RelationshipResolver resolver) {
+	protected ElementState findHost(ElementState element, List<ElementState> list, Navigator navigator) {
 
-		String hostId = resolver.getHostId(element.getId());
-		if (hostId == null) {
+		ServiceUnit hostUnit = navigator.getHost(element.getId());
+		if (hostUnit == null) {
 			return null;
 		}
 
 		if (element.getInstanceId() == null) {// stack node
 			for (ElementState temp : list) {
-				if (temp.getId().equals(hostId)) {
+				if (temp.getId().equals(hostUnit.getId())) {
 					return temp;
 				}
 			}
 
 		} else {// instance
-			NodeInstance host = resolver.navigator().getInstance(element.getId(), element.getInstanceId())
+			UnitInstance host = navigator.getInstance(element.getId(), element.getInstanceId())
 					.getHostInstance();
 			if (host == null) {
 				return null;
 			}
 
 			for (ElementState temp : list) {
-				if (temp.getId().equals(hostId) && temp.getInstanceId() == host.getInstanceId()) {
+				if (temp.getId().equals(hostUnit.getId()) && temp.getInstanceId() == host.getInstanceId()) {
 					return temp;
 				}
 			}

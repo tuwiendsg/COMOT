@@ -2,15 +2,14 @@ package at.ac.tuwien.dsg.comot.test.model.examples;
 
 import at.ac.tuwien.dsg.comot.model.SyblDirective;
 import at.ac.tuwien.dsg.comot.model.node.ArtifactTemplate;
-import at.ac.tuwien.dsg.comot.model.node.NodeInstance;
-import at.ac.tuwien.dsg.comot.model.node.NodeInstanceOs;
+import at.ac.tuwien.dsg.comot.model.node.UnitInstance;
+import at.ac.tuwien.dsg.comot.model.node.UnitInstanceOs;
 import at.ac.tuwien.dsg.comot.model.node.Properties;
 import at.ac.tuwien.dsg.comot.model.relationship.ConnectToRel;
 import at.ac.tuwien.dsg.comot.model.relationship.HostOnRel;
 import at.ac.tuwien.dsg.comot.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.structure.ServiceTopology;
 import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.model.structure.StackNode;
 import at.ac.tuwien.dsg.comot.model.type.ArtifactType;
 import at.ac.tuwien.dsg.comot.model.type.DirectiveType;
 import at.ac.tuwien.dsg.comot.model.type.NodePropertiesType;
@@ -22,49 +21,41 @@ public class STemplates {
 	public static final String swNodeId = "nodeId";
 	public static final String swNodeId2 = "nodeId2";
 	public static final String osNodeId = "osId";
-	public static final String swId_unit = swNodeId + "_unit";
-	public static final String swId2_unit = swNodeId2 + "_unit";
 	public static final String topologyId = "topologyId";
 	public static final String serviceId = "serviceId";
 
 	public static CloudService simplifiedService() {
 
-		// NODE OS
+		// UNIT OS
 		Properties properties = new Properties(NodePropertiesType.OS);
 		properties.addProperty("instanceType", "000000512");
 		properties.addProperty("provider", "dsg@openstack");
 		properties.setId(osNodeId + "_property_salsa");
 
-		StackNode osNode = new StackNode(osNodeId, "Test os", 1, 2, NodeType.OS);
-		osNode.addProperties(properties);
+		ServiceUnit unitOs = new ServiceUnit(osNodeId, "Test os", 1, 2, NodeType.OS);
+		unitOs.addProperties(properties);
 
-		// NODE SW 1
-		StackNode swNode = new StackNode(swNodeId, "Test node unit", 2, 5, NodeType.SOFTWARE);
+		// UNIT SW 1
+		ServiceUnit unitSw = new ServiceUnit(swNodeId, "Test node unit", 2, 5, NodeType.SOFTWARE);
 
-		// NODE SW 2
-		StackNode swNode2 = new StackNode(swNodeId2, "Test node unit 2", 2, 5, NodeType.SOFTWARE);
+		// UNIT SW 2
+		ServiceUnit unitSw2 = new ServiceUnit(swNodeId2, "Test node unit 2", 2, 5, NodeType.SOFTWARE);
 
 		// HOST ON
-		HostOnRel hostOn1 = new HostOnRel("hostOn1ID", swNode, osNode);
-		swNode.setHostNode(hostOn1);
-		HostOnRel hostOn2 = new HostOnRel("hostOn2ID", swNode2, osNode);
-		swNode2.setHostNode(hostOn2);
+		HostOnRel hostOn1 = new HostOnRel("hostOn1ID", unitSw, unitOs);
+		unitSw.setHost(hostOn1);
+		HostOnRel hostOn2 = new HostOnRel("hostOn2ID", unitSw2, unitOs);
+		unitSw2.setHost(hostOn2);
 
 		// CONNECT TO
-		ConnectToRel rel = new ConnectToRel("connectToID", "connectVar_Capa", "connectVar_Req", swNode2, swNode);
-		swNode2.addConnectTo(rel);
-
-		// UNITS
-		ServiceUnit unit = new ServiceUnit(swId_unit, swNode);
-		ServiceUnit unit2 = new ServiceUnit(swId2_unit, swNode2);
+		ConnectToRel rel = new ConnectToRel("connectToID", "connectVar_Capa", "connectVar_Req", unitSw2, unitSw);
+		unitSw2.addConnectTo(rel);
 
 		// TOPOLOGY
 		ServiceTopology topology = new ServiceTopology(topologyId);
-		topology.addNode(swNode);
-		topology.addNode(swNode2);
-		topology.addNode(osNode);
-		topology.addServiceUnit(unit);
-		topology.addServiceUnit(unit2);
+		topology.addServiceUnit(unitSw);
+		topology.addServiceUnit(unitSw2);
+		topology.addServiceUnit(unitOs);
 
 		CloudService service = new CloudService(serviceId);
 		service.addServiceTopology(topology);
@@ -73,7 +64,7 @@ public class STemplates {
 
 	public static CloudService fullServiceWithoutInstances() {
 
-		// NODE OS
+		// UNIT OS
 		Properties properties = new Properties(NodePropertiesType.OS);
 		properties.addProperty("instanceType", "000000512");
 		properties.addProperty("provider", "dsg@openstack");
@@ -81,46 +72,40 @@ public class STemplates {
 		properties.addProperty("packages", "java-jdk, something-something");
 		properties.setId(osNodeId + "_property_salsa");
 
-		StackNode osNode = new StackNode(osNodeId, "Test os", 1, 2, NodeType.OS);
-		osNode.addProperties(properties);
+		ServiceUnit unitOs = new ServiceUnit(osNodeId, "Test os", 1, 2, NodeType.OS);
+		unitOs.addProperties(properties);
 
-		// NODE SW 1
+		// UNIT SW 1
 		ArtifactTemplate artTemplate = new ArtifactTemplate("artifactTemplateID", ArtifactType.SCRIPT);
 		artTemplate.addUri("http://128.130.172.215/salsa/upload/files/DaasService/deployCassandraSeed.sh");
 
-		StackNode swNode = new StackNode(swNodeId, "Test node unit", 2, 5, NodeType.SOFTWARE);
-		swNode.addDeploymentArtifact(artTemplate);
+		ServiceUnit unitSw = new ServiceUnit(swNodeId, "Test node unit", 2, 5, NodeType.SOFTWARE);
+		unitSw.addDeploymentArtifact(artTemplate);
 
-		ServiceUnit unit = new ServiceUnit(swId_unit, swNode);
-		unit.addDirective(new SyblDirective("str1", DirectiveType.STRATEGY,
+		unitSw.addDirective(new SyblDirective("str1", DirectiveType.STRATEGY,
 				"ST1: STRATEGY CASE cpuUsage < 40 % : scalein"));
-		unit.addDirective(new SyblDirective("con1", DirectiveType.CONSTRAINT,
+		unitSw.addDirective(new SyblDirective("con1", DirectiveType.CONSTRAINT,
 				"Co2: CONSTRAINT dataAccuracy > 95 % WHEN total_cost > 400 ;"));
 
-		// NODE SW 2
-		StackNode swNode2 = new StackNode(swNodeId2, "Test node unit 2",
+		// UNIT SW 2
+		ServiceUnit unitSw2 = new ServiceUnit(swNodeId2, "Test node unit 2",
 				2, 5, NodeType.SOFTWARE);
 
-		ServiceUnit unit2 = new ServiceUnit(swId2_unit, swNode2);
-
 		// HOST ON
-		HostOnRel hostOn1 = new HostOnRel("hostOn1ID", swNode, osNode);
-		swNode.setHostNode(hostOn1);
-		HostOnRel hostOn2 = new HostOnRel("hostOn2ID", swNode2, osNode);
-		swNode2.setHostNode(hostOn2);
+		HostOnRel hostOn1 = new HostOnRel("hostOn1ID", unitSw, unitOs);
+		unitSw.setHost(hostOn1);
+		HostOnRel hostOn2 = new HostOnRel("hostOn2ID", unitSw2, unitOs);
+		unitSw2.setHost(hostOn2);
 
 		// CONNECT TO
-		ConnectToRel rel = new ConnectToRel("connectToID", "connectVar_Capa", "connectVar_Req", swNode2, swNode);
-		swNode2.addConnectTo(rel);
+		ConnectToRel rel = new ConnectToRel("connectToID", "connectVar_Capa", "connectVar_Req", unitSw2, unitSw);
+		unitSw2.addConnectTo(rel);
 
 		// TOPOLOGY
-
 		ServiceTopology topology = new ServiceTopology("topologyId");
-		topology.addNode(swNode);
-		topology.addNode(osNode);
-		topology.addNode(swNode2);
-		topology.addServiceUnit(unit);
-		topology.addServiceUnit(unit2);
+		topology.addServiceUnit(unitSw);
+		topology.addServiceUnit(unitOs);
+		topology.addServiceUnit(unitSw2);
 		topology.addDirective(new SyblDirective("con4", DirectiveType.CONSTRAINT,
 				"Co4: CONSTRAINT total_cost < 800"));
 
@@ -133,23 +118,23 @@ public class STemplates {
 	public static CloudService fullService() {
 
 		CloudService service = fullServiceWithoutInstances();
-		NodeInstance instanceOs = null;
+		UnitInstance instanceOs = null;
 
 		// INSTANCES
-		for (StackNode node : service.getServiceTopologiesList().get(0).getNodes()) {
-			if (node.getId().equals(osNodeId)) {
-				instanceOs = new NodeInstanceOs(osNodeId + "_instance", 0, null, State.ALLOCATING,
+		for (ServiceUnit unit : service.getServiceTopologiesList().get(0).getServiceUnits()) {
+			if (unit.getId().equals(osNodeId)) {
+				instanceOs = new UnitInstanceOs(osNodeId + "_instance", 0, null, State.ALLOCATING,
 						"dsg@openstack",
 						"8f1428ac-f239-42e0-ab35-137f6e234101", "000000512", "uuid_of_VM", "192.168.1.1");
-				node.addNodeInstance(instanceOs);
+				unit.addNodeInstance(instanceOs);
 			}
 		}
 
-		for (StackNode node : service.getServiceTopologiesList().get(0).getNodes()) {
-			if (node.getId().equals(swNodeId)) {
-				node.addNodeInstance(new NodeInstance(swNodeId + "_instance", 0, State.DEPLOYED, instanceOs));
-			} else if (node.getId().equals(swNodeId2)) {
-				node.addNodeInstance(new NodeInstance(swNodeId2 + "_instance", 0, State.DEPLOYED, instanceOs));
+		for (ServiceUnit unit : service.getServiceTopologiesList().get(0).getServiceUnits()) {
+			if (unit.getId().equals(swNodeId)) {
+				unit.addNodeInstance(new UnitInstance(swNodeId + "_instance", 0, State.DEPLOYED, instanceOs));
+			} else if (unit.getId().equals(swNodeId2)) {
+				unit.addNodeInstance(new UnitInstance(swNodeId2 + "_instance", 0, State.DEPLOYED, instanceOs));
 			}
 		}
 		return service;

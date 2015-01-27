@@ -1,6 +1,6 @@
 package at.ac.tuwien.dsg.comot.model.relationship;
 
-import at.ac.tuwien.dsg.comot.model.structure.StackNode;
+import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
 
 public class LocalRel extends Relationship {
 
@@ -9,7 +9,7 @@ public class LocalRel extends Relationship {
 	public LocalRel() {
 	}
 
-	public LocalRel(String id, StackNode from, StackNode to) {
+	public LocalRel(String id, ServiceUnit from, ServiceUnit to) {
 		super();
 		this.id = id;
 		this.from = from;

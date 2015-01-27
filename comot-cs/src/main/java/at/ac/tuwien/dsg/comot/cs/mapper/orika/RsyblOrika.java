@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import at.ac.tuwien.dsg.comot.common.model.logic.Navigator;
 import at.ac.tuwien.dsg.comot.model.SyblDirective;
 import at.ac.tuwien.dsg.comot.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.structure.ServiceTopology;
@@ -47,7 +48,7 @@ public class RsyblOrika {
 
 		mapperFactory.classMap(ServiceTopology.class, at.ac.tuwien.dsg.comot.rsybl.ServiceTopology.class)
 				.field("serviceTopologies", "serviceTopology")
-				.field("serviceUnits", "serviceUnit")
+				// .field("serviceUnits", "serviceUnit")
 				.fieldAToB("directives", "SYBLDirective")
 				.byDefault()
 				.customize(
@@ -55,6 +56,13 @@ public class RsyblOrika {
 							@Override
 							public void mapAtoB(ServiceTopology topology,
 									at.ac.tuwien.dsg.comot.rsybl.ServiceTopology rTopology, MappingContext context) {
+
+								for (ServiceUnit unit : topology.getServiceUnits()) {
+									if (Navigator.isTrueServiceUnit(unit, topology.getServiceUnitList())) {
+										rTopology.withServiceUnit(facade.map(unit,
+												at.ac.tuwien.dsg.comot.rsybl.ServiceUnit.class));
+									}
+								}
 
 								// TODO how to mapp relationships
 							}

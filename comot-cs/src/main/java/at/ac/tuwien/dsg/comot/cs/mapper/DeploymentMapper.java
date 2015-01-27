@@ -13,9 +13,9 @@ import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.model.logic.Navigator;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.DeploymentOrika;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.StateOrika;
-import at.ac.tuwien.dsg.comot.model.node.NodeInstance;
+import at.ac.tuwien.dsg.comot.model.node.UnitInstance;
 import at.ac.tuwien.dsg.comot.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.structure.StackNode;
+import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 
 @Component
@@ -52,7 +52,7 @@ public class DeploymentMapper {
 
 			for (at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceUnit unit : topology.getComponents()) {
 
-				StackNode node = navigator.getNodeFor(unit.getId());
+				ServiceUnit node = navigator.getUnitFor(unit.getId());
 				mapperState.get().map(unit, node);
 
 				// <instanceID, hostInstanceID> pairs
@@ -67,9 +67,9 @@ public class DeploymentMapper {
 
 		// set host to instance
 		for (String str : hosts.keySet()) {
-			NodeInstance node = navigator.getInstance(IdResolver.nodeFromInstance(str),
+			UnitInstance node = navigator.getInstance(IdResolver.nodeFromInstance(str),
 					IdResolver.instanceFromInstance(str));
-			NodeInstance host = navigator.getInstance(IdResolver.nodeFromInstance(str),
+			UnitInstance host = navigator.getInstance(IdResolver.nodeFromInstance(str),
 					IdResolver.instanceFromInstance(str));
 			node.setHostInstance(host);
 		}

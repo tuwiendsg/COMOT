@@ -76,7 +76,7 @@ public class AutomatedTest extends AbstractTest {
 	public void multipleVersions() throws IllegalArgumentException, IllegalAccessException, ClassNotFoundException,
 			IOException, InstantiationException, ComotException, RecorderException {
 
-		ServiceUnit unitV1 = UtilsTest.getServiceUnit(service, STemplates.swId_unit);
+		ServiceUnit unitV1 = UtilsTest.getServiceUnit(service, STemplates.swNodeId);
 
 		// VERSION 1
 		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, "init");
@@ -85,14 +85,14 @@ public class AutomatedTest extends AbstractTest {
 
 		// VERSION 2
 		CloudService updatedService = update1(service);
-		ServiceUnit unitV2 = UtilsTest.getServiceUnit(updatedService, STemplates.swId_unit);
+		ServiceUnit unitV2 = UtilsTest.getServiceUnit(updatedService, STemplates.swNodeId);
 		revisionApi.createOrUpdateRegion(updatedService, STemplates.serviceId, "config_change");
 
 		Long version2Time = System.currentTimeMillis();
 
 		// VERSION 3
 		CloudService finalService = update2(updatedService);
-		ServiceUnit unitV3 = UtilsTest.getServiceUnit(finalService, STemplates.swId_unit);
+		ServiceUnit unitV3 = UtilsTest.getServiceUnit(finalService, STemplates.swNodeId);
 		revisionApi.createOrUpdateRegion(finalService, STemplates.serviceId, "config_change");
 
 		// ///////////////////////////
@@ -114,17 +114,17 @@ public class AutomatedTest extends AbstractTest {
 		// READ ServiceUnit
 
 		ServiceUnit unitV1Res = (ServiceUnit) revisionApi.getRevision(STemplates.serviceId,
-				STemplates.swId_unit, version1Time);
+				STemplates.swNodeId, version1Time);
 		assertReflectionEquals(unitV1, unitV1Res, ReflectionComparatorMode.LENIENT_ORDER);
 
 		// READ VERSION 2
 		ServiceUnit unitV2Res = (ServiceUnit) revisionApi.getRevision(STemplates.serviceId,
-				STemplates.swId_unit, version2Time);
+				STemplates.swNodeId, version2Time);
 		assertReflectionEquals(unitV2, unitV2Res, ReflectionComparatorMode.LENIENT_ORDER);
 
 		// READ VERSION 3
 		ServiceUnit unitV3Res = (ServiceUnit) revisionApi.getRevision(STemplates.serviceId,
-				STemplates.swId_unit, Long.MAX_VALUE);
+				STemplates.swNodeId, Long.MAX_VALUE);
 		assertReflectionEquals(unitV3, unitV3Res, ReflectionComparatorMode.LENIENT_ORDER);
 
 	}
@@ -157,12 +157,10 @@ public class AutomatedTest extends AbstractTest {
 		change1Time = change.getTimestamp();
 		change3Time = change.getTo().getEnd().getTo().getEnd().getTimestamp();
 
-		change = revisionApi.getAllChanges(STemplates.serviceId, STemplates.swId_unit, 0L, Long.MAX_VALUE);
-		assertEquals(2, countChanges(change));
-		change = revisionApi.getAllChanges(STemplates.serviceId, STemplates.swId2_unit, 0L, Long.MAX_VALUE);
-		assertEquals(3, countChanges(change));// because of connect to relationship
 		change = revisionApi.getAllChanges(STemplates.serviceId, STemplates.swNodeId, 0L, Long.MAX_VALUE);
-		assertEquals(1, countChanges(change));
+		assertEquals(2, countChanges(change));
+		change = revisionApi.getAllChanges(STemplates.serviceId, STemplates.swNodeId2, 0L, Long.MAX_VALUE);
+		assertEquals(3, countChanges(change));// because of connect to relationship
 
 		// READ CHANGES - SELECTED PERIOD
 
@@ -190,7 +188,7 @@ public class AutomatedTest extends AbstractTest {
 		// GET ALL IDs
 
 		List<ManagedObject> list = revisionApi.getManagedObjects(STemplates.serviceId);
-		assertEquals(9, list.size());
+		assertEquals(7, list.size());
 		log.info("{}", list);
 
 	}

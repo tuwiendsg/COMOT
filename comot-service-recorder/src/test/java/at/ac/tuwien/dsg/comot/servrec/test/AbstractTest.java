@@ -37,7 +37,6 @@ import at.ac.tuwien.dsg.comot.model.repo.CloudServiceRepoWorkaround;
 import at.ac.tuwien.dsg.comot.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.structure.ServiceTopology;
 import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.model.structure.StackNode;
 import at.ac.tuwien.dsg.comot.recorder.model.Change;
 import at.ac.tuwien.dsg.comot.recorder.revisions.RevisionApi;
 import at.ac.tuwien.dsg.comot.servrec.RecordingManager;
@@ -113,7 +112,7 @@ public abstract class AbstractTest {
 		updatedService.setName("UPDATED");
 
 		ServiceTopology topo = updatedService.getServiceTopologiesList().get(0);
-		ServiceUnit unit = UtilsTest.getServiceUnit(updatedService, STemplates.swId_unit);
+		ServiceUnit unit = UtilsTest.getServiceUnit(updatedService, STemplates.swNodeId);
 
 		// remove relationship -> update timestamp
 		topo.getServiceUnits().remove(unit);
@@ -128,7 +127,7 @@ public abstract class AbstractTest {
 		updatedService.addServiceTopology(newTopo);
 
 		// change parameter of relationship -> create new one & update state of the old
-		for (StackNode node : topo.getNodes()) {
+		for (ServiceUnit node : topo.getServiceUnits()) {
 			if (node.getId().equals(STemplates.swNodeId2) && node.getConnectToList().size() > 0) {
 				node.getConnectToList().get(0).setVariableValue("variableValue_UPDATED");
 			}
@@ -145,7 +144,7 @@ public abstract class AbstractTest {
 
 		ServiceTopology topo1 = finalService.getServiceTopologiesList().get(0);
 		ServiceTopology topo2 = finalService.getServiceTopologiesList().get(1);
-		ServiceUnit unit2 = UtilsTest.getServiceUnit(finalService, STemplates.swId2_unit);
+		ServiceUnit unit2 = UtilsTest.getServiceUnit(finalService, STemplates.swNodeId2);
 
 		// remove relationship -> update timestamp
 		topo1.getServiceUnits().remove(unit2);

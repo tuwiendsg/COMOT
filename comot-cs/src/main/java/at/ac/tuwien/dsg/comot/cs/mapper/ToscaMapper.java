@@ -32,7 +32,6 @@ import org.springframework.stereotype.Component;
 import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties;
 import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.model.logic.Navigator;
-import at.ac.tuwien.dsg.comot.common.model.logic.RelationshipResolver;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.ToscaConverters;
 import at.ac.tuwien.dsg.comot.cs.mapper.orika.ToscaOrika;
 import at.ac.tuwien.dsg.comot.model.node.ArtifactTemplate;
@@ -42,10 +41,7 @@ import at.ac.tuwien.dsg.comot.model.relationship.LocalRel;
 import at.ac.tuwien.dsg.comot.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.structure.ServiceTopology;
 import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.model.structure.StackNode;
 import at.ac.tuwien.dsg.comot.model.type.RelationshipType;
-
-// TODO Capabilities and requirement in both directions
 
 @Component
 public class ToscaMapper {
@@ -69,7 +65,6 @@ public class ToscaMapper {
 
 		Definitions definition = mapper.get().map(cloudService, Definitions.class);
 		Navigator navigator = new Navigator(cloudService);
-		RelationshipResolver resolver = new RelationshipResolver(cloudService);
 
 		log.trace("Mapping by orica: {}", Utils.asXmlString(definition, SalsaMappingProperties.class));
 
@@ -96,7 +91,7 @@ public class ToscaMapper {
 				TServiceTemplate topology = (TServiceTemplate) element;
 
 				// inject Relationships
-				for (TRelationshipTemplate oneRel : createTRelationships(navigator.getAllNodes())) {
+				for (TRelationshipTemplate oneRel : createTRelationships(navigator.getAllUnits())) {
 
 					log.trace("TRelationshipTemplate id={}, type={}, from={}, to={} ",
 							oneRel.getId(), oneRel.getType(), oneRel.getSourceElement().getRef(), oneRel
@@ -123,7 +118,7 @@ public class ToscaMapper {
 						Capabilities capas = new Capabilities();
 						tNode.setCapabilities(capas);
 
-						for (ConnectToRel rel : navigator.getNode(tNode.getId()).getConnectTo()) {
+						for (ConnectToRel rel : navigator.getUnit(tNode.getId()).getConnectTo()) {
 							TCapability capa = new TCapability()
 									.withId(rel.getCapabilityId())
 									.withType(CAP_REQ_TYPE);
@@ -134,7 +129,7 @@ public class ToscaMapper {
 						Requirements reqs = new Requirements();
 						tNode.setRequirements(reqs);
 
-						for (StackNode one : navigator.getAllNodes()) {
+						for (ServiceUnit one : navigator.getAllUnits()) {
 							for (ConnectToRel rel : one.getConnectTo()) {
 								if (rel.getTo().getId().equals(tNode.getId())) {
 									TRequirement req = new TRequirement()
@@ -144,13 +139,6 @@ public class ToscaMapper {
 								}
 							}
 						}
-
-						// service unit
-						if (resolver.isServiceUnit(tNode.getId())) {
-							tNode.setPolicies(mapper.get().map(navigator.getServiceUnitFor(tNode.getId()),
-									TNodeTemplate.Policies.class));
-						}
-
 					}
 				}
 
@@ -165,9 +153,8 @@ public class ToscaMapper {
 	public CloudService createModel(Definitions definition) {
 
 		String from, to;
-		StackNode startNode, endNode;
-		ServiceUnit unit;
-		Map<String, StackNode> capaReq = new HashMap<>();
+		ServiceUnit startNode, endNode;
+		Map<String, ServiceUnit> capaReq = new HashMap<>();
 		CloudService service = maper.map(definition, CloudService.class);
 
 		// log.trace("Mapping by orika: {}", Utils.asJsonString(cloudService));
@@ -190,16 +177,8 @@ public class ToscaMapper {
 						TNodeTemplate tNode = (TNodeTemplate) element2;
 
 						// create StackNode
-						StackNode node = maper.map(tNode, StackNode.class);
-						topology.addNode(node);
-
-						// create ServiceUnit to store policies
-						if (tNode.getPolicies() != null && tNode.getPolicies().getPolicy() != null) {
-
-							unit = new ServiceUnit(IdResolver.nodeToUnit(node.getId()), node);
-							maper.map(tNode.getPolicies(), unit);
-							topology.addServiceUnit(unit);
-						}
+						ServiceUnit node = maper.map(tNode, ServiceUnit.class);
+						topology.addServiceUnit(node);
 
 						// mark capabilities and requirements
 						if (tNode.getCapabilities() != null) {
@@ -218,7 +197,6 @@ public class ToscaMapper {
 		}
 
 		Navigator navigator = new Navigator(service);
-		RelationshipResolver resolver = new RelationshipResolver(service);
 
 		// 2. run
 		for (TExtensibleElements element : definition.getServiceTemplateOrNodeTypeOrNodeTypeImplementation()) {
@@ -242,14 +220,14 @@ public class ToscaMapper {
 							startNode.addConnectTo(new ConnectToRel(rel.getId(), from, to, startNode, endNode));
 
 						} else {
-							startNode = navigator.getNodeFor(from);
-							endNode = navigator.getNodeFor(to);
+							startNode = navigator.getUnitFor(from);
+							endNode = navigator.getUnitFor(to);
 
 							if (type.equals(RelationshipType.LOCAL)) {
 								startNode.addLocal(new LocalRel(rel.getId(), startNode, endNode));
 
 							} else if (type.equals(RelationshipType.HOST_ON)) {
-								startNode.setHostNode(new HostOnRel(rel.getId(), startNode, endNode));
+								startNode.setHost(new HostOnRel(rel.getId(), startNode, endNode));
 							}
 						}
 					}
@@ -264,30 +242,11 @@ public class ToscaMapper {
 					artifact.addUri(ref.getReference());
 				}
 
-				for (StackNode node : navigator.getAllNodes()) {
+				for (ServiceUnit node : navigator.getAllUnits()) {
 					if (node.getDeploymentArtifacts().contains(artifact)) {
 						node.getDeploymentArtifacts().remove(artifact);
 						node.addDeploymentArtifact(artifact);
 					}
-				}
-			}
-		}
-
-		// remove and add ServiceUnits
-		for (StackNode node : navigator.getAllNodes()) {
-			log.info("node: " + node);
-			log.info("n id: " + ((node != null) ? node.getId() : "null"));
-
-			unit = navigator.getServiceUnitFor(node.getId());
-
-			if (resolver.isServiceUnit(node)) {
-				if (unit == null) {
-					unit = new ServiceUnit(IdResolver.nodeToUnit(node.getId()), node);
-					navigator.getParentTopologyFor(node.getId()).getServiceUnits().add(unit);
-				}
-			} else {
-				if (unit != null) {
-					navigator.getParentTopologyFor(node.getId()).getServiceUnits().remove(unit);
 				}
 			}
 		}
@@ -297,24 +256,24 @@ public class ToscaMapper {
 		return service;
 	}
 
-	protected List<TRelationshipTemplate> createTRelationships(List<StackNode> nodes) {
+	protected List<TRelationshipTemplate> createTRelationships(List<ServiceUnit> units) {
 
 		List<TRelationshipTemplate> relTemplates = new ArrayList<>();
 
-		for (StackNode node : nodes) {
+		for (ServiceUnit unit : units) {
 			// CONNECT_TO
-			for (ConnectToRel rel : node.getConnectTo()) {
+			for (ConnectToRel rel : unit.getConnectTo()) {
 				relTemplates.add(createTRelationshps(rel.getId(), rel.getCapabilityId(), rel.getRequirementId(),
 						RelationshipType.CONNECT_TO));
 			}
 			// LOCAL
-			for (LocalRel rel : node.getLocal()) {
-				relTemplates.add(createTRelationshps(rel.getId(), node.getId(), rel.getTo().getId(),
+			for (LocalRel rel : unit.getLocal()) {
+				relTemplates.add(createTRelationshps(rel.getId(), unit.getId(), rel.getTo().getId(),
 						RelationshipType.LOCAL));
 			}
 			// HOST_ON
-			if (node.getHostNode() != null) {
-				relTemplates.add(createTRelationshps(node.getHostNode().getId(), node.getId(), node.getHostNode()
+			if (unit.getHost() != null) {
+				relTemplates.add(createTRelationshps(unit.getHost().getId(), unit.getId(), unit.getHost()
 						.getTo().getId(), RelationshipType.HOST_ON));
 			}
 		}

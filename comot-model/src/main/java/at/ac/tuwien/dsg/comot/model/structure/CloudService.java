@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import at.ac.tuwien.dsg.comot.model.node.ArtifactTemplate;
 
 @XmlRootElement
-public class CloudService extends ServicePart {
+public class CloudService extends ServiceEntity {
 
 	private static final long serialVersionUID = 4336434946064439267L;
 

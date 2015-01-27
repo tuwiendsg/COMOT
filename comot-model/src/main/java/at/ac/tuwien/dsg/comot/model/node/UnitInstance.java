@@ -17,10 +17,10 @@ import at.ac.tuwien.dsg.comot.model.type.State;
 import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 
 @XmlRootElement
-@XmlSeeAlso({ NodeInstanceOs.class })
+@XmlSeeAlso({ UnitInstanceOs.class })
 @XmlAccessorType(XmlAccessType.FIELD)
 @NodeEntity
-public class NodeInstance implements Serializable {
+public class UnitInstance implements Serializable {
 
 	private static final long serialVersionUID = 6826825251009392073L;
 
@@ -36,13 +36,13 @@ public class NodeInstance implements Serializable {
 	protected State state;
 	@XmlIDREF
 	@XmlAttribute
-	protected NodeInstance hostInstance;
+	protected UnitInstance hostInstance;
 
-	public NodeInstance() {
+	public UnitInstance() {
 
 	}
 
-	public NodeInstance(String id, int instanceId, State state, NodeInstance hostInstance) {
+	public UnitInstance(String id, int instanceId, State state, UnitInstance hostInstance) {
 		super();
 		this.id = id;
 		this.instanceId = instanceId;
@@ -76,11 +76,11 @@ public class NodeInstance implements Serializable {
 		this.nodeId = nodeId;
 	}
 
-	public NodeInstance getHostInstance() {
+	public UnitInstance getHostInstance() {
 		return hostInstance;
 	}
 
-	public void setHostInstance(NodeInstance hostInstance) {
+	public void setHostInstance(UnitInstance hostInstance) {
 		this.hostInstance = hostInstance;
 	}
 

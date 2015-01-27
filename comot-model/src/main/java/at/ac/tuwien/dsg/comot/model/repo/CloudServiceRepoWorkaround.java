@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import at.ac.tuwien.dsg.comot.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.structure.ServiceTopology;
-import at.ac.tuwien.dsg.comot.model.structure.StackNode;
+import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
 
 @Component
 public class CloudServiceRepoWorkaround {
@@ -22,7 +22,7 @@ public class CloudServiceRepoWorkaround {
 	protected CloudServiceRepo csRepo;
 
 	@Autowired
-	protected StackNodeRepo stackNodeRepo;
+	protected ServiceUnitRepo stackNodeRepo;
 
 	/**
 	 * Saves all stack nodes separately before saving the entire service
@@ -39,16 +39,16 @@ public class CloudServiceRepoWorkaround {
 
 	protected void doTopologies(Set<ServiceTopology> topos) {
 
-		Set<StackNode> savedNodes;
+		Set<ServiceUnit> savedNodes;
 
 		for (ServiceTopology topo : topos) {
 			savedNodes = new HashSet<>();
 
-			for (StackNode node : topo.getNodes()) {
+			for (ServiceUnit node : topo.getServiceUnits()) {
 				savedNodes.add(stackNodeRepo.save(node));
 			}
 
-			topo.setNodes(savedNodes);
+			topo.setServiceUnits(savedNodes);
 
 			doTopologies(topo.getServiceTopologies());
 		}
