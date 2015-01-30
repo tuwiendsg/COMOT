@@ -23,6 +23,14 @@ public class SoftwareNode extends ServiceUnit {
                 .provides(ElasticityCapability.ScaleIn())
                 .provides(ElasticityCapability.ScaleOut());
     }
+    
+    public static SoftwareNode WarNode(String id){
+        return new SoftwareNode(id).ofType(NodeType.War);
+    }
+    
+    public static SoftwareNode SingleWarUnit(String id) {
+        return new SoftwareNode(id).ofType(NodeType.War).withMinInstances(1).withMaxColocatedInstances(1);
+    }
 
     @Override
     public SoftwareNode withMinInstances(int minInstances) {
