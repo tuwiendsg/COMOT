@@ -5,6 +5,7 @@
  */
 package at.ac.tuwien.dsg.orchestrator.interraction.salsa;
 
+import at.ac.tuwien.dsg.comot.orchestrator.interraction.salsa.SalsaConnector;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 import org.junit.*;
 

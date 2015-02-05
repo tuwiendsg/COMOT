@@ -23,7 +23,7 @@ import at.ac.tuwien.dsg.comot.common.model.LifecyclePhase;
 import at.ac.tuwien.dsg.comot.common.model.Requirement;
 import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
 import at.ac.tuwien.dsg.comot.common.model.ServiceUnit;
-import at.ac.tuwien.dsg.orchestrator.interraction.COMOTOrchestrator;
+import at.ac.tuwien.dsg.comot.orchestrator.interraction.COMOTOrchestrator;
 
 /**
  *

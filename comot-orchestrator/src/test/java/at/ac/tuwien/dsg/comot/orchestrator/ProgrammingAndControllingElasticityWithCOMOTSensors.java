@@ -22,7 +22,7 @@ import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.SingleSoftwareUni
 import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.UnboundedSoftwareUnit;
 import at.ac.tuwien.dsg.comot.common.model.Strategy;
 import static at.ac.tuwien.dsg.comot.common.model.Strategy.Strategy;
-import at.ac.tuwien.dsg.orchestrator.interraction.COMOTOrchestrator;
+import at.ac.tuwien.dsg.comot.orchestrator.interraction.COMOTOrchestrator;
 
 /**
  *

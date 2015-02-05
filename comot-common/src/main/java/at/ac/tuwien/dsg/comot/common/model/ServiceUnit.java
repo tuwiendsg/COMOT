@@ -21,6 +21,7 @@ public class ServiceUnit extends AbstractServiceDescriptionEntity {
 
         OperatingSystem("os"), 
         Docker("docker"),
+        War("war"),
         Software("software");
 
         final String type;
