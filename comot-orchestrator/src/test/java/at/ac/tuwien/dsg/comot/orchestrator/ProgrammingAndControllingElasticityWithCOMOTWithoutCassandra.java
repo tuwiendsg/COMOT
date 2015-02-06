@@ -236,7 +236,7 @@ public class ProgrammingAndControllingElasticityWithCOMOTWithoutCassandra {
         //if it makes sense or not to execute the action
 //                .withDefaultActionEffects();
 
-        COMOTOrchestrator orchestrator = new COMOTOrchestrator("128.130.172.214").withSalsaPort(8380);
+        COMOTOrchestrator orchestrator = new COMOTOrchestrator("localhost").withSalsaPort(8380);
 
         orchestrator.controlExisting(serviceTemplate);
     }
