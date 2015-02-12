@@ -27,7 +27,7 @@
 
 		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
-			<artifactId>comot-core</artifactId>
+			<artifactId>comot-manager</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>

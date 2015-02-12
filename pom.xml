@@ -25,7 +25,7 @@
 		<profile>
 			<id>noJAXB</id><!-- do not regenerate JAXB binding classes -->
 			<modules>
-				<module>comot-core</module>
+				<module>comot-manager</module>
 				<module>comot-cs</module>
 				<module>comot-common</module>
 				<module>comot-ui</module>
@@ -41,7 +41,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
-				<module>comot-core</module>
+				<module>comot-manager</module>
 				<module>comot-cs</module>
 				<module>comot-common</module>
 				<module>comot-ui</module>
@@ -167,7 +167,7 @@
 			<!-- CoMoT -->
 			<dependency>
 				<groupId>at.ac.tuwien.dsg.comot</groupId>
-				<artifactId>comot-core</artifactId>
+				<artifactId>comot-manager</artifactId>
 				<version>0.2</version>
 			</dependency>
 			<dependency>
