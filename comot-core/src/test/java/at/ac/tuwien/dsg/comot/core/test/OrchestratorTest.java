@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.xml.bind.JAXBException;
 
 import org.junit.Test;
+import org.oasis.tosca.Definitions;
 
 import at.ac.tuwien.dsg.comot.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
@@ -57,12 +58,13 @@ public class OrchestratorTest extends AbstractTest {
 	public void testRecordingManager() throws IOException, JAXBException, CoreServiceException, ComotException,
 			IllegalArgumentException, IllegalAccessException {
 
-		CloudService service = mapperTosca.createModel(UtilsCs
-				.loadTosca(UtilsTest.TEST_FILE_BASE + "tomcat/tomcat.xml"));
+		Definitions def = UtilsCs.loadTosca(UtilsTest.TEST_FILE_BASE + "tomcat/tomcat.xml");
+		// CloudService service = mapperTosca.createModel(def);
 
-		orchestrator.deployNew(service);
+		// deploy
+		String serviceId = orchestrator.deployNew(UtilsCs.asString(def));
 
-		ServiceEntity entity = serviceRepo.findOne(service.getId());
+		ServiceEntity entity = serviceRepo.findOne(serviceId);
 
 		log.info("entity: {}", entity);
 
@@ -84,7 +86,7 @@ public class OrchestratorTest extends AbstractTest {
 		log.info(" {} ", mcr);
 
 		// deploy
-		orchestrator.deployNew(service);
+		orchestrator.deployNew(UtilsCs.asString(mapperTosca.extractTosca(service)));
 		orchestrator.setMcr(newServiceId, mcr);
 		// orchestrator.startMonitoring(newServiceId);
 

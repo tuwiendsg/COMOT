@@ -21,7 +21,8 @@ import at.ac.tuwien.dsg.comot.cs.connector.SalsaClient;
 public class AppContextCs {
 
 	public static final String SALSA_IP = "128.130.172.215";
-	public static final String MELA_RSYBL_IP = "128.130.172.191";
+	public static final String MELA_IP = "128.130.172.215";
+	public static final String RSYBL_IP = "128.130.172.215";
 	public static final int MELA_PORT = 8180;
 	public static final int SALSA_PORT = 8380;
 	public static final int RSYBL_PORT = 8020;
@@ -36,12 +37,12 @@ public class AppContextCs {
 
 	@Bean
 	public MelaClient melaClient() {
-		return new MelaClient(MELA_RSYBL_IP, MELA_PORT);
+		return new MelaClient(MELA_IP, MELA_PORT);
 	}
 
 	@Bean
 	public RsyblClient rsyblClient() {
-		return new RsyblClient(MELA_RSYBL_IP, RSYBL_PORT);
+		return new RsyblClient(RSYBL_IP, RSYBL_PORT);
 	}
 
 	@Bean

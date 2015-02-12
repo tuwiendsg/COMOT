@@ -58,7 +58,7 @@ public class AppContextCoreInsertData {
 
 					Definitions def = salsaClient.getTosca(serviceId);
 					CloudService deployedService = mapperTosca.createModel(def);
-					ServiceEntity entity = new ServiceEntity(deployedService, deployedService);
+					ServiceEntity entity = new ServiceEntity(deployedService);
 
 					serviceRepo.save(entity);
 

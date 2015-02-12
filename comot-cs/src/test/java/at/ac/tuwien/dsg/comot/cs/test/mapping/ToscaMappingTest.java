@@ -2,6 +2,8 @@ package at.ac.tuwien.dsg.comot.cs.test.mapping;
 
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
+import java.io.IOException;
+
 import javax.xml.bind.JAXBException;
 
 import org.junit.Before;
@@ -56,9 +58,27 @@ public class ToscaMappingTest extends AbstractTest {
 		Definitions tosca2 = mapperTosca.extractTosca(service2);
 		log.info("tosca2 {}", UtilsCs.asString(tosca2));
 
-		CloudService service3 = mapperTosca.createModel(tosca1);
+		CloudService service3 = mapperTosca.createModel(tosca2);
 		log.info("service3 {}", Utils.asString(service3));
 		assertReflectionEquals(serviceForMapping, service3, ReflectionComparatorMode.LENIENT_ORDER);
+
+	}
+
+	@Test
+	public void testToscaFromFile() throws JAXBException, IOException {
+
+		Definitions tosca1 = loadTosca("./../resources/test/daas_m2m_fromSalsa.xml");
+		log.info("tosca1 {}", UtilsCs.asString(tosca1));
+
+		CloudService service1 = mapperTosca.createModel(tosca1);
+		log.info("service1 {}", Utils.asString(service1));
+
+		Definitions tosca2 = mapperTosca.extractTosca(service1);
+		log.info("tosca2 {}", UtilsCs.asString(tosca2));
+
+		CloudService service2 = mapperTosca.createModel(tosca2);
+		log.info("service2 {}", Utils.asString(service2));
+		assertReflectionEquals(service1, service2, ReflectionComparatorMode.LENIENT_ORDER);
 
 	}
 

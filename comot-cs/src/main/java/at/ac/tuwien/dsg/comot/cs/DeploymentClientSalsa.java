@@ -48,9 +48,17 @@ public class DeploymentClientSalsa implements DeploymentClient {
 			throw new ComotException("Failed to marshall TOSCA into XML ", e);
 		}
 
-		salsa.deploy(toscaDescriptionXml);
+		CloudService deployedService = deploy(toscaDescriptionXml);
 
-		Definitions def = salsa.getTosca(service.getId());
+		return deployedService;
+	}
+
+	@Override
+	public CloudService deploy(String service) throws CoreServiceException, ComotException {
+
+		String serviceId = salsa.deploy(service);
+
+		Definitions def = salsa.getTosca(serviceId);
 		CloudService deployedService = mapperTosca.createModel(def);
 
 		return deployedService;

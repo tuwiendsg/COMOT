@@ -13,6 +13,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBException;
 
 import org.oasis.tosca.Definitions;
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ import at.ac.tuwien.dsg.comot.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.common.model.monitoring.ElementMonitoring;
 import at.ac.tuwien.dsg.comot.core.ComotOrchestrator;
 import at.ac.tuwien.dsg.comot.core.model.ServiceEntity;
+import at.ac.tuwien.dsg.comot.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.ui.mapper.SalsaOutputMapper;
@@ -60,9 +62,10 @@ public class ServicesResource {
 	@POST
 	@Path("/")
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response createAndDeploy(Definitions def) throws CoreServiceException, ComotException {
+	public Response createAndDeploy(Definitions def) throws CoreServiceException, ComotException, JAXBException {
 
-		orchestrator.deployNew(mapperTosca.createModel(def));
+		// orchestrator.deployNew(mapperTosca.createModel(def));
+		orchestrator.deployNew(UtilsCs.asString(def));
 		return Response.ok(def.getId()).build();
 	}
 

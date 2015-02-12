@@ -3,8 +3,10 @@ package at.ac.tuwien.dsg.comot.common.model.logic;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +46,7 @@ public class Navigator {
 
 		ServiceUnit node = getUnit(id);
 		if (node != null) {
-			if (isTrueServiceUnit(node, getAllUnits())) {
+			if (isTrueServiceUnit(node, new HashSet<ServiceUnit>(getAllUnits()))) {
 				return true;
 			}
 		}
@@ -57,7 +59,7 @@ public class Navigator {
 	 * @param node
 	 * @return
 	 */
-	public static boolean isTrueServiceUnit(ServiceUnit node, List<ServiceUnit> potentialHosted) {
+	public static boolean isTrueServiceUnit(ServiceUnit node, Set<ServiceUnit> potentialHosted) {
 
 		if (node.getType().equals(NodeType.OS) ||
 				node.getType().equals(NodeType.DOCKER) ||
@@ -66,16 +68,26 @@ public class Navigator {
 			return false;
 		}
 
+		Set<ServiceUnit> hostedOnThis = getHostedOn(node, potentialHosted);
+
+		log.debug("isServiceUnit(nodeId={} ): children={}", node.getId(), hostedOnThis);
+		return true;
+	}
+
+	public Set<ServiceUnit> getHostedOn(ServiceUnit node) {
+		return getHostedOn(node, getParentTopologyFor(node.getId()).getServiceUnits());
+	}
+
+	public static Set<ServiceUnit> getHostedOn(ServiceUnit node, Set<ServiceUnit> potentialHosted) {
+
+		Set<ServiceUnit> hostedOnThis = new HashSet<>();
+
 		for (ServiceUnit one : potentialHosted) {
-			if (one.getHost() != null && one.getHost().getId().equals(node.getId())) {
-				log.debug("isServiceUnit(nodeId={} ): false", node.getId());
-				return false;
+			if (one.getHost() != null && one.getHost().getTo().equals(node)) {
+				hostedOnThis.add(one);
 			}
 		}
-
-		log.debug("isServiceUnit(nodeId={} ): true", node.getId());
-
-		return true;
+		return hostedOnThis;
 	}
 
 	public ServiceUnit getOsForServiceUnit(String id) {

@@ -2,7 +2,7 @@ define(function(require) {
 	var app = require('durandal/app'), ko = require('knockout'), JsonHuman = require('json_human'), d3 = require('d3'), comot = require('comot_client');
 	var repeater = require('repeater');
 
-	var tab = repeater.create("Monitoring", 7000);
+	var tab = repeater.create("Monitoring", 5000);
 
 	var model = {
 		startTab : function(serviceId) {

@@ -15,8 +15,8 @@ import org.springframework.data.neo4j.annotation.RelatedToVia;
 
 import at.ac.tuwien.dsg.comot.model.ElasticityCapability;
 import at.ac.tuwien.dsg.comot.model.node.ArtifactTemplate;
-import at.ac.tuwien.dsg.comot.model.node.UnitInstance;
 import at.ac.tuwien.dsg.comot.model.node.Properties;
+import at.ac.tuwien.dsg.comot.model.node.UnitInstance;
 import at.ac.tuwien.dsg.comot.model.relationship.ConnectToRel;
 import at.ac.tuwien.dsg.comot.model.relationship.HostOnRel;
 import at.ac.tuwien.dsg.comot.model.relationship.LocalRel;
@@ -127,6 +127,10 @@ public class ServiceUnit extends ServiceEntity {
 
 	public List<ConnectToRel> getConnectToList() {
 		return new ArrayList<ConnectToRel>(connectTo);
+	}
+
+	public List<ArtifactTemplate> getDeploymentArtifactsList() {
+		return new ArrayList<ArtifactTemplate>(deploymentArtifacts);
 	}
 
 	// GENERATED METHODS

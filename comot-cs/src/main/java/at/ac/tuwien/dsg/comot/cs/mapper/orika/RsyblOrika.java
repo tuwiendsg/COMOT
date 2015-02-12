@@ -58,7 +58,7 @@ public class RsyblOrika {
 									at.ac.tuwien.dsg.comot.rsybl.ServiceTopology rTopology, MappingContext context) {
 
 								for (ServiceUnit unit : topology.getServiceUnits()) {
-									if (Navigator.isTrueServiceUnit(unit, topology.getServiceUnitList())) {
+									if (Navigator.isTrueServiceUnit(unit, topology.getServiceUnits())) {
 										rTopology.withServiceUnit(facade.map(unit,
 												at.ac.tuwien.dsg.comot.rsybl.ServiceUnit.class));
 									}

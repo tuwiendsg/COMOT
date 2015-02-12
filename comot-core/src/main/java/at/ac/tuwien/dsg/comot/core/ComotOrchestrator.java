@@ -76,12 +76,13 @@ public class ComotOrchestrator {
 	}
 
 	@Transactional
-	public void deployNew(CloudService service) throws CoreServiceException, ComotException {
+	public String deployNew(String service) throws CoreServiceException, ComotException {
 
 		CloudService deployedService = deployment.deploy(service);
-		ServiceEntity entity = new ServiceEntity(service, deployedService);
+		ServiceEntity entity = new ServiceEntity(deployedService);
 
 		serviceRepo.save(entity);
+		return deployedService.getId();
 
 	}
 
@@ -89,7 +90,7 @@ public class ComotOrchestrator {
 
 		ServiceEntity entity = getServiceEntity(serviceId);
 
-		CloudService deployedService = deployment.deploy(entity.getServiceOriginal());
+		CloudService deployedService = deployment.deploy(entity.getServiceDeployed());
 
 		entity.setServiceDeployed(deployedService);
 		entity.setDeployment(true);

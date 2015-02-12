@@ -75,7 +75,10 @@ public class ServiceRepoProxy {
 
 	public void save(Job job) {
 		job.setId(jobCounter++);
-		entities.get(job.getService().getId()).getJobs().add(job);
+
+		log.info("job.getService() {}", job.getService());
+		log.info("job.getService().getId() {}", job.getService().getId());
+		entities.get(job.getService().getId()).addJob(job);
 
 	}
 

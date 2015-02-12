@@ -7,7 +7,10 @@ import at.ac.tuwien.dsg.comot.model.structure.CloudService;
 public interface DeploymentClient extends CoreServiceClient {
 
 	public CloudService deploy(
-			CloudService cloudService) throws CoreServiceException, ComotException;
+			CloudService service) throws CoreServiceException, ComotException;
+	
+	public CloudService deploy(
+			String service) throws CoreServiceException, ComotException;
 
 	public void undeploy(
 			String serviceId) throws CoreServiceException;
@@ -25,10 +28,12 @@ public interface DeploymentClient extends CoreServiceClient {
 			int instanceId) throws CoreServiceException;
 
 	public CloudService refreshStatus(
-			CloudService cloudService) throws CoreServiceException, ComotException;
+			CloudService service) throws CoreServiceException, ComotException;
 
 	public CloudService getService(String serviceId) throws CoreServiceException, ComotException;
 
 	boolean isRunning(String serviceID) throws CoreServiceException, ComotException;
+
+	
 
 }

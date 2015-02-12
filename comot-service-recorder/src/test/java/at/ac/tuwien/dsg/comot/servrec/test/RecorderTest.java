@@ -31,11 +31,11 @@ public class RecorderTest extends AbstractTest {
 	public void testRecordingManager() throws IOException, JAXBException, CoreServiceException, ComotException,
 			IllegalArgumentException, IllegalAccessException {
 
-		CloudService service = mapperTosca.createModel(UtilsCs
-				.loadTosca(UtilsTest.TEST_FILE_BASE + "tomcat/tomcat.xml"));
+		Definitions def = UtilsCs.loadTosca(UtilsTest.TEST_FILE_BASE + "tomcat/tomcat.xml");
+		// CloudService service = mapperTosca.createModel(def);
 
 		// deploy
-		orchestrator.deployNew(service);
+		orchestrator.deployNew(UtilsCs.asString(def));
 
 		ServiceEntity entity = serviceRepo.findOne(service.getId());
 		log.info("entity: {}", entity);
@@ -43,7 +43,6 @@ public class RecorderTest extends AbstractTest {
 
 		recordingManager.addService(service.getId(), deployment, control, monitoring);
 
-		recordingManager.insertVersion(entity.getServiceOriginal());
 		recordingManager.insertVersion(entity.getServiceDeployed());
 
 		recordingManager.startRecording(service.getId());

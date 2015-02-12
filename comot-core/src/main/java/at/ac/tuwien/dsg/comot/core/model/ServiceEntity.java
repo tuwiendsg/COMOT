@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot.core.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -38,9 +39,6 @@ public class ServiceEntity implements Serializable {
 
 	@XmlTransient
 	@Lob
-	protected CloudService serviceOriginal;
-	@XmlTransient
-	@Lob
 	protected CloudService serviceDeployed;
 
 	@XmlTransient
@@ -57,16 +55,22 @@ public class ServiceEntity implements Serializable {
 	public ServiceEntity() {
 	}
 
-	public ServiceEntity(CloudService serviceOriginal, CloudService serviceDeployed) {
+	public ServiceEntity(CloudService serviceDeployed) {
 		dateCreated = new Date();
-		this.id = serviceOriginal.getId();
-		this.name = serviceOriginal.getName();
-		this.serviceOriginal = serviceOriginal;
+		this.id = serviceDeployed.getId();
+		this.name = serviceDeployed.getName();
 		this.serviceDeployed = serviceDeployed;
 		deployment = true;
 		monitoring = false;
 		control = false;
 		recording = false;
+	}
+
+	public void addJob(Job job) {
+		if (jobs == null) {
+			jobs = new ArrayList<>();
+		}
+		jobs.add(job);
 	}
 
 	// GENERATED METHODS
@@ -93,14 +97,6 @@ public class ServiceEntity implements Serializable {
 
 	public void setDateCreated(Date dateCreated) {
 		this.dateCreated = dateCreated;
-	}
-
-	public CloudService getServiceOriginal() {
-		return serviceOriginal;
-	}
-
-	public void setServiceOriginal(CloudService serviceOriginal) {
-		this.serviceOriginal = serviceOriginal;
 	}
 
 	public CloudService getServiceDeployed() {
@@ -171,7 +167,7 @@ public class ServiceEntity implements Serializable {
 	public String toString() {
 		return "ServiceEntity [id=" + id + ", name=" + name + ", dateCreated=" + dateCreated + ", deployment="
 				+ deployment + ", monitoring=" + monitoring + ", control=" + control + ", recording=" + recording
-				+ ", serviceOriginal=" + ((serviceOriginal == null) ? null : "data") + ", serviceDeployed="
+				+ ", serviceDeployed="
 				+ ((serviceDeployed == null) ? null : "data") + ", mcr=" + ((mcr == null) ? null : "data")
 				+ ", effects=" + ((effects == null) ? null : "data") + "]";
 	}

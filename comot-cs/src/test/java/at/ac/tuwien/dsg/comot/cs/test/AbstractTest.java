@@ -1,12 +1,17 @@
 package at.ac.tuwien.dsg.comot.cs.test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.oasis.tosca.Definitions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +21,7 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import at.ac.tuwien.dsg.comot.common.Utils;
 import at.ac.tuwien.dsg.comot.common.coreservices.ControlClient;
 import at.ac.tuwien.dsg.comot.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.common.coreservices.MonitoringClient;
@@ -76,6 +82,20 @@ public abstract class AbstractTest {
 		deploymentDescription.setAccessIP("localhost");
 		deploymentDescription.setCloudServiceID(serviceId);
 		deploymentDescription.setDeployments(deployments);
+	}
+
+	public static Definitions loadTosca(String path)
+			throws JAXBException, IOException {
+
+		Definitions xmlContent = null;
+
+		JAXBContext context = JAXBContext.newInstance(Definitions.class);
+		Unmarshaller unmarshaller = context.createUnmarshaller();
+
+		xmlContent = (Definitions) unmarshaller
+				.unmarshal(Utils.loadFileFromSystem(path));
+
+		return xmlContent;
 	}
 
 }

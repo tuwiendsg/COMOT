@@ -45,8 +45,8 @@ define(function(require) {
 						}
 						if (model.checkboxReco() === true) {
 							comot.startRecording(result, function() {
-								notify.success("Recording stopped for " + result);
-							}, "Failed to stop recording for " + result);
+								notify.success("Recording started for " + result);
+							}, "Failed to start recording for " + result);
 
 							console.log("reco")
 						}

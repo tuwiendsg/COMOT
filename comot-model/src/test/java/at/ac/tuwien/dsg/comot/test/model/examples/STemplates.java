@@ -2,9 +2,9 @@ package at.ac.tuwien.dsg.comot.test.model.examples;
 
 import at.ac.tuwien.dsg.comot.model.SyblDirective;
 import at.ac.tuwien.dsg.comot.model.node.ArtifactTemplate;
+import at.ac.tuwien.dsg.comot.model.node.Properties;
 import at.ac.tuwien.dsg.comot.model.node.UnitInstance;
 import at.ac.tuwien.dsg.comot.model.node.UnitInstanceOs;
-import at.ac.tuwien.dsg.comot.model.node.Properties;
 import at.ac.tuwien.dsg.comot.model.relationship.ConnectToRel;
 import at.ac.tuwien.dsg.comot.model.relationship.HostOnRel;
 import at.ac.tuwien.dsg.comot.model.structure.CloudService;

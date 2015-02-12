@@ -1,7 +1,9 @@
 package at.ac.tuwien.dsg.comot.model.node;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -49,6 +51,10 @@ public class ArtifactTemplate implements HasUniqueId, Serializable {
 			uris = new HashSet<String>();
 		}
 		uris.add(reference);
+	}
+
+	public List<String> getUrisList() {
+		return new ArrayList<String>(uris);
 	}
 
 	// GENERATED METHODS
