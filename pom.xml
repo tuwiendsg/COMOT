@@ -27,6 +27,7 @@
 		<profile>
 			<id>noJAXB</id><!-- do not regenerate JAXB binding classes -->
 			<modules>
+				<!-- <module>comot-compact-distribution</module> -->
 				<!-- <module>comot-elise</module> -->
 				<module>comot-fluent-api</module>
 				<module>comot-manager</module>
@@ -40,10 +41,12 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
+				<!-- <module>comot-compact-distribution</module> -->
 				<!-- <module>comot-elise</module> -->
 				<module>comot-fluent-api</module>
 				<module>comot-manager</module>
 				<module>comot-model</module>
+				<module>comot-visualization-service</module>
 				<module>comot-tosca</module>
 			</modules>
 		</profile>
