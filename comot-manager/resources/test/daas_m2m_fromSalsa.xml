@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:Definitions xmlns:ns2="http://docs.oasis-open.org/tosca/ns/2011/12" id="DaaSApp" name="DaaSApp"
+	targetNamespace="http://tempuri.org">
+	<ns2:ServiceTemplate id="DataEndServiceTopology1" substitutableNodeType="DataEndServiceTopology">
+		<ns2:TopologyTemplate>
+
+			<ns2:NodeTemplate xmlns:salsa="http://example.com" name="Cassandra head node" minInstances="1"
+				maxInstances="1" id="CassandraSeed" type="salsa:software">
+				<ns2:Properties />
+				<ns2:Capabilities>
+					<ns2:Capability name="CassandraSeed_capa_for_CassandraNode" id="CassandraSeed_capa_for_CassandraNode" />
+					<ns2:Capability name="CassandraSeed_capa_for_EventProcessing" id="CassandraSeed_capa_for_EventProcessing" />
+				</ns2:Capabilities>
+				<ns2:DeploymentArtifacts>
+					<ns2:DeploymentArtifact name="Deployment script" artifactType="salsa:sh" artifactRef="deployCassandraSeed" />
+				</ns2:DeploymentArtifacts>
+			</ns2:NodeTemplate>
+
+			<ns2:NodeTemplate xmlns:salsa="http://example.com" name="Cassandra data node" minInstances="1"
+				maxInstances="10" id="CassandraNode" type="salsa:software">
+				<ns2:Properties />
+				<ns2:Requirements>
+					<ns2:Requirement name="CassandraNode_req_CassandraSeed" fulfilled="false" id="CassandraNode_req_CassandraSeed" />
+				</ns2:Requirements>
+				<ns2:DeploymentArtifacts>
+					<ns2:DeploymentArtifact name="Deployment script" artifactType="salsa:sh" artifactRef="deployCassandraNode" />
+				</ns2:DeploymentArtifacts>
+			</ns2:NodeTemplate>
+
+			<ns2:NodeTemplate minInstances="1" maxInstances="unbounded" id="os_OF_CassandraSeed" type="os">
+				<ns2:Properties>
+					<MappingProperties>
+						<MappingProperty type="os">
+							<property name="instanceType">000000960</property>
+							<property name="packages"></property>
+							<property name="provider">dsg@openstack</property>
+							<property name="baseImage">8f1428ac-f239-42e0-ab35-137f6e234101</property>
+						</MappingProperty>
+					</MappingProperties>
+				</ns2:Properties>
+			</ns2:NodeTemplate>
+
+			<ns2:NodeTemplate minInstances="1" maxInstances="unbounded" id="os_OF_CassandraNode" type="os">
+				<ns2:Properties>
+					<MappingProperties>
+						<MappingProperty type="os">
+							<property name="instanceType">000000960</property>
+							<property name="packages"></property>
+							<property name="provider">dsg@openstack</property>
+							<property name="baseImage">8f1428ac-f239-42e0-ab35-137f6e234101</property>
+						</MappingProperty>
+					</MappingProperties>
+				</ns2:Properties>
+			</ns2:NodeTemplate>
+
+			<ns2:RelationshipTemplate id="CassandraSeed_HOSTON_os_OF_CassandraSeed" type="HOSTON">
+				<ns2:SourceElement ref="CassandraSeed" />
+				<ns2:TargetElement ref="os_OF_CassandraSeed" />
+			</ns2:RelationshipTemplate>
+			<ns2:RelationshipTemplate xmlns:salsa="http://example.com" name="Relation" id="head2datanode"
+				type="salsa:CONNECTTO">
+				<ns2:SourceElement ref="CassandraSeed_capa_for_CassandraNode" />
+				<ns2:TargetElement ref="CassandraNode_req_CassandraSeed" />
+			</ns2:RelationshipTemplate>
+			<ns2:RelationshipTemplate id="CassandraNode_HOSTON_os_OF_CassandraNode" type="HOSTON">
+				<ns2:SourceElement ref="CassandraNode" />
+				<ns2:TargetElement ref="os_OF_CassandraNode" />
+			</ns2:RelationshipTemplate>
+
+		</ns2:TopologyTemplate>
+	</ns2:ServiceTemplate>
+	<ns2:ServiceTemplate id="EventProcessingServiceTopology1" substitutableNodeType="EventProcessingServiceTopology">
+		<ns2:TopologyTemplate>
+
+			<ns2:NodeTemplate xmlns:salsa="http://example.com" name="Load Balancer" id="LoadBalancer" type="salsa:software">
+				<ns2:Properties />
+				<ns2:Capabilities>
+					<ns2:Capability name="LoadBalancer_capa_for_EventProcessing" id="LoadBalancer_capa_for_EventProcessing" />
+				</ns2:Capabilities>
+				<ns2:DeploymentArtifacts>
+					<ns2:DeploymentArtifact name="deploy" artifactType="salsa:sh" artifactRef="deployLoadBalancer" />
+				</ns2:DeploymentArtifacts>
+			</ns2:NodeTemplate>
+
+			<ns2:NodeTemplate xmlns:salsa="http://example.com" name="Event Processing" id="EventProcessing"
+				type="salsa:software">
+				<ns2:Properties />
+				<ns2:Requirements>
+					<ns2:Requirement name="EventProcessing_req_LoadBalancer" fulfilled="false"
+						id="EventProcessing_req_LoadBalancer" />
+					<ns2:Requirement name="EventProcessing_req_CassandraSeed" fulfilled="false"
+						id="EventProcessing_req_CassandraSeed" />
+				</ns2:Requirements>
+				<ns2:DeploymentArtifacts>
+					<ns2:DeploymentArtifact name="deploy" artifactType="salsa:sh" artifactRef="deployEventProcessing" />
+				</ns2:DeploymentArtifacts>
+			</ns2:NodeTemplate>
+
+			<ns2:NodeTemplate minInstances="1" maxInstances="unbounded" id="os_OF_LoadBalancer" type="os">
+				<ns2:Properties>
+					<MappingProperties>
+						<MappingProperty type="os">
+							<property name="instanceType">000000960</property>
+							<property name="packages"></property>
+							<property name="provider">dsg@openstack</property>
+							<property name="baseImage">8f1428ac-f239-42e0-ab35-137f6e234101</property>
+						</MappingProperty>
+					</MappingProperties>
+				</ns2:Properties>
+			</ns2:NodeTemplate>
+
+			<ns2:NodeTemplate minInstances="1" maxInstances="unbounded" id="os_OF_EventProcessing" type="os">
+				<ns2:Properties>
+					<MappingProperties>
+						<MappingProperty type="os">
+							<property name="instanceType">000000960</property>
+							<property name="packages"></property>
+							<property name="provider">dsg@openstack</property>
+							<property name="baseImage">8f1428ac-f239-42e0-ab35-137f6e234101</property>
+						</MappingProperty>
+					</MappingProperties>
+				</ns2:Properties>
+			</ns2:NodeTemplate>
+
+			<ns2:RelationshipTemplate id="LoadBalancer_HOSTON_os_OF_LoadBalancer" type="HOSTON">
+				<ns2:SourceElement ref="LoadBalancer" />
+				<ns2:TargetElement ref="os_OF_LoadBalancer" />
+			</ns2:RelationshipTemplate>
+			<ns2:RelationshipTemplate xmlns:salsa="http://example.com" name="Relation"
+				id="loadbalancer2EventProcessing" type="salsa:CONNECTTO">
+				<ns2:SourceElement ref="LoadBalancer_capa_for_EventProcessing" />
+				<ns2:TargetElement ref="EventProcessing_req_LoadBalancer" />
+			</ns2:RelationshipTemplate>
+			<ns2:RelationshipTemplate xmlns:salsa="http://example.com" name="Relation"
+				id="EventProcessing2CassandraHead" type="salsa:CONNECTTO">
+				<ns2:SourceElement ref="CassandraSeed_capa_for_EventProcessing" />
+				<ns2:TargetElement ref="EventProcessing_req_CassandraSeed" />
+			</ns2:RelationshipTemplate>
+			<ns2:RelationshipTemplate id="EventProcessing_HOSTON_os_OF_EventProcessing" type="HOSTON">
+				<ns2:SourceElement ref="EventProcessing" />
+				<ns2:TargetElement ref="os_OF_EventProcessing" />
+			</ns2:RelationshipTemplate>
+
+		</ns2:TopologyTemplate>
+	</ns2:ServiceTemplate>
+
+	<ns2:ArtifactTemplate xmlns:salsa="http://example.com" id="deployCassandraSeed" type="salsa:sh">
+		<ns2:ArtifactReferences>
+			<ns2:ArtifactReference reference="http://128.130.172.215/salsa/upload/files/DaasService/deployCassandraSeed.sh" />
+		</ns2:ArtifactReferences>
+	</ns2:ArtifactTemplate>
+	<ns2:ArtifactTemplate xmlns:salsa="http://example.com" id="deployCassandraNode" type="salsa:sh">
+		<ns2:ArtifactReferences>
+			<ns2:ArtifactReference reference="http://128.130.172.215/salsa/upload/files/DaasService/deployCassandraNode.sh" />
+		</ns2:ArtifactReferences>
+	</ns2:ArtifactTemplate>
+	<ns2:ArtifactTemplate xmlns:salsa="http://example.com" id="deployLoadBalancer" type="salsa:sh">
+		<ns2:ArtifactReferences>
+			<ns2:ArtifactReference reference="http://128.130.172.215/salsa/upload/files/DaasService/deployLoadBalancer.sh" />
+		</ns2:ArtifactReferences>
+	</ns2:ArtifactTemplate>
+	<ns2:ArtifactTemplate xmlns:salsa="http://example.com" id="deployEventProcessing" type="salsa:sh">
+		<ns2:ArtifactReferences>
+			<ns2:ArtifactReference reference="http://128.130.172.215/salsa/upload/files/DaasService/deployWorkloadGenerator.sh" />
+		</ns2:ArtifactReferences>
+	</ns2:ArtifactTemplate>
+
+</ns2:Definitions>

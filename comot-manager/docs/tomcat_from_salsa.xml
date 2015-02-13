@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:Definitions xmlns:ns2="http://docs.oasis-open.org/tosca/ns/2011/12" id="SalsaExample_comot" targetNamespace="http://tempuri.org">
+    <ns2:ServiceTemplate id="SampleService_test">
+        <ns2:TopologyTemplate>
+            <ns2:NodeTemplate xmlns:salsa="http://example.com" name="policeApp" minInstances="1" maxInstances="1" id="policeApp" type="salsa:war">
+                <ns2:Properties>
+                    <MappingProperties/>
+                </ns2:Properties>
+                <ns2:DeploymentArtifacts>
+                    <ns2:DeploymentArtifact name="Deployment script" artifactType="salsa:war" artifactRef="deployWar"/>
+                </ns2:DeploymentArtifacts>
+            </ns2:NodeTemplate>
+            <ns2:NodeTemplate minInstances="1" maxInstances="1" id="tomcat_OF_policeApp" type="tomcat">
+                <ns2:Properties>
+                    <MappingProperties>
+                        <MappingProperty type="action">
+                            <property name="deploy">apt-get -y install tomcat7</property>
+                            <property name="undeploy">apt-get -y erase tomcat7</property>
+                            <property name="start">service tomcat7 start</property>
+                            <property name="stop">service tomcat7 stop</property>
+                        </MappingProperty>
+                    </MappingProperties>
+                </ns2:Properties>
+            </ns2:NodeTemplate>
+            <ns2:RelationshipTemplate id="policeApp_HOSTON_tomcat_OF_policeApp" type="HOSTON">
+                <ns2:SourceElement ref="policeApp"/>
+                <ns2:TargetElement ref="tomcat_OF_policeApp"/>
+            </ns2:RelationshipTemplate>
+            <ns2:NodeTemplate minInstances="1" maxInstances="unbounded" id="os_OF_tomcat_OF_policeApp" type="os">
+                <ns2:Properties>
+                    <MappingProperties>
+                        <MappingProperty type="salsa:os">
+                            <property name="instanceType">000000960</property>
+                            <property name="provider">dsg@openstack</property>
+                            <property name="baseImage">8f1428ac-f239-42e0-ab35-137f6e234101</property>
+                            <property name="packages">openjdk-7-jre</property>
+                        </MappingProperty>
+                        <MappingProperty type="os">
+                            <property name="instanceType">000000960</property>
+                            <property name="packages"></property>
+                            <property name="provider">dsg@openstack</property>
+                            <property name="baseImage">8f1428ac-f239-42e0-ab35-137f6e234101</property>
+                        </MappingProperty>
+                    </MappingProperties>
+                </ns2:Properties>
+            </ns2:NodeTemplate>
+            <ns2:RelationshipTemplate id="tomcat_OF_policeApp_HOSTON_os_OF_tomcat_OF_policeApp" type="HOSTON">
+                <ns2:SourceElement ref="tomcat_OF_policeApp"/>
+                <ns2:TargetElement ref="os_OF_tomcat_OF_policeApp"/>
+            </ns2:RelationshipTemplate>
+        </ns2:TopologyTemplate>
+    </ns2:ServiceTemplate>
+    <ns2:ArtifactTemplate xmlns:salsa="http://example.com" id="deployWar" type="salsa:war">
+        <ns2:ArtifactReferences>
+            <ns2:ArtifactReference reference="http://128.130.172.215/salsa/upload/files/ASE/PoliceDaaS.war"/>
+        </ns2:ArtifactReferences>
+    </ns2:ArtifactTemplate>
+</ns2:Definitions>
