@@ -1,139 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-	<groupId>at.ac.tuwien.dsg.comot</groupId>
-    <artifactId>comot-elise</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <groupId>at.ac.tuwien.dsg.comot.elise</groupId>
+    <artifactId>ELISE</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.1.8.RELEASE</version>
-    </parent>
-
-<!--     <parent> -->
-<!--         <groupId>at.ac.tuwien.dsg.comot</groupId> -->
-<!--         <artifactId>comot-parent</artifactId> -->
-<!--         <relativePath>../pom.xml</relativePath> -->
-<!--         <version>0.0.1-SNAPSHOT</version> -->
-<!--     </parent> -->
+    <name>ELISE</name>
+    <url>http://maven.apache.org</url>
 
     <properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>1.7</java.version>
-		<start-class>at.ac.tuwien.dsg.elise.Application.RunService</start-class>	
-	</properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-rest</artifactId>
-<!--        		<version>1.1.8.RELEASE</version> -->
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>                
-        
-        <dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-neo4j-rest</artifactId>
-			<version>3.2.1.RELEASE</version>
-		</dependency>
-		        
-        
-<!--         <dependency> -->
-<!--             <groupId>org.springframework</groupId> -->
-<!--             <artifactId>spring-context</artifactId> -->
-<!--         </dependency> -->
-<!--         <dependency> -->
-<!--             <groupId>org.springframework</groupId> -->
-<!--             <artifactId>spring-tx</artifactId> -->
-<!--         </dependency> -->
-<!--         <dependency> -->
-<!--             <groupId>org.springframework.data</groupId> -->
-<!--             <artifactId>spring-data-neo4j</artifactId> -->
-<!--         </dependency> -->
-        <dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-neo4j</artifactId>
-<!-- 			<version>3.2.0.RELEASE</version> -->
-		</dependency>
-		
-<!-- 		<dependency> -->
-<!-- 			<groupId>commons-io</groupId> -->
-<!-- 			<artifactId>commons-io</artifactId> -->
-<!-- 			<version>2.4</version> -->
-<!-- 		</dependency> -->
-		
-		<dependency>
-			<groupId>org.apache.jclouds.api</groupId>
-			<artifactId>openstack-nova-ec2</artifactId>
-			<version>1.7.2</version>
-		</dependency>
-        
-<!--         <dependency>  -->
-<!-- 		    <groupId>org.neo4j</groupId>  -->
-<!-- 		    <artifactId>neo4j-rest-graphdb</artifactId>  -->
-<!-- 		    <version>2.0.1</version>  -->
-<!-- 		  </dependency> -->
-        
-        
-        <dependency>
-             <groupId>org.hibernate</groupId>
-             <artifactId>hibernate-validator</artifactId>
-        </dependency>
-        
-        <dependency>
-		  <groupId>at.ac.tuwien.dsg.cloud.salsa</groupId>
-		  <artifactId>flexiant-jade-user</artifactId>
-		  <version>0.0.1-SNAPSHOT</version>
-<!-- 		  <scope>system</scope> -->
-<!-- 		  <systemPath>${project.basedir}/lib/flexiant-jade-user-0.0.1-SNAPSHOT.jar</systemPath> -->
-		</dependency>
-        
-    </dependencies>
-
-    <build>
-    	<finalName>comot-elise</finalName>
-        <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                
-                <configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-				</configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
-    <repositories>
-        <repository>
-            <id>spring-releases</id>
-            <name>Spring Releases</name>
-            <url>http://repo.spring.io/libs-release</url>
-        </repository>
-        <repository>
-            <id>neo4j</id>
-            <name>Neo4j</name>
-            <url>http://m2.neo4j.org/</url>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>spring-releases</id>
-            <name>Spring Releases</name>
-            <url>http://repo.spring.io/libs-release</url>
-        </pluginRepository>
-    </pluginRepositories>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+	
+    <modules>
+	<module>elise-common</module>
+        <module>elise-service</module>
+        <module>elise-collector</module>
+	<module>elise-extension</module>
+    </modules>
 
 </project>
