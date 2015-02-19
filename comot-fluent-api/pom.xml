@@ -77,6 +77,51 @@
 				<artifactId>comot-tosca</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
+			
+			<!-- TU Wien DSG -->
+			<dependency>
+				<groupId>at.ac.tuwien.mela</groupId>
+				<artifactId>MELA-Common</artifactId>
+				<version>3.0-SNAPSHOT</version>
+				<exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>   
+            </exclusions>
+			</dependency>
+			<dependency>
+				<groupId>at.ac.tuwien.rSYBL.control-service</groupId>
+				<artifactId>rSYBL-cloud-application-dependency-graph</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>at.ac.tuwien.dsg.cloud.salsa</groupId>
+				<artifactId>salsa-common</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+				<exclusions>
+                <exclusion>
+                    <groupId>com.sun.jersey</groupId>
+                    <artifactId>jersey-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+			</dependency>
 
 		</dependencies>
 	</dependencyManagement>

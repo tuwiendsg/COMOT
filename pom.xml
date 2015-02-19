@@ -87,7 +87,15 @@
 				<exclusions>
 					<exclusion>
 						<groupId>ch.qos.logback</groupId>
-						<artifactId>*</artifactId>
+						<artifactId>logback-access</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>ch.qos.logback</groupId>
+						<artifactId>logback-classic</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>ch.qos.logback</groupId>
+						<artifactId>logback-core</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -99,7 +107,15 @@
 				<exclusions>
 					<exclusion>
 						<groupId>ch.qos.logback</groupId>
-						<artifactId>*</artifactId>
+						<artifactId>logback-access</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>ch.qos.logback</groupId>
+						<artifactId>logback-classic</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>ch.qos.logback</groupId>
+						<artifactId>logback-core</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -131,40 +147,6 @@
 				<version>15.0</version>
 			</dependency>
 
-			<!-- TU Wien DSG -->
-			<dependency>
-				<groupId>at.ac.tuwien.mela</groupId>
-				<artifactId>MELA-Common</artifactId>
-				<version>3.0-SNAPSHOT</version>
-				<exclusions>
-					<exclusion>
-						<groupId>*</groupId>
-						<artifactId>*</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>at.ac.tuwien.rSYBL.control-service</groupId>
-				<artifactId>rSYBL-cloud-application-dependency-graph</artifactId>
-				<version>1.0-SNAPSHOT</version>
-				<exclusions>
-					<exclusion>
-						<groupId>*</groupId>
-						<artifactId>*</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>at.ac.tuwien.dsg.cloud.salsa</groupId>
-				<artifactId>salsa-common</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
-				<exclusions>
-					<exclusion>
-						<groupId>*</groupId>
-						<artifactId>*</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
