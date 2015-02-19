@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:Definitions xmlns:ns2="http://docs.oasis-open.org/tosca/ns/2011/12" id="comot_elasticWS" name="comot_elasticWS"
+	targetNamespace="http://tempuri.org" xmlns:salsa="http://example.com">
+
+	<ns2:ServiceTemplate id="elasticWS_topo">
+		<ns2:TopologyTemplate>
+
+			<ns2:NodeTemplate name="elasticWS" minInstances="1" maxInstances="10"
+				id="elasticWS" type="salsa:war">
+				<ns2:Properties>
+					<MappingProperties>
+						<MappingProperty type="action">
+							<property name="undeploy">./undeploy.sh</property>
+						</MappingProperty>
+					</MappingProperties>
+				</ns2:Properties>
+				<ns2:DeploymentArtifacts>
+					<ns2:DeploymentArtifact name="Deployment script" artifactType="salsa:sh" artifactRef="artWar" />
+				</ns2:DeploymentArtifacts>
+			</ns2:NodeTemplate>
+
+			<ns2:RelationshipTemplate id="elasticWS_HOSTON_tomcat_OF_elasticWS" type="HOSTON">
+				<ns2:SourceElement ref="elasticWS" />
+				<ns2:TargetElement ref="tomcat_OF_elasticWS" />
+			</ns2:RelationshipTemplate>
+
+
+			<ns2:NodeTemplate minInstances="1" maxInstances="1" id="tomcat_OF_elasticWS" type="salsa:tomcat">
+				<ns2:Properties>
+					<MappingProperties>
+						<MappingProperty type="action">
+							<property name="undeploy">./undeploy.sh</property>
+						</MappingProperty>
+					</MappingProperties>
+				</ns2:Properties>
+				<ns2:DeploymentArtifacts>
+					<ns2:DeploymentArtifact name="deploy" artifactType="salsa:sh" artifactRef="artTomcat" />
+				</ns2:DeploymentArtifacts>
+			</ns2:NodeTemplate>
+
+			<ns2:RelationshipTemplate id="tomcat_OF_elasticWS_HOSTON_os_OF_tomcat_OF_elasticWS" type="HOSTON">
+				<ns2:SourceElement ref="tomcat_OF_elasticWS" />
+				<ns2:TargetElement ref="os_OF_tomcat_OF_elasticWS" />
+			</ns2:RelationshipTemplate>
+
+			<ns2:NodeTemplate id="os_OF_tomcat_OF_elasticWS" type="os">
+				<ns2:Properties>
+					<MappingProperties>
+						<MappingProperty type="os">
+							<property name="instanceType">000000960</property>
+							<property name="provider">dsg@openstack</property>
+							<property name="baseImage">8f1428ac-f239-42e0-ab35-137f6e234101</property>
+							<property name="packages">gmetad,ganglia-monitor,openjdk-7-jre</property>
+						</MappingProperty>
+					</MappingProperties>
+				</ns2:Properties>
+			</ns2:NodeTemplate>
+
+		</ns2:TopologyTemplate>
+	</ns2:ServiceTemplate>
+
+	<ns2:ArtifactTemplate id="artWar" type="salsa:sh">
+		<ns2:ArtifactReferences>
+			<ns2:ArtifactReference reference="http://128.130.172.215/salsa/upload/files/juraj/elasticWS/deployWar.sh" />
+		</ns2:ArtifactReferences>
+	</ns2:ArtifactTemplate>
+	<ns2:ArtifactTemplate id="artTomcat" type="salsa:sh">
+		<ns2:ArtifactReferences>
+			<ns2:ArtifactReference reference="http://128.130.172.215/salsa/upload/files/juraj/elasticWS/deployTomcat.sh" />
+		</ns2:ArtifactReferences>
+	</ns2:ArtifactTemplate>
+
+</ns2:Definitions>

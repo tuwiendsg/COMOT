@@ -1,0 +1,85 @@
+{
+	"id": "serviceId",
+	"currentState": "IDLE",
+	"previousState": "null",
+	"type": "SERVICE",
+	"parent": "null",
+	"members": 
+	[
+		{
+			"id": "topologyId",
+			"currentState": "IDLE",
+			"previousState": "null",
+			"type": "TOPOLOGY",
+			"parent": "serviceId",
+			"members": 
+			[
+				{
+					"id": "osId",
+					"currentState": "IDLE",
+					"previousState": "null",
+					"type": "UNIT",
+					"parent": "topologyId",
+					"members": 
+					[
+						{
+							"id": "osId_instance",
+							"currentState": "IDLE",
+							"previousState": "null",
+							"type": "INSTANCE",
+							"parent": "osId",
+							"members": 
+							[
+								
+							]
+						}
+					]
+				},
+
+				{
+					"id": "nodeId",
+					"currentState": "IDLE",
+					"previousState": "null",
+					"type": "UNIT",
+					"parent": "topologyId",
+					"members": 
+					[
+						{
+							"id": "nodeId_instance",
+							"currentState": "IDLE",
+							"previousState": "null",
+							"type": "INSTANCE",
+							"parent": "nodeId",
+							"members": 
+							[
+								
+							]
+						}
+					]
+				},
+
+				{
+					"id": "nodeId2",
+					"currentState": "IDLE",
+					"previousState": "null",
+					"type": "UNIT",
+					"parent": "topologyId",
+					"members": 
+					[
+						{
+							"id": "nodeId2_instance",
+							"currentState": "IDLE",
+							"previousState": "null",
+							"type": "INSTANCE",
+							"parent": "nodeId2",
+							"members": 
+							[
+								
+							]
+						}
+					]
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.1.6" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true">  
+  <enumeration id="1" language="java" name="at.ac.tuwien.dsg.comot.common.model.type.NodeType" 
+    project="comot-common-graph" 
+    file="/comot-common-graph/src/main/java/at/ac/tuwien/dsg/comot/common/model/type/NodeType.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="96" width="196" x="41" y="37"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </enumeration>  
+  <class id="2" language="java" name="at.ac.tuwien.dsg.comot.common.model.structure.ServiceTopology" 
+    project="comot-common-graph" 
+    file="/comot-common-graph/src/main/java/at/ac/tuwien/dsg/comot/common/model/structure/ServiceTopology.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="42" width="214" x="1089" y="273"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="3" language="java" name="at.ac.tuwien.dsg.comot.common.model.SyblDirective" project="comot-common-graph" 
+    file="/comot-common-graph/src/main/java/at/ac/tuwien/dsg/comot/common/model/SyblDirective.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="60" width="174" x="772" y="173"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="4" language="java" name="at.ac.tuwien.dsg.comot.common.model.structure.ServicePart" 
+    project="comot-common-graph" 
+    file="/comot-common-graph/src/main/java/at/ac/tuwien/dsg/comot/common/model/structure/ServicePart.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="60" width="214" x="1221" y="37"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <enumeration id="5" language="java" name="at.ac.tuwien.dsg.comot.common.model.type.RelationshipType" 
+    project="comot-common-graph" 
+    file="/comot-common-graph/src/main/java/at/ac/tuwien/dsg/comot/common/model/type/RelationshipType.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="96" width="196" x="985" y="37"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </enumeration>  
+  <enumeration id="6" language="java" name="at.ac.tuwien.dsg.comot.common.model.type.CapabilityType" 
+    project="comot-common" 
+    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/type/CapabilityType.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="78" width="196" x="513" y="37"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </enumeration>  
+  <class id="7" language="java" name="at.ac.tuwien.dsg.comot.common.model.structure.CloudService" 
+    project="comot-common-graph" 
+    file="/comot-common-graph/src/main/java/at/ac/tuwien/dsg/comot/common/model/structure/CloudService.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="42" width="214" x="986" y="173"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="8" language="java" name="at.ac.tuwien.dsg.comot.common.model.EntityRelationship" project="comot-common" 
+    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/EntityRelationship.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="42" width="174" x="812" y="501"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <enumeration id="9" language="java" name="at.ac.tuwien.dsg.comot.common.model.type.ArtifactType" 
+    project="comot-common-graph" 
+    file="/comot-common-graph/src/main/java/at/ac/tuwien/dsg/comot/common/model/type/ArtifactType.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="78" width="196" x="749" y="37"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </enumeration>  
+  <class id="10" language="java" name="at.ac.tuwien.dsg.comot.common.model.structure.StackNode" 
+    project="comot-common-graph" 
+    file="/comot-common-graph/src/main/java/at/ac/tuwien/dsg/comot/common/model/structure/StackNode.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="96" width="214" x="1334" y="365"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <enumeration id="11" language="java" name="at.ac.tuwien.dsg.comot.common.model.type.RequirementType" 
+    project="comot-common" 
+    file="/comot-common/src/main/java/at/ac/tuwien/dsg/comot/common/model/type/RequirementType.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="78" width="196" x="277" y="37"/>    
+    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </enumeration>  
+  <association id="12">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="13" name="serviceTopologies"/>      
+      <multiplicity id="14" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="15">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="16" name="nodes"/>      
+      <multiplicity id="17" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="10" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="18">    
+    <bendpoint x="1230" y="173"/>    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="4"/>  
+  </generalization>  
+  <association id="19">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="20" name="serviceTopologies"/>      
+      <multiplicity id="21" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="22">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="4"/>  
+  </generalization>  
+  <association id="23">    
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="24" name="directives"/>      
+      <multiplicity id="25" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <classifier-display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" 
+    accessors="true" visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true" static="true"/>    
+    <operations public="false" package="false" protected="false" private="false" static="false"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>

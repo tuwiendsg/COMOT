@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>comot-fluent-api</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>COMOT Fluent Java API</name>
+	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>at.ac.tuwien.dsg.comot</groupId>
+		<artifactId>comot-parent</artifactId>
+		<relativePath>../pom.xml</relativePath>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
+	<modules>
+		<module>comot-fluent-bundles</module>
+		<module>comot-fluent-client</module>
+		<module>comot-fluent-common</module>
+		<module>comot-fluent-core</module>
+		<module>comot-fluent-platform</module>
+		<module>comot-fluent-samples</module>
+	</modules>
+
+	<dependencyManagement>
+		<dependencies>
+
+			<dependency>
+				<groupId>org.yaml</groupId>
+				<artifactId>snakeyaml</artifactId>
+				<version>1.13</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpmime</artifactId>
+				<version>4.2.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.codehaus.groovy.modules.http-builder</groupId>
+				<artifactId>http-builder</artifactId>
+				<version>0.7.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.codehaus.groovy</groupId>
+				<artifactId>groovy-all</artifactId>
+				<version>${groovy.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>at.ac.tuwien.dsg.comot</groupId>
+				<artifactId>comot-fluent-common</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>at.ac.tuwien.dsg.comot</groupId>
+				<artifactId>comot-fluent-bundles</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>at.ac.tuwien.dsg.comot</groupId>
+				<artifactId>comot-fluent-core</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>at.ac.tuwien.dsg.comot</groupId>
+				<artifactId>comot-fluent-samples</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>at.ac.tuwien.dsg.comot</groupId>
+				<artifactId>comot-fluent-client</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>at.ac.tuwien.dsg.comot</groupId>
+				<artifactId>comot-tosca</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			
+			<!-- TU Wien DSG -->
+			<dependency>
+				<groupId>at.ac.tuwien.mela</groupId>
+				<artifactId>MELA-Common</artifactId>
+				<version>3.0-SNAPSHOT</version>
+				<exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>   
+            </exclusions>
+			</dependency>
+			<dependency>
+				<groupId>at.ac.tuwien.rSYBL.control-service</groupId>
+				<artifactId>rSYBL-cloud-application-dependency-graph</artifactId>
+				<version>1.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>at.ac.tuwien.dsg.cloud.salsa</groupId>
+				<artifactId>salsa-common</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+				<exclusions>
+                <exclusion>
+                    <groupId>com.sun.jersey</groupId>
+                    <artifactId>jersey-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.0.13</version>
+		</dependency>
+
+		<!-- TEST dependencies -->
+		<dependency>
+			<groupId>org.eclipse.jetty.toolchain</groupId>
+			<artifactId>jetty-test-helper</artifactId>
+			<version>2.2</version>
+			<exclusions>
+				<exclusion>
+					<groupId>junit</groupId>
+					<artifactId>junit-dep</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.jayway.restassured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>2.3.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.codehaus.groovy</groupId>
+					<artifactId>groovy</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+
+		</plugins>
+	</build>
+
+</project>

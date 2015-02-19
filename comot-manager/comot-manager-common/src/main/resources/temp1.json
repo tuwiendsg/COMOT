@@ -1,0 +1,199 @@
+{
+	"type" : "cloudService",
+	"id" : "comot_tomcat_id",
+	"name" : "comot_tomcat_name",
+	"state" : "ALLOCATING",
+	"Directives" : {
+		"Directive" : []
+	},
+
+	"Topology" : [{
+			"id" : "SampleService_test",
+			"state" : "ALLOCATING",
+			"Directives" : {
+				"Directive" : []
+			},
+
+			"StackNodes" : {
+				"Node" : [{
+						"id" : "os_OF_tomcat_OF_policeApp",
+						"minInstances" : 1,
+						"maxInstances" : 1,
+						"type" : "OS",
+						"state" : "DEPLOYED",
+						"Connections" : {
+							"Connection" : []
+						},
+
+						"LocalRelationships" : {
+							"Local" : []
+						},
+
+						"Artifacts" : {
+							"Artifact" : []
+						},
+
+						"Properties" : {
+							"Property" : [{
+									"id" : "os_OF_tomcat_OF_policeApp_property_salsa",
+									"propertiesType" : "OS",
+									"properties" : {
+										"map" : {
+											"entries" : [{
+													"key" : "instanceType",
+													"value" : "000000960"
+												},{
+													"key" : "packages",
+													"value" : "gmetad,ganglia-monitor,openjdk-7-jre"
+												},{
+													"key" : "provider",
+													"value" : "dsg@openstack"
+												},{
+													"key" : "baseImage",
+													"value" : "8f1428ac-f239-42e0-ab35-137f6e234101"
+												}]
+										}
+									}
+								}]
+						},
+
+						"Instances" : {
+							"instances" : [{
+									"id" : "os_OF_tomcat_OF_policeApp_instance_0",
+									"instanceId" : 0,
+									"state" : "DEPLOYED",
+									"type" : "nodeInstanceOs",
+									"provider" : "dsg@openstack",
+									"baseImage" : "8f1428ac-f239-42e0-ab35-137f6e234101",
+									"instanceType" : "000000960",
+									"uuid" : "ad95ac6d-fada-4fe2-a8c6-ca0df232e117",
+									"ip" : "10.99.0.83"
+								}]
+						}
+					},{
+						"id" : "tomcat_OF_policeApp",
+						"minInstances" : 1,
+						"maxInstances" : 1,
+						"type" : "TOMCAT",
+						"state" : "CONFIGURING",
+						"hostNode" : {
+							"id" : "tomcat_OF_policeApp_HOSTON_os_OF_tomcat_OF_policeApp",
+							"from" : "tomcat_OF_policeApp",
+							"to" : "os_OF_tomcat_OF_policeApp"
+						},
+
+						"Connections" : {
+							"Connection" : []
+						},
+
+						"LocalRelationships" : {
+							"Local" : []
+						},
+
+						"Artifacts" : {
+							"Artifact" : []
+						},
+
+						"Properties" : {
+							"Property" : [{
+									"id" : "tomcat_OF_policeApp_property_salsa",
+									"propertiesType" : "ACTION",
+									"properties" : {
+										"map" : {
+											"entries" : [{
+													"key" : "stop",
+													"value" : "service tomcat7 stop"
+												},{
+													"key" : "start",
+													"value" : "service tomcat7 start"
+												},{
+													"key" : "undeploy",
+													"value" : "apt-get -y erase tomcat7"
+												},{
+													"key" : "deploy",
+													"value" : "apt-get -y install tomcat7"
+												}]
+										}
+									}
+								}]
+						},
+
+						"Instances" : {
+							"instances" : [{
+									"id" : "tomcat_OF_policeApp_instance_0",
+									"instanceId" : 0,
+									"state" : "CONFIGURING",
+									"hostInstance" : "tomcat_OF_policeApp_instance_0"
+								}]
+						}
+					},{
+						"id" : "policeApp",
+						"name" : "policeApp",
+						"minInstances" : 1,
+						"maxInstances" : 1,
+						"type" : "WAR",
+						"state" : "ALLOCATING",
+						"hostNode" : {
+							"id" : "policeApp_HOSTON_tomcat_OF_policeApp",
+							"from" : "policeApp",
+							"to" : "tomcat_OF_policeApp"
+						},
+
+						"Connections" : {
+							"Connection" : []
+						},
+
+						"LocalRelationships" : {
+							"Local" : []
+						},
+
+						"Artifacts" : {
+							"Artifact" : ["deployWar"]
+						},
+
+						"Properties" : {
+							"Property" : []
+						},
+
+						"Instances" : {
+							"instances" : [{
+									"id" : "policeApp_instance_0",
+									"instanceId" : 0,
+									"state" : "ALLOCATING",
+									"hostInstance" : "policeApp_instance_0"
+								}]
+						}
+					}]
+			},
+
+			"Units" : {
+				"ServiceUnits" : [{
+						"id" : "policeApp_unit",
+						"node" : "policeApp",
+						"Directives" : {
+							"Directive" : []
+						},
+
+						"ElasticityCapabilities" : {
+							"Capability" : []
+						},
+
+						"RodeRegions" : {
+							"Region" : []
+						}
+					}]
+			},
+
+			"Topologies" : {
+				"ServiceTopologies" : []
+			}
+		}],
+
+	"Artifacts" : {
+		"Artifact" : [{
+				"id" : "deployWar",
+				"type" : "WAR_FILE",
+				"Uri" : ["http://128.130.172.215/salsa/upload/files/ASE/PoliceDaaS.war"]
+			}]
+	}
+}

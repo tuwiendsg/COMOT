@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<CloudService id="aaaa" name="SalsaExample_comot" state="RUNNING">
+    <ServiceTopology replica="0" id="SampleService_test" state="RUNNING">
+        <ServiceUnit type="war" hostedId="tomcat_OF_policeApp" connecttoId="" idCounter="2" min="1" max="1" id="policeApp" name="policeApp" state="RUNNING">
+            <Replica replica="0" uuid="03c99cad-4aab-4c7a-a44a-e48e0cbd9889" hostedId="0" instanceState="UNDEPLOYED" state="RUNNING"/>
+            <Replica replica="1" uuid="c0f3187a-f7be-46f7-8dc9-e6b4b9f5ded1" hostedId="1" instanceState="UNDEPLOYED" state="RUNNING"/>
+        </ServiceUnit>
+        <ServiceUnit type="tomcat" hostedId="os_OF_tomcat_OF_policeApp" connecttoId="" idCounter="2" min="1" max="1" id="tomcat_OF_policeApp" state="RUNNING">
+            <Primitives>
+                <Primitive name="deploy" type="SCRIPT">
+                    <executionREF>apt-get -y install tomcat7</executionREF>
+                    <executionParameter></executionParameter>
+                    <executionOutput></executionOutput>
+                </Primitive>
+                <Primitive name="undeploy" type="SCRIPT">
+                    <executionREF>apt-get -y erase tomcat7</executionREF>
+                    <executionParameter></executionParameter>
+                    <executionOutput></executionOutput>
+                </Primitive>
+                <Primitive name="start" type="SCRIPT">
+                    <executionREF>service tomcat7 start</executionREF>
+                    <executionParameter></executionParameter>
+                    <executionOutput></executionOutput>
+                </Primitive>
+                <Primitive name="stop" type="SCRIPT">
+                    <executionREF>service tomcat7 stop</executionREF>
+                    <executionParameter></executionParameter>
+                    <executionOutput></executionOutput>
+                </Primitive>
+            </Primitives>
+            <Replica replica="0" uuid="12466a2b-d9bc-43ec-9025-cf3b5090541d" hostedId="0" instanceState="UNDEPLOYED" state="RUNNING"/>
+            <Replica replica="1" uuid="8d72cb3a-cfd0-4e34-b586-5c11bc34321c" hostedId="1" instanceState="UNDEPLOYED" state="RUNNING"/>
+        </ServiceUnit>
+        <ServiceUnit type="os" hostedId="" connecttoId="" idCounter="2" min="1" max="100" id="os_OF_tomcat_OF_policeApp" state="RUNNING">
+            <Replica replica="0" uuid="965f1854-aba9-4854-9fb2-3074bee863d3" hostedId="2147483647" instanceState="UNDEPLOYED" state="RUNNING">
+                <Properties>
+                    <SalsaInstanceDescription>
+                        <provider>dsg@openstack</provider>
+                        <baseImage>8f1428ac-f239-42e0-ab35-137f6e234101</baseImage>
+                        <instanceType>000000960</instanceType>
+                        <id>f7a54a8b-4289-49de-a8f1-8d4b6101c27c</id>
+                        <privateIp>10.99.0.77</privateIp>
+                        <quota>0</quota>
+                        <Packages>
+                            <Package></Package>
+                        </Packages>
+                    </SalsaInstanceDescription>
+                </Properties>
+            </Replica>
+            <Replica replica="1" uuid="c672cb81-bd4c-41cb-9807-476f0ca12538" hostedId="2147483647" instanceState="UNDEPLOYED" state="RUNNING">
+                <Properties>
+                    <SalsaInstanceDescription>
+                        <provider>dsg@openstack</provider>
+                        <baseImage>8f1428ac-f239-42e0-ab35-137f6e234101</baseImage>
+                        <instanceType>000000960</instanceType>
+                        <id>b25b1e40-8fd3-472e-9387-9f3f06dafd23</id>
+                        <privateIp>10.99.0.92</privateIp>
+                        <quota>0</quota>
+                        <Packages>
+                            <Package></Package>
+                        </Packages>
+                    </SalsaInstanceDescription>
+                </Properties>
+            </Replica>
+        </ServiceUnit>
+    </ServiceTopology>
+</CloudService>
