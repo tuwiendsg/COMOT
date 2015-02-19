@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.model.relationship;
+package at.ac.tuwien.dsg.comot.model.devel.relationship;
 
 import java.io.Serializable;
 
@@ -13,7 +13,7 @@ import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.RelationshipEntity;
 import org.springframework.data.neo4j.annotation.StartNode;
 
-import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @RelationshipEntity

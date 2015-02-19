@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.common.model.logic.Navigator;
 import at.ac.tuwien.dsg.comot.m.ui.model.ElementState;
-import at.ac.tuwien.dsg.comot.model.node.UnitInstance;
-import at.ac.tuwien.dsg.comot.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.structure.ServiceTopology;
-import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceTopology;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 
 @Component
 public class SalsaOutputMapper {
@@ -82,7 +82,7 @@ public class SalsaOutputMapper {
 				isUnit = navigator.isTrueServiceUnit(node.getId());
 
 				if (node.getInstances().size() == 0) {
-					eNode = new ElementState(node.getId(), node.getType().toString(), node
+					eNode = new ElementState(node.getId(), node.getOsu().getType().toString(), node
 							.getState().toString());
 					eNode.setServiceUnit(isUnit);
 
@@ -90,7 +90,7 @@ public class SalsaOutputMapper {
 
 				} else {
 					for (UnitInstance instance : node.getInstances()) {
-						eInstance = new ElementState(node.getId(), node.getType().toString(), instance
+						eInstance = new ElementState(node.getId(), node.getOsu().getType().toString(), instance
 								.getState().toString());
 						eInstance.setInstanceId(instance.getInstanceId());
 						eInstance.setServiceUnit(isUnit);

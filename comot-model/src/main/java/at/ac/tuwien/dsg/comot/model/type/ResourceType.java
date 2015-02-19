@@ -1,15 +1,20 @@
 package at.ac.tuwien.dsg.comot.model.type;
 
-public enum ArtifactType {
+public enum ResourceType {
 	SCRIPT("sh"),
 	WAR_FILE("war"),
 	CHEF("chef"),
 	CHEF_SOLO("chef-solo"),
-	APT_GET_COMMAND("apt");
+	APT_GET_COMMAND("apt"),
+	//
+	INSTANCE_TYPE("instanceType"),
+	PROVIDER("provider"),
+	IMAGE("baseImage"),
+	PACKAGES("packages");
 
 	private final String type;
 
-	ArtifactType(String type) {
+	ResourceType(String type) {
 		this.type = type;
 	}
 
@@ -18,9 +23,9 @@ public enum ArtifactType {
 		return type;
 	}
 
-	public static ArtifactType fromString(String type) {
+	public static ResourceType fromString(String type) {
 		if (type != null) {
-			for (ArtifactType b : ArtifactType.values()) {
+			for (ResourceType b : ResourceType.values()) {
 				if (type.equalsIgnoreCase(b.type)) {
 					return b;
 				}

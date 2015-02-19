@@ -1,8 +1,8 @@
-package at.ac.tuwien.dsg.comot.model.relationship;
+package at.ac.tuwien.dsg.comot.model.devel.relationship;
 
 import javax.xml.bind.annotation.XmlAttribute;
 
-import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 
 public class ConnectToRel extends Relationship {
 

@@ -13,9 +13,9 @@ import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.model.logic.Navigator;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.orika.DeploymentOrika;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.orika.StateOrika;
-import at.ac.tuwien.dsg.comot.model.node.UnitInstance;
-import at.ac.tuwien.dsg.comot.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 
 @Component

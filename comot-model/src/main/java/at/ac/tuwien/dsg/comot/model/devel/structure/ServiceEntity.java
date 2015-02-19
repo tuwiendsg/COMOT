@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.model.structure;
+package at.ac.tuwien.dsg.comot.model.devel.structure;
 
 import java.io.Serializable;
 import java.util.HashSet;

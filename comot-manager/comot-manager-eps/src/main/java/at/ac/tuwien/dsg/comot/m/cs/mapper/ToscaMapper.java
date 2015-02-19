@@ -34,13 +34,14 @@ import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.model.logic.Navigator;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.orika.ToscaConverters;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.orika.ToscaOrika;
-import at.ac.tuwien.dsg.comot.model.node.ArtifactTemplate;
-import at.ac.tuwien.dsg.comot.model.relationship.ConnectToRel;
-import at.ac.tuwien.dsg.comot.model.relationship.HostOnRel;
-import at.ac.tuwien.dsg.comot.model.relationship.LocalRel;
-import at.ac.tuwien.dsg.comot.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.structure.ServiceTopology;
-import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.devel.relationship.ConnectToRel;
+import at.ac.tuwien.dsg.comot.model.devel.relationship.HostOnRel;
+import at.ac.tuwien.dsg.comot.model.devel.relationship.LocalRel;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceTopology;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
+import at.ac.tuwien.dsg.comot.model.type.NodePropertiesType;
 import at.ac.tuwien.dsg.comot.model.type.RelationshipType;
 
 @Component
@@ -72,15 +73,20 @@ public class ToscaMapper {
 		ArtifactReferences refs;
 
 		// inject TArtifactTemplates
-		for (ArtifactTemplate artifact : cloudService.getArtifacts()) {
-			refs = new ArtifactReferences();
-			tArtifact = mapper.get().map(artifact, TArtifactTemplate.class);
-			tArtifact.setArtifactReferences(refs);
-
-			for (String uri : artifact.getUris()) {
-				refs.withArtifactReference(new TArtifactReference().withReference(uri));
+		for (ServiceUnit unit : navigator.getAllUnits()) {
+			
+			if(!unit.getOsu().getType().equals(NodePropertiesType.OS) 
+					&& unit.getOsu().getResources() != null 
+					&& !unit.getOsu().getResources().isEmpty()){
+				refs = new ArtifactReferences();
+				tArtifact = mapper.get().map(unit.getOsu(), TArtifactTemplate.class);
+				tArtifact.setArtifactReferences(refs);
+	
+				for (String uri : unit.getOsu().getResources().values()) {
+					refs.withArtifactReference(new TArtifactReference().withReference(uri));
+				}
+				definition.getServiceTemplateOrNodeTypeOrNodeTypeImplementation().add(tArtifact);
 			}
-			definition.getServiceTemplateOrNodeTypeOrNodeTypeImplementation().add(tArtifact);
 		}
 
 		String sourceTopoId;
@@ -236,18 +242,18 @@ public class ToscaMapper {
 			} else if (element instanceof TArtifactTemplate) {
 				TArtifactTemplate tArtifact = (TArtifactTemplate) element;
 
-				ArtifactTemplate artifact = maper.map(tArtifact, ArtifactTemplate.class);
-				service.addArtifacts(artifact);
-				for (TArtifactReference ref : tArtifact.getArtifactReferences().getArtifactReference()) {
-					artifact.addUri(ref.getReference());
-				}
-
-				for (ServiceUnit node : navigator.getAllUnits()) {
-					if (node.getDeploymentArtifacts().contains(artifact)) {
-						node.getDeploymentArtifacts().remove(artifact);
-						node.addDeploymentArtifact(artifact);
-					}
-				}
+				OfferedServiceUnit artifact = maper.map(tArtifact, OfferedServiceUnit.class);
+//			 TODO
+//				for (TArtifactReference ref : tArtifact.getArtifactReferences().getArtifactReference()) {
+//					artifact.addResource(tArtifact.getType().getLocalPart(), value);addUri(ref.getReference());
+//				}
+//
+//				for (ServiceUnit node : navigator.getAllUnits()) {
+//					if (node.getDeploymentArtifacts().contains(artifact)) {
+//						node.getDeploymentArtifacts().remove(artifact);
+//						node.addDeploymentArtifact(artifact);
+//					}
+//				}
 			}
 		}
 

@@ -7,7 +7,7 @@ import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.m.core.model.ServiceEntity;
 import at.ac.tuwien.dsg.comot.m.recorder.cs.RecordingManager.ChangeType;
-import at.ac.tuwien.dsg.comot.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 
 @Component("prototype")
 public class StateChecker extends AbstractAsyncExecutor {

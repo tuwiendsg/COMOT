@@ -20,9 +20,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import at.ac.tuwien.dsg.comot.model.AppContextModel;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.repo.CloudServiceRepo;
 import at.ac.tuwien.dsg.comot.model.repo.CloudServiceRepoWorkaround;
-import at.ac.tuwien.dsg.comot.model.structure.CloudService;
 import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
 
 @SuppressWarnings("deprecation")

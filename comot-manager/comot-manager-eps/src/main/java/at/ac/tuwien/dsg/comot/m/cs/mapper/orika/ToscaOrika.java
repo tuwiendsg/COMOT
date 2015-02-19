@@ -1,6 +1,8 @@
 package at.ac.tuwien.dsg.comot.m.cs.mapper.orika;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -28,12 +30,13 @@ import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties;
 import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties.SalsaMappingProperty;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.IdResolver;
 import at.ac.tuwien.dsg.comot.model.SyblDirective;
-import at.ac.tuwien.dsg.comot.model.node.ArtifactTemplate;
-import at.ac.tuwien.dsg.comot.model.node.Properties;
-import at.ac.tuwien.dsg.comot.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.structure.ServiceTopology;
-import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceTopology;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
+import at.ac.tuwien.dsg.comot.model.provider.PrimitiveOperation;
 import at.ac.tuwien.dsg.comot.model.type.NodePropertiesType;
+import at.ac.tuwien.dsg.comot.model.type.ResourceType;
 
 @Component
 public class ToscaOrika {
@@ -66,14 +69,14 @@ public class ToscaOrika {
 						})
 				.register();
 
-		mapperFactory.classMap(ArtifactTemplate.class, TDeploymentArtifact.class)
+		mapperFactory.classMap(OfferedServiceUnit.class, TDeploymentArtifact.class)
 				.field("type", "artifactType")
 				.field("id", "artifactRef")
-				.byDefault()
+				//.field("name", "name")
 				.register();
 
 		// artifact creation
-		mapperFactory.classMap(ArtifactTemplate.class, TArtifactTemplate.class)
+		mapperFactory.classMap(OfferedServiceUnit.class, TArtifactTemplate.class)
 				.field("id", "id")
 				.field("type", "type")
 				.register();
@@ -81,9 +84,9 @@ public class ToscaOrika {
 		mapperFactory.classMap(ServiceUnit.class, TNodeTemplate.class)
 				.field("id", "id")
 				.field("name", "name")
-				.field("type", "type")
+				.field("osu.type", "type")
 				.field("directives", "policies.policy")
-				.field("deploymentArtifacts", "deploymentArtifacts.deploymentArtifact")
+				//.field("osu", "deploymentArtifacts.deploymentArtifact")
 				.customize(new NodeMapper())
 				.register();
 
@@ -126,14 +129,42 @@ public class ToscaOrika {
 			node.setMinInstances(unit.getMinInstances());
 
 			// inserting SalsaMappingProperties into Object
-			Set<Properties> props = unit.getProperties();
+			Set<PrimitiveOperation> operations = unit.getOsu().getOperations();
+			Map<String, String> resources = unit.getOsu().getResources();
 			SalsaMappingProperties salsaProps = new SalsaMappingProperties();
-			if (props != null) {
-				for (Properties oneProps : props) {
-					salsaProps.put(oneProps.getPropertiesType().toString(), oneProps.getPropertiesMap());
+			Map<String, String> map = new HashMap<>();
+			
+			if (operations != null) {
+				for (PrimitiveOperation oneProps : operations) {
+					map.put(oneProps.getName(), oneProps.getExecuteMethod());
 				}
-				node.setProperties(new TEntityTemplate.Properties().withAny(salsaProps));
+				salsaProps.put(NodePropertiesType.ACTION.toString(), map);				
 			}
+
+//			 TODO
+//			if (resources != null) {
+//
+//				for(String key: resources.keySet()){
+//					
+//					ResourceType type = ResourceType.fromString(key);
+//					
+//					if(type.equals(ResourceType.APT_GET_COMMAND) 
+//							|| type.equals(ResourceType.CHEF) 
+//							|| type.equals(ResourceType.CHEF_SOLO) 
+//							|| type.equals(ResourceType.SCRIPT)
+//							|| type.equals(ResourceType.WAR_FILE)){
+//						
+//						facade.map(sourceObject, destinationClass)
+//						
+//					}else{
+//						salsaProps.put(NodePropertiesType.OS.toString(), key, resources.get(key));	
+//					}
+//						
+//				}
+//					
+//			}
+			
+			node.setProperties(new TEntityTemplate.Properties().withAny(salsaProps));
 		}
 
 		@Override
@@ -154,14 +185,14 @@ public class ToscaOrika {
 
 				List<SalsaMappingProperty> list = ((SalsaMappingProperties) node.getProperties()
 						.getAny()).getProperties();
-
-				if (list != null) {
-					for (SalsaMappingProperty property : list) {
-						unit.addProperties(new Properties(IdResolver.nodeToProperty(node.getId()),
-								NodePropertiesType.fromString(property.getType()),
-								property.getMapData()));
-					}
-				}
+//*
+//				if (list != null) {
+//					for (SalsaMappingProperty property : list) {
+//						unit.addProperties(new Properties(IdResolver.nodeToProperty(node.getId()),
+//								NodePropertiesType.fromString(property.getType()),
+//								property.getMapData()));
+//					}
+//				}
 			}
 		}
 	}

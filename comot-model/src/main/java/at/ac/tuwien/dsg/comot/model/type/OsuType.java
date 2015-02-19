@@ -1,6 +1,6 @@
 package at.ac.tuwien.dsg.comot.model.type;
 
-public enum NodeType {
+public enum OsuType {
 
 	OS("os"),
 	WAR("war"),
@@ -10,7 +10,7 @@ public enum NodeType {
 
 	final String type;
 
-	NodeType(String type) {
+	OsuType(String type) {
 		this.type = type;
 	}
 
@@ -19,9 +19,9 @@ public enum NodeType {
 		return type;
 	}
 
-	public static NodeType fromString(String type) {
+	public static OsuType fromString(String type) {
 		if (type != null) {
-			for (NodeType b : NodeType.values()) {
+			for (OsuType b : OsuType.values()) {
 				if (type.equalsIgnoreCase(b.type)) {
 					return b;
 				}

@@ -13,7 +13,7 @@ import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.RsyblMapper;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.orika.RsyblOrika;
 import at.ac.tuwien.dsg.comot.m.cs.test.AbstractTest;
-import at.ac.tuwien.dsg.comot.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.rsybl.CloudServiceXML;
 import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
 

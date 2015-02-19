@@ -1,7 +1,7 @@
 package at.ac.tuwien.dsg.comot.m.common.coreservices;
 
 import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
-import at.ac.tuwien.dsg.comot.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
 public interface ControlClient extends CoreServiceClient {

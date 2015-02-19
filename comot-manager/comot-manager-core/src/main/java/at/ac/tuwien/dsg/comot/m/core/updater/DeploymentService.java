@@ -1,94 +1,31 @@
 package at.ac.tuwien.dsg.comot.m.core.updater;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 
-import at.ac.tuwien.dsg.comot.m.core.updater.Node.State;
 
-@Component
-public abstract class DeploymentService {
+public interface DeploymentService {
+	
+	/*
+	 * Update tosca without redeployment. Only used to update actions and scripts.
+	 */
+	public void updateDescription(CloudService service);
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	public void createVMCore(Node node);
 
-	public void createVM(Node node) {
+	public void deploy(Node node);
 
-		// TODO
-	}
+	public void remove(Node node);
 
-	public void deploy(Node node) {
-		node.setState(State.DEPLOY_STARTED);
-		log.info("node={} state={}", node.getUnit().getId(), node.getState());
+	public void migrate(Node node);
 
-		deployCore(node);
+	public void preMigrate(Node node);
 
-		node.setState(State.DEPLOY_FINISHED);
-		log.info("node={} state={}", node.getUnit().getId(), node.getState());
-	}
+	public void postMigrate(Node node);
 
-	public void remove(Node node) {
+	public void start(Node node);
 
-	}
+	public void stop(Node node);
 
-	public void migrate(Node node) {
-		node.setState(State.MIGRATE_STARTED);
-		log.info("node={} state={}", node.getUnit().getId(), node.getState());
-
-		migrateCore(node);
-
-		node.setState(State.MIGRATE_FINISHED);
-		log.info("node={} state={}", node.getUnit().getId(), node.getState());
-	}
-
-	public void preMigrate(Node node) {
-
-		node.setState(State.PRE_MIGRATE_STARTED);
-		log.info("node={} state={}", node.getUnit().getId(), node.getState());
-
-		preMigrateCore(node);
-
-		node.setState(State.PRE_MIGRATE_FINISHED);
-		log.info("node={} state={}", node.getUnit().getId(), node.getState());
-	}
-
-	public void postMigrate(Node node) {
-		node.setState(State.POST_MIGRATE_STARTED);
-		log.info("node={} state={}", node.getUnit().getId(), node.getState());
-
-		postMigrateCore(node);
-
-		node.setState(State.POST_MIGRATE_FINISHED);
-		log.info("node={} state={}", node.getUnit().getId(), node.getState());
-	}
-
-	public void start(Node node) {
-
-	}
-
-	public void stop(Node node) {
-
-	}
-
-	public void reconfigure(Node node) {
-
-	}
-
-	public abstract void createVMCore(Node node);
-
-	public abstract void deployCore(Node node);
-
-	public abstract void removeCore(Node node);
-
-	public abstract void migrateCore(Node node);
-
-	public abstract void preMigrateCore(Node node);
-
-	public abstract void postMigrateCore(Node node);
-
-	public abstract void startCore(Node node);
-
-	public abstract void stopCore(Node node);
-
-	public abstract void reconfigureCore(Node node);
+	public void reconfigure(Node node);
 
 }

@@ -15,11 +15,10 @@ import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.model.logic.Navigator;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.orika.MelaOrika;
 import at.ac.tuwien.dsg.comot.model.SyblDirective;
-import at.ac.tuwien.dsg.comot.model.node.UnitInstance;
-import at.ac.tuwien.dsg.comot.model.node.UnitInstanceOs;
-import at.ac.tuwien.dsg.comot.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.structure.ServiceEntity;
-import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceEntity;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 import at.ac.tuwien.dsg.comot.model.type.DirectiveType;
 import at.ac.tuwien.dsg.comot.model.type.RelationshipType;
 import at.ac.tuwien.dsg.csdg.elasticityInformation.elasticityRequirements.BinaryRestriction;
@@ -69,7 +68,7 @@ public class MelaMapper {
 				for (UnitInstance instance : node.getInstances()) {
 					vmElement = new MonitoredElement();
 					vmElement.setLevel(MonitoredElementLevel.VM);
-					vmElement.setId(((UnitInstanceOs) instance).getIp());
+					vmElement.setId( instance.getEnvId());
 
 					element.addElement(vmElement);
 				}

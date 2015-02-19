@@ -17,7 +17,7 @@ import at.ac.tuwien.dsg.comot.m.common.model.monitoring.ElementMonitoring;
 import at.ac.tuwien.dsg.comot.m.cs.connector.MelaClient;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.MelaMapper;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.MelaOutputMapper;
-import at.ac.tuwien.dsg.comot.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitoringSnapshot;

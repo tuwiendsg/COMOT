@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.model.node;
+package at.ac.tuwien.dsg.comot.model.runtime;
 
 import java.io.Serializable;
 
@@ -17,7 +17,6 @@ import at.ac.tuwien.dsg.comot.model.type.State;
 import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 
 @XmlRootElement
-@XmlSeeAlso({ UnitInstanceOs.class })
 @XmlAccessorType(XmlAccessType.FIELD)
 @NodeEntity
 public class UnitInstance implements Serializable {
@@ -33,6 +32,8 @@ public class UnitInstance implements Serializable {
 	@XmlAttribute
 	protected Integer instanceId;
 	@XmlAttribute
+	protected String envId;
+	@XmlAttribute
 	protected State state;
 	@XmlIDREF
 	@XmlAttribute
@@ -42,10 +43,11 @@ public class UnitInstance implements Serializable {
 
 	}
 
-	public UnitInstance(String id, int instanceId, State state, UnitInstance hostInstance) {
+	public UnitInstance(String id, int instanceId, String envId, State state, UnitInstance hostInstance) {
 		super();
 		this.id = id;
 		this.instanceId = instanceId;
+		this.envId = envId;
 		this.state = state;
 		this.hostInstance = hostInstance;
 	}
@@ -91,5 +93,14 @@ public class UnitInstance implements Serializable {
 	public void setId(String id) {
 		this.id = id;
 	}
+
+	public String getEnvId() {
+		return envId;
+	}
+
+	public void setEnvId(String envId) {
+		this.envId = envId;
+	}
+	
 
 }

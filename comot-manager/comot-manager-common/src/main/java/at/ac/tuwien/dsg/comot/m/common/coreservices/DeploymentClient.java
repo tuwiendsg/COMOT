@@ -2,7 +2,7 @@ package at.ac.tuwien.dsg.comot.m.common.coreservices;
 
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
-import at.ac.tuwien.dsg.comot.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 
 public interface DeploymentClient extends CoreServiceClient {
 

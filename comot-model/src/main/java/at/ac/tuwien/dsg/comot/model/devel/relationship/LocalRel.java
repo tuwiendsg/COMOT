@@ -1,6 +1,6 @@
-package at.ac.tuwien.dsg.comot.model.relationship;
+package at.ac.tuwien.dsg.comot.model.devel.relationship;
 
-import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 
 public class LocalRel extends Relationship {
 

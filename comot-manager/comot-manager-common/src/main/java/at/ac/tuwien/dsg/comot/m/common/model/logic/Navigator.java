@@ -12,13 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.comot.model.HasUniqueId;
-import at.ac.tuwien.dsg.comot.model.node.UnitInstance;
-import at.ac.tuwien.dsg.comot.model.relationship.ConnectToRel;
-import at.ac.tuwien.dsg.comot.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.structure.ServiceEntity;
-import at.ac.tuwien.dsg.comot.model.structure.ServiceTopology;
-import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.model.type.NodeType;
+import at.ac.tuwien.dsg.comot.model.devel.relationship.ConnectToRel;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceEntity;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceTopology;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
+import at.ac.tuwien.dsg.comot.model.type.OsuType;
 
 public class Navigator {
 
@@ -61,9 +61,9 @@ public class Navigator {
 	 */
 	public static boolean isTrueServiceUnit(ServiceUnit node, Set<ServiceUnit> potentialHosted) {
 
-		if (node.getType().equals(NodeType.OS) ||
-				node.getType().equals(NodeType.DOCKER) ||
-				node.getType().equals(NodeType.TOMCAT)) {
+		if (node.getOsu().getType().equals(OsuType.OS) ||
+				node.getOsu().getType().equals(OsuType.DOCKER) ||
+				node.getOsu().getType().equals(OsuType.TOMCAT)) {
 			log.debug("isServiceUnit(nodeId={} ): false", node.getId());
 			return false;
 		}
@@ -97,7 +97,7 @@ public class Navigator {
 		ServiceUnit host = getHost(id);
 
 		if (host != null) {
-			if (host.getType().equals(NodeType.OS)) {
+			if (host.getOsu().getType().equals(OsuType.OS)) {
 				return host;
 			} else {
 				return getOsForServiceUnit(host.getId());

@@ -4,9 +4,9 @@ import javax.xml.namespace.QName;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;
-import at.ac.tuwien.dsg.comot.model.type.ArtifactType;
+import at.ac.tuwien.dsg.comot.model.type.ResourceType;
 import at.ac.tuwien.dsg.comot.model.type.DirectiveType;
-import at.ac.tuwien.dsg.comot.model.type.NodeType;
+import at.ac.tuwien.dsg.comot.model.type.OsuType;
 import at.ac.tuwien.dsg.comot.model.type.RelationshipType;
 
 public class ToscaConverters {
@@ -18,16 +18,16 @@ public class ToscaConverters {
 		return new QName(NS_SALSA, name, PREFIX_SALSA);
 	}
 
-	public static class NodeTypeConverter extends BidirectionalConverter<NodeType, QName> {
+	public static class NodeTypeConverter extends BidirectionalConverter<OsuType, QName> {
 
 		@Override
-		public QName convertTo(NodeType source, Type<QName> destinationType) {
+		public QName convertTo(OsuType source, Type<QName> destinationType) {
 			return toSalsaQName(source.toString());
 		}
 
 		@Override
-		public NodeType convertFrom(QName source, Type<NodeType> destinationType) {
-			return NodeType.fromString(source.getLocalPart());
+		public OsuType convertFrom(QName source, Type<OsuType> destinationType) {
+			return OsuType.fromString(source.getLocalPart());
 		}
 	}
 
@@ -44,16 +44,16 @@ public class ToscaConverters {
 		}
 	}
 
-	public static class ArtifactTypeConverter extends BidirectionalConverter<ArtifactType, QName> {
+	public static class ArtifactTypeConverter extends BidirectionalConverter<ResourceType, QName> {
 
 		@Override
-		public QName convertTo(ArtifactType source, Type<QName> destinationType) {
+		public QName convertTo(ResourceType source, Type<QName> destinationType) {
 			return toSalsaQName(source.toString());
 		}
 
 		@Override
-		public ArtifactType convertFrom(QName source, Type<ArtifactType> destinationType) {
-			return ArtifactType.fromString(source.getLocalPart());
+		public ResourceType convertFrom(QName source, Type<ResourceType> destinationType) {
+			return ResourceType.fromString(source.getLocalPart());
 		}
 	}
 

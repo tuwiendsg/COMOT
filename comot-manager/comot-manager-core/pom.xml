@@ -14,6 +14,11 @@
 	<dependencies>
 
 		<dependency>
+			<groupId>com.rabbitmq</groupId>
+			<artifactId>amqp-client</artifactId>
+		</dependency>
+
+		<dependency>
 			<!-- just forcing the same version as in comot-cs -->
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-moxy</artifactId>
@@ -41,6 +46,14 @@
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>at.ac.tuwien.dsg.comot</groupId>
+			<artifactId>comot-model</artifactId>
+			<version>0.2</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+
 
 		<dependency>
 			<groupId>org.json</groupId>

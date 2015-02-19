@@ -37,10 +37,10 @@ import at.ac.tuwien.dsg.comot.m.recorder.AppContextServrec;
 import at.ac.tuwien.dsg.comot.m.recorder.cs.RecordingManager;
 import at.ac.tuwien.dsg.comot.m.recorder.model.Change;
 import at.ac.tuwien.dsg.comot.m.recorder.revisions.RevisionApi;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceTopology;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.model.repo.CloudServiceRepoWorkaround;
-import at.ac.tuwien.dsg.comot.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.structure.ServiceTopology;
-import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
 
 @SuppressWarnings("deprecation")

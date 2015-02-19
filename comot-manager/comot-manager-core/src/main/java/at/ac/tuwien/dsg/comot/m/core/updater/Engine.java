@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.common.model.logic.Navigator;
 import at.ac.tuwien.dsg.comot.m.core.updater.Node.State;
-import at.ac.tuwien.dsg.comot.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.model.type.NodeType;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.type.OsuType;
 
 @Component
 public class Engine {
@@ -24,7 +24,7 @@ public class Engine {
 	protected Set<ServiceUnit> forceUpdate;
 
 	@Autowired
-	protected DeploymentService deployment;
+	protected DeploymentWrapper deployment;
 
 	public Engine() {
 
@@ -49,7 +49,7 @@ public class Engine {
 		Set<ServiceUnit> roots = new HashSet<>();
 
 		for (ServiceUnit unit : navNeu.getAllUnits()) {
-			if (unit.getType().equals(NodeType.OS) && navOld.getUnit(unit.getId()) != null) {
+			if (unit.getOsu().getType().equals(OsuType.OS) && navOld.getUnit(unit.getId()) != null) {
 				roots.add(unit);
 			}
 		}

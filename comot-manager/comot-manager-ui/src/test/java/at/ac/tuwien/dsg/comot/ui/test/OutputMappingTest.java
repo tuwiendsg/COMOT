@@ -21,7 +21,7 @@ import at.ac.tuwien.dsg.comot.m.cs.mapper.DeploymentMapper;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.m.ui.mapper.SalsaOutputMapper;
 import at.ac.tuwien.dsg.comot.m.ui.model.ElementState;
-import at.ac.tuwien.dsg.comot.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 
 public class OutputMappingTest extends AbstractTest {
 

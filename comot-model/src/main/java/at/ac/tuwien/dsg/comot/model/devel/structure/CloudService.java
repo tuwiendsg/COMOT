@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.model.structure;
+package at.ac.tuwien.dsg.comot.model.devel.structure;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import at.ac.tuwien.dsg.comot.model.node.ArtifactTemplate;
+import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 
 @XmlRootElement
 public class CloudService extends ServiceEntity {
@@ -21,9 +21,6 @@ public class CloudService extends ServiceEntity {
 	protected Set<ServiceTopology> serviceTopologies = new HashSet<>();
 	@XmlAttribute
 	protected String accessIp;
-	@XmlElementWrapper(name = "Artifacts")
-	@XmlElement(name = "Artifact")
-	protected Set<ArtifactTemplate> artifacts = new HashSet<>();
 
 	public CloudService() {
 	}
@@ -37,13 +34,6 @@ public class CloudService extends ServiceEntity {
 			serviceTopologies = new HashSet<>();
 		}
 		serviceTopologies.add(serviceTopology);
-	}
-
-	public void addArtifacts(ArtifactTemplate artifact) {
-		if (artifacts == null) {
-			artifacts = new HashSet<>();
-		}
-		artifacts.add(artifact);
 	}
 
 	public List<ServiceTopology> getServiceTopologiesList() {
@@ -68,12 +58,5 @@ public class CloudService extends ServiceEntity {
 		this.accessIp = accessIp;
 	}
 
-	public Set<ArtifactTemplate> getArtifacts() {
-		return artifacts;
-	}
-
-	public void setArtifacts(Set<ArtifactTemplate> artifacts) {
-		this.artifacts = artifacts;
-	}
 
 }

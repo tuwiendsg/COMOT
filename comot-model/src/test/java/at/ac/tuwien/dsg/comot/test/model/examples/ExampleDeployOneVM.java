@@ -1,11 +1,10 @@
 package at.ac.tuwien.dsg.comot.test.model.examples;
 
-import at.ac.tuwien.dsg.comot.model.node.Properties;
-import at.ac.tuwien.dsg.comot.model.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.structure.ServiceTopology;
-import at.ac.tuwien.dsg.comot.model.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.model.type.NodePropertiesType;
-import at.ac.tuwien.dsg.comot.model.type.NodeType;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceTopology;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
+import at.ac.tuwien.dsg.comot.model.type.OsuType;
 
 public class ExampleDeployOneVM {
 
@@ -15,15 +14,16 @@ public class ExampleDeployOneVM {
 
 	public static CloudService build() {
 
-		Properties properties = new Properties(NodePropertiesType.OS);
-		properties.addProperty("instanceType", "000000512");
-		properties.addProperty("provider", "dsg@openstack");
-		properties.addProperty("baseImage", "8f1428ac-f239-42e0-ab35-137f6e234101");
-		properties.addProperty("packages", "openjdk-7-jre");
+		
+		OfferedServiceUnit osu = new OfferedServiceUnit("vm", OsuType.OS);
+		osu.addResource("instanceType", "000000512");
+		osu.addResource("provider", "dsg@openstack");
+		osu.addResource("baseImage", "8f1428ac-f239-42e0-ab35-137f6e234101");
+		osu.addResource("packages", "openjdk-7-jre");
 
-		ServiceUnit unit = new ServiceUnit(NODE_ID, "example_name", 1, 1, NodeType.OS);
-		unit.addProperties(properties);
-
+		ServiceUnit unit = new ServiceUnit(NODE_ID, "example_name", 1, 1);
+		unit.setOsu(osu);
+		
 		ServiceTopology topology = new ServiceTopology(TOPOLOGY_ID);
 		topology.addServiceUnit(unit);
 

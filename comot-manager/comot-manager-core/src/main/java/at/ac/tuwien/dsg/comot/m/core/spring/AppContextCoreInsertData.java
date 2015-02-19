@@ -18,7 +18,7 @@ import at.ac.tuwien.dsg.comot.m.core.dal.ServiceRepoProxy;
 import at.ac.tuwien.dsg.comot.m.core.model.ServiceEntity;
 import at.ac.tuwien.dsg.comot.m.cs.connector.SalsaClient;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
-import at.ac.tuwien.dsg.comot.model.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 
 @Configuration
 @PropertySource({ "classpath:spring/properties/application.properties" })
