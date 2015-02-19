@@ -7,6 +7,7 @@
 #Maven
 target/
 log/
+.extract/
 
 #Mac
 .DS_Store
