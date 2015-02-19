@@ -2,6 +2,9 @@ package at.ac.tuwien.dsg.comot.m.core.lifecycle;
 
 import java.util.ArrayList;
 
+import at.ac.tuwien.dsg.comot.m.common.Action;
+import at.ac.tuwien.dsg.comot.m.common.State;
+
 public class Instance extends Group {
 
 	public Instance(String id, Group parent, AggregationStrategy strategy) {

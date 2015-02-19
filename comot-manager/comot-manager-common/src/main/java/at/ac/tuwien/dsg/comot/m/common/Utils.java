@@ -10,14 +10,19 @@ import java.io.ObjectOutputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.eclipse.persistence.jaxb.JAXBContextProperties;
+import org.eclipse.persistence.jaxb.MarshallerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +39,26 @@ public class Utils {
 			log.error("Fail to marshall to XML", e);
 			return null;
 		}
+	}
+	
+	public static String asJsonString(Object obj, Class<?>... clazz) throws JAXBException {
+
+		List<Object> list = new ArrayList<Object>(Arrays.asList(clazz));
+		list.add(obj.getClass());
+
+		StringWriter w = new StringWriter();
+		
+		Map<String, Object> props = new HashMap<String, Object>();
+		props.put(JAXBContextProperties.JSON_INCLUDE_ROOT, false);
+		props.put(JAXBContextProperties.MEDIA_TYPE, MediaType.APPLICATION_JSON);
+		
+		JAXBContext context = JAXBContext.newInstance(list.toArray(new Class[list.size()]), props);
+
+		Marshaller m = context.createMarshaller();
+		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		m.marshal(obj, w);
+
+		return w.toString();
 	}
 
 	public static String asXmlString(Object obj, Class<?>... clazz) throws JAXBException {

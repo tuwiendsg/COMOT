@@ -1,11 +1,13 @@
-package at.ac.tuwien.dsg.comot.m.core.lifecycle;
+package at.ac.tuwien.dsg.comot.m.common;
 
 public enum Action {
+	CREATE_NEW_INSTANCE,
 	DEPLOY, 
 	SUCCESSFULY_DEPLOYED, 
 	UNDEPLOY, 
 	SUCCESSFULY_UNDEPLOYED, 
 	START_TEST, 
-	STOP_TEST
+	STOP_TEST,
+	REMOVE_INSTANCE;
 
 }

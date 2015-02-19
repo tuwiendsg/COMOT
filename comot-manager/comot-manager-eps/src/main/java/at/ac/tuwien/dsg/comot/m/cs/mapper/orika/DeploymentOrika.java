@@ -36,7 +36,7 @@ public class DeploymentOrika {
 				.build();
 
 		mapperFactory.classMap(ServiceUnit.class, DeploymentUnit.class)
-				.field("elasticityCapabilities", "elasticityCapabilities")
+			//	.field("elasticityCapabilities", "elasticityCapabilities")
 				.field("id", "serviceUnitID")
 				.field("instances", "associatedVMs")
 				.customize(new CustomMapper<ServiceUnit, DeploymentUnit>() {

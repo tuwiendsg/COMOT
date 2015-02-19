@@ -1,13 +1,28 @@
-package at.ac.tuwien.dsg.comot.m.core.lifecycle;
+package at.ac.tuwien.dsg.comot.m.common;
 
 public enum State {
 
+	NONE {
+		@Override
+		public State execute(Action action) {
+			switch (action) {
+			case CREATE_NEW_INSTANCE:
+				return IDLE;
+
+			default:
+				return null;
+			}
+
+		}
+	},
 	IDLE {
 		@Override
-		State execute(Action action) {
+		public State execute(Action action) {
 			switch (action) {
 			case DEPLOY:
 				return DEPLOYMENT;
+			case REMOVE_INSTANCE:
+				return NONE;
 			default:
 				return null;
 			}
@@ -16,7 +31,7 @@ public enum State {
 	},
 	DEPLOYMENT {
 		@Override
-		State execute(Action action) {
+		public State execute(Action action) {
 			switch (action) {
 			case SUCCESSFULY_DEPLOYED:
 				return OPERATION_RUNNING;
@@ -27,7 +42,7 @@ public enum State {
 	},
 	OPERATION_RUNNING {
 		@Override
-		State execute(Action action) {
+		public State execute(Action action) {
 			switch (action) {
 			case UNDEPLOY:
 				return UNDEPLOYMENT;
@@ -40,7 +55,7 @@ public enum State {
 	},
 	TEST_RUNNING {
 		@Override
-		State execute(Action action) {
+		public State execute(Action action) {
 			switch (action) {
 			case STOP_TEST:
 				return OPERATION_RUNNING;
@@ -53,7 +68,7 @@ public enum State {
 	},
 	UNDEPLOYMENT {
 		@Override
-		State execute(Action action) {
+		public State execute(Action action) {
 			switch (action) {
 			case SUCCESSFULY_UNDEPLOYED:
 				return IDLE;
@@ -63,6 +78,6 @@ public enum State {
 		}
 	};
 
-	abstract State execute(Action action);
-	
+	abstract public State execute(Action action);
+
 }

@@ -10,7 +10,8 @@
 				<ns2:Properties>
 					<MappingProperties>
 						<MappingProperty type="action">
-							<property name="undeploy">./undeploy.sh</property>
+							<property name="deploy_action">./deployWar.sh</property>
+							<property name="undeploy">./artifactWar/undeploy.sh</property>
 						</MappingProperty>
 					</MappingProperties>
 				</ns2:Properties>
@@ -29,7 +30,8 @@
 				<ns2:Properties>
 					<MappingProperties>
 						<MappingProperty type="action">
-							<property name="undeploy">./undeploy.sh</property>
+							<property name="deploy_action">./deployTomcat.sh</property>
+							<property name="undeploy">./artifactTomcat/undeploy.sh</property>
 						</MappingProperty>
 					</MappingProperties>
 				</ns2:Properties>
