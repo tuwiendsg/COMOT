@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot.m.core.lifecycle;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import at.ac.tuwien.dsg.comot.m.common.Action;
 import at.ac.tuwien.dsg.comot.m.common.State;
@@ -21,7 +22,11 @@ public class Instance extends Group {
 		State nextState = currentState.execute(action);
 
 		if (nextState != null) {
-			moveState(nextState);
+			moveToState(nextState);
+		}
+
+		if (parent != null) {
+			parent.refreshState();
 		}
 
 		return nextState;
@@ -29,6 +34,14 @@ public class Instance extends Group {
 
 	@Override
 	public void refreshState() {
+	}
+
+	@Override
+	public List<Group> getAllMembersNested() {
+
+		List<Group> nested = new ArrayList<Group>();
+		nested.add(this);
+		return nested;
 	}
 
 }

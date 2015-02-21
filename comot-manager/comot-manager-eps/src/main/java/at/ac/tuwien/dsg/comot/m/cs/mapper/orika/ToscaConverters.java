@@ -4,10 +4,10 @@ import javax.xml.namespace.QName;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;
-import at.ac.tuwien.dsg.comot.model.type.ResourceType;
 import at.ac.tuwien.dsg.comot.model.type.DirectiveType;
 import at.ac.tuwien.dsg.comot.model.type.OsuType;
 import at.ac.tuwien.dsg.comot.model.type.RelationshipType;
+import at.ac.tuwien.dsg.comot.model.type.ResourceType;
 
 public class ToscaConverters {
 

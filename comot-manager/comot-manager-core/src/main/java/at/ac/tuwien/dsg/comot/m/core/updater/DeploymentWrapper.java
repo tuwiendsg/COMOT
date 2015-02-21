@@ -11,7 +11,7 @@ import at.ac.tuwien.dsg.comot.m.core.updater.Node.State;
 public class DeploymentWrapper {
 
 	protected final Logger log = LoggerFactory.getLogger(getClass());
-	
+
 	@Autowired
 	protected DeploymentService deployment;
 
@@ -24,8 +24,6 @@ public class DeploymentWrapper {
 		node.setState(State.DEPLOY_STARTED);
 		log.info("node={} state={}", node.getUnit().getId(), node.getState());
 
-		
-		
 		deployment.deploy(node);
 
 		node.setState(State.DEPLOY_FINISHED);
@@ -80,4 +78,3 @@ public class DeploymentWrapper {
 	}
 
 }
-

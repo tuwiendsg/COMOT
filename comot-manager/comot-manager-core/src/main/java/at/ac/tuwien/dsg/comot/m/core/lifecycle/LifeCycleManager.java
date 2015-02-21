@@ -13,27 +13,29 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.common.Action;
+import at.ac.tuwien.dsg.comot.m.common.StateMessage;
+import at.ac.tuwien.dsg.comot.m.common.Utils;
+import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-
 
 @Component
 public class LifeCycleManager {
 
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 
-	protected Map<String, ManagerOfServiceInstance> managers = new HashMap<>();
-	
 	@Autowired
 	protected ApplicationContext context;
-	
+
 	public static final String EXCHANGE_NAME = "SERVICE_LIFECYCLE_INFORMATION";
 	public static final String SERVER = "localhost";
 
 	protected Connection connection;
 	protected Channel channel;
+
+	protected Map<String, ManagerOfServiceInstance> managers = new HashMap<>();
 
 	public void setUp() throws IOException {
 
@@ -46,36 +48,6 @@ public class LifeCycleManager {
 		channel.exchangeDeclare(EXCHANGE_NAME, "topic");
 	}
 
-	public void executeAction(String serviceId, String csInstanceId, String groupId, Action action) {
-
-	}
-
-	public void executeAction(String serviceId, String groupId, Action action) {
-
-	}
-
-	
-	public void createNewInstance(String serviceId, String csInstanceId) throws JAXBException, IOException{
-		
-		if (managers.containsKey(serviceId)) {
-			managers.get(serviceId).createNewInstance(serviceId, csInstanceId);
-		} else {
-			ManagerOfServiceInstance manager = context.getBean(ManagerOfServiceInstance.class);
-			manager.createNewInstance(csInstanceId, csInstanceId);
-			managers.put(csInstanceId, manager);
-		}
-		
-		// get info from infoService
-		// create new lifecycle manager
-		// inform about the change
-		
-	}
-	
-	
-	
-	
-	
-	
 	public void send(String routingKey, String message) throws IOException {
 
 		channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes());
@@ -91,6 +63,48 @@ public class LifeCycleManager {
 		if (connection != null) {
 			connection.close();
 		}
+	}
+
+	public void executeAction(String serviceId, String csInstanceId, String groupId, Action action) throws IOException,
+			JAXBException {
+
+		ManagerOfServiceInstance manager;
+
+		if (action.equals(Action.CREATE_NEW_INSTANCE)) {
+
+			if (managers.containsKey(csInstanceId)) {
+				return;
+			}
+
+			manager = context.getBean(ManagerOfServiceInstance.class);
+			StateMessage message = manager.createNewInstance(csInstanceId, csInstanceId);
+			managers.put(csInstanceId, manager);
+
+			String msg = Utils.asJsonString(message);
+
+			log.info(msg);
+
+			send(serviceId + "." + csInstanceId + ".#", msg);
+
+		}
+
+		if (!managers.containsKey(csInstanceId)) {
+			throw new ComotIllegalArgumentException("Instance '" + csInstanceId + "' has no managed life-cycle");
+		}
+
+		manager = managers.get(csInstanceId);
+		manager.executeAction(groupId, action);
+
+	}
+
+	public void executeAction(String serviceId, String groupId, Action action) {
+
+		for (ManagerOfServiceInstance manager : managers.values()) {
+			if (manager.getServiceGroup().getId().equals(serviceId)) {
+				manager.executeAction(groupId, action);
+			}
+		}
+
 	}
 
 }

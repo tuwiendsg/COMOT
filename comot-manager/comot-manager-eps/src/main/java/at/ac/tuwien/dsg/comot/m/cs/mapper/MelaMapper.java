@@ -68,7 +68,7 @@ public class MelaMapper {
 				for (UnitInstance instance : node.getInstances()) {
 					vmElement = new MonitoredElement();
 					vmElement.setLevel(MonitoredElementLevel.VM);
-					vmElement.setId( instance.getEnvId());
+					vmElement.setId(instance.getEnvId());
 
 					element.addElement(vmElement);
 				}

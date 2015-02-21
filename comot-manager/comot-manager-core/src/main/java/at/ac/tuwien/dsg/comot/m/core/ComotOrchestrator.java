@@ -74,20 +74,15 @@ public class ComotOrchestrator {
 
 		return updated;
 	}
-	
-	
-	
-	public String createCloudService(String service){
-		// 
+
+	public String createCloudService(String service) {
+		//
 		return null;
 	}
-	
-	public void createNewServiceInstance(String serviceId){
-		
+
+	public void createNewServiceInstance(String serviceId) {
+
 	}
-	
-	
-	
 
 	@Transactional
 	public String deployNew(String service) throws CoreServiceException, ComotException {

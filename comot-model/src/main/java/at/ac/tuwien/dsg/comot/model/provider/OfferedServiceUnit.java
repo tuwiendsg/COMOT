@@ -142,7 +142,22 @@ public class OfferedServiceUnit extends Entity implements HasUniqueId {
         return costFunctions;
     }
 
-    @Override
+    
+    public Set<PrimitiveOperation> getPrimitiveOperations() {
+		return primitiveOperations;
+	}
+    
+    
+
+	public OsuType getType() {
+		return type;
+	}
+
+	public void setType(OsuType type) {
+		this.type = type;
+	}
+
+	@Override
     public String getId() {
         return id;
     }

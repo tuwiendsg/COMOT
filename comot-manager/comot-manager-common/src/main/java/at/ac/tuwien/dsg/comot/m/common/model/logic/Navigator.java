@@ -17,6 +17,7 @@ import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceEntity;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceTopology;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.provider.Resource;
 import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 import at.ac.tuwien.dsg.comot.model.type.OsuType;
 
@@ -38,6 +39,20 @@ public class Navigator {
 				map.get(rel.getTo().getId()).newNode(new HelperNode(rel.getRequirementId()));
 			}
 		}
+	}
+
+	// OSU
+
+	public Resource getResource(String id) {
+
+		for (ServiceUnit temp : getAllUnits()) {
+			for (Resource res : temp.getOsu().getResources()) {
+				if (res.getName().equals(id)) {
+					return res;
+				}
+			}
+		}
+		return null;
 	}
 
 	// // RELATIONSHIP HELPERS
@@ -159,8 +174,7 @@ public class Navigator {
 	}
 
 	/**
-	 * Finds either service unit matching with the ID or if ID is of capability, requirement or ArtifactTemplate returns
-	 * the related node
+	 * Finds either service unit matching with the ID or if ID is of capability or requirement returns the related node
 	 * 
 	 * @param id
 	 * @return

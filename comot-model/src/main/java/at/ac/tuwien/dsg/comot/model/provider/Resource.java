@@ -6,8 +6,12 @@
 package at.ac.tuwien.dsg.comot.model.provider;
 
 import at.ac.tuwien.dsg.comot.model.HasUniqueId;
+
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.xml.bind.annotation.XmlAttribute;
+
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.Indexed;
@@ -20,8 +24,9 @@ import org.springframework.data.neo4j.annotation.RelatedTo;
  */
 @NodeEntity
 public class Resource extends Entity implements HasUniqueId {
-
+	
     @Indexed(unique = true)
+    @XmlAttribute
     String id;
 
     @Fetch

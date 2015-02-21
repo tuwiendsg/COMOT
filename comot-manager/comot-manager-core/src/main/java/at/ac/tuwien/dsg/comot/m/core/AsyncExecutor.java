@@ -11,8 +11,8 @@ import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.MonitoringClient;
 import at.ac.tuwien.dsg.comot.m.core.dal.ServiceRepoProxy;
 import at.ac.tuwien.dsg.comot.m.core.model.Job;
-import at.ac.tuwien.dsg.comot.m.core.model.ServiceEntity;
 import at.ac.tuwien.dsg.comot.m.core.model.Job.Type;
+import at.ac.tuwien.dsg.comot.m.core.model.ServiceEntity;
 
 @Component
 public class AsyncExecutor {

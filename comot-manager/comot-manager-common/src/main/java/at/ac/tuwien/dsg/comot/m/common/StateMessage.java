@@ -15,39 +15,64 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 public class StateMessage {
 
 	protected String targetedId;
-	protected Map<String, State> allIds = new HashMap<>();
+	protected Action action;
+	protected Map<String, Transition> transitions = new HashMap<>();
 
 	public StateMessage() {
 
 	}
 
-	public StateMessage(String targetedId, State state) {
+	public StateMessage(String targetedId, Action action) {
 		super();
 		this.targetedId = targetedId;
-		addOne(targetedId, state);
+		this.action = action;
 	}
 
-	public void addOne(String id, State state) {
-		if (allIds == null) {
-			allIds = new HashMap<>();
+	public void addOne(String id, State oldState, State newState) {
+		if (transitions == null) {
+			transitions = new HashMap<>();
 		}
-		allIds.put(id, state);
+		transitions.put(id, new Transition(oldState, newState));
+	}
+
+	public class Transition {
+		State oldState;
+		State newState;
+
+		public Transition(State oldState, State newState) {
+			super();
+			this.oldState = oldState;
+			this.newState = newState;
+		}
+
+		public State getOldState() {
+			return oldState;
+		}
+
+		public void setOldState(State oldState) {
+			this.oldState = oldState;
+		}
+
+		public State getNewState() {
+			return newState;
+		}
+
+		public void setNewState(State newState) {
+			this.newState = newState;
+		}
+
 	}
 
 	public String getTargetedId() {
 		return targetedId;
 	}
 
-	public void setTargetedId(String targetedId) {
-		this.targetedId = targetedId;
+	public Action getAction() {
+		return action;
 	}
 
-	public Map<String, State> getAllIds() {
-		return allIds;
-	}
-
-	public void setAllIds(Map<String, State> allIds) {
-		this.allIds = allIds;
+	public Map<String, Transition> getTransitions() {
+		return transitions;
 	}
 
 }

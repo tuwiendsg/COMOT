@@ -25,7 +25,7 @@ import at.ac.tuwien.dsg.comot.model.AppContextModel;
 @Import({ AppContextModel.class, AppContextCore.class })
 @ComponentScan
 @Transactional
-public class AppContextServrec extends Neo4jConfiguration{
+public class AppContextServrec extends Neo4jConfiguration {
 
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -33,7 +33,6 @@ public class AppContextServrec extends Neo4jConfiguration{
 	public static final String STANDALONE_NEO4J_DB = "STANDALONE_NEO4J_DB";
 	public static final String EMBEDDED_NEO4J_DB = "EMBEDDED_NEO4J_DB";
 
-	
 	@Autowired
 	protected GraphDatabaseService db;
 

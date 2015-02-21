@@ -2,9 +2,8 @@ package at.ac.tuwien.dsg.comot.m.core.updater;
 
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 
-
 public interface DeploymentService {
-	
+
 	/*
 	 * Update tosca without redeployment. Only used to update actions and scripts.
 	 */

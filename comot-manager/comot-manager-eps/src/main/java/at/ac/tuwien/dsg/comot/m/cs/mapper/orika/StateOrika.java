@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.SalsaEntity;
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceInstance;
-import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaInstanceDescription_VM;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.IdResolver;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceEntity;
@@ -62,8 +61,9 @@ public class StateOrika {
 
 								for (ServiceInstance instance : unit.getInstancesList()) {
 									if (node.getOsu().getType().equals(OsuType.OS)) {
-//										nInst = facade.map(instance, UnitInstanceOs.class);
-										nInst = facade.map(instance, UnitInstance.class); // TODO remove and make it accept also IP
+										// nInst = facade.map(instance, UnitInstanceOs.class);
+										nInst = facade.map(instance, UnitInstance.class); // TODO remove and make it
+																							// accept also IP
 									} else {
 										nInst = facade.map(instance, UnitInstance.class);
 									}
@@ -81,27 +81,27 @@ public class StateOrika {
 				.register();
 		// TODO get IP from SalsaInstanceDescription_VM
 
-//		mapperFactory.classMap(UnitInstanceOs.class, ServiceInstance.class)
-//				.field("instanceId", "instanceId")
-//				.field("state", "state")
-//				.customize(
-//						new CustomMapper<UnitInstanceOs, ServiceInstance>() {
-//							@Override
-//							public void mapBtoA(ServiceInstance inst, UnitInstanceOs nodeInst, MappingContext context) {
-//								if (inst.getProperties() != null && inst.getProperties().getAny() != null) {
-//									facade.map(((SalsaInstanceDescription_VM) inst.getProperties().getAny()), nodeInst);
-//								}
-//							}
-//						})
-//				.register();
-//
-//		mapperFactory.classMap(UnitInstanceOs.class, SalsaInstanceDescription_VM.class)
-//				.field("provider", "provider")
-//				.field("baseImage", "baseImage")
-//				.field("instanceType", "instanceType")
-//				.field("uuid", "instanceId")
-//				.field("ip", "privateIp")
-//				.register();
+		// mapperFactory.classMap(UnitInstanceOs.class, ServiceInstance.class)
+		// .field("instanceId", "instanceId")
+		// .field("state", "state")
+		// .customize(
+		// new CustomMapper<UnitInstanceOs, ServiceInstance>() {
+		// @Override
+		// public void mapBtoA(ServiceInstance inst, UnitInstanceOs nodeInst, MappingContext context) {
+		// if (inst.getProperties() != null && inst.getProperties().getAny() != null) {
+		// facade.map(((SalsaInstanceDescription_VM) inst.getProperties().getAny()), nodeInst);
+		// }
+		// }
+		// })
+		// .register();
+		//
+		// mapperFactory.classMap(UnitInstanceOs.class, SalsaInstanceDescription_VM.class)
+		// .field("provider", "provider")
+		// .field("baseImage", "baseImage")
+		// .field("instanceType", "instanceType")
+		// .field("uuid", "instanceId")
+		// .field("ip", "privateIp")
+		// .register();
 
 		facade = mapperFactory.getMapperFacade();
 	}

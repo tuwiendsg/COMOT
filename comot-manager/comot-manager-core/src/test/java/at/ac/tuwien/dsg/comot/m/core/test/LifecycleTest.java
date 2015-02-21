@@ -6,21 +6,19 @@ import javax.xml.bind.JAXBException;
 
 import org.junit.Test;
 
+import at.ac.tuwien.dsg.comot.m.common.Action;
 import at.ac.tuwien.dsg.comot.m.common.State;
 import at.ac.tuwien.dsg.comot.m.common.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
-import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
-import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
 
 public class LifecycleTest extends AbstractTest {
 
 	@Test
 	public void testCycle() throws IOException, JAXBException {
 
-		StateMessage msg = new StateMessage("vvvvvvvvvvvvvvv", State.DEPLOYMENT);
-		msg.addOne("other",  State.DEPLOYMENT);
-		
+		StateMessage msg = new StateMessage("vvvvvvvvvvvvvvv", Action.CREATE_NEW_INSTANCE);
+		msg.addOne("ooo", State.NONE, State.IDLE);
+
 		String message = Utils.asJsonString(msg);
 
 		log.info(message);

@@ -53,7 +53,7 @@ public class Group {
 			AggregationStrategy strategy) {
 		super();
 		this.id = id;
-		this.currentState = State.IDLE;
+		this.currentState = State.NONE;
 		this.type = type;
 		this.parent = parent;
 		this.strategy = strategy;
@@ -90,21 +90,44 @@ public class Group {
 		State nextState = null;
 
 		for (Group member : members) {
-			nextState = member.executeAction(action);
+			member.executeAction(action);
 		}
-
-		refreshState();
 
 		return nextState;
 	}
 
-	public void refreshState() {
-		moveState(strategy.determineState(currentState, type, members));
+	public List<Group> getAllMembersNested() {
+
+		List<Group> nested = new ArrayList<Group>();
+		nested.add(this);
+
+		for (Group member : members) {
+			nested.addAll(member.getAllMembersNested());
+		}
+
+		return nested;
+
 	}
 
-	protected void moveState(State newState) {
+	protected void refreshState() {
+
+		State nextState = strategy.determineState(currentState, type, members);
+
+		if (nextState.equals(currentState)) {
+			return;
+		}
+
+		moveToState(nextState);
+
+		if (parent != null) {
+			parent.refreshState();
+		}
+
+	}
+
+	protected void moveToState(State nextState) {
 		previousState = currentState;
-		currentState = newState;
+		currentState = nextState;
 	}
 
 	// GENERATED
@@ -171,5 +194,4 @@ public class Group {
 		return true;
 	}
 
-	
 }

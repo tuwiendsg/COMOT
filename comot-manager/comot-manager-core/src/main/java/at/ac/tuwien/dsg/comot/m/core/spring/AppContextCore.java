@@ -25,7 +25,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import at.ac.tuwien.dsg.comot.m.cs.AppContextEps;
-import at.ac.tuwien.dsg.comot.model.AppContextModel;
 
 @Configuration
 @EnableTransactionManagement

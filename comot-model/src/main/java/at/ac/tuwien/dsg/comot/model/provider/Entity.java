@@ -5,7 +5,12 @@
  */
 package at.ac.tuwien.dsg.comot.model.provider;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+
 import at.ac.tuwien.dsg.comot.model.HasUniqueId;
+
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
@@ -14,7 +19,7 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
  *
  * @author hungld
  */
-
+@XmlAccessorType(XmlAccessType.FIELD)
 @NodeEntity
 public abstract class Entity {
     
@@ -22,6 +27,7 @@ public abstract class Entity {
     
     // Name is the unique identify in local context,
     // e.g. in one service unit, a resource has a unique name
+    @XmlAttribute
     String name;
     
     public Entity(){}

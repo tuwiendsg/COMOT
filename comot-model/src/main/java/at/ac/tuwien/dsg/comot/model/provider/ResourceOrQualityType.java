@@ -6,8 +6,12 @@
 package at.ac.tuwien.dsg.comot.model.provider;
 
 import at.ac.tuwien.dsg.comot.model.HasUniqueId;
+
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.xml.bind.annotation.XmlAttribute;
+
 import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
@@ -21,7 +25,11 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 @NodeEntity
 public class ResourceOrQualityType extends Entity implements HasUniqueId{
 
+	public static final String ART_REFERENCE_TYPE = "URL";
+
+	
     @Indexed(unique = true)
+    @XmlAttribute
     String id;
     
     @Fetch

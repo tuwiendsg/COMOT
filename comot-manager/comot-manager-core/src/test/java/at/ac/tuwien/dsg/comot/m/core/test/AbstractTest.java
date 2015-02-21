@@ -23,7 +23,8 @@ import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { AppContextCore.class })
-@ActiveProfiles({ AppContextCore.EMBEDDED_H2_DB}) //AppContextCore.INSERT_INIT_DATA 
+@ActiveProfiles({ AppContextCore.EMBEDDED_H2_DB })
+// AppContextCore.INSERT_INIT_DATA
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public abstract class AbstractTest {
 

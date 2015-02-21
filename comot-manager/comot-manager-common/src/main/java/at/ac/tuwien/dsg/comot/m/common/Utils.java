@@ -22,7 +22,6 @@ import javax.xml.bind.Marshaller;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.persistence.jaxb.JAXBContextProperties;
-import org.eclipse.persistence.jaxb.MarshallerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,18 +39,18 @@ public class Utils {
 			return null;
 		}
 	}
-	
+
 	public static String asJsonString(Object obj, Class<?>... clazz) throws JAXBException {
 
 		List<Object> list = new ArrayList<Object>(Arrays.asList(clazz));
 		list.add(obj.getClass());
 
 		StringWriter w = new StringWriter();
-		
+
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(JAXBContextProperties.JSON_INCLUDE_ROOT, false);
 		props.put(JAXBContextProperties.MEDIA_TYPE, MediaType.APPLICATION_JSON);
-		
+
 		JAXBContext context = JAXBContext.newInstance(list.toArray(new Class[list.size()]), props);
 
 		Marshaller m = context.createMarshaller();
