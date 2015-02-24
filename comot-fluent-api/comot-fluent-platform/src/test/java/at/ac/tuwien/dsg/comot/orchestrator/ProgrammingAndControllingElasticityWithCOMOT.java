@@ -351,24 +351,15 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
         COMOTOrchestrator orchestrator = new COMOTOrchestrator()
                 //we have SALSA as cloud management tool
                 //curently deployed separately
- 
                 .withSalsaIP("localhost")
-                .withSalsaPort(8080)
+                .withSalsaPort(8080);
  
-                //we have rSYBL elasticity control service and MELA 
+                //ifwe have rSYBL elasticity control service and MELA 
                 //deployed separately
-                //                .withRsyblIP("localhost")
-                //                .withRsyblIP("localhost")
-                //                                .withRsyblIP("localhost")
-                .withRsyblIP("localhost")
-                //                .withRsyblIP("localhost")
-                .withRsyblPort(8080);
-//                .withRsyblPort(8080);
-
-        //deploy, monitor and control
-//        orchestrator.deployAndControl(serviceTemplate);
-//        orchestrator.deploy(serviceTemplate);
-        orchestrator.controlExisting(serviceTemplate);
+                //.withRsyblIP("localhost")
+                //.withRsyblPort(8080);
+ 
+        orchestrator.deployAndControl(serviceTemplate);
 
     }
 }
