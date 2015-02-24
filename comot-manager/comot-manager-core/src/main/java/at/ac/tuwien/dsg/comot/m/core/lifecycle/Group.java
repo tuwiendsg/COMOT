@@ -3,12 +3,12 @@ package at.ac.tuwien.dsg.comot.m.core.lifecycle;
 import java.util.ArrayList;
 import java.util.List;
 
-import at.ac.tuwien.dsg.comot.m.common.Action;
-import at.ac.tuwien.dsg.comot.m.common.State;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceTopology;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
+import at.ac.tuwien.dsg.comot.model.type.Action;
+import at.ac.tuwien.dsg.comot.model.type.State;
 
 public class Group {
 
@@ -21,16 +21,15 @@ public class Group {
 	protected AggregationStrategy strategy;
 
 	public Group(CloudService service, AggregationStrategy strategy) {
-		this(service.getId(), Type.SERVICE, null, strategy);
+		this(service.getId(), Type.SERVICE, State.NONE, null, strategy);
 
 		for (ServiceTopology topo : service.getServiceTopologies()) {
 			addTopology(topo);
 		}
 	}
 
-	public Group(ServiceTopology topology, Group parent,
-			AggregationStrategy strategy) {
-		this(topology.getId(), Type.TOPOLOGY, parent, strategy);
+	public Group(ServiceTopology topology, Group parent, AggregationStrategy strategy) {
+		this(topology.getId(), Type.TOPOLOGY, State.NONE, parent, strategy);
 
 		for (ServiceUnit unit : topology.getServiceUnits()) {
 			addUnit(unit);
@@ -42,33 +41,42 @@ public class Group {
 	}
 
 	public Group(ServiceUnit unit, Group parent, AggregationStrategy strategy) {
-		this(unit.getId(), Type.UNIT, parent, strategy);
+		this(unit.getId(), Type.UNIT, State.NONE, parent, strategy);
 
 		for (UnitInstance instance : unit.getInstances()) {
 			addInstance(instance);
 		}
 	}
 
-	public Group(String id, Type type, Group parent,
-			AggregationStrategy strategy) {
+	public Group(UnitInstance instance, Group parent, AggregationStrategy strategy) {
+		this(instance.getId(), Type.INSTANCE, State.IDLE, parent, strategy);
+	}
+
+	public Group(String id, Type type, State state, Group parent, AggregationStrategy strategy) {
 		super();
 		this.id = id;
-		this.currentState = State.NONE;
+		this.currentState = state;
 		this.type = type;
 		this.parent = parent;
 		this.strategy = strategy;
 	}
 
-	public void addTopology(ServiceTopology topology) {
-		members.add(new Group(topology, this, strategy));
+	public Group addTopology(ServiceTopology topology) {
+		Group temp = new Group(topology, this, strategy);
+		members.add(temp);
+		return temp;
 	}
 
-	public void addUnit(ServiceUnit unit) {
-		members.add(new Group(unit, this, strategy));
+	public Group addUnit(ServiceUnit unit) {
+		Group temp = new Group(unit, this, strategy);
+		members.add(temp);
+		return temp;
 	}
 
-	public void addInstance(UnitInstance instance) {
-		members.add(new Instance(instance.getId(), this, strategy));
+	public Group addInstance(UnitInstance instance) {
+		Group temp = new Group(instance, this, strategy);
+		members.add(temp);
+		return temp;
 	}
 
 	enum Type {
@@ -77,23 +85,41 @@ public class Group {
 
 	public boolean canExecute(Action action) {
 
-		for (Group menber : members) {
-			if (!menber.canExecute(action)) {
-				return false;
+		if (members.isEmpty()) {
+			return (currentState.execute(action) == null) ? false : true;
+
+		} else {
+			for (Group menber : members) {
+				if (!menber.canExecute(action)) {
+					return false;
+				}
 			}
+			return true;
 		}
-		return true;
 	}
 
-	public State executeAction(Action action) {
+	public void executeAction(Action action) {
 
 		State nextState = null;
 
-		for (Group member : members) {
-			member.executeAction(action);
+		if (members.isEmpty()) {
+
+			nextState = currentState.execute(action);
+
+			if (nextState != null) {
+				moveToState(nextState);
+			}
+
+			if (parent != null) {
+				parent.refreshState();
+			}
+
+		} else {
+			for (Group member : members) {
+				member.executeAction(action);
+			}
 		}
 
-		return nextState;
 	}
 
 	public List<Group> getAllMembersNested() {

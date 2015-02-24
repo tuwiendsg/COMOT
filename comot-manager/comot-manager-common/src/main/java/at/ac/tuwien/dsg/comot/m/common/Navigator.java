@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.m.common.model.logic;
+package at.ac.tuwien.dsg.comot.m.common;
 
 import java.util.ArrayList;
 import java.util.Collection;

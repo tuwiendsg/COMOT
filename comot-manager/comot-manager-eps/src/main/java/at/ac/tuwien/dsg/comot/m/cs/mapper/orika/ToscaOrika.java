@@ -149,7 +149,7 @@ public class ToscaOrika {
 					// resource -> deploymentArtifact
 					if (isArtifact(resource)) {
 						arts.withDeploymentArtifact(facade.map(resource, TDeploymentArtifact.class));
-
+						node.setDeploymentArtifacts(arts);
 						// resource -> property type os
 					} else {
 						salsaProps.put(NodePropertiesType.OS.toString(), resource.getType().getName(),
@@ -158,8 +158,10 @@ public class ToscaOrika {
 				}
 			}
 
-			node.setProperties(new TEntityTemplate.Properties().withAny(salsaProps));
-			node.setDeploymentArtifacts(arts);
+			if (!salsaProps.getProperties().isEmpty()) {
+				node.setProperties(new TEntityTemplate.Properties().withAny(salsaProps));
+			}
+
 		}
 
 		@Override
@@ -176,14 +178,10 @@ public class ToscaOrika {
 			// osu name
 			unit.getOsu().setName(unit.getId());
 
-			log.info("aaa {}", unit.getId());
 			// properties
 			if (node.getProperties() != null
 					&& node.getProperties().getAny() != null) {
 				// && node.getProperties().getAny() instanceof SalsaMappingProperties) {
-
-				log.info("bbb {}", unit.getId());
-				log.info("ccc {}", node.getProperties().getAny());
 
 				List<SalsaMappingProperty> list = ((SalsaMappingProperties) node.getProperties()
 						.getAny()).getProperties();
@@ -194,15 +192,13 @@ public class ToscaOrika {
 						// os -> resource
 						if (property.getType().equals(NodePropertiesType.OS.toString())) {
 
-							log.info("xxxxxxx {}", unit.getId());
-
 							for (Property prop : property.getPropertiesList()) {
 								unit.getOsu().hasResource(
 										new Resource(prop.getValue(), new ResourceOrQualityType(prop.getName())));
 							}
 
 							// action -> primitiveOperation
-						} else if (property.getType().equals(NodePropertiesType.OS.toString())) {
+						} else if (property.getType().equals(NodePropertiesType.ACTION.toString())) {
 
 							for (Property prop : property.getPropertiesList()) {
 								unit.getOsu().hasPrimitiveOperation(

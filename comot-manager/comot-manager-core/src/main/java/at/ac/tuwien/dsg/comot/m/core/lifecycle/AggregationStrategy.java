@@ -2,8 +2,8 @@ package at.ac.tuwien.dsg.comot.m.core.lifecycle;
 
 import java.util.List;
 
-import at.ac.tuwien.dsg.comot.m.common.State;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.Group.Type;
+import at.ac.tuwien.dsg.comot.model.type.State;
 
 public class AggregationStrategy {
 

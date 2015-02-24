@@ -46,20 +46,20 @@ public class ToscaMappingTest extends AbstractTest {
 	@Test
 	public void automatedMapperTest() throws JAXBException {
 
-		log.info("original {}", Utils.asString(serviceForMapping));
+		log.info("original {}", Utils.asXmlString(serviceForMapping));
 
 		Definitions tosca1 = mapperTosca.extractTosca(serviceForMapping);
 		log.info("tosca1 {}", UtilsCs.asString(tosca1));
 
 		CloudService service2 = mapperTosca.createModel(tosca1);
-		log.info("service2 {}", Utils.asString(service2));
+		log.info("service2 {}", Utils.asXmlString(service2));
 		assertReflectionEquals(serviceForMapping, service2, ReflectionComparatorMode.LENIENT_ORDER);
 
 		Definitions tosca2 = mapperTosca.extractTosca(service2);
 		log.info("tosca2 {}", UtilsCs.asString(tosca2));
 
 		CloudService service3 = mapperTosca.createModel(tosca2);
-		log.info("service3 {}", Utils.asString(service3));
+		log.info("service3 {}", Utils.asXmlString(service3));
 		assertReflectionEquals(serviceForMapping, service3, ReflectionComparatorMode.LENIENT_ORDER);
 
 	}
@@ -67,17 +67,18 @@ public class ToscaMappingTest extends AbstractTest {
 	@Test
 	public void testToscaFromFile() throws JAXBException, IOException {
 
-		Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/daas_m2m_fromSalsa.xml");
+		// Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/daas_m2m_fromSalsa.xml");
+		Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/tomcat/tomcat_from_salsa.xml");
 		log.info("tosca1 {}", UtilsCs.asString(tosca1));
 
 		CloudService service1 = mapperTosca.createModel(tosca1);
-		log.info("service1 {}", Utils.asString(service1));
+		log.info("service1 {}", Utils.asXmlString(service1));
 
 		Definitions tosca2 = mapperTosca.extractTosca(service1);
 		log.info("tosca2 {}", UtilsCs.asString(tosca2));
 
 		CloudService service2 = mapperTosca.createModel(tosca2);
-		log.info("service2 {}", Utils.asString(service2));
+		log.info("service2 {}", Utils.asXmlString(service2));
 		assertReflectionEquals(service1, service2, ReflectionComparatorMode.LENIENT_ORDER);
 
 	}
@@ -85,19 +86,19 @@ public class ToscaMappingTest extends AbstractTest {
 	@Test
 	public void orikaTest() throws JAXBException {
 
-		log.info("original {} \n", Utils.asString(serviceForMapping));
+		log.info("original {} \n", Utils.asXmlString(serviceForMapping));
 
 		Definitions tosca1 = toscaOrika.get().map(serviceForMapping, Definitions.class);
 		log.info("tosca1 {} \n", UtilsCs.asString(tosca1));
 
 		CloudService service2 = toscaOrika.get().map(tosca1, CloudService.class);
-		log.info("service2 {} \n", Utils.asString(service2));
+		log.info("service2 {} \n", Utils.asXmlString(service2));
 
 		Definitions tosca2 = toscaOrika.get().map(service2, Definitions.class);
 		log.info("tosca2 {} \n", UtilsCs.asString(tosca2));
 
 		CloudService service3 = toscaOrika.get().map(tosca2, CloudService.class);
-		log.info("service3 {}", Utils.asString(service3));
+		log.info("service3 {}", Utils.asXmlString(service3));
 
 	}
 
@@ -114,10 +115,10 @@ public class ToscaMappingTest extends AbstractTest {
 		log.info("state {}", UtilsCs.asString(serviceState));
 
 		CloudService service = mapperTosca.createModel(def);
-		log.info("service {}", Utils.asString(service));
+		log.info("service {}", Utils.asXmlString(service));
 
 		mapperDepl.enrichModel(service, serviceState);
-		log.info("service enriched{}", Utils.asString(service));
+		log.info("service enriched{}", Utils.asXmlString(service));
 
 		// EXTRACT DEPLOYMENT DESCRIOPTION
 

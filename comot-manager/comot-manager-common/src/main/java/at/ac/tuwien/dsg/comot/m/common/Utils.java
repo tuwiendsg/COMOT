@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -25,11 +27,20 @@ import org.eclipse.persistence.jaxb.JAXBContextProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
-
 public class Utils {
 
 	protected static final Logger log = LoggerFactory.getLogger(Utils.class);
+
+	public static <T> T toObject(String str, Class<T> clazz, Class<?>... otherClazz) throws JAXBException, IOException {
+
+		List<Object> list = new ArrayList<Object>(Arrays.asList(otherClazz));
+		list.add(clazz);
+
+		JAXBContext context = JAXBContext.newInstance(list.toArray(new Class[list.size()]));
+		Unmarshaller unmarshaller = context.createUnmarshaller();
+
+		return (T) unmarshaller.unmarshal(new StringReader(str));
+	}
 
 	public static String asXmlStringLog(Object obj, Class<?>... clazz) {
 		try {
@@ -40,6 +51,24 @@ public class Utils {
 		}
 	}
 
+	public static StateMessage asStateMessage(String str, Class<?>... clazz) throws JAXBException {
+
+		List<Object> list = new ArrayList<Object>(Arrays.asList(clazz));
+		list.add(StateMessage.class);
+
+		StringReader r = new StringReader(str);
+
+		Map<String, Object> props = new HashMap<String, Object>();
+		// props.put(JAXBContextProperties.JSON_INCLUDE_ROOT, false);
+		props.put(JAXBContextProperties.MEDIA_TYPE, MediaType.APPLICATION_JSON);
+
+		JAXBContext context = JAXBContext.newInstance(list.toArray(new Class[list.size()]), props);
+
+		Unmarshaller unm = context.createUnmarshaller();
+
+		return (StateMessage) unm.unmarshal(r);
+	}
+
 	public static String asJsonString(Object obj, Class<?>... clazz) throws JAXBException {
 
 		List<Object> list = new ArrayList<Object>(Arrays.asList(clazz));
@@ -48,7 +77,7 @@ public class Utils {
 		StringWriter w = new StringWriter();
 
 		Map<String, Object> props = new HashMap<String, Object>();
-		props.put(JAXBContextProperties.JSON_INCLUDE_ROOT, false);
+		// props.put(JAXBContextProperties.JSON_INCLUDE_ROOT, false);
 		props.put(JAXBContextProperties.MEDIA_TYPE, MediaType.APPLICATION_JSON);
 
 		JAXBContext context = JAXBContext.newInstance(list.toArray(new Class[list.size()]), props);
@@ -93,10 +122,6 @@ public class Utils {
 	// return gson.toJson(obj);
 	//
 	// }
-
-	public static String asString(CloudService service) throws JAXBException {
-		return Utils.asXmlString(service);
-	}
 
 	static public Object deepCopy(Object oldObj) throws IOException, ClassNotFoundException {
 

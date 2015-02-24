@@ -63,7 +63,7 @@ public class OutputMappingTest extends AbstractTest {
 		CloudService service = mapperTosca.createModel(def);
 		mapperDepl.enrichModel(service, serviceState);
 
-		log.info("state {}", Utils.asString(service));
+		log.info("state {}", Utils.asXmlString(service));
 
 		ElementState element = mapperOutput.extractOutput(service);
 		log.info("depl {}", Utils.asXmlString(element));
@@ -82,7 +82,7 @@ public class OutputMappingTest extends AbstractTest {
 		CloudService service = mapperTosca.createModel(def);
 		mapperDepl.enrichModel(service, serviceState);
 
-		log.info("state {}", Utils.asString(service));
+		log.info("state {}", Utils.asXmlString(service));
 
 		ElementState element = mapperOutput.extractOutput(service);
 		log.info("depl {}", Utils.asXmlString(element));

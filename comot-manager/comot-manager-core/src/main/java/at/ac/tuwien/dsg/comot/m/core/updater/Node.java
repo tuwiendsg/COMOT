@@ -3,7 +3,7 @@ package at.ac.tuwien.dsg.comot.m.core.updater;
 import java.util.HashSet;
 import java.util.Set;
 
-import at.ac.tuwien.dsg.comot.m.common.model.logic.Navigator;
+import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 
 public class Node {

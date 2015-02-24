@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceInstance;
+import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
-import at.ac.tuwien.dsg.comot.m.common.model.logic.Navigator;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.orika.DeploymentOrika;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.orika.StateOrika;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;

@@ -10,10 +10,10 @@ import org.junit.Test;
 import org.oasis.tosca.Definitions;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
-import at.ac.tuwien.dsg.comot.m.common.model.logic.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.m.core.updater.Engine;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
@@ -37,7 +37,7 @@ public class UpdaterTest extends AbstractTest {
 		CloudService serviceOld = mapperTosca.createModel(def);
 		CloudService serviceNew = (CloudService) Utils.deepCopy(serviceOld);
 
-		log.info("service {}", Utils.asString(serviceOld));
+		log.info("service {}", Utils.asXmlString(serviceOld));
 
 		Navigator nav = new Navigator(serviceNew);
 		Set<ServiceUnit> forceUpdate = new HashSet<>();

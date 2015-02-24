@@ -58,7 +58,7 @@ public class RecorderTest extends AbstractTest {
 		Definitions def = UtilsCs.loadTosca(UtilsTest.TEST_FILE_BASE + "tomcat/tomcat.xml");
 		CloudService service = mapperTosca.createModel(def);
 
-		log.info("{}", Utils.asString(service));
+		log.info("{}", Utils.asXmlString(service));
 
 		revisionApi.createOrUpdateRegion(service, service.getId(), "init");
 

@@ -7,25 +7,28 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.springframework.data.neo4j.annotation.NodeEntity;
+import at.ac.tuwien.dsg.comot.model.type.State;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@NodeEntity
 @XmlRootElement
 public class StateMessage {
 
-	protected String targetedId;
-	protected Action action;
+	protected EventMessage event;
 	protected Map<String, Transition> transitions = new HashMap<>();
 
 	public StateMessage() {
 
 	}
 
-	public StateMessage(String targetedId, Action action) {
+	public StateMessage(EventMessage event) {
 		super();
-		this.targetedId = targetedId;
-		this.action = action;
+		this.event = event;
+	}
+
+	public StateMessage(EventMessage event, Map<String, Transition> transitions) {
+		super();
+		this.event = event;
+		this.transitions = transitions;
 	}
 
 	public void addOne(String id, State oldState, State newState) {
@@ -35,44 +38,20 @@ public class StateMessage {
 		transitions.put(id, new Transition(oldState, newState));
 	}
 
-	public class Transition {
-		State oldState;
-		State newState;
-
-		public Transition(State oldState, State newState) {
-			super();
-			this.oldState = oldState;
-			this.newState = newState;
-		}
-
-		public State getOldState() {
-			return oldState;
-		}
-
-		public void setOldState(State oldState) {
-			this.oldState = oldState;
-		}
-
-		public State getNewState() {
-			return newState;
-		}
-
-		public void setNewState(State newState) {
-			this.newState = newState;
-		}
-
+	public EventMessage getEvent() {
+		return event;
 	}
 
-	public String getTargetedId() {
-		return targetedId;
-	}
-
-	public Action getAction() {
-		return action;
+	public void setEvent(EventMessage event) {
+		this.event = event;
 	}
 
 	public Map<String, Transition> getTransitions() {
 		return transitions;
+	}
+
+	public void setTransitions(Map<String, Transition> transitions) {
+		this.transitions = transitions;
 	}
 
 }

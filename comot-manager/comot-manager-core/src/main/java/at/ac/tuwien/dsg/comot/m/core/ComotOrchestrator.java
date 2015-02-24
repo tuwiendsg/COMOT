@@ -5,10 +5,12 @@
  */
 package at.ac.tuwien.dsg.comot.m.core;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import at.ac.tuwien.dsg.comot.m.common.EventMessage;
+import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.ControlClient;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.MonitoringClient;
@@ -24,10 +28,13 @@ import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.m.common.model.monitoring.ElementMonitoring;
 import at.ac.tuwien.dsg.comot.m.core.dal.ServiceRepoProxy;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
 import at.ac.tuwien.dsg.comot.m.core.model.Job;
 import at.ac.tuwien.dsg.comot.m.core.model.ServiceEntity;
 import at.ac.tuwien.dsg.comot.m.core.model.ServiceEntityComparator;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
 @Component
@@ -41,6 +48,11 @@ public class ComotOrchestrator {
 	protected ControlClient control;
 	@Autowired
 	protected MonitoringClient monitoring;
+
+	@Autowired
+	protected InformationServiceMock infoServ;
+	@Autowired
+	protected LifeCycleManager lcManager;
 
 	@Autowired
 	protected ServiceRepoProxy serviceRepo;
@@ -75,12 +87,31 @@ public class ComotOrchestrator {
 		return updated;
 	}
 
-	public String createCloudService(String service) {
-		//
-		return null;
+	public String createCloudService(CloudService service) {
+
+		String serviceId = infoServ.createCloudService(service);
+
+		return serviceId;
 	}
 
-	public void createNewServiceInstance(String serviceId) {
+	public String createNewServiceInstance(String serviceId) throws IOException, JAXBException {
+
+		String instanceId = infoServ.createNewServiceInstance(serviceId);
+		CloudService service = infoServ.getServiceInformation(serviceId);
+
+		log.info(instanceId);
+
+		EventMessage event = new EventMessage(serviceId, instanceId, serviceId, Action.NEW_INSTANCE_REQUESTED,
+				Utils.asXmlString(service));
+		lcManager.executeAction(event);
+
+		return instanceId;
+
+	}
+
+	public void assignDeployment(String instanceId) {
+
+		infoServ.assignSupportingService(instanceId, InformationServiceMock.SALSA_SERVICE_PUBLIC_ID);
 
 	}
 

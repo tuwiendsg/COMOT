@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ns2:Definitions xmlns:ns2="http://docs.oasis-open.org/tosca/ns/2011/12" id="SalsaExample_comot" targetNamespace="http://tempuri.org">
+<ns2:Definitions xmlns:ns2="http://docs.oasis-open.org/tosca/ns/2011/12" id="comot_tomcat" name="comot_tomcat" targetNamespace="http://tempuri.org">
     <ns2:ServiceTemplate id="SampleService_test">
         <ns2:TopologyTemplate>
             <ns2:NodeTemplate xmlns:salsa="http://example.com" name="policeApp" minInstances="1" maxInstances="1" id="policeApp" type="salsa:war">
@@ -26,14 +26,14 @@
                 <ns2:SourceElement ref="policeApp"/>
                 <ns2:TargetElement ref="tomcat_OF_policeApp"/>
             </ns2:RelationshipTemplate>
-            <ns2:NodeTemplate minInstances="1" maxInstances="unbounded" id="os_OF_tomcat_OF_policeApp" type="os">
+            <ns2:NodeTemplate id="os_OF_tomcat_OF_policeApp" type="os">
                 <ns2:Properties>
                     <MappingProperties>
                         <MappingProperty type="os">
                             <property name="instanceType">000000960</property>
-                            <property name="packages"></property>
                             <property name="provider">dsg@openstack</property>
                             <property name="baseImage">8f1428ac-f239-42e0-ab35-137f6e234101</property>
+                            <property name="packages">gmetad,ganglia-monitor,openjdk-7-jre</property>
                         </MappingProperty>
                     </MappingProperties>
                 </ns2:Properties>

@@ -31,8 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties;
+import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
-import at.ac.tuwien.dsg.comot.m.common.model.logic.Navigator;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.orika.ToscaConverters;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.orika.ToscaOrika;
 import at.ac.tuwien.dsg.comot.model.devel.relationship.ConnectToRel;
@@ -133,18 +133,17 @@ public class ToscaMapper {
 
 						// set capabilities
 						Capabilities capas = new Capabilities();
-						tNode.setCapabilities(capas);
 
 						for (ConnectToRel rel : navigator.getUnit(tNode.getId()).getConnectTo()) {
 							TCapability capa = new TCapability()
 									.withId(rel.getCapabilityId())
 									.withType(CAP_REQ_TYPE);
 							capas.withCapability(capa);
+							tNode.setCapabilities(capas);
 						}
 
 						// set requirements
 						Requirements reqs = new Requirements();
-						tNode.setRequirements(reqs);
 
 						for (ServiceUnit one : navigator.getAllUnits()) {
 							for (ConnectToRel rel : one.getConnectTo()) {
@@ -153,6 +152,7 @@ public class ToscaMapper {
 											.withId(rel.getRequirementId())
 											.withType(CAP_REQ_TYPE);
 									reqs.withRequirement(req);
+									tNode.setRequirements(reqs);
 								}
 							}
 						}
