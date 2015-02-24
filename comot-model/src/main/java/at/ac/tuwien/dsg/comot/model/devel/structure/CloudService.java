@@ -10,23 +10,32 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
+import at.ac.tuwien.dsg.comot.model.runtime.ServiceInstance;
 
 @XmlRootElement
 public class CloudService extends ServiceEntity {
 
 	private static final long serialVersionUID = 4336434946064439267L;
 
-	@XmlElement(name = "Topology")
-	protected Set<ServiceTopology> serviceTopologies = new HashSet<>();
 	@XmlAttribute
 	protected String accessIp;
+	@XmlElement(name = "Topology")
+	protected Set<ServiceTopology> serviceTopologies = new HashSet<>();
+	@XmlElementWrapper(name = "ServiceInstances")
+	@XmlElement(name = "Instance")
+	protected Set<ServiceInstance> instances = new HashSet<>();
 
 	public CloudService() {
 	}
 
 	public CloudService(String id) {
 		super(id);
+	}
+
+	public ServiceInstance createServiceInstance(String instanceId) {
+		ServiceInstance instance = new ServiceInstance(instanceId);
+		instances.add(instance);
+		return instance;
 	}
 
 	public void addServiceTopology(ServiceTopology serviceTopology) {
@@ -58,5 +67,12 @@ public class CloudService extends ServiceEntity {
 		this.accessIp = accessIp;
 	}
 
+	public Set<ServiceInstance> getInstances() {
+		return instances;
+	}
+
+	public void setInstances(Set<ServiceInstance> instances) {
+		this.instances = instances;
+	}
 
 }

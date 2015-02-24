@@ -1,5 +1,6 @@
 package at.ac.tuwien.dsg.comot.test.model.examples;
 
+
 import at.ac.tuwien.dsg.comot.model.SyblDirective;
 import at.ac.tuwien.dsg.comot.model.devel.relationship.ConnectToRel;
 import at.ac.tuwien.dsg.comot.model.devel.relationship.HostOnRel;
@@ -10,9 +11,7 @@ import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.Resource;
 import at.ac.tuwien.dsg.comot.model.provider.ResourceOrQualityType;
 import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
-import at.ac.tuwien.dsg.comot.model.type.ResourceType;
 import at.ac.tuwien.dsg.comot.model.type.DirectiveType;
-import at.ac.tuwien.dsg.comot.model.type.NodePropertiesType;
 import at.ac.tuwien.dsg.comot.model.type.OsuType;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
@@ -145,7 +144,7 @@ public class STemplates {
 		// INSTANCES
 		for (ServiceUnit unit : service.getServiceTopologiesList().get(0).getServiceUnits()) {
 			if (unit.getId().equals(osNodeId)) {
-				instanceOs = new UnitInstance(osNodeId + "_instance", 0, "10.99.0.1", State.ALLOCATING, null);
+				instanceOs = new UnitInstance(osNodeId + "_instance", 0, "10.99.0.1", State.DEPLOYMENT_ALLOCATING, null);
 				unit.addUnitInstance(instanceOs);
 			}
 		}
@@ -153,10 +152,10 @@ public class STemplates {
 		for (ServiceUnit unit : service.getServiceTopologiesList().get(0).getServiceUnits()) {
 			if (unit.getId().equals(swNodeId)) {
 				unit.addUnitInstance(new UnitInstance(swNodeId + "_instance", 0, swNodeId + "_processId",
-						State.DEPLOYED, instanceOs));
+						State.OPERATION_RUNNING, instanceOs));
 			} else if (unit.getId().equals(swNodeId2)) {
 				unit.addUnitInstance(new UnitInstance(swNodeId2 + "_instance", 0, swNodeId2 + "_processId",
-						State.DEPLOYED, instanceOs));
+						State.OPERATION_RUNNING, instanceOs));
 			}
 		}
 		return service;

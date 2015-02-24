@@ -45,6 +45,16 @@ public class Metric extends Entity {
     public MetricType getMetricType() {
         return metricType;
     }
+
+	public void setMeasurementUnit(String measurementUnit) {
+		this.measurementUnit = measurementUnit;
+	}
+
+	public void setMetricType(MetricType metricType) {
+		this.metricType = metricType;
+	}
+    
+    
     
     
 }

@@ -19,6 +19,14 @@
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-neo4j</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.neo4j</groupId>
@@ -41,15 +49,6 @@
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
 			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -83,21 +82,21 @@
 			</plugin>
 		</plugins>
 	</build>
-        
-        <repositories>
-        
-        <repository>
-            <id>neo4j</id>
-            <name>Neo4j</name>
-            <url>http://m2.neo4j.org/</url>            
-        </repository>
-        
-        <repository>
-            <id>spring-releases</id>
-            <name>Spring Releases</name>
-            <url>http://repo.spring.io/libs-release</url>
-        </repository>
-    </repositories>
+
+	<repositories>
+
+		<repository>
+			<id>neo4j</id>
+			<name>Neo4j</name>
+			<url>http://m2.neo4j.org/</url>
+		</repository>
+
+		<repository>
+			<id>spring-releases</id>
+			<name>Spring Releases</name>
+			<url>http://repo.spring.io/libs-release</url>
+		</repository>
+	</repositories>
 
 
 </project>

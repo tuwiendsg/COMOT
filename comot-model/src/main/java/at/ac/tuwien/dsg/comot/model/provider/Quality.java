@@ -5,14 +5,14 @@
  */
 package at.ac.tuwien.dsg.comot.model.provider;
 
-import at.ac.tuwien.dsg.comot.model.HasUniqueId;
 import java.util.HashSet;
 import java.util.Set;
-import org.neo4j.graphdb.Direction;
+
 import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
-import org.springframework.data.neo4j.annotation.RelatedTo;
+
+import at.ac.tuwien.dsg.comot.model.HasUniqueId;
 
 /**
  *
@@ -68,7 +68,20 @@ public class Quality extends Entity implements HasUniqueId {
     }
 
     public void setId(String id) {
-        this.id = id;
+    	this.id = id;
     }
 
+	public Set<MetricValue> getHasMetricQuality() {
+		return hasMetricQuality;
+	}
+
+	public void setHasMetricQuality(Set<MetricValue> hasMetricQuality) {
+		this.hasMetricQuality = hasMetricQuality;
+	}
+
+	public void setType(ResourceOrQualityType type) {
+		this.type = type;
+	}
+
+    
 }

@@ -6,10 +6,7 @@
 package at.ac.tuwien.dsg.comot.model.provider;
 
 
-import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.NodeEntity;
-import org.springframework.data.neo4j.annotation.RelatedTo;
-import org.springframework.data.neo4j.annotation.RelatedToVia;
 
 /**
  *
@@ -47,6 +44,19 @@ public class CostElement extends Entity {
     public Double getCost() {
         return cost;
     }
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public void setCostIntervalFunction(MetricValue costIntervalFunction) {
+		this.costIntervalFunction = costIntervalFunction;
+	}
+
+	public void setCost(Double cost) {
+		this.cost = cost;
+	}
+    
     
     
 }

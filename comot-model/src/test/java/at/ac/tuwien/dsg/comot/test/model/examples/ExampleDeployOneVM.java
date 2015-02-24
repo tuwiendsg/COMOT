@@ -1,10 +1,6 @@
 package at.ac.tuwien.dsg.comot.test.model.examples;
 
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceTopology;
-import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
-import at.ac.tuwien.dsg.comot.model.type.OsuType;
 
 public class ExampleDeployOneVM {
 

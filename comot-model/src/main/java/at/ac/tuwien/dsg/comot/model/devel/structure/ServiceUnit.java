@@ -16,9 +16,7 @@ import at.ac.tuwien.dsg.comot.model.devel.relationship.ConnectToRel;
 import at.ac.tuwien.dsg.comot.model.devel.relationship.HostOnRel;
 import at.ac.tuwien.dsg.comot.model.devel.relationship.LocalRel;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
-import at.ac.tuwien.dsg.comot.model.provider.PrimitiveOperation;
 import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
-import at.ac.tuwien.dsg.comot.model.type.OsuType;
 
 @XmlRootElement
 public class ServiceUnit extends ServiceEntity {

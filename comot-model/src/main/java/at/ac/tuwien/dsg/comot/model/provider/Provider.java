@@ -5,11 +5,13 @@
  */
 package at.ac.tuwien.dsg.comot.model.provider;
 
-import at.ac.tuwien.dsg.comot.model.HasUniqueId;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
+
+import at.ac.tuwien.dsg.comot.model.HasUniqueId;
 
 /**
  *
@@ -74,5 +76,14 @@ public class Provider extends Entity implements HasUniqueId{
         IAAS, PAAS,
         CUSTOM;
     }
+
+	public void setProviderType(ProviderType providerType) {
+		this.providerType = providerType;
+	}
+
+	public void setOffering(Set<OfferedServiceUnit> offering) {
+		this.offering = offering;
+	}
+    
     
 }

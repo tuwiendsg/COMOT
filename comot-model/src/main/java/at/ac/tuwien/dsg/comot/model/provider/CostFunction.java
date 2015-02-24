@@ -7,8 +7,8 @@ package at.ac.tuwien.dsg.comot.model.provider;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import org.springframework.data.neo4j.annotation.NodeEntity;
-import org.springframework.data.neo4j.annotation.RelatedTo;
 
 /**
  *
@@ -55,6 +55,16 @@ public class CostFunction extends Entity{
         }
         this.appliedInConjunctionWith.add(entity);
     }
+
+	public void setAppliedInConjunctionWith(Set<Entity> appliedInConjunctionWith) {
+		this.appliedInConjunctionWith = appliedInConjunctionWith;
+	}
+
+	public void setCostElements(Set<CostElement> costElements) {
+		this.costElements = costElements;
+	}
+    
+    
     
     
 }

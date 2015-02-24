@@ -5,7 +5,6 @@
  */
 package at.ac.tuwien.dsg.comot.model.provider;
 
-import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
 /**
@@ -43,5 +42,14 @@ public class MetricValue extends Entity{
     public ValueType getValueType() {
         return valueType;
     }
+
+	public void setValue(Object value) {
+		this.value = value;
+	}
+
+	public void setValueType(ValueType valueType) {
+		this.valueType = valueType;
+	}
+    
     
 }

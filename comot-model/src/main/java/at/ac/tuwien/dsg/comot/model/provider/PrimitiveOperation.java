@@ -5,7 +5,6 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.springframework.data.neo4j.annotation.GraphId;
@@ -64,5 +63,13 @@ public class PrimitiveOperation implements Serializable{
 	public void setEndpoint(String endpoint) {
 		this.endpoint = endpoint;
 	}
+	public Long getNodeId() {
+		return nodeId;
+	}
+	public void setNodeId(Long nodeId) {
+		this.nodeId = nodeId;
+	}
+	
+	
 
 }

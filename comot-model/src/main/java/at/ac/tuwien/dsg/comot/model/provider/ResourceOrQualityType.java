@@ -5,8 +5,7 @@
  */
 package at.ac.tuwien.dsg.comot.model.provider;
 
-import at.ac.tuwien.dsg.comot.model.HasUniqueId;
-
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,6 +15,8 @@ import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
+import at.ac.tuwien.dsg.comot.model.HasUniqueId;
+
 /**
  *
  * @author hungld
@@ -23,7 +24,10 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
  * This store the list of metric that associate to a resource/quality The list of these metric must be mapped by the resource/quality object
  */
 @NodeEntity
-public class ResourceOrQualityType extends Entity implements HasUniqueId{
+public class ResourceOrQualityType extends Entity implements HasUniqueId, Serializable{
+
+	private static final long serialVersionUID = -9039493125624891059L;
+
 
 	public static final String ART_REFERENCE_TYPE = "URL";
 
@@ -86,6 +90,16 @@ public class ResourceOrQualityType extends Entity implements HasUniqueId{
     public String getId() {
         return id;
     }
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setMetrics(Set<Metric> metrics) {
+		this.metrics = metrics;
+	}
+    
+    
     
     
 }
