@@ -4,6 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>comot-model</artifactId>
 	<name>COMOT Model</name>
+	<version>1.0</version>
 
 	<parent>
 		<artifactId>comot-parent</artifactId>
@@ -97,6 +98,4 @@
 		</repository>
 	</repositories>
 
-
-	<version>1.0</version>
 </project>

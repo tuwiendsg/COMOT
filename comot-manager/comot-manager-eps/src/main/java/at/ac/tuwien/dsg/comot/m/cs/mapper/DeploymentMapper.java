@@ -67,9 +67,9 @@ public class DeploymentMapper {
 
 		// set host to instance
 		for (String str : hosts.keySet()) {
-			UnitInstance node = navigator.getInstance(IdResolver.nodeFromInstance(str),
+			UnitInstance node = navigator.getInstance(IdResolver.unitFromInstance(str),
 					IdResolver.instanceFromInstance(str));
-			UnitInstance host = navigator.getInstance(IdResolver.nodeFromInstance(str),
+			UnitInstance host = navigator.getInstance(IdResolver.unitFromInstance(str),
 					IdResolver.instanceFromInstance(str));
 			node.setHostInstance(host);
 		}

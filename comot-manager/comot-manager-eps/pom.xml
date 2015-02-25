@@ -15,16 +15,9 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>org.unitils</groupId>
-			<artifactId>unitils-core</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>ma.glasnost.orika</groupId>
 			<artifactId>orika-core</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-client</artifactId>
@@ -47,6 +40,24 @@
 			<artifactId>comot-manager-common</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>at.ac.tuwien.mela</groupId>
+			<artifactId>MELA-Common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>at.ac.tuwien.dsg.cloud.salsa</groupId>
+			<artifactId>salsa-common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>at.ac.tuwien.rSYBL.control-service</groupId>
+			<artifactId>rSYBL-cloud-application-dependency-graph</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.unitils</groupId>
+			<artifactId>unitils-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-manager-common</artifactId>
 			<version>0.2</version>
@@ -61,18 +72,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>at.ac.tuwien.mela</groupId>
-			<artifactId>MELA-Common</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>at.ac.tuwien.dsg.cloud.salsa</groupId>
-			<artifactId>salsa-common</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>at.ac.tuwien.rSYBL.control-service</groupId>
-			<artifactId>rSYBL-cloud-application-dependency-graph</artifactId>
-		</dependency>
 	</dependencies>
 
 	<build>

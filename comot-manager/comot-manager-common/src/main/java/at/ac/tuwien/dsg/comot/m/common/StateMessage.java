@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -52,6 +53,30 @@ public class StateMessage {
 
 	public void setTransitions(Map<String, Transition> transitions) {
 		this.transitions = transitions;
+	}
+
+	public String getServiceId() {
+		return event.getServiceId();
+	}
+
+	public String getCsInstanceId() {
+		return event.getCsInstanceId();
+	}
+
+	public String getGroupId() {
+		return event.getGroupId();
+	}
+
+	public Action getAction() {
+		return event.getAction();
+	}
+
+	public String getCustomEvent() {
+		return event.getCustomEvent();
+	}
+
+	public String getMessage() {
+		return event.getMessage();
 	}
 
 }

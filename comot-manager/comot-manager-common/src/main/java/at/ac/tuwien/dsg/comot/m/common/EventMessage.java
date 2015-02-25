@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -16,6 +17,7 @@ public class EventMessage {
 	protected Action action;
 	protected String customEvent;
 	protected String message;
+	protected CloudService service;
 
 	public EventMessage() {
 
@@ -30,13 +32,15 @@ public class EventMessage {
 		this.message = message;
 	}
 
-	public EventMessage(String serviceId, String csInstanceId, String groupId, Action action, String message) {
+	public EventMessage(String serviceId, String csInstanceId, String groupId, Action action, CloudService service,
+			String message) {
 		super();
 		this.serviceId = serviceId;
 		this.csInstanceId = csInstanceId;
 		this.groupId = groupId;
 		this.action = action;
 		this.message = message;
+		this.service = service;
 	}
 
 	public boolean isLifeCycleDefined() {
@@ -97,6 +101,14 @@ public class EventMessage {
 	public String toString() {
 		return "EventMessage [serviceId=" + serviceId + ", csInstanceId=" + csInstanceId + ", groupId=" + groupId
 				+ ", action=" + action + ", customEvent=" + customEvent + ", message=" + message + "]";
+	}
+
+	public CloudService getService() {
+		return service;
+	}
+
+	public void setService(CloudService service) {
+		this.service = service;
 	}
 
 }

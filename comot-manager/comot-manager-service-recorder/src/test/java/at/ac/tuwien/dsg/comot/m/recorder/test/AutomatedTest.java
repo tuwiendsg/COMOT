@@ -42,6 +42,8 @@ public class AutomatedTest extends AbstractTest {
 	public void oneVersion() throws IllegalArgumentException, IllegalAccessException, InstantiationException,
 			ClassNotFoundException, ComotException, RecorderException {
 
+		cutOsus(service);
+
 		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, "init");
 
 		CloudService sResult = (CloudService) revisionApi.getRevision(STemplates.serviceId,
@@ -75,6 +77,8 @@ public class AutomatedTest extends AbstractTest {
 
 	public void multipleVersions() throws IllegalArgumentException, IllegalAccessException, ClassNotFoundException,
 			IOException, InstantiationException, ComotException, RecorderException {
+
+		cutOsus(service);
 
 		ServiceUnit unitV1 = UtilsTest.getServiceUnit(service, STemplates.swNodeId);
 
@@ -134,6 +138,8 @@ public class AutomatedTest extends AbstractTest {
 			ClassNotFoundException, IOException, InstantiationException, RecorderException {
 
 		service = STemplates.simplifiedService();
+		cutOsus(service);
+
 		Long change1Time;
 		Long change3Time;
 
@@ -188,7 +194,7 @@ public class AutomatedTest extends AbstractTest {
 		// GET ALL IDs
 
 		List<ManagedObject> list = revisionApi.getManagedObjects(STemplates.serviceId);
-		assertEquals(7, list.size());
+		assertEquals(6, list.size());
 		log.info("{}", list);
 
 	}

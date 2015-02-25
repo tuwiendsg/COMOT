@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.m.core.lifecycle;
+package at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters;
 
 import java.io.IOException;
 
@@ -20,11 +20,14 @@ import org.springframework.stereotype.Component;
 import at.ac.tuwien.dsg.comot.m.common.EventMessage;
 import at.ac.tuwien.dsg.comot.m.common.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.Quality;
 import at.ac.tuwien.dsg.comot.model.provider.Resource;
 import at.ac.tuwien.dsg.comot.model.type.Action;
+import at.ac.tuwien.dsg.comot.model.type.State;
 
 @Component
 public class EpsCoordinator {
@@ -48,8 +51,8 @@ public class EpsCoordinator {
 		admin.declareQueue(new Queue(QUEUE_PREPARATION, false, false, false));
 		admin.declareBinding(new Binding(
 				QUEUE_PREPARATION, DestinationType.QUEUE,
-				AppContextCore.EXCHANGE_SERVICES,
-				Action.NEW_INSTANCE_REQUESTED + ".#", null));
+				AppContextCore.EXCHANGE_INSTANCE_HIGH_LEVEL,
+				"*.TRUE." + State.NONE + "." + State.PREPARATION + ".#", null));
 
 		for (OfferedServiceUnit osu : infoService.getOsus().values()) {
 			try {
@@ -59,7 +62,7 @@ public class EpsCoordinator {
 							if (res2.getType().getName().equals(InformationServiceMock.ADAPTER_CLASS)) {
 
 								Adapter adapter = (Adapter) context.getBean(Class.forName(res2.getName()));
-								adapter.start(osu.getId(), null, null);
+								adapter.startAdapter(osu.getId());
 
 							}
 						}
@@ -81,9 +84,9 @@ public class EpsCoordinator {
 			log.info("wwwwwwwwwwww {}", data);
 
 			StateMessage message = Utils.asStateMessage(data);
-			String instanceId = message.getEvent().getCsInstanceId();
-			String serviceId = message.getEvent().getServiceId();
-			for (OfferedServiceUnit osu : infoService.getSupportingServices(instanceId)) {
+			String csInstanceId = message.getCsInstanceId();
+			String serviceId = message.getServiceId();
+			for (OfferedServiceUnit osu : infoService.getSupportingServices(csInstanceId)) {
 
 				for (Quality quality : osu.getQualities()) {
 					if (quality.getType().getName().equals(InformationServiceMock.TYPE_ACTION)
@@ -95,7 +98,8 @@ public class EpsCoordinator {
 				}
 			}
 
-			EventMessage event = new EventMessage(serviceId, instanceId, serviceId, Action.PREPARED, null);
+			EventMessage event = new EventMessage(serviceId, csInstanceId, serviceId, Action.PREPARED, message
+					.getEvent().getService(), null);
 			lcManager.executeAction(event);
 
 		} catch (JAXBException | IOException e) {

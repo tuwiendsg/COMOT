@@ -3,6 +3,7 @@ package at.ac.tuwien.dsg.comot.m.core.lifecycle;
 import java.util.ArrayList;
 import java.util.List;
 
+import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceTopology;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
@@ -77,10 +78,6 @@ public class Group {
 		Group temp = new Group(instance, this, strategy);
 		members.add(temp);
 		return temp;
-	}
-
-	enum Type {
-		SERVICE, TOPOLOGY, UNIT, INSTANCE
 	}
 
 	public boolean canExecute(Action action) {

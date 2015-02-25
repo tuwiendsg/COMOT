@@ -23,6 +23,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.eclipse.persistence.jaxb.JAXBContextFactory;
 import org.eclipse.persistence.jaxb.JAXBContextProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +63,7 @@ public class Utils {
 		// props.put(JAXBContextProperties.JSON_INCLUDE_ROOT, false);
 		props.put(JAXBContextProperties.MEDIA_TYPE, MediaType.APPLICATION_JSON);
 
-		JAXBContext context = JAXBContext.newInstance(list.toArray(new Class[list.size()]), props);
+		JAXBContext context = JAXBContextFactory.createContext(list.toArray(new Class[list.size()]), props);
 
 		Unmarshaller unm = context.createUnmarshaller();
 
@@ -80,7 +81,7 @@ public class Utils {
 		// props.put(JAXBContextProperties.JSON_INCLUDE_ROOT, false);
 		props.put(JAXBContextProperties.MEDIA_TYPE, MediaType.APPLICATION_JSON);
 
-		JAXBContext context = JAXBContext.newInstance(list.toArray(new Class[list.size()]), props);
+		JAXBContext context = JAXBContextFactory.createContext(list.toArray(new Class[list.size()]), props);
 
 		Marshaller m = context.createMarshaller();
 		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);

@@ -24,17 +24,12 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
-import at.ac.tuwien.dsg.comot.m.common.coreservices.ControlClient;
-import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
-import at.ac.tuwien.dsg.comot.m.common.coreservices.MonitoringClient;
 import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
-import at.ac.tuwien.dsg.comot.m.core.ComotOrchestrator;
-import at.ac.tuwien.dsg.comot.m.core.dal.ServiceRepoProxy;
-import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
+import at.ac.tuwien.dsg.comot.m.cs.AppContextEps;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.m.recorder.AppContextServrec;
-import at.ac.tuwien.dsg.comot.m.recorder.cs.RecordingManager;
 import at.ac.tuwien.dsg.comot.m.recorder.model.Change;
 import at.ac.tuwien.dsg.comot.m.recorder.revisions.RevisionApi;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
@@ -45,8 +40,8 @@ import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
 
 @SuppressWarnings("deprecation")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = AppContextServrec.class)
-@ActiveProfiles({ AppContextServrec.IMPERMANENT_NEO4J_DB, AppContextCore.EMBEDDED_H2_DB })
+@ContextConfiguration(classes = { AppContextServrec.class, AppContextEps.class })
+@ActiveProfiles({ AppContextServrec.IMPERMANENT_NEO4J_DB })
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public abstract class AbstractTest {
 
@@ -64,20 +59,6 @@ public abstract class AbstractTest {
 
 	@Autowired
 	protected CloudServiceRepoWorkaround cloudServiceRepo;
-	@Autowired
-	protected RecordingManager recordingManager;
-
-	@Autowired
-	protected DeploymentClient deployment;
-	@Autowired
-	protected ControlClient control;
-	@Autowired
-	protected MonitoringClient monitoring;
-
-	@Autowired
-	protected ComotOrchestrator orchestrator;
-	@Autowired
-	protected ServiceRepoProxy serviceRepo;
 
 	@Autowired
 	protected ToscaMapper mapperTosca;
@@ -95,9 +76,6 @@ public abstract class AbstractTest {
 		// http://127.0.0.1:7474/
 		srv = new WrappingNeoServerBootstrapper((GraphDatabaseAPI) db);
 		srv.start();
-
-		serviceRepo.setFake(true);
-
 	}
 
 	@After
@@ -175,6 +153,13 @@ public abstract class AbstractTest {
 			change = change.getTo().getEnd();
 		}
 		return i;
+	}
+
+	public static void cutOsus(CloudService service) {
+		for (ServiceUnit unit : Navigator.getAllUnits(service)) {
+			unit.setOsu(null);
+		}
+
 	}
 
 }

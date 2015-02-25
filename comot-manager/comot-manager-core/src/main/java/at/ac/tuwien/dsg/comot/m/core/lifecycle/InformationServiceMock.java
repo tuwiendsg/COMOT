@@ -1,5 +1,6 @@
 package at.ac.tuwien.dsg.comot.m.core.lifecycle;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -12,9 +13,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.DeploymentAdapter;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.RecordingAdapter;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
+import at.ac.tuwien.dsg.comot.model.provider.PrimitiveOperation;
 import at.ac.tuwien.dsg.comot.model.provider.Resource;
 import at.ac.tuwien.dsg.comot.model.provider.ResourceOrQualityType;
 import at.ac.tuwien.dsg.comot.model.runtime.ServiceInstance;
@@ -29,6 +34,7 @@ public class InformationServiceMock {
 	public static final String SALSA_SERVICE_PUBLIC_ID = "SALSA_SERVICE";
 	public static final String MELA_SERVICE_PUBLIC_ID = "MELA_SERVICE";
 	public static final String RSYBL_SERVICE_PUBLIC_ID = "RSYBL_SERVICE";
+	public static final String RECORDER_SERVICE = "RECORDER_SERVICE";
 
 	public static final String PUBLIC_INSTANCE = "PUBLIC_INSTANCE";
 	public static final String TYPE_STATIC_SERVICE = "TYPE_STATIC_SERVICE";
@@ -36,6 +42,10 @@ public class InformationServiceMock {
 	public static final String ADAPTER_CLASS = "ADAPTER_CLASS";
 	public static final String IP = "IP";
 	public static final String PORT = "PORT";
+
+	// custom events
+	public static final String SET_MCR = "SET_MCR";
+	public static final String SET_EFFECTS = "SET_EFFECTS";
 
 	protected Map<String, CloudService> services = new HashMap<>();
 	protected Map<String, OfferedServiceUnit> osus = new HashMap<>();
@@ -45,7 +55,7 @@ public class InformationServiceMock {
 
 		// SALSA
 		Resource resource = new Resource(PUBLIC_INSTANCE, new ResourceOrQualityType(TYPE_STATIC_SERVICE));
-		resource.hasResource(new Resource("at.ac.tuwien.dsg.comot.m.core.lifecycle.DeploymentAdapter",
+		resource.hasResource(new Resource(DeploymentAdapter.class.getCanonicalName(),
 				new ResourceOrQualityType(ADAPTER_CLASS)));
 		resource.hasResource(new Resource("128.130.172.215", new ResourceOrQualityType(IP)));
 		resource.hasResource(new Resource("8380", new ResourceOrQualityType(PORT)));
@@ -57,39 +67,51 @@ public class InformationServiceMock {
 		// MELA
 
 		Resource resource2 = new Resource(PUBLIC_INSTANCE, new ResourceOrQualityType(TYPE_STATIC_SERVICE));
-		resource2.hasResource(new Resource("TODO",
-				new ResourceOrQualityType(ADAPTER_CLASS)));
+		resource2.hasResource(new Resource("TODO", new ResourceOrQualityType(ADAPTER_CLASS)));
 		resource2.hasResource(new Resource("128.130.172.215", new ResourceOrQualityType(IP)));
 		resource2.hasResource(new Resource("8180", new ResourceOrQualityType(PORT)));
 
 		OfferedServiceUnit monitoring = new OfferedServiceUnit();
 		monitoring.setId(MELA_SERVICE_PUBLIC_ID);
 		monitoring.hasResource(resource2);
+		monitoring.hasPrimitiveOperation(new PrimitiveOperation("Set Metric Composition Rules", SET_MCR));
 
 		// RSYBL
 
 		Resource resource3 = new Resource(PUBLIC_INSTANCE, new ResourceOrQualityType(TYPE_STATIC_SERVICE));
-		resource3.hasResource(new Resource("TODO",
-				new ResourceOrQualityType(ADAPTER_CLASS)));
+		resource3.hasResource(new Resource("TODO", new ResourceOrQualityType(ADAPTER_CLASS)));
 		resource3.hasResource(new Resource("128.130.172.215", new ResourceOrQualityType(IP)));
 		resource3.hasResource(new Resource("8020", new ResourceOrQualityType(PORT)));
 
 		OfferedServiceUnit control = new OfferedServiceUnit();
 		control.setId(RSYBL_SERVICE_PUBLIC_ID);
 		control.hasResource(resource3);
+		control.hasPrimitiveOperation(new PrimitiveOperation("Set Metric Composition Rules", SET_MCR));
+		control.hasPrimitiveOperation(new PrimitiveOperation("Set Effects", SET_EFFECTS));
+
+		// RECORDER
+
+		Resource resource4 = new Resource(PUBLIC_INSTANCE, new ResourceOrQualityType(TYPE_STATIC_SERVICE));
+		resource4.hasResource(new Resource(RecordingAdapter.class.getCanonicalName(), new ResourceOrQualityType(
+				ADAPTER_CLASS)));
+
+		OfferedServiceUnit recorder = new OfferedServiceUnit();
+		control.setId(RECORDER_SERVICE);
+		control.hasResource(resource4);
 
 		osus.put(SALSA_SERVICE_PUBLIC_ID, deployment);
+		osus.put(RECORDER_SERVICE, recorder);
 		// osus.put(MELA_SERVICE_PUBLIC_ID, monitoring);
 		// osus.put(RSYBL_SERVICE_PUBLIC_ID, control);
 	}
 
-	public String createCloudService(CloudService service) {
+	public String createService(CloudService service) {
 		services.put(service.getId(), service);
 
 		return service.getId();
 	}
 
-	public String createNewServiceInstance(String serviceId) {
+	public String createServiceInstance(String serviceId) {
 
 		if (!services.containsKey(serviceId)) {
 			throw new ComotIllegalArgumentException("There is no service '" + serviceId + "'");
@@ -126,13 +148,36 @@ public class InformationServiceMock {
 		return new HashSet<OfferedServiceUnit>();
 	}
 
-	public CloudService getServiceInformation(String instanceId) {
-		log.info("{}", services);
-		return services.get(instanceId);
+	public CloudService getService(String serviceId) {
+		return services.get(serviceId);
+	}
+
+	public CloudService getServiceInstance(String instanceId) throws ClassNotFoundException, IOException {
+
+		for (CloudService service : services.values()) {
+			for (ServiceInstance instance : service.getInstances()) {
+
+				if (instance.getId().equals(instanceId)) {
+					CloudService copy = (CloudService) Utils.deepCopy(service);
+					copy.getInstances().clear();
+					copy.getInstances().add(instance);
+
+					// TODO clean also unitInstances
+
+					return copy;
+				}
+			}
+		}
+
+		return null;
 	}
 
 	public Map<String, OfferedServiceUnit> getOsus() {
 		return osus;
+	}
+
+	public Map<String, CloudService> getServices() {
+		return services;
 	}
 
 }

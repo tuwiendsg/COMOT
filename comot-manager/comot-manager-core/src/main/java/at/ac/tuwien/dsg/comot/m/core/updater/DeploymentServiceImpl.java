@@ -1,9 +1,7 @@
-package at.ac.tuwien.dsg.comot.m.core.test;
+package at.ac.tuwien.dsg.comot.m.core.updater;
 
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.m.core.updater.DeploymentService;
-import at.ac.tuwien.dsg.comot.m.core.updater.Node;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 
 @Component

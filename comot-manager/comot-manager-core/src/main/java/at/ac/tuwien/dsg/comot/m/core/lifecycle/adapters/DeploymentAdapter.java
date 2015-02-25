@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.m.core.lifecycle;
+package at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -8,14 +8,10 @@ import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Binding.DestinationType;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageListener;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +22,7 @@ import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
@@ -37,44 +34,65 @@ import at.ac.tuwien.dsg.comot.model.type.State;
 
 @Component
 // @Scope("prototype") //for some reason this creates multip0le instances
-public class DeploymentAdapter implements Adapter {
+public class DeploymentAdapter extends Adapter {
 
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 
-	public static final String QUEUE = "QUEUE_";
-
-	// protected String osuId;
-	protected String osuInstanceId;
-
-	@Autowired
-	protected AmqpAdmin admin;
-	@Autowired
-	protected InformationServiceMock infoService;
 	@Autowired
 	protected DeploymentClient deployment;
-	@Autowired
-	protected ConnectionFactory connectionFactory;
-	@Autowired
-	protected LifeCycleManager lcManager;
+
+	@Override
+	public void start(String osuInstanceId) {
+
+		OfferedServiceUnit osu = infoService.getOsus().get(osuInstanceId);
+		String ip = null;
+		String port = null;
+
+		for (Resource resource : osu.getResources()) {
+			if (resource.getName().equals(InformationServiceMock.PUBLIC_INSTANCE)) {
+				for (Resource res : resource.getContainsResources()) {
+					if (res.getType().getName().equals(InformationServiceMock.IP)) {
+						ip = res.getName();
+					} else if (res.getType().getName().equals(InformationServiceMock.PORT)) {
+						port = res.getName();
+					}
+				}
+			}
+		}
+
+		deployment.setHost(ip);
+		deployment.setPort(new Integer(port));
+
+		admin.declareBinding(new Binding(queueName(), DestinationType.QUEUE,
+				AppContextCore.EXCHANGE_INSTANCE_HIGH_LEVEL, "*.TRUE.*." + State.IDLE + ".#", null));
+		admin.declareBinding(new Binding(queueName(), DestinationType.QUEUE,
+				AppContextCore.EXCHANGE_INSTANCE_HIGH_LEVEL, "*.TRUE.*." + State.UNDEPLOYMENT + ".#", null));
+
+		container.setMessageListener(new DeployListener());
+
+	}
 
 	class DeployListener implements MessageListener {
 		@Override
 		public void onMessage(Message message) {
 			try {
 
-				log.info("bbbbbbbb {}", new String(message.getBody(), "UTF-8"));
-
-				StateMessage msg = Utils.asStateMessage(new String(message.getBody(), "UTF-8"));
-
+				StateMessage msg = stateMessage(message);
 				String instanceId = msg.getEvent().getCsInstanceId();
 				String serviceId = msg.getEvent().getServiceId();
+				Action action = msg.getEvent().getAction();
 
-				for (OfferedServiceUnit osu : infoService.getSupportingServices(instanceId)) {
-					if (osu.getId().equals(osuInstanceId)) {
+				log.info("onMessage {}", Utils.asJsonString(msg));
+
+				if (isAssignedTo(instanceId)) {
+
+					log.info("bbbbbbbbbbbb");
+
+					if (action.equals(Action.PREPARED)) {
 
 						log.info("would deploy {}", instanceId);
 
-						CloudService service = infoService.getServiceInformation(serviceId);
+						CloudService service = infoService.getServiceInstance(instanceId);
 						service.setId(instanceId);
 						service.setName(instanceId);
 
@@ -82,13 +100,16 @@ public class DeploymentAdapter implements Adapter {
 
 						monitorStatusUntilDeployed(serviceId, service);
 
+					} else if (action.equals(Action.UNDEPLOYMENT_REQUESTED)) { // TODO this will probably be different
+																				// action
+
 					}
 				}
 
-			} catch (JAXBException | CoreServiceException | ComotException | IOException | InterruptedException e) {
+			} catch (JAXBException | CoreServiceException | ComotException | IOException | InterruptedException
+					| ClassNotFoundException e) {
 				e.printStackTrace();
 			}
-
 		}
 
 	}
@@ -131,7 +152,7 @@ public class DeploymentAdapter implements Adapter {
 						log.error("invalid transitions {} -> {}", oldState, instance.getState());
 					} else {
 						lcManager.executeAction(new EventMessage(serviceId, service.getId(), instance.getId(), action,
-								Utils.asXmlString(service)));
+								service, null));
 					}
 				}
 			}
@@ -155,51 +176,6 @@ public class DeploymentAdapter implements Adapter {
 		}
 
 		return null;
-	}
-
-	@Override
-	public void start(String osuInstanceId, String infoIp, String infoPort) {
-
-		this.osuInstanceId = osuInstanceId;
-
-		OfferedServiceUnit osu = infoService.getOsus().get(osuInstanceId);
-		String ip = null;
-		String port = null;
-
-		for (Resource resource : osu.getResources()) {
-			if (resource.getName().equals(InformationServiceMock.PUBLIC_INSTANCE)) {
-				for (Resource res : resource.getContainsResources()) {
-					if (res.getType().getName().equals(InformationServiceMock.IP)) {
-						ip = res.getName();
-					} else if (res.getType().getName().equals(InformationServiceMock.PORT)) {
-						port = res.getName();
-					}
-				}
-			}
-		}
-
-		deployment.setHost(ip);
-		deployment.setPort(new Integer(port));
-
-		admin.declareQueue(new Queue(QUEUE + osuInstanceId, false, false, false));
-		admin.declareBinding(new Binding(
-				QUEUE + osuInstanceId, DestinationType.QUEUE,
-				AppContextCore.EXCHANGE_INSTANCE_HIGH_LEVEL,
-				"*.*." + State.IDLE + ".#", null));//
-
-		SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
-		container.setConnectionFactory(connectionFactory);
-		container.setQueueNames(QUEUE + osuInstanceId);
-		container.setMessageListener(new DeployListener());
-		container.start();
-
-		log.info("aaaaaaaa");
-
-	}
-
-	@Override
-	public void clean() {
-
 	}
 
 }

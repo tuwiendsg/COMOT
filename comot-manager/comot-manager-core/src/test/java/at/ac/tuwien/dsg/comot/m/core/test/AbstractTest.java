@@ -16,15 +16,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.ControlClient;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.MonitoringClient;
-import at.ac.tuwien.dsg.comot.m.core.ComotOrchestrator;
-import at.ac.tuwien.dsg.comot.m.core.dal.ServiceRepoProxy;
+import at.ac.tuwien.dsg.comot.m.core.Coordinator;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
+import at.ac.tuwien.dsg.comot.m.recorder.AppContextServrec;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { AppContextCore.class })
-@ActiveProfiles({ AppContextCore.EMBEDDED_H2_DB })
-// AppContextCore.INSERT_INIT_DATA
+@ActiveProfiles({ AppContextServrec.IMPERMANENT_NEO4J_DB })
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public abstract class AbstractTest {
 
@@ -34,10 +33,7 @@ public abstract class AbstractTest {
 	protected Environment env;
 
 	@Autowired
-	protected ServiceRepoProxy serviceRepo;
-
-	@Autowired
-	protected ComotOrchestrator orchestrator;
+	protected Coordinator orchestrator;
 
 	@Autowired
 	protected DeploymentClient deployment;

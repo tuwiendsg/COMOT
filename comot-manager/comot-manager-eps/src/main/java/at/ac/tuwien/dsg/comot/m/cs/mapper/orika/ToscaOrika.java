@@ -37,13 +37,12 @@ import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.PrimitiveOperation;
 import at.ac.tuwien.dsg.comot.model.provider.Resource;
 import at.ac.tuwien.dsg.comot.model.provider.ResourceOrQualityType;
-import at.ac.tuwien.dsg.comot.model.type.NodePropertiesType;
 import at.ac.tuwien.dsg.comot.model.type.ResourceType;
 
 @Component
 public class ToscaOrika {
 
-	protected final Logger log = LoggerFactory.getLogger(ToscaOrika.class);
+	protected static final Logger log = LoggerFactory.getLogger(ToscaOrika.class);
 	// public static final String OS = "os";
 	public static final QName ATTRIBUTE_ID = new QName("id");
 
@@ -140,7 +139,7 @@ public class ToscaOrika {
 				for (PrimitiveOperation oneProps : operations) {
 					map.put(oneProps.getName(), oneProps.getExecuteMethod());
 				}
-				salsaProps.put(NodePropertiesType.ACTION.toString(), map);
+				salsaProps.put(ResourceType.ACTION.toString(), map);
 			}
 
 			if (resources != null && !resources.isEmpty()) {
@@ -152,7 +151,7 @@ public class ToscaOrika {
 						node.setDeploymentArtifacts(arts);
 						// resource -> property type os
 					} else {
-						salsaProps.put(NodePropertiesType.OS.toString(), resource.getType().getName(),
+						salsaProps.put(ResourceType.OS.toString(), resource.getType().getName(),
 								resource.getName());
 					}
 				}
@@ -190,7 +189,7 @@ public class ToscaOrika {
 					for (SalsaMappingProperty property : list) {
 
 						// os -> resource
-						if (property.getType().equals(NodePropertiesType.OS.toString())) {
+						if (property.getType().equals(ResourceType.OS.toString())) {
 
 							for (Property prop : property.getPropertiesList()) {
 								unit.getOsu().hasResource(
@@ -198,7 +197,7 @@ public class ToscaOrika {
 							}
 
 							// action -> primitiveOperation
-						} else if (property.getType().equals(NodePropertiesType.ACTION.toString())) {
+						} else if (property.getType().equals(ResourceType.ACTION.toString())) {
 
 							for (Property prop : property.getPropertiesList()) {
 								unit.getOsu().hasPrimitiveOperation(
@@ -223,6 +222,7 @@ public class ToscaOrika {
 	}
 
 	public static boolean isArtifact(Resource resource) {
+
 		ResourceType type = ResourceType.fromString(resource.getType().getName());
 
 		if (type.equals(ResourceType.APT_GET_COMMAND)
