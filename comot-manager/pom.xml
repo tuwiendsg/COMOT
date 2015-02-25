@@ -100,7 +100,7 @@
 			<dependency>
 				<groupId>at.ac.tuwien.dsg.comot</groupId>
 				<artifactId>comot-model</artifactId>
-				<version>0.2</version>
+				<version>1.0</version>
 			</dependency>
 			<dependency>
 				<groupId>at.ac.tuwien.dsg.comot</groupId>
