@@ -1,6 +1,6 @@
 package at.ac.tuwien.dsg.comot.m.ui.service;
 
-import java.util.List;
+import java.io.IOException;
 
 import javax.annotation.PostConstruct;
 import javax.ws.rs.Consumes;
@@ -15,6 +15,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBException;
 
+import org.glassfish.jersey.media.sse.EventOutput;
+import org.glassfish.jersey.media.sse.OutboundEvent;
+import org.glassfish.jersey.media.sse.SseFeature;
 import org.oasis.tosca.Definitions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,15 +26,9 @@ import org.springframework.stereotype.Service;
 
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
-import at.ac.tuwien.dsg.comot.m.common.model.monitoring.ElementMonitoring;
-import at.ac.tuwien.dsg.comot.m.core.ComotOrchestrator;
-import at.ac.tuwien.dsg.comot.m.core.model.ServiceEntity;
-import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
+import at.ac.tuwien.dsg.comot.m.core.Coordinator;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.m.ui.mapper.SalsaOutputMapper;
-import at.ac.tuwien.dsg.comot.m.ui.model.ElementState;
-import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
-import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
 // WADL http://localhost:8380/comot/rest/application.wadl
 @Service
@@ -50,69 +47,58 @@ public class ServicesResource {
 	protected ToscaMapper mapperTosca;
 
 	@Autowired
-	protected ComotOrchestrator orchestrator;
+	protected Coordinator orchestrator;
 
 	@PostConstruct
 	public void startUp() {
 		log.info("REST resource created");
 	}
 
-	// CREATE & UPDATE
-
 	@POST
 	@Path("/")
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response createAndDeploy(Definitions def) throws CoreServiceException, ComotException, JAXBException {
+	public Response createService(Definitions def) throws CoreServiceException, ComotException, JAXBException {
 
-		// orchestrator.deployNew(mapperTosca.createModel(def));
-		orchestrator.deployNew(UtilsCs.asString(def));
+		orchestrator.createCloudService(mapperTosca.createModel(def));
 		return Response.ok(def.getId()).build();
 	}
 
-	@PUT
-	@Path("/{serviceId}/deployment")
+	@POST
+	@Path("/{serviceId}/instances")
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response redeploy(@PathParam("serviceId") String serviceId) throws CoreServiceException, ComotException {
+	public Response createServiceInstance(@PathParam("serviceId") String serviceId) throws CoreServiceException,
+			ComotException, ClassNotFoundException, IOException, JAXBException {
 
-		orchestrator.redeploy(serviceId);
-		return Response.ok().build();
+		String instanceId = orchestrator.createServiceInstance(serviceId);
+		return Response.ok(instanceId).build();
 	}
 
 	@PUT
-	@Path("/{serviceId}/monitoring")
+	@Path("/{serviceId}/instances/{instanceId}/eps/{epsId}")
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response startMonitoring(@PathParam("serviceId") String serviceId) throws CoreServiceException,
-			ComotException {
+	public Response assignSupportingEps(
+			@PathParam("serviceId") String serviceId,
+			@PathParam("instanceId") String instanceId,
+			@PathParam("epsId") String epsId) throws CoreServiceException, ComotException, ClassNotFoundException,
+			IOException, JAXBException {
 
-		orchestrator.startMonitoring(serviceId);
+		orchestrator.assignSupportingOsu(instanceId, epsId);
 		return Response.ok().build();
 	}
 
 	@PUT
-	@Path("/{serviceId}/control")
+	@Path("/{serviceId}/instances/{instanceId}/eps/{epsId}/events/{eventId}")
+	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response startControl(@PathParam("serviceId") String serviceId) throws CoreServiceException, ComotException {
+	public Response triggerCustomEvent(
+			@PathParam("serviceId") String serviceId,
+			@PathParam("instanceId") String instanceId,
+			@PathParam("epsId") String epsId,
+			@PathParam("eventId") String eventId,
+			String optionalInput) throws CoreServiceException, ComotException, ClassNotFoundException, IOException,
+			JAXBException {
 
-		orchestrator.startControl(serviceId);
-		return Response.ok().build();
-	}
-
-	@PUT
-	@Path("/{serviceId}/mcr")
-	public Response createMcr(@PathParam("serviceId") String serviceId, CompositionRulesConfiguration mcr)
-			throws CoreServiceException, ComotException {
-
-		orchestrator.setMcr(serviceId, mcr);
-		return Response.ok().build();
-	}
-
-	@PUT
-	@Path("/{serviceId}/effects")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response createElasticityEffects(@PathParam("serviceId") String serviceId, String input)
-			throws CoreServiceException, ComotException {
-
-		orchestrator.startMonitoring(serviceId);// todo
+		orchestrator.triggerCustomEvent(serviceId, instanceId, epsId, eventId, optionalInput);
 		return Response.ok().build();
 	}
 
@@ -128,94 +114,131 @@ public class ServicesResource {
 	// DELETE
 
 	@DELETE
-	@Path("/{serviceId}/deployment")
-	public Response undeploy(@PathParam("serviceId") String serviceId) throws CoreServiceException,
+	@Path("/{serviceId}")
+	public Response deleteService(@PathParam("serviceId") String serviceId) throws CoreServiceException,
 			ComotException {
 
-		orchestrator.undeploy(serviceId);
+		// TODO
 		return Response.ok().build();
 	}
 
 	@DELETE
-	@Path("/{serviceId}/monitoring")
-	public Response stopMonitoring(@PathParam("serviceId") String serviceId) throws CoreServiceException,
-			ComotException {
+	@Path("/{serviceId}/instances/{instanceId}")
+	public Response deleteServiceInstance(
+			@PathParam("serviceId") String serviceId,
+			@PathParam("instanceId") String instanceId) throws CoreServiceException, ComotException {
 
-		orchestrator.stopMonitoring(serviceId);
+		// TODO
 		return Response.ok().build();
 	}
 
 	@DELETE
-	@Path("/{serviceId}/control")
-	public Response stopControl(@PathParam("serviceId") String serviceId) throws CoreServiceException, ComotException {
+	@Path("/{serviceId}/instances/{instanceId}/eps/{epsId}")
+	public Response removeSupportingEps(
+			@PathParam("serviceId") String serviceId,
+			@PathParam("instanceId") String instanceId,
+			@PathParam("epsId") String epsId) throws CoreServiceException, ComotException {
 
-		orchestrator.stopControl(serviceId);
+		// TODO
 		return Response.ok().build();
+	}
+
+	@GET
+	@Path("/events/{serviceId}")
+	@Consumes(SseFeature.SERVER_SENT_EVENTS)
+	@Produces(SseFeature.SERVER_SENT_EVENTS)
+	public EventOutput getServerSentEvents(
+			@PathParam("serviceId") String serviceId) {
+
+		final EventOutput eventOutput = new EventOutput();
+
+		log.info("input: {}", serviceId);
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+
+					for (int i = 0; i < 10; i++) {
+						log.info("sending {}", i);
+
+						Thread.sleep(1000);
+
+						final OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
+						// eventBuilder.name("message-to-client");
+						eventBuilder.data(String.class, "Hello world " + i + "!");
+						final OutboundEvent event = eventBuilder.build();
+						eventOutput.write(event);
+					}
+
+				} catch (IOException e) {
+					throw new RuntimeException("Error when writing the event.", e);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} finally {
+					try {
+						eventOutput.close();
+					} catch (IOException ioClose) {
+						throw new RuntimeException("Error when closing the event output.", ioClose);
+					}
+				}
+			}
+		}).start();
+
+		return eventOutput;
 	}
 
 	// READ
 
-	@GET
-	@Consumes(MediaType.WILDCARD)
-	@Path("/")
-	public Response getServices() {
-
-		List<ServiceEntity> list = orchestrator.getServices();
-		return Response.ok(list.toArray(new ServiceEntity[list.size()])).build();
-	}
-
-	@GET
-	@Consumes(MediaType.WILDCARD)
-	@Path("/{serviceId}")
-	public Response getService(@PathParam("serviceId") String serviceId) throws CoreServiceException, ComotException {
-
-		CloudService service = orchestrator.getStatus(serviceId);
-		ElementState element = mapperOutput.extractOutput(service);
-		return Response.ok(element).build();
-	}
-
-	// return status from salsa & monitoring (depends on what is turned on)
-	@GET
-	@Consumes(MediaType.WILDCARD)
-	@Path("/{serviceId}/state")
-	public Response getState(@PathParam("serviceId") String serviceId) throws CoreServiceException, ComotException {
-
-		CloudService service = orchestrator.getStatus(serviceId);
-		ElementState element = mapperOutput.extractOutput(service);
-		return Response.ok(element).build();
-	}
-
-	@GET
-	@Consumes(MediaType.WILDCARD)
-	@Path("/{serviceId}/monitoring/snapshots/last")
-	public Response getMonitoringData(@PathParam("serviceId") String serviceId) throws CoreServiceException,
-			ComotException {
-
-		ElementMonitoring element = orchestrator.getMonitoringData(serviceId);
-		return Response.ok(element).build();
-	}
-
-	@GET
-	@Consumes(MediaType.WILDCARD)
-	@Path("/{serviceId}/mcr")
-	public Response getMcr(@PathParam("serviceId") String serviceId) throws CoreServiceException {
-
-		CompositionRulesConfiguration mcr = orchestrator.getMcr(serviceId);
-		return Response.ok(mcr).build();
-	}
-
 	// @GET
 	// @Consumes(MediaType.WILDCARD)
-	// @Produces(MediaType.APPLICATION_XML)
-	// @Path("/tosca")
-	// public Response getToscaXsd() {
+	// @Path("/")
+	// public Response getServices() {
 	//
-	// try {
-	// return Response.ok(IOUtils.toString(ClassLoader.getSystemResourceAsStream(TOSCA_FILE), "UTF-8")).build();
-	//
-	// } catch (Exception e) {
-	// return handleException(e);
+	// List<ServiceEntity> list = orchestrator.getServices();
+	// return Response.ok(list.toArray(new ServiceEntity[list.size()])).build();
 	// }
+	//
+	// @GET
+	// @Consumes(MediaType.WILDCARD)
+	// @Path("/{serviceId}")
+	// public Response getService(@PathParam("serviceId") String serviceId) throws CoreServiceException, ComotException
+	// {
+	//
+	// CloudService service = orchestrator.getStatus(serviceId);
+	// ElementState element = mapperOutput.extractOutput(service);
+	// return Response.ok(element).build();
+	// }
+	//
+	// // return status from salsa & monitoring (depends on what is turned on)
+	// @GET
+	// @Consumes(MediaType.WILDCARD)
+	// @Path("/{serviceId}/state")
+	// public Response getState(@PathParam("serviceId") String serviceId) throws CoreServiceException, ComotException {
+	//
+	// CloudService service = orchestrator.getStatus(serviceId);
+	// ElementState element = mapperOutput.extractOutput(service);
+	// return Response.ok(element).build();
+	// }
+	//
+	// @GET
+	// @Consumes(MediaType.WILDCARD)
+	// @Path("/{serviceId}/monitoring/snapshots/last")
+	// public Response getMonitoringData(@PathParam("serviceId") String serviceId) throws CoreServiceException,
+	// ComotException {
+	//
+	// ElementMonitoring element = orchestrator.getMonitoringData(serviceId);
+	// return Response.ok(element).build();
+	// }
+	//
+	// @GET
+	// @Consumes(MediaType.WILDCARD)
+	// @Path("/{serviceId}/mcr")
+	// public Response getMcr(@PathParam("serviceId") String serviceId) throws CoreServiceException {
+	//
+	// CompositionRulesConfiguration mcr = orchestrator.getMcr(serviceId);
+	// return Response.ok(mcr).build();
 	// }
 
 }

@@ -17,7 +17,7 @@
 	</context-param>
 	<context-param>
 		<param-name>spring.profiles.default</param-name>
-		<param-value>INSERT_INIT_DATA,IMPERMANENT_NEO4J_DB,EMBEDDED_H2_DB</param-value>
+		<param-value>IMPERMANENT_NEO4J_DB</param-value>
 	</context-param>
 
 	<listener>
@@ -34,6 +34,7 @@
 			<param-value>at.ac.tuwien.dsg.comot.m.ui.JerseyMoxyConfig</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
+		<async-supported>true</async-supported>
 	</servlet>
 
 	<servlet-mapping>

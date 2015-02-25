@@ -54,6 +54,11 @@
 				<artifactId>jersey-spring3</artifactId>
 				<version>${jersey.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.glassfish.jersey.media</groupId>
+				<artifactId>jersey-media-sse</artifactId>
+				<version>${jersey.version}</version>
+			</dependency>
 
 			<dependency>
 				<groupId>ma.glasnost.orika</groupId>
@@ -107,12 +112,33 @@
 				<artifactId>comot-manager-service-recorder</artifactId>
 				<version>0.2</version>
 			</dependency>
-			
-						<!-- TU Wien DSG -->
+			<dependency>
+				<groupId>at.ac.tuwien.dsg.comot</groupId>
+				<artifactId>comot-manager-eps</artifactId>
+				<version>0.2</version>
+				<type>test-jar</type>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>at.ac.tuwien.dsg.comot</groupId>
+				<artifactId>comot-manager-common</artifactId>
+				<version>0.2</version>
+				<type>test-jar</type>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>at.ac.tuwien.dsg.comot</groupId>
+				<artifactId>comot-model</artifactId>
+				<version>1.0</version>
+				<type>test-jar</type>
+				<scope>test</scope>
+			</dependency>
+
+			<!-- TU Wien DSG -->
 			<dependency>
 				<groupId>at.ac.tuwien.mela</groupId>
 				<artifactId>MELA-Common</artifactId>
-					<version>3.0-SNAPSHOT</version>
+				<version>3.0-SNAPSHOT</version>
 				<exclusions>
 					<exclusion>
 						<groupId>*</groupId>

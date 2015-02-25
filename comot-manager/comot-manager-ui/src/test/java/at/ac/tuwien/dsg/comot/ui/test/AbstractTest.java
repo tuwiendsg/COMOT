@@ -20,7 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.ControlClient;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.MonitoringClient;
-import at.ac.tuwien.dsg.comot.m.core.ComotOrchestrator;
+import at.ac.tuwien.dsg.comot.m.core.Coordinator;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
 import at.ac.tuwien.dsg.comot.m.cs.connector.SalsaClient;
 import at.ac.tuwien.dsg.comot.m.ui.service.ServicesResource;
@@ -32,7 +32,7 @@ import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescripti
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { AppContextCore.class })
-@ActiveProfiles({ AppContextCore.EMBEDDED_H2_DB, AppContextCore.INSERT_INIT_DATA })
+@ActiveProfiles({ AppContextCore.INSERT_INIT_DATA })
 // @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 // @DatabaseSetup("classpath:iata_codes/airports_functional.xml")
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
@@ -54,7 +54,7 @@ public abstract class AbstractTest {
 	protected MonitoringClient monitoring;
 
 	@Autowired
-	protected ComotOrchestrator orchestrator;
+	protected Coordinator orchestrator;
 	@Autowired
 	protected ServicesResource servicesResource;
 

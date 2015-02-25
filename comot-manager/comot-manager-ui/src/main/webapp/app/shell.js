@@ -7,7 +7,7 @@ define(function(require) {
 			router.map([ {
 				route : '',
 				title : 'Home',
-				moduleId : 'manage',
+				moduleId : 'create',
 				nav : false
 			}, {
 				route : 'create',

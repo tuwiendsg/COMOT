@@ -22,19 +22,10 @@
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-model</artifactId>
 		</dependency>
-<!-- 
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-			<version>2.3.3</version>
-		</dependency>
-		-->
-
 		<dependency>
 			<groupId>at.ac.tuwien.mela</groupId>
 			<artifactId>MELA-Common</artifactId>
 		</dependency>
-
 	</dependencies>
 
 

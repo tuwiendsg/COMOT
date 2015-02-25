@@ -13,82 +13,59 @@
 
 	<dependencies>
 
+		<!-- <dependency> just forcing the same version as in comot-cs <groupId>org.glassfish.jersey.media</groupId> <artifactId>jersey-media-moxy</artifactId> 
+			</dependency> -->
+
 		<dependency>
 			<groupId>org.springframework.amqp</groupId>
 			<artifactId>spring-rabbit</artifactId>
 			<version>1.4.3.RELEASE</version>
 		</dependency>
-
-		<dependency>
-			<!-- just forcing the same version as in comot-cs -->
-			<groupId>org.glassfish.jersey.media</groupId>
-			<artifactId>jersey-media-moxy</artifactId>
-		</dependency>
-
 		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>at.ac.tuwien.dsg.comot</groupId>
-			<artifactId>comot-manager-eps</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>at.ac.tuwien.dsg.comot</groupId>
-			<artifactId>comot-manager-eps</artifactId>
-			<version>0.2</version>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>at.ac.tuwien.dsg.comot</groupId>
-			<artifactId>comot-manager-common</artifactId>
-			<version>0.2</version>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>at.ac.tuwien.dsg.comot</groupId>
-			<artifactId>comot-model</artifactId>
-			<version>0.2</version>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-
-
-		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 		</dependency>
-
-		<!-- JPA, DB -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<version>4.1.12.Final</version><!-- 4.1.12.Final -->
-		</dependency>
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<version>1.4.184</version>
-		</dependency>
-
-		<!-- SPRING DATA -->
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-jpa</artifactId>
-			<version>1.7.1.RELEASE</version>
-		</dependency>
-
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 		</dependency>
 
 		<dependency>
+			<groupId>at.ac.tuwien.dsg.comot</groupId>
+			<artifactId>comot-manager-eps</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>at.ac.tuwien.dsg.comot</groupId>
+			<artifactId>comot-manager-service-recorder</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>at.ac.tuwien.dsg.cloud.salsa</groupId>
 			<artifactId>salsa-common</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>at.ac.tuwien.dsg.comot</groupId>
+			<artifactId>comot-manager-eps</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>at.ac.tuwien.dsg.comot</groupId>
+			<artifactId>comot-manager-common</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>at.ac.tuwien.dsg.comot</groupId>
+			<artifactId>comot-model</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>

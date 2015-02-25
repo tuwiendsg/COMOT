@@ -152,7 +152,7 @@ public class ConverterToInternal {
 				return field.get(obj).toString();
 			}
 		}
-		throw new RuntimeException("There is no fiel annotated with @BusinessId in " + obj);
+		throw new RuntimeException("There is no field annotated with @BusinessId in " + obj);
 	}
 
 	protected Map<String, Object> extractProperties(Object obj, List<Field> fields)

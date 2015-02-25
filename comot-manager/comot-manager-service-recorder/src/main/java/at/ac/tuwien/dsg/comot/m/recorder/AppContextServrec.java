@@ -15,14 +15,13 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
-import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
 import at.ac.tuwien.dsg.comot.model.AppContextModel;
 
 @EnableAsync
 @Configuration
 @EnableTransactionManagement
 @EnableNeo4jRepositories
-@Import({ AppContextModel.class, AppContextCore.class })
+@Import({ AppContextModel.class })
 @ComponentScan
 @Transactional
 public class AppContextServrec extends Neo4jConfiguration {

@@ -9,6 +9,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.ac.tuwien.dsg.comot.recorder.BusinessId;
+
 public class CustomReflectionUtils {
 
 	protected static final Logger log = LoggerFactory.getLogger(CustomReflectionUtils.class);
@@ -20,6 +22,10 @@ public class CustomReflectionUtils {
 		for (Field field : getInheritedNonStaticNonTransientFields(obj.getClass())) {
 			if (field.get(obj) != null) {
 				list.add(field);
+			} else {
+				if (field.isAnnotationPresent(BusinessId.class)) {
+					throw new RuntimeException("Field '" + field + "' annotated with @BusinessId must not be null !");
+				}
 			}
 		}
 		return list;
@@ -31,6 +37,7 @@ public class CustomReflectionUtils {
 		List<Field> list = new ArrayList<>();
 
 		for (Field field : clazz.getDeclaredFields()) {
+
 			if (field.isAnnotationPresent(Transient.class)) {
 				continue;
 			}
