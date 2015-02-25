@@ -5,6 +5,8 @@
  */
 package at.ac.tuwien.dsg.comot.model.provider;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -18,14 +20,17 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @NodeEntity
-public abstract class Entity {
+public abstract class Entity implements Serializable{
     
-    @GraphId Long graphID;
+	private static final long serialVersionUID = 4164778764692932101L;
+
+	@GraphId 
+    protected Long graphID;
     
     // Name is the unique identify in local context,
     // e.g. in one service unit, a resource has a unique name
     @XmlAttribute
-    String name;
+    protected String name;
     
     public Entity(){}
     

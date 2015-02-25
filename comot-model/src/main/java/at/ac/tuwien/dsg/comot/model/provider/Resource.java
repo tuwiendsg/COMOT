@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.Fetch;
@@ -23,8 +24,9 @@ import at.ac.tuwien.dsg.comot.model.HasUniqueId;
  *
  * @author hungld
  */
+@XmlRootElement
 @NodeEntity
-public class Resource extends Entity implements HasUniqueId , Serializable{
+public class Resource extends Entity implements HasUniqueId {
 	
 	private static final long serialVersionUID = -5603850599882357782L;
 

@@ -1,5 +1,6 @@
 package at.ac.tuwien.dsg.comot.model.runtime;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,8 +20,10 @@ import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @NodeEntity
-public class ServiceInstance {
+public class ServiceInstance implements Serializable{
 
+	private static final long serialVersionUID = 5032108831476284465L;
+	
 	@GraphId
 	protected Long nodeId;
 	@BusinessId

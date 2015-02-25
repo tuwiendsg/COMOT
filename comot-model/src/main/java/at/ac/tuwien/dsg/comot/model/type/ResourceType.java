@@ -1,12 +1,16 @@
 package at.ac.tuwien.dsg.comot.model.type;
 
 public enum ResourceType {
+	// tosca artifact types
 	SCRIPT("sh"),
 	WAR_FILE("war"),
 	CHEF("chef"),
 	CHEF_SOLO("chef-solo"),
 	APT_GET_COMMAND("apt"),
-	//
+	// tosca properties types
+	OS("os"),
+	ACTION("action"),
+	// tosca os properties
 	INSTANCE_TYPE("instanceType"),
 	PROVIDER("provider"),
 	IMAGE("baseImage"),

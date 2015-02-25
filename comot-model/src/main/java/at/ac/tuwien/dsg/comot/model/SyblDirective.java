@@ -28,7 +28,7 @@ public class SyblDirective implements HasUniqueId, Serializable {
 	protected String id;
 	@XmlAttribute
 	protected String directive;
-	@XmlAttribute
+	@XmlAttribute(name= "directiveType")
 	protected DirectiveType type;
 
 	public SyblDirective() {

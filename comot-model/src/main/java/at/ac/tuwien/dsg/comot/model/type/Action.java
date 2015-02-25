@@ -1,5 +1,6 @@
 package at.ac.tuwien.dsg.comot.model.type;
 
+
 public enum Action {
 	NEW_INSTANCE_REQUESTED,
 	PREPARED,

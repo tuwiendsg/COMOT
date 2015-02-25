@@ -52,7 +52,7 @@ public class OfferedServiceUnit extends Entity implements HasUniqueId, Serializa
 
 	protected String providerID;
 
-	@XmlAttribute
+	@XmlAttribute(name = "osuType")
 	protected OsuType type;
 
 	@Indexed
