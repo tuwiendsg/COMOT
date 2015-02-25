@@ -168,6 +168,7 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
     }
 
     private void handleDeploymentArtifacts(ServiceUnit node, TNodeTemplate tNodeTemplate, Definitions definitions) {
+        TDeploymentArtifacts deploymentArtifacts = null;
         for (ArtifactTemplate artifact : node.getDeploymentArtifacts()) {
 
             TArtifactTemplate tArtifactTemplate = new TArtifactTemplate()
@@ -180,9 +181,10 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
                     .withName(artifact.getId())
                     .withArtifactType(buildArtifactTypeQname(artifact)) // todo what to do here?
                     .withArtifactRef(new QName(tArtifactTemplate.getId()));
-
-            TDeploymentArtifacts deploymentArtifacts = new TDeploymentArtifacts();
-            tNodeTemplate.setDeploymentArtifacts(deploymentArtifacts);
+            if (deploymentArtifacts==null){
+                deploymentArtifacts = new TDeploymentArtifacts();                
+                tNodeTemplate.setDeploymentArtifacts(deploymentArtifacts);
+            }            
             deploymentArtifacts.getDeploymentArtifact().add(tDeploymentArtifact);
 
             List<TArtifactReference> tArtifactReferences = new ArrayList<>();

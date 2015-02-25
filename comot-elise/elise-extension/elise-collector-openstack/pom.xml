@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>at.ac.tuwien.dsg.comot.elise</groupId>
-        <artifactId>ELISE</artifactId>
+        <artifactId>elise-extensions</artifactId>
         <version>1.0</version>
     </parent>
     <artifactId>elise-collector-openstack</artifactId>
@@ -14,11 +14,7 @@
     </properties>
     
     <dependencies>
-<!--        <dependency>
-            <groupId>at.ac.tuwien.dsg.comot</groupId>
-            <artifactId>comot-model</artifactId>
-            <version>1.0</version>
-        </dependency>-->
+
         <dependency>
             <groupId>at.ac.tuwien.dsg.comot.elise</groupId>
             <artifactId>elise-common</artifactId>
@@ -60,21 +56,21 @@
             </plugin>
             
             <plugin>
-		  <groupId>org.apache.maven.plugins</groupId>
-		  <artifactId>maven-shade-plugin</artifactId>
-		  <version>2.3</version>
-		  <executions>
-		     <!-- Run shade goal on package phase -->
-		    <execution>
-			<phase>package</phase>
-			<goals>
-				<goal>shade</goal>
-			</goals>			
-		      </execution>
-		  </executions>
-		</plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                    <!-- Run shade goal on package phase -->
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>			
+                    </execution>
+                </executions>
+            </plugin>
             
-<!--            <plugin>
+            <!--            <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
                     <descriptorRefs>

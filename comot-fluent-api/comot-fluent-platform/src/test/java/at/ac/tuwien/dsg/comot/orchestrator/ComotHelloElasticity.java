@@ -47,9 +47,9 @@ public class ComotHelloElasticity {
                 );
 
         DockerUnit eventProcessingDocker = DockerUnit("EventProcessingUnitDocker")
-                .providedBy(DockerDefault()
+                .providedBy(DockerDefault()                        
                 );
-
+        
         //elasticity capabilities as first class citizens
         ElasticityCapability scaleOutEventProcessing = ElasticityCapability.ScaleOut();
         ElasticityCapability scaleInEventProcessing = ElasticityCapability.ScaleIn();

@@ -22,7 +22,9 @@ public class ArtifactTemplate extends AbstractCloudEntity {
 
         RunOnceScript("sh"),
         RunContinuousScript("shcont"),
-        WarArtifact("war");
+        WarArtifact("war"),
+        DockerFile("dockerfile"),
+        MiscArtifact("misc");
 
         private final String type;
 
@@ -80,6 +82,16 @@ public class ArtifactTemplate extends AbstractCloudEntity {
     public static ArtifactTemplate ServiceArtifact(String id, String scriptUri) {
         return new ArtifactTemplate(id).ofType(ArtifactType.RunContinuousScript)
                 .consistsOf(ArtifactReference.ArtifactReference(scriptUri).locatedAt(scriptUri));
+    }
+    
+    public static ArtifactTemplate MiscArtifact(String id, String artifactURI) {
+        return new ArtifactTemplate(id).ofType(ArtifactType.MiscArtifact)
+                .consistsOf(ArtifactReference.ArtifactReference(artifactURI).locatedAt(artifactURI));
+    }
+    
+    public static ArtifactTemplate DockerFileArtifact(String id, String dockerFileURI) {
+        return new ArtifactTemplate(id).ofType(ArtifactType.DockerFile)
+                .consistsOf(ArtifactReference.ArtifactReference(dockerFileURI).locatedAt(dockerFileURI));
     }
 
     public ArtifactTemplate consistsOf(ArtifactReference... artifactReferences) {
