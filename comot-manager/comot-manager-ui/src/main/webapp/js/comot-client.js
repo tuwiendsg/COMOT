@@ -78,6 +78,14 @@
 		return errorBody(error);
 	}
 
+	exports.base = function() {
+		return errorBody(error);
+	}
+
+	exports.baseServices = function() {
+		return errorBody(error);
+	}
+
 	// API
 
 	exports.createAndDeploy = function(tosca, onSuccess, onError) {
@@ -199,6 +207,20 @@
 		});
 	}
 
+	// //////////////////////////////// LIFECYCLE
+	exports.eventPath = function(serviceId, instanceId) {
+		return services + serviceId + "/instances/" + instanceId+"/events";
+	}
+
+	exports.lifecycle = function(onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "GET";
+		request.dataType = "json"
+		request.url = services + "lifecycle";
+		return $.ajax(request);
+	}
+
 	// //////////////////////////////// REVISIONS
 
 	exports.startRecording = function(serviceId, onSuccess, onError) {
@@ -207,7 +229,6 @@
 		request.type = "PUT";
 		request.url = services + serviceId + revisions + "/recording";
 		return $.ajax(request);
-
 	}
 
 	exports.stopRecording = function(serviceId, onSuccess, onError) {
@@ -216,7 +237,6 @@
 		request.type = "DELETE";
 		request.url = services + serviceId + revisions + "/recording";
 		return $.ajax(request);
-
 	}
 
 	exports.stopRecordingAndDeleteData = function(serviceId, onSuccess, onError) {
@@ -225,7 +245,6 @@
 		request.type = "DELETE";
 		request.url = services + serviceId + revisions;
 		return $.ajax(request);
-
 	}
 
 	exports.getRevision = function(serviceId, objectId, timestamp, onSuccess, onError) {
@@ -235,7 +254,6 @@
 		request.dataType = "json"
 		request.url = services + serviceId + revisions + "/" + objectId + "/" + timestamp;
 		return $.ajax(request);
-
 	}
 
 	exports.getChanges = function(serviceId, objectId, onSuccess, onError) {
@@ -245,7 +263,6 @@
 		request.dataType = "json"
 		request.url = services + serviceId + revisions + "/changes/" + objectId;
 		return $.ajax(request);
-
 	}
 
 	exports.getObjects = function(serviceId, onSuccess, onError) {
@@ -255,6 +272,5 @@
 		request.dataType = "json"
 		request.url = services + serviceId + revisions + "/objects";
 		return $.ajax(request);
-
 	}
 }));

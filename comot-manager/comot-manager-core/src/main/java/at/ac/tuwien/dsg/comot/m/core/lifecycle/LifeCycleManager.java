@@ -16,8 +16,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.common.EventMessage;
+import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 
 @Component
@@ -38,15 +40,17 @@ public class LifeCycleManager {
 	@PostConstruct
 	public void setUp() {
 
-		admin.declareExchange(new TopicExchange(AppContextCore.EXCHANGE_INSTANCE_HIGH_LEVEL, false, false));
-		admin.declareExchange(new TopicExchange(AppContextCore.EXCHANGE_INSTANCE_DETAILED, false, false));
-		admin.declareExchange(new TopicExchange(AppContextCore.EXCHANGE_INSTANCE_CUSTOM, false, false));
+		admin.declareExchange(new TopicExchange(AppContextCore.EXCHANGE_LIFE_CYCLE, false, false));
+		admin.declareExchange(new TopicExchange(AppContextCore.EXCHANGE_CUSTOM_EVENT, false, false));
 	}
 
 	public void executeAction(EventMessage event) throws IOException,
-			JAXBException {
+			JAXBException, ClassNotFoundException {
 
-		log.info("executeAction( {})", event);
+		// clean service
+		event.setService(UtilsLc.removeProviderInfo((CloudService) Utils.deepCopy(event.getService())));
+
+		log.info("EXECUTE ACTION: ( {})", event);
 
 		String csInstanceId = event.getCsInstanceId();
 		ManagerOfServiceInstance manager;
@@ -67,8 +71,6 @@ public class LifeCycleManager {
 			// TODO delete manager, remove exchanges
 
 		} else {
-
-			log.info("managers {}", managers);
 
 			if (!managers.containsKey(csInstanceId)) {
 				throw new ComotIllegalArgumentException("Instance '" + csInstanceId + "' has no managed life-cycle");

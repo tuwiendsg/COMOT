@@ -23,9 +23,9 @@ public class AppContextEps {
 	public static final String SALSA_IP = "128.130.172.215";
 	public static final String MELA_IP = "128.130.172.215";
 	public static final String RSYBL_IP = "128.130.172.215";
-	public static final int MELA_PORT = 8180;
-	public static final int SALSA_PORT = 8380;
-	public static final int RSYBL_PORT = 8020;
+	public static final Integer MELA_PORT = 8180;
+	public static final Integer SALSA_PORT = 8380;
+	public static final Integer RSYBL_PORT = 8020;
 
 	@Resource
 	public Environment env;

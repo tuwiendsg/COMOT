@@ -64,7 +64,6 @@ public class StateOrika {
 
 								UnitInstance nInst;
 								UnitInstance existingInst;
-								boolean add;
 
 								for (ServiceInstance instance : unit.getInstancesList()) {
 									existingInst = null;

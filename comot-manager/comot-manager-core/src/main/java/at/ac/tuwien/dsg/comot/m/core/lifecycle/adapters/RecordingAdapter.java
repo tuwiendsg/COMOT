@@ -23,6 +23,8 @@ import at.ac.tuwien.dsg.comot.m.recorder.RecorderException;
 import at.ac.tuwien.dsg.comot.m.recorder.model.Change;
 import at.ac.tuwien.dsg.comot.m.recorder.out.ManagedObject;
 import at.ac.tuwien.dsg.comot.m.recorder.revisions.RevisionApi;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.type.Action;
 
 @Component
 public class RecordingAdapter extends Adapter {
@@ -34,25 +36,25 @@ public class RecordingAdapter extends Adapter {
 	@Autowired
 	protected ToscaMapper mapperTosca;
 
-	public enum ChangeType {
-		INSERTED, STATE
-	}
+	protected Binding binding1;
+	protected Binding binding2;
 
 	@Override
 	public void start(String osuInstanceId) {
 
-		admin.declareBinding(new Binding(queueName(), DestinationType.QUEUE,
-				AppContextCore.EXCHANGE_INSTANCE_HIGH_LEVEL, "#", null));
-		admin.declareBinding(new Binding(queueName(), DestinationType.QUEUE,
-				AppContextCore.EXCHANGE_INSTANCE_DETAILED, "#", null));
-		admin.declareBinding(new Binding(queueName(), DestinationType.QUEUE,
-				AppContextCore.EXCHANGE_INSTANCE_CUSTOM, "#", null));
+		binding1 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_LIFE_CYCLE,
+				"#", null);
+		binding2 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_CUSTOM_EVENT,
+				"#", null);
 
-		container.setMessageListener(new DeployListener());
+		admin.declareBinding(binding1);
+		admin.declareBinding(binding2);
+
+		container.setMessageListener(new CustomListener());
 
 	}
 
-	class DeployListener implements MessageListener {
+	class CustomListener implements MessageListener {
 		@Override
 		public void onMessage(Message message) {
 			try {
@@ -62,9 +64,11 @@ public class RecordingAdapter extends Adapter {
 
 				if (isAssignedTo(instanceId)) {
 
-					if (msg.getAction() != null) {
-						revisionApi.createOrUpdateRegion(
-								msg.getEvent().getService(), instanceId, msg.getAction().toString());
+					if (msg.getEvent().isLifeCycleDefined()) {
+						insertNewVersion(msg.getEvent().getService(), instanceId, msg.getAction());
+
+					} else {
+						// TODO store custom events
 					}
 				}
 
@@ -72,6 +76,13 @@ public class RecordingAdapter extends Adapter {
 				e.printStackTrace();
 			}
 		}
+
+	}
+
+	public void insertNewVersion(CloudService service, String csInstanceId, Action action)
+			throws IllegalArgumentException, IllegalAccessException {
+
+		revisionApi.createOrUpdateRegion(service, csInstanceId, action.toString());
 
 	}
 
@@ -120,6 +131,16 @@ public class RecordingAdapter extends Adapter {
 		List<ManagedObject> list = revisionApi.getManagedObjects(serviceId);
 		return list;
 
+	}
+
+	@Override
+	protected void clean() {
+		if (binding1 != null) {
+			admin.removeBinding(binding1);
+		}
+		if (binding2 != null) {
+			admin.removeBinding(binding2);
+		}
 	}
 
 }

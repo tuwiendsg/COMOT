@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot.m.ui.service;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.ws.rs.Consumes;
@@ -16,19 +17,26 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBException;
 
 import org.glassfish.jersey.media.sse.EventOutput;
-import org.glassfish.jersey.media.sse.OutboundEvent;
 import org.glassfish.jersey.media.sse.SseFeature;
 import org.oasis.tosca.Definitions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.m.core.Coordinator;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.UtilsLc;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
+import at.ac.tuwien.dsg.comot.m.ui.UiAdapter;
 import at.ac.tuwien.dsg.comot.m.ui.mapper.SalsaOutputMapper;
+import at.ac.tuwien.dsg.comot.m.ui.model.Lc;
+import at.ac.tuwien.dsg.comot.m.ui.model.LcState;
+import at.ac.tuwien.dsg.comot.m.ui.model.LcTransition;
+import at.ac.tuwien.dsg.comot.model.type.Action;
+import at.ac.tuwien.dsg.comot.model.type.State;
 
 // WADL http://localhost:8380/comot/rest/application.wadl
 @Service
@@ -42,12 +50,14 @@ public class ServicesResource {
 	// public static final String TOSCA_FILE = "./TOSCA-v1.0.xsd";
 
 	@Autowired
+	protected ApplicationContext context;
+	@Autowired
 	protected SalsaOutputMapper mapperOutput;
 	@Autowired
 	protected ToscaMapper mapperTosca;
 
 	@Autowired
-	protected Coordinator orchestrator;
+	protected Coordinator coordinator;
 
 	@PostConstruct
 	public void startUp() {
@@ -59,7 +69,7 @@ public class ServicesResource {
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response createService(Definitions def) throws CoreServiceException, ComotException, JAXBException {
 
-		orchestrator.createCloudService(mapperTosca.createModel(def));
+		coordinator.createCloudService(mapperTosca.createModel(def));
 		return Response.ok(def.getId()).build();
 	}
 
@@ -69,7 +79,7 @@ public class ServicesResource {
 	public Response createServiceInstance(@PathParam("serviceId") String serviceId) throws CoreServiceException,
 			ComotException, ClassNotFoundException, IOException, JAXBException {
 
-		String instanceId = orchestrator.createServiceInstance(serviceId);
+		String instanceId = coordinator.createServiceInstance(serviceId);
 		return Response.ok(instanceId).build();
 	}
 
@@ -82,7 +92,7 @@ public class ServicesResource {
 			@PathParam("epsId") String epsId) throws CoreServiceException, ComotException, ClassNotFoundException,
 			IOException, JAXBException {
 
-		orchestrator.assignSupportingOsu(instanceId, epsId);
+		coordinator.assignSupportingOsu(instanceId, epsId);
 		return Response.ok().build();
 	}
 
@@ -98,7 +108,7 @@ public class ServicesResource {
 			String optionalInput) throws CoreServiceException, ComotException, ClassNotFoundException, IOException,
 			JAXBException {
 
-		orchestrator.triggerCustomEvent(serviceId, instanceId, epsId, eventId, optionalInput);
+		coordinator.triggerCustomEvent(serviceId, instanceId, epsId, eventId, optionalInput);
 		return Response.ok().build();
 	}
 
@@ -144,51 +154,46 @@ public class ServicesResource {
 	}
 
 	@GET
-	@Path("/events/{serviceId}")
+	@Path("/{serviceId}/instances/{instanceId}/events")
 	@Consumes(SseFeature.SERVER_SENT_EVENTS)
 	@Produces(SseFeature.SERVER_SENT_EVENTS)
 	public EventOutput getServerSentEvents(
-			@PathParam("serviceId") String serviceId) {
+			@PathParam("serviceId") String serviceId,
+			@PathParam("instanceId") String instanceId) throws InterruptedException, IOException {
 
 		final EventOutput eventOutput = new EventOutput();
 
-		log.info("input: {}", serviceId);
+		log.info("input: {}", instanceId);
 
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-
-					for (int i = 0; i < 10; i++) {
-						log.info("sending {}", i);
-
-						Thread.sleep(1000);
-
-						final OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
-						// eventBuilder.name("message-to-client");
-						eventBuilder.data(String.class, "Hello world " + i + "!");
-						final OutboundEvent event = eventBuilder.build();
-						eventOutput.write(event);
-					}
-
-				} catch (IOException e) {
-					throw new RuntimeException("Error when writing the event.", e);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} finally {
-					try {
-						eventOutput.close();
-					} catch (IOException ioClose) {
-						throw new RuntimeException("Error when closing the event output.", ioClose);
-					}
-				}
-			}
-		}).start();
+		UiAdapter adapter = context.getBean(UiAdapter.class);
+		adapter.setUiAdapter(instanceId, eventOutput);
+		adapter.startAdapter(UUID.randomUUID().toString());
+		adapter.checkClient();
 
 		return eventOutput;
 	}
 
+	// GUI
+
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Path("/lifecycle")
+	public Response getLifeCycle() {
+
+		Lc lc = new Lc();
+
+		for (State tempS : State.values()) {
+			lc.getStates().add(new LcState(tempS));
+		}
+		for (State source : State.values()) {
+			for (Action tempA : UtilsLc.allPossibleActions(source)) {
+				lc.getTransitions().add(
+						new LcTransition(tempA.toString(), lc.stateNr(source), lc.stateNr(source.execute(tempA))));
+			}
+		}
+
+		return Response.ok(lc).build();
+	}
 	// READ
 
 	// @GET

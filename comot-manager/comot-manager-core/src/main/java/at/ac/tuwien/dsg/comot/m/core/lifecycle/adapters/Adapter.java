@@ -2,6 +2,7 @@ package at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters;
 
 import java.io.UnsupportedEncodingException;
 
+import javax.annotation.PreDestroy;
 import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
@@ -21,11 +22,9 @@ import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 
 public abstract class Adapter {
 
-	private final Logger log = LoggerFactory.getLogger(getClass());
+	protected final Logger log = LoggerFactory.getLogger(getClass());
 
 	public static final String ADAPTER_QUEUE = "ADAPTER_QUEUE_";
-
-	protected String osuInstanceId;
 
 	@Autowired
 	protected AmqpAdmin admin;
@@ -36,47 +35,67 @@ public abstract class Adapter {
 	protected InformationServiceMock infoService;
 	@Autowired
 	protected LifeCycleManager lcManager;
+
+	private String adapterId;
 	protected SimpleMessageListenerContainer container;
 
-	public void startAdapter(String osuInstanceId) {
+	public void startAdapter(String adapterId) {
 
-		this.osuInstanceId = osuInstanceId;
+		this.adapterId = adapterId;
 
 		admin.declareQueue(new Queue(queueName(), false, false, false));
 
 		container = new SimpleMessageListenerContainer();
 		container.setConnectionFactory(connectionFactory);
-		container.setQueueNames(ADAPTER_QUEUE + osuInstanceId);
+		container.setQueueNames(queueName());
 
-		start(osuInstanceId);
+		start(adapterId);
 
 		container.start();
 
-		log.info("started adapter '{}'", osuInstanceId);
+		log.info("started adapter '{}'", adapterId);
 	}
 
+	@PreDestroy
 	public void cleanAdapter() {
 
+		log.info("cleaning requested '{}'", queueName());
+
+		if (container != null) {
+			container.stop();
+		}
+		clean();
+		if (admin != null) {
+			admin.deleteQueue(queueName());
+		}
+
+		log.info("cleaned '{}'", queueName());
 	}
 
 	public String queueName() {
-		return ADAPTER_QUEUE + osuInstanceId;
+		return ADAPTER_QUEUE + adapterId;
 	}
 
 	protected abstract void start(String osuInstanceId);
 
+	protected abstract void clean();
+
 	protected boolean isAssignedTo(String instanceId) {
 
 		for (OfferedServiceUnit osu : infoService.getSupportingServices(instanceId)) {
-			if (osu.getId().equals(osuInstanceId)) {
+			if (osu.getId().equals(adapterId)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	protected StateMessage stateMessage(Message message) throws UnsupportedEncodingException, JAXBException {
+	public static StateMessage stateMessage(Message message) throws UnsupportedEncodingException, JAXBException {
 		StateMessage msg = Utils.asStateMessage(new String(message.getBody(), "UTF-8"));
 		return msg;
+	}
+
+	protected String logId() {
+		return "[" + adapterId + "] ";
 	}
 }

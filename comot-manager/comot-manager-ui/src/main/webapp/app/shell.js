@@ -7,12 +7,17 @@ define(function(require) {
 			router.map([ {
 				route : '',
 				title : 'Home',
-				moduleId : 'create',
+				moduleId : 'lifecycle',
 				nav : false
 			}, {
 				route : 'create',
 				title : 'Create',
 				moduleId : 'create',
+				nav : true
+			}, {
+				route : 'lifecycle',
+				title : 'Lifecycle',
+				moduleId : 'lifecycle',
 				nav : true
 			}, {
 				route : 'manage*details',

@@ -35,3 +35,28 @@
 	stroke: #ccc;
 	stroke-width: 2px;
 }
+
+circle.lc {
+	fill: #1f77b4;
+	stroke-width: 0;
+}
+
+circle.lc.current {
+	fill: #ff7f0e;
+}
+
+circle.lc.last {
+	fill: #ffbb78;
+}
+
+circle.lc.init {
+	fill: #aec7e8;
+}
+
+#lastAction {
+	fill: #ffbb78;
+}
+
+.link.lastAction {
+	stroke: #ffbb78;
+}
