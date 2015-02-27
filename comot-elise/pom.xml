@@ -15,10 +15,16 @@
     </properties>
 	
     <modules>
-	<module>elise-common</module>
+        <module>elise-common</module>
         <module>elise-service</module>
         <module>elise-collector</module>
-	<module>elise-extension</module>
+        <module>elise-extension</module>
     </modules>
-
+    <dependencies>
+        <dependency>
+            <groupId>at.ac.tuwien.dsg.comot</groupId>
+            <artifactId>comot-model</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
 </project>

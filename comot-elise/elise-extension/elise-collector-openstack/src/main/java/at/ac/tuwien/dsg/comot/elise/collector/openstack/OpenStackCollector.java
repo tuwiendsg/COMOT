@@ -37,6 +37,7 @@ import at.ac.tuwien.dsg.comot.model.offeredserviceunit.ResourceOrQualityType;
 import com.google.common.base.Optional;
 import com.google.common.collect.Multimap;
 import com.google.common.io.Closeables;
+import com.google.gson.Gson;
 
 /**
  * This extension update the whole static information of a OpenStack provider
@@ -100,7 +101,15 @@ public class OpenStackCollector implements DataProviderInterface{
             System.out.println(u.getId());
         }
     }
-
+    
+    
+    
+    public String exportProviderDescription(){
+        Gson gson = new Gson();
+        return gson.toJson(this.provider);        
+    }
+            
+            
     public Properties readConfig() {
         Properties prop = new Properties();
         final String CURRENT_DIR = System.getProperty("user.dir");

@@ -20,7 +20,7 @@ public class DockerUnit extends ServiceUnit {
         this.specification = specification;
         return this;
     }
-
+    
     public OperatingSystemSpecification getSpecification() {
         return specification;
     }

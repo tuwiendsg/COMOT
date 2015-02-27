@@ -352,12 +352,12 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 //we have SALSA as cloud management tool
                 //curently deployed separately
                 .withSalsaIP("localhost")
-                .withSalsaPort(8080);
+                .withSalsaPort(8380)
  
                 //ifwe have rSYBL elasticity control service and MELA 
                 //deployed separately
-                //.withRsyblIP("localhost")
-                //.withRsyblPort(8080);
+                .withRsyblIP("localhost")
+                .withRsyblPort(8280);
  
         orchestrator.deployAndControl(serviceTemplate);
 

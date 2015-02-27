@@ -9,6 +9,12 @@
 
     <name>elise-extensions</name>
     <url>http://maven.apache.org</url>
+    
+    <parent>
+        <groupId>at.ac.tuwien.dsg.comot.elise</groupId>
+        <artifactId>ELISE</artifactId>
+        <version>1.0</version>
+    </parent>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
