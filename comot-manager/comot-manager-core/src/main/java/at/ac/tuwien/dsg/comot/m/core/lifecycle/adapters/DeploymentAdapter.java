@@ -2,21 +2,20 @@ package at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Binding.DestinationType;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.common.EventMessage;
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.StateMessage;
-import at.ac.tuwien.dsg.comot.m.common.Utils;
+import at.ac.tuwien.dsg.comot.m.common.Transition;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
@@ -40,6 +39,7 @@ public class DeploymentAdapter extends Adapter {
 
 	protected Binding binding1;
 	protected Binding binding2;
+	protected Binding binding3;
 
 	@Override
 	public void start(String osuInstanceId) {
@@ -64,101 +64,186 @@ public class DeploymentAdapter extends Adapter {
 		deployment.setPort(new Integer(port));
 
 		binding1 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_LIFE_CYCLE,
-				"*.TRUE.*." + State.IDLE + ".#", null);
+				"*.TRUE.*." + State.STARTING + ".#", null);
 		binding2 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_LIFE_CYCLE,
-				"*.TRUE.*." + State.UNDEPLOYMENT + ".#", null);
+				"*.TRUE.*." + State.STOPPING + ".#", null);
+		binding3 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_CUSTOM_EVENT,
+				"*." + EpsAction.EPS_ASSIGNMENT_REMOVED + ".SERVICE", null);
 
 		admin.declareBinding(binding1);
 		admin.declareBinding(binding2);
+		admin.declareBinding(binding3);
 
-		container.setMessageListener(new CustomListener());
+		container.setMessageListener(new CustomListener(osuInstanceId));
 
+		atStartUpDeployWhatIsWaiting();
 	}
 
-	class CustomListener implements MessageListener {
+	class CustomListener extends AdapterListener {
+
+		public CustomListener(String adapterId) {
+			super(adapterId);
+		}
+
 		@Override
-		public void onMessage(Message message) {
-			try {
+		protected void onLifecycleEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
+				Action action, String optionalMessage, CloudService service, Map<String, Transition> transitions)
+				throws ClassNotFoundException, CoreServiceException, IOException, JAXBException, ComotException,
+				InterruptedException {
 
-				StateMessage msg = stateMessage(message);
-				String instanceId = msg.getEvent().getCsInstanceId();
-				String serviceId = msg.getEvent().getServiceId();
-				Action action = msg.getEvent().getAction();
+			if (isAssignedTo(serviceId, instanceId)) {
+				if (action.equals(Action.STARTED)) {
+					deployInstance(serviceId, instanceId);
 
-				log.info("onMessage {}", Utils.asJsonString(msg));
-
-				if (isAssignedTo(instanceId)) {
-
-					if (action.equals(Action.PREPARED)) {
-
-						CloudService service = infoService.getServiceInstance(instanceId);
-						service.setId(instanceId);
-						service.setName(instanceId);
-
-						service = deployment.deploy(service);
-
-						monitorStatusUntilDeployed(serviceId, service);
-
-					} else if (action.equals(Action.UNDEPLOYMENT_REQUESTED)) { // TODO this will probably be different
-																				// action
-
-					}
+				} else if (action.equals(Action.STOPPED)) {
+					unDeployInstance(serviceId, instanceId, service);
 				}
-
-			} catch (JAXBException | CoreServiceException | ComotException | IOException | InterruptedException
-					| ClassNotFoundException e) {
-				e.printStackTrace();
 			}
 		}
 
+		@Override
+		protected void onCustomEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
+				String event, String optionalMessage) throws ClassNotFoundException, IOException, JAXBException {
+
+			if (isAssignedTo(serviceId, instanceId)) {
+
+				EpsAction action = EpsAction.valueOf(event);
+
+				log.info("action {} {}", action, EpsAction.EPS_ASSIGNMENT_REMOVED);
+
+				if (action.equals(EpsAction.EPS_ASSIGNMENT_REMOVED)) {
+					log.info("go");
+					EventMessage newEvent = new EventMessage(serviceId, instanceId, serviceId, Action.STOPPED, null,
+							null);
+					lcManager.executeAction(newEvent);
+				}
+			}
+		}
+
+	}
+
+	protected void atStartUpDeployWhatIsWaiting() {
+
+		Map<String, String> instances = infoService.getInstancesHavingThisOsuAssigned(adapterId);
+
+		for (String instanceId : instances.keySet()) {
+
+			State state = lcManager.getCurrentState(instanceId, instances.get(instanceId));
+
+			if (state.equals(State.STARTING)) {
+				try {
+					deployInstance(instances.get(instanceId), instanceId);
+				} catch (ClassNotFoundException | IOException | CoreServiceException | ComotException | JAXBException
+						| InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	protected void deployInstance(String serviceId, String instanceId) throws ClassNotFoundException, IOException,
+			CoreServiceException, ComotException, JAXBException, InterruptedException {
+
+		CloudService fullService = infoService.getServiceInstance(serviceId, instanceId);
+		fullService.setId(instanceId);
+		fullService.setName(instanceId);
+
+		deployment.deploy(fullService);
+
+		monitorStatusUntilDeployed(serviceId, fullService);
+	}
+
+	protected void unDeployInstance(String serviceId, String instanceId, CloudService service)
+			throws CoreServiceException, ClassNotFoundException, IOException, JAXBException {
+
+		deployment.undeploy(instanceId);
+
+		for (ServiceUnit unit : Navigator.getAllUnits(service)) {
+			unit.setInstances(new HashSet<UnitInstance>());
+		}
+
+		lcManager.executeAction(new EventMessage(serviceId, instanceId, serviceId, Action.UNDEPLOYED,
+				service, null));
+	}
+
+	protected void assignmentRemoved() {
+		// TODO
 	}
 
 	protected void monitorStatusUntilDeployed(String serviceId, CloudService service) throws CoreServiceException,
 			ComotException, IOException, JAXBException, InterruptedException, ClassNotFoundException {
 
 		Map<String, State> map;
-		State oldState;
+		State oldState, newState;
+		boolean notAllRunning = false;
+		String uInstId;
+		CloudService serviceReturned = service;
 
 		service = UtilsLc.removeProviderInfo(service);
 
 		do {
 
-			map = new HashMap<>();
-			for (ServiceUnit unit : Navigator.getAllUnits(service)) {
-				for (UnitInstance instance : unit.getInstances()) {
-					map.put(instance.getId(), instance.getState());
+			try {
+
+				map = new HashMap<>();
+				for (ServiceUnit unit : Navigator.getAllUnits(serviceReturned)) {
+					for (UnitInstance instance : unit.getInstances()) {
+						map.put(instance.getId(), instance.getState());
+						// log.info("xxxx: {} {}", instance.getId(), instance.getState());
+					}
 				}
-			}
+				notAllRunning = false;
 
-			Thread.sleep(1000);
+				Thread.sleep(1000);
 
-			service = deployment.refreshStatus(service);
+				serviceReturned = deployment.refreshStatus(service);
+				serviceReturned.setId(serviceId);
+				serviceReturned.setName(serviceId);
 
-			for (ServiceUnit unit : Navigator.getAllUnits(service)) {
-				for (UnitInstance instance : unit.getInstances()) {
-					if (map.containsKey(instance.getId())) {
-						if (map.get(instance.getId()).equals(instance.getState())) {
-							continue;
-						} else {
-							oldState = map.get(instance.getId());
+				for (ServiceUnit unit : Navigator.getAllUnits(serviceReturned)) {
+					for (UnitInstance instance : unit.getInstances()) {
+						uInstId = instance.getId();
+						newState = instance.getState();
+
+						if (!State.OPERATION_RUNNING.equals(newState)) {
+							notAllRunning = true;
 						}
-					} else {
-						oldState = State.IDLE;
+
+						if (map.containsKey(uInstId)) {
+							if (map.get(uInstId).equals(newState)) {
+								continue;
+							} else {
+								oldState = map.get(uInstId);
+							}
+						} else {
+							oldState = State.STARTING;
+						}
+
+						if (State.ERROR.equals(newState)) {
+							// TODO process error
+							log.error("error ocured");
+						}
+
+						// publish
+						Action action = UtilsLc.translateToAction(oldState, newState);
+
+						if (action == null) {
+							log.error("invalid transitions {} -> {}", oldState, newState);
+						} else {
+							lcManager.executeAction(new EventMessage(serviceId, service.getId(), uInstId, action,
+									serviceReturned, null));
+						}
 					}
-
-					// publish
-					Action action = UtilsLc.translateToAction(oldState, instance.getState());
-
-					if (action == null) {
-						log.error("invalid transitions {} -> {}", oldState, instance.getState());
-					} else {
-						lcManager.executeAction(new EventMessage(serviceId, service.getId(), instance.getId(), action,
-								service, null));
+					if (unit.getInstances().isEmpty()) {
+						notAllRunning = true;
 					}
 				}
+
+			} catch (ComotException e) {
+				log.warn(e.getMessage());
 			}
 
-		} while (!service.getState().equals(State.OPERATION_RUNNING));
+		} while (notAllRunning);
 
 		log.info("stopped checking");
 
@@ -171,6 +256,9 @@ public class DeploymentAdapter extends Adapter {
 		}
 		if (binding2 != null) {
 			admin.removeBinding(binding2);
+		}
+		if (binding3 != null) {
+			admin.removeBinding(binding3);
 		}
 	}
 

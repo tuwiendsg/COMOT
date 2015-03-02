@@ -1,20 +1,17 @@
 package at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.bind.JAXBException;
+import java.util.Map;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Binding.DestinationType;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.common.StateMessage;
+import at.ac.tuwien.dsg.comot.m.common.Transition;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
@@ -50,31 +47,36 @@ public class RecordingAdapter extends Adapter {
 		admin.declareBinding(binding1);
 		admin.declareBinding(binding2);
 
-		container.setMessageListener(new CustomListener());
+		container.setMessageListener(new CustomListener(osuInstanceId));
 
 	}
 
-	class CustomListener implements MessageListener {
+	class CustomListener extends AdapterListener {
+
+		public CustomListener(String adapterId) {
+			super(adapterId);
+		}
+
 		@Override
-		public void onMessage(Message message) {
-			try {
+		protected void onLifecycleEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
+				Action action, String optionalMessage, CloudService service, Map<String, Transition> transitions) {
 
-				StateMessage msg = stateMessage(message);
-				String instanceId = msg.getCsInstanceId();
+			if (isAssignedTo(serviceId, instanceId)) {
 
-				if (isAssignedTo(instanceId)) {
-
-					if (msg.getEvent().isLifeCycleDefined()) {
-						insertNewVersion(msg.getEvent().getService(), instanceId, msg.getAction());
-
-					} else {
-						// TODO store custom events
-					}
+				try {
+					insertNewVersion(msg.getEvent().getService(), instanceId, msg.getAction());
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					e.printStackTrace();
 				}
 
-			} catch (IOException | JAXBException | IllegalArgumentException | IllegalAccessException e) {
-				e.printStackTrace();
 			}
+		}
+
+		@Override
+		protected void onCustomEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
+				String event, String optionalMessage) {
+			// TODO Auto-generated method stub
+
 		}
 
 	}

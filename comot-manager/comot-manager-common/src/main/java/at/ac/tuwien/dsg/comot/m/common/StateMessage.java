@@ -1,7 +1,7 @@
 package at.ac.tuwien.dsg.comot.m.common;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -15,7 +15,7 @@ import at.ac.tuwien.dsg.comot.model.type.State;
 public class StateMessage {
 
 	protected EventMessage event;
-	protected Set<Transition> transitions = new HashSet<>();
+	protected Map<String, Transition> transitions = new HashMap<>(); // not in custom
 
 	public StateMessage() {
 
@@ -26,7 +26,7 @@ public class StateMessage {
 		this.event = event;
 	}
 
-	public StateMessage(EventMessage event, Set<Transition> transitions) {
+	public StateMessage(EventMessage event, Map<String, Transition> transitions) {
 		super();
 		this.event = event;
 		this.transitions = transitions;
@@ -34,9 +34,9 @@ public class StateMessage {
 
 	public void addOne(String id, Type type, State oldState, State newState, boolean fresh) {
 		if (transitions == null) {
-			transitions = new HashSet<>();
+			transitions = new HashMap<>();
 		}
-		transitions.add(new Transition(id, type, oldState, newState, fresh));
+		transitions.put(id, new Transition(id, type, oldState, newState, fresh));
 	}
 
 	public EventMessage getEvent() {
@@ -71,11 +71,11 @@ public class StateMessage {
 		return event.getMessage();
 	}
 
-	public Set<Transition> getTransitions() {
+	public Map<String, Transition> getTransitions() {
 		return transitions;
 	}
 
-	public void setTransitions(Set<Transition> transitions) {
+	public void setTransitions(Map<String, Transition> transitions) {
 		this.transitions = transitions;
 	}
 

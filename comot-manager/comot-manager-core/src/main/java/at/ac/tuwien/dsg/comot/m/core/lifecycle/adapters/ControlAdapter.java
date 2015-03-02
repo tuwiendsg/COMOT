@@ -1,21 +1,18 @@
 package at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters;
 
-import java.io.IOException;
-
-import javax.xml.bind.JAXBException;
+import java.util.Map;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Binding.DestinationType;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.common.StateMessage;
-import at.ac.tuwien.dsg.comot.m.common.Utils;
+import at.ac.tuwien.dsg.comot.m.common.Transition;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.ControlClient;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.Resource;
 import at.ac.tuwien.dsg.comot.model.type.Action;
@@ -54,38 +51,35 @@ public class ControlAdapter extends Adapter {
 		control.setPort(new Integer(port));
 
 		binding1 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_LIFE_CYCLE,
-				"*.TRUE.*." + State.IDLE + ".#", null);
+				"*.TRUE.*." + State.STARTING + ".#", null);
 		binding2 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_LIFE_CYCLE,
-				"*.TRUE.*." + State.UNDEPLOYMENT + ".#", null);
+				"*.TRUE.*." + State.STOPPING + ".#", null);
 
 		admin.declareBinding(binding1);
 		admin.declareBinding(binding2);
 
-		container.setMessageListener(new CustomListener());
+		container.setMessageListener(new CustomListener(osuInstanceId));
 
 	}
 
-	class CustomListener implements MessageListener {
+	class CustomListener extends AdapterListener {
+
+		public CustomListener(String adapterId) {
+			super(adapterId);
+		}
+
 		@Override
-		public void onMessage(Message message) {
-			try {
+		protected void onLifecycleEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
+				Action action, String optionalMessage, CloudService service, Map<String, Transition> transitions) {
+			// TODO Auto-generated method stub
 
-				StateMessage msg = stateMessage(message);
-				String instanceId = msg.getCsInstanceId();
-				String serviceId = msg.getServiceId();
-				Action action = msg.getAction();
+		}
 
-				log.info("onMessage {}", Utils.asJsonString(msg));
+		@Override
+		protected void onCustomEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
+				String event, String optionalMessage) {
+			// TODO Auto-generated method stub
 
-				if (isAssignedTo(instanceId)) {
-					if (action.equals(Action.PREPARED)) {
-
-					}
-				}
-
-			} catch (JAXBException | IOException e) {
-				e.printStackTrace();
-			}
 		}
 
 	}

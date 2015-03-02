@@ -2,9 +2,7 @@ package at.ac.tuwien.dsg.comot.m.core.lifecycle;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
@@ -24,7 +22,6 @@ import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceEntity;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 import at.ac.tuwien.dsg.comot.model.type.Action;
@@ -37,94 +34,100 @@ public class ManagerOfServiceInstance {
 
 	@Autowired
 	protected RabbitTemplate amqp;
+	@Autowired
+	protected InformationServiceMock infoService;
 
 	protected String csInstanceId;
 	protected String serviceId;
 	protected Group serviceGroup;
-	protected Map<String, Group> groups = new HashMap<>();
+	protected Group serviceGroupReadOnly;
 	protected Map<String, State> lastStates = new HashMap<>();
 	protected AggregationStrategy strategy = new AggregationStrategy();
 
-	// TODO consider synchronized
-	public void executeAction(EventMessage event) throws JAXBException, IOException {
+	synchronized public void executeAction(
+			EventMessage event) throws JAXBException, IOException, ClassNotFoundException {
 
 		String groupId = event.getGroupId();
 		Action action = event.getAction();
 		CloudService service = event.getService();
+		Group targetGroup;
+		boolean found = false;
 
-		if (Action.NEW_INSTANCE_REQUESTED.equals(action)) {
+		if (Action.INSTANCE_CREATION_REQUESTED.equals(action)) {
 
 			this.csInstanceId = event.getCsInstanceId();
-			this.serviceId = service.getId();
+			this.serviceId = event.getServiceId();
 
-			serviceGroup = new Group(service, strategy);
+			serviceGroup = new Group(service, State.INIT);
 
 			for (Group group : serviceGroup.getAllMembersNested()) {
-				groups.put(group.getId(), group);
-				lastStates.put(group.getId(), State.NONE);
+				lastStates.put(group.getId(), State.INIT);
 			}
 
-		} else if (Action.DEPLOYMENT_REQUESTED.equals(action) && !groups.containsKey(groupId)) {
+			targetGroup = checkAndExecute(action, groupId);
 
+		} else if (Action.DEPLOYMENT_STARTED.equals(action) && serviceGroup.getMemberNested(groupId) == null) {
+			log.info("creating new group {}", service);
+
+			// add new instance groups
 			for (ServiceUnit unit : Navigator.getAllUnits(service)) {
 				for (UnitInstance instance : unit.getInstances()) {
 					if (instance.getId().equals(groupId)) {
+						Group newGroup = serviceGroup.getMemberNested(unit.getId()).addInstance(instance,
+								State.STARTING);
+						lastStates.put(newGroup.getId(), State.PASSIVE);
 
-						Group newGroup = groups.get(unit.getId()).addInstance(instance);
-						groups.put(newGroup.getId(), newGroup);
+						infoService.addUnitInstance(serviceId, csInstanceId, unit.getId(), instance);
+
+						log.info("newGroup: {}", newGroup);
+						found = true;
+						break;
 					}
 				}
+				if (found) {
+					break;
+				}
 			}
+
+			targetGroup = checkAndExecute(action, groupId);
+
+		} else if (Action.UNDEPLOYED.equals(action)) {
+
+			// remove new instance groups
+			targetGroup = checkAndExecute(action, groupId);
+
+			for (Group member : targetGroup.getAllMembersNested()) {
+				if (member.getType() == Type.INSTANCE) {
+					infoService.removeUnitInstance(serviceId, csInstanceId, member.getId());
+					member.getParent().getMembers().remove(member);
+				}
+			}
+
+		} else {
+			targetGroup = checkAndExecute(action, groupId);
 		}
 
-		Group group = groups.get(groupId);
-
-		log.info("group check: {} {}", groupId, group);
-
-		if (!group.canExecute(action)) {
-			throw new ComotIllegalArgumentException("Action '" + action + "' is not allowed in state '"
-					+ group.getCurrentState() + "'");
-		}
-
-		group.executeAction(action);
+		processOutgoingService(event);
 
 		// sum up transitions
 		Map<String, State> tempStates = new HashMap<>();
-		Set<Transition> transitions = new HashSet<>();
+		Map<String, Transition> transitions = new HashMap<>();
 		boolean fresh;
-		Group tempG;
 
-		for (String key : groups.keySet()) {
-			tempG = groups.get(key);
+		for (Group tempG : serviceGroup.getAllMembersNested()) {
 			fresh = true;
-			tempStates.put(key, tempG.getCurrentState());
-			if (tempG.getCurrentState().equals(lastStates.get(key))) {
+			tempStates.put(tempG.getId(), tempG.getCurrentState());
+			if (tempG.getCurrentState().equals(lastStates.get(tempG.getId()))) {
 				fresh = false;
 			}
-			transitions.add(new Transition(key, tempG.getType(), lastStates.get(key), tempG.getCurrentState(), fresh));
+			transitions.put(tempG.getId(), new Transition(tempG.getId(), tempG.getType(), tempG.getPreviousState(),
+					tempG.getCurrentState(), fresh));
 		}
 		lastStates = tempStates;
-
-		// enrich service with states
-		Navigator nav = new Navigator(event.getService());
-
-		for (ServiceEntity entity : nav.getAllServiceParts()) {
-			if (groups.containsKey(entity.getId())) {
-				entity.setState(groups.get(entity.getId()).getCurrentState());
-			}
-			if (entity.getClass().equals(ServiceUnit.class)) {
-				for (UnitInstance instance : ((ServiceUnit) entity).getInstances()) {
-					if (groups.containsKey(instance.getId())) {
-						entity.setState(groups.get(entity.getId()).getCurrentState());
-					}
-				}
-			}
-		}
+		serviceGroupReadOnly = (Group) Utils.deepCopy(serviceGroup);
 
 		// create binding
-		//
 		// instanceID.changeTRUE/FALSE.stateBefore.stateAfter.action.targetLevel
-		//
 		String change;
 
 		if (serviceGroup.getCurrentState().equals(serviceGroup.getPreviousState())) {
@@ -132,26 +135,49 @@ public class ManagerOfServiceInstance {
 		} else {
 			change = "TRUE";
 		}
-		String targetLevel = groups.get(event.getGroupId()).getType().toString();
 
 		String bindingKey = csInstanceId + "." + change + "." + serviceGroup.getPreviousState() + "."
-				+ serviceGroup.getCurrentState() + "." + event.getAction() + "." + targetLevel;
+				+ serviceGroup.getCurrentState() + "." + event.getAction() + "." + targetGroup.getType();
 
 		send(AppContextCore.EXCHANGE_LIFE_CYCLE, bindingKey, new StateMessage(event, transitions));
 
 	}
 
+	protected Group checkAndExecute(Action action, String groupId) {
+
+		Group group = serviceGroup.getMemberNested(groupId);
+
+		log.info("[Manager_{}] group check: {} {}", csInstanceId, groupId, group);
+		log.info("getCurrentState(instanceId={}, groupId={}): {}", csInstanceId, groupId, serviceGroup);
+
+		if (!group.canExecute(action)) {
+			throw new ComotIllegalArgumentException("Action '" + action + "' is not allowed in state '"
+					+ group.getCurrentState() + "'. Group " + groupId);
+		}
+
+		group.executeAction(action, strategy);
+
+		return group;
+	}
+
+	protected void processOutgoingService(EventMessage event) throws ClassNotFoundException, IOException {
+
+		CloudService service = event.getService();
+		service = infoService.getServiceInstance(serviceId, csInstanceId);
+		event.setService(UtilsLc.removeProviderInfo((CloudService) Utils.deepCopy(service)));
+	}
+
 	public void executeCustomAction(EventMessage event) throws AmqpException, JAXBException {
 
 		String groupId = event.getGroupId();
+		Group group;
 
-		if (!groups.containsKey(groupId)) {
+		if ((group = serviceGroup.getMemberNested(groupId)) == null) {
 			throw new ComotIllegalArgumentException("The entity '" + groupId + "' of service instance '" + csInstanceId
 					+ "' does not exist.");
 		}
 
-		Type targetType = groups.get(groupId).getType();
-		String bindingKey = csInstanceId + "." + event.getCustomEvent() + "." + targetType;
+		String bindingKey = csInstanceId + "." + event.getCustomEvent() + "." + group.getType();
 
 		send(AppContextCore.EXCHANGE_CUSTOM_EVENT, bindingKey, new StateMessage(event));
 
@@ -166,6 +192,22 @@ public class ManagerOfServiceInstance {
 
 	public String getServiceId() {
 		return serviceId;
+	}
+
+	public State getCurrentState(String groupId) {
+		log.info("getCurrentState(instanceId={}, groupId={}): {}", csInstanceId, groupId, serviceGroup);
+		final State temp = serviceGroupReadOnly.getMemberNested(groupId).getCurrentState();
+		return temp;
+	}
+
+	public Map<String, Transition> getCurrentState() {
+		Map<String, Transition> transitions = new HashMap<>();
+
+		for (Group tempG : serviceGroupReadOnly.getAllMembersNested()) {
+			transitions.put(tempG.getId(), new Transition(tempG.getId(), tempG.getType(), tempG.getPreviousState(),
+					tempG.getCurrentState(), false));
+		}
+		return transitions;
 	}
 
 }

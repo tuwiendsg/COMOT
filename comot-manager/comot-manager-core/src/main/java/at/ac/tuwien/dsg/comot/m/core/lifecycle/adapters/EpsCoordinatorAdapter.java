@@ -1,25 +1,25 @@
 package at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters;
 
-import java.io.IOException;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
-import javax.xml.bind.JAXBException;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Binding.DestinationType;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageListener;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.m.common.EventMessage;
 import at.ac.tuwien.dsg.comot.m.common.StateMessage;
+import at.ac.tuwien.dsg.comot.m.common.Transition;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.m.recorder.revisions.RevisionApi;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.Quality;
 import at.ac.tuwien.dsg.comot.model.provider.Resource;
@@ -37,7 +37,10 @@ public class EpsCoordinatorAdapter extends Adapter {
 	protected ToscaMapper mapperTosca;
 
 	protected Binding binding1;
-	protected Binding binding2;
+	protected Binding binding3;
+	protected Binding binding4;
+
+	protected Set<String> createdOsus = new HashSet<String>();
 
 	@PostConstruct
 	public void setUp() {
@@ -49,69 +52,105 @@ public class EpsCoordinatorAdapter extends Adapter {
 					if (res.getType().getName().equals(InformationServiceMock.TYPE_STATIC_SERVICE)) {
 						for (Resource res2 : res.getContainsResources()) {
 							if (res2.getType().getName().equals(InformationServiceMock.ADAPTER_CLASS)) {
-
 								Adapter adapter = (Adapter) context.getBean(Class.forName(res2.getName()));
 								adapter.startAdapter(osu.getId());
-
+								createdOsus.add(osu.getId());
 							}
 						}
-
 					}
 				}
 			} catch (BeansException | ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 		}
-
 	}
 
 	@Override
 	public void start(String osuInstanceId) {
 
-		binding1 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_LIFE_CYCLE,
-				"*.TRUE." + State.NONE + "." + State.PREPARATION + ".#", null);
+		binding1 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_CUSTOM_EVENT,
+				"*." + EpsAction.EPS_ASSIGNED + ".SERVICE", null);
+		binding3 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_CUSTOM_EVENT,
+				"*." + EpsAction.EPS_REMOVAL_REQUESTED + ".SERVICE", null);
+		binding4 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_LIFE_CYCLE,
+				"*.TRUE.*." + State.STARTING + ".#", null);
 
 		admin.declareBinding(binding1);
-		container.setMessageListener(new CustomListener());
+		container.setMessageListener(new CustomListener(osuInstanceId));
 
 	}
 
-	class CustomListener implements MessageListener {
+	class CustomListener extends AdapterListener {
+
+		public CustomListener(String adapterId) {
+			super(adapterId);
+		}
+
 		@Override
-		public void onMessage(Message message) {
-			try {
+		protected void onLifecycleEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
+				Action action, String optionalMessage, CloudService service, Map<String, Transition> transitions) {
 
-				StateMessage msg = stateMessage(message);
-				String csInstanceId = msg.getCsInstanceId();
-				String serviceId = msg.getServiceId();
+			if (action.equals(Action.STARTED)) {
 
-				for (OfferedServiceUnit osu : infoService.getSupportingServices(csInstanceId)) {
-
+				for (OfferedServiceUnit osu : infoService.getSupportingServices(serviceId, instanceId)) {
 					for (Quality quality : osu.getQualities()) {
 						if (quality.getType().getName().equals(InformationServiceMock.TYPE_ACTION)
-								&& quality.getName().equals(Action.NEW_INSTANCE_REQUESTED)) {
+								&& quality.getName().equals(Action.STARTED)) {
 
-							// TODO instantiating new EPS
-							log.warn("instantiating new EPS");
+							createOsu(osu.getId());
 						}
 					}
 				}
-
-				EventMessage event = new EventMessage(serviceId, csInstanceId, serviceId, Action.PREPARED, msg
-						.getEvent().getService(), null);
-				lcManager.executeAction(event);
-
-			} catch (IOException | JAXBException | IllegalArgumentException | ClassNotFoundException e) {
-				e.printStackTrace();
 			}
 		}
 
+		@Override
+		protected void onCustomEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
+				String event, String optionalMessage) {
+
+			EpsAction action = EpsAction.valueOf(event);
+			String osuId = optionalMessage;
+			State serviceState = lcManager.getCurrentState(instanceId, groupId);
+
+			if (action.equals(EpsAction.EPS_ASSIGNED)) {
+
+				if (!createdOsus.contains(osuId) && !serviceState.equals(State.PASSIVE)) {
+					createOsu(osuId);
+				}
+
+			} else if (action.equals(EpsAction.EPS_REMOVAL_REQUESTED)) {
+
+				if (!createdOsus.contains(osuId)) {
+					removeOsu(osuId);
+				}
+
+			}
+		}
+
+	}
+
+	protected void createOsu(String osuId) {
+
+		createdOsus.add(osuId);
+		// TODO
+	}
+
+	protected void removeOsu(String osuId) {
+
+		createdOsus.remove(osuId);
+		// TODO
 	}
 
 	@Override
 	protected void clean() {
 		if (binding1 != null) {
 			admin.removeBinding(binding1);
+		}
+		if (binding3 != null) {
+			admin.removeBinding(binding3);
+		}
+		if (binding4 != null) {
+			admin.removeBinding(binding4);
 		}
 	}
 

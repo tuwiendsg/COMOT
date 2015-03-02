@@ -1,19 +1,18 @@
 package at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters;
 
-import java.io.IOException;
-
-import javax.xml.bind.JAXBException;
+import java.util.Map;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Binding.DestinationType;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.common.StateMessage;
+import at.ac.tuwien.dsg.comot.m.common.Transition;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.type.Action;
 
 @Component
 public class UpdaterAdapter extends Adapter {
@@ -35,25 +34,28 @@ public class UpdaterAdapter extends Adapter {
 		admin.declareBinding(binding1);
 		admin.declareBinding(binding2);
 
-		container.setMessageListener(new CustomListener());
+		container.setMessageListener(new CustomListener(osuInstanceId));
 
 	}
 
-	class CustomListener implements MessageListener {
+	class CustomListener extends AdapterListener {
+
+		public CustomListener(String adapterId) {
+			super(adapterId);
+		}
+
 		@Override
-		public void onMessage(Message message) {
-			try {
+		protected void onLifecycleEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
+				Action action, String optionalMessage, CloudService service, Map<String, Transition> transitions) {
+			// TODO Auto-generated method stub
 
-				StateMessage msg = stateMessage(message);
-				String instanceId = msg.getCsInstanceId();
+		}
 
-				if (isAssignedTo(instanceId)) {
+		@Override
+		protected void onCustomEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
+				String event, String optionalMessage) {
+			// TODO Auto-generated method stub
 
-				}
-
-			} catch (IOException | JAXBException | IllegalArgumentException e) {
-				e.printStackTrace();
-			}
 		}
 
 	}

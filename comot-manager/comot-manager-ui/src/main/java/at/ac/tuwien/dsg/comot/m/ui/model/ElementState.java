@@ -13,10 +13,6 @@ public class ElementState {
 
 	protected String id;
 	protected Integer instanceId;
-	protected String type;
-	protected String state;
-	// @XmlElementWrapper
-	// @XmlElement(name = "element")
 	protected List<ElementState> children = new ArrayList<>();
 	protected boolean serviceUnit;
 	protected List<String> connectToIds = new ArrayList<>();
@@ -25,11 +21,9 @@ public class ElementState {
 
 	}
 
-	public ElementState(String id, String type, String state) {
+	public ElementState(String id) {
 		super();
 		this.id = id;
-		this.type = type;
-		this.state = state;
 	}
 
 	public void addChild(ElementState element) {
@@ -54,22 +48,6 @@ public class ElementState {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
 	}
 
 	public List<ElementState> getChildren() {

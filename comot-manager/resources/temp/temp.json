@@ -1,85 +1,33 @@
 {
-	"id": "serviceId",
-	"currentState": "IDLE",
-	"previousState": "null",
-	"type": "SERVICE",
-	"parent": "null",
-	"members": 
-	[
-		{
-			"id": "topologyId",
-			"currentState": "IDLE",
-			"previousState": "null",
-			"type": "TOPOLOGY",
-			"parent": "serviceId",
-			"members": 
-			[
-				{
-					"id": "osId",
-					"currentState": "IDLE",
-					"previousState": "null",
-					"type": "UNIT",
-					"parent": "topologyId",
-					"members": 
-					[
-						{
-							"id": "osId_instance",
-							"currentState": "IDLE",
-							"previousState": "null",
-							"type": "INSTANCE",
-							"parent": "osId",
-							"members": 
-							[
-								
-							]
-						}
-					]
-				},
-
-				{
-					"id": "nodeId",
-					"currentState": "IDLE",
-					"previousState": "null",
-					"type": "UNIT",
-					"parent": "topologyId",
-					"members": 
-					[
-						{
-							"id": "nodeId_instance",
-							"currentState": "IDLE",
-							"previousState": "null",
-							"type": "INSTANCE",
-							"parent": "nodeId",
-							"members": 
-							[
-								
-							]
-						}
-					]
-				},
-
-				{
-					"id": "nodeId2",
-					"currentState": "IDLE",
-					"previousState": "null",
-					"type": "UNIT",
-					"parent": "topologyId",
-					"members": 
-					[
-						{
-							"id": "nodeId2_instance",
-							"currentState": "IDLE",
-							"previousState": "null",
-							"type": "INSTANCE",
-							"parent": "nodeId2",
-							"members": 
-							[
-								
-							]
-						}
-					]
-				}
-			]
-		}
-	]
+	"id" : "comot_tomcat_666cc9ba-6707-4716-842d-05bb129ab990",
+	"entity" : "at.ac.tuwien.dsg.comot.model.devel.structure.CloudService@5a4918d1",
+	"children" : [{
+			"id" : "SampleService_test",
+			"entity" : "at.ac.tuwien.dsg.comot.model.devel.structure.ServiceTopology@294776e5",
+			"children" : [{
+					"id" : "policeApp",
+					"entity" : "at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit@f282e042",
+					"children" : [{
+							"id" : "policeApp_instance_0",
+							"entity" : "at.ac.tuwien.dsg.comot.model.runtime.UnitInstance@14970fd4",
+							"children" : []
+						}]
+				},{
+					"id" : "os_OF_tomcat_OF_policeApp",
+					"entity" : "at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit@8fc52d48",
+					"children" : [{
+							"id" : "os_OF_tomcat_OF_policeApp_instance_0",
+							"entity" : "at.ac.tuwien.dsg.comot.model.runtime.UnitInstance@22115a9d",
+							"children" : []
+						}]
+				},{
+					"id" : "tomcat_OF_policeApp",
+					"entity" : "at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit@979276f5",
+					"children" : [{
+							"id" : "tomcat_OF_policeApp_instance_0",
+							"entity" : "at.ac.tuwien.dsg.comot.model.runtime.UnitInstance@21540ae4",
+							"children" : []
+						}]
+				}]
+		}]
 }

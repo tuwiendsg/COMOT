@@ -13,14 +13,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.m.common.StateMessage;
-import at.ac.tuwien.dsg.comot.m.common.Transition;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.MonitoringClient;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.UtilsLc;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.Adapter;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
-import at.ac.tuwien.dsg.comot.m.ui.model.JaxbList;
-import at.ac.tuwien.dsg.comot.model.type.Action;
 
 @Component
 @Scope("prototype")
@@ -36,13 +33,16 @@ public class UiAdapter extends Adapter {
 	protected String csInstanceId;
 	protected EventOutput eventOutput;
 
+	public static final String MSG_LIFE_CYCLE = "MSG_LIFE_CYCLE";
+	public static final String MSG_CUSTOM_EVENT = "MSG_CUSTOM_EVENT";
+
 	@Override
 	public void start(String id) {
 
 		binding1 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_LIFE_CYCLE,
 				// csInstanceId + ".#", null);
 				"#", null);
-		binding2 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_LIFE_CYCLE,
+		binding2 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_CUSTOM_EVENT,
 				// csInstanceId + ".#", null);
 				"#", null);
 
@@ -59,27 +59,23 @@ public class UiAdapter extends Adapter {
 	}
 
 	class CustomListener implements MessageListener {
+
 		@Override
 		public void onMessage(Message message) {
 			try {
 
 				if (eventOutput.isClosed()) {
-					log.info("eventOutput.isClosed()");
+					log.debug("eventOutput.isClosed()");
 					cleanAdapter();
 				}
 
-				StateMessage msg = stateMessage(message);
-				String instanceId = msg.getCsInstanceId();
-				String serviceId = msg.getServiceId();
-				Action action = msg.getAction();
+				String msgForClient = Utils.asJsonString(UtilsLc.stateMessage(message));
 
-				log.info(logId() + "onMessage {}", Utils.asJsonString(msg));
-
-				String msgForClient = Utils.asJsonString(new JaxbList<Transition>(msg.getTransitions()),
-						Transition.class);
+				log.info(logId() + "onMessage {}", msgForClient);
 
 				OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
 				eventBuilder.data(String.class, msgForClient);
+				// eventBuilder.name(MSG_LIFE_CYCLE);
 				eventOutput.write(eventBuilder.build());
 
 			} catch (Throwable t) {
@@ -88,8 +84,8 @@ public class UiAdapter extends Adapter {
 				log.info("Throwable -> cleanAdapter()");
 				cleanAdapter();
 			}
-		}
 
+		}
 	}
 
 	@Async
@@ -98,7 +94,7 @@ public class UiAdapter extends Adapter {
 		while (true) {
 
 			try {
-				log.info("checking eventOutput");
+				log.trace("checking eventOutput");
 				OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
 				eventBuilder.name("ping");
 				eventBuilder.data(String.class, "ping");
@@ -110,7 +106,7 @@ public class UiAdapter extends Adapter {
 			Thread.sleep(10000);
 		}
 
-		log.info("regular check request cleanAdapter()");
+		log.debug("regular check request cleanAdapter()");
 		cleanAdapter();
 	}
 

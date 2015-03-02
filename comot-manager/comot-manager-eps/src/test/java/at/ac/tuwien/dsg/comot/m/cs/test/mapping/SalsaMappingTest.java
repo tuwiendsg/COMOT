@@ -24,7 +24,7 @@ import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 
-public class ToscaMappingTest extends AbstractTest {
+public class SalsaMappingTest extends AbstractTest {
 
 	@Autowired
 	protected ToscaMapper mapperTosca;

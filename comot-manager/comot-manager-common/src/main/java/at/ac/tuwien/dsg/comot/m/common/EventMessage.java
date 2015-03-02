@@ -19,11 +19,11 @@ public class EventMessage {
 	@XmlAttribute
 	protected String groupId;
 	@XmlAttribute
-	protected Action action;
+	protected Action action; // not in custom
 	@XmlAttribute
-	protected String customEvent;
+	protected String customEvent; // not in lifecycle
 	protected String message;
-	protected CloudService service;
+	protected CloudService service; // not in custom
 
 	public EventMessage() {
 

@@ -6,8 +6,6 @@
 package at.ac.tuwien.dsg.comot.m.core;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
@@ -17,10 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.common.EventMessage;
-import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.EpsAction;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 
@@ -37,26 +34,58 @@ public class Coordinator {
 	public String createCloudService(CloudService service) {
 
 		String serviceId = infoServ.createService(service);
-
 		return serviceId;
 	}
 
 	public String createServiceInstance(String serviceId) throws IOException, JAXBException, ClassNotFoundException {
 
 		String instanceId = infoServ.createServiceInstance(serviceId);
-		log.info("instanceId {}", instanceId);
 
-		CloudService service = infoServ.getServiceInstance(instanceId);
-
-		EventMessage event = new EventMessage(serviceId, instanceId, serviceId, Action.NEW_INSTANCE_REQUESTED, service,
-				null);
+		EventMessage event = new EventMessage(serviceId, instanceId, serviceId, Action.INSTANCE_CREATION_REQUESTED,
+				null, null);
 		lcManager.executeAction(event);
 
 		return instanceId;
 	}
 
-	public void assignSupportingOsu(String csInstanceId, String osuInstanceId) {
-		infoServ.assignSupportingService(csInstanceId, osuInstanceId);
+	public void startServiceInstance(String serviceId, String instanceId) throws IOException, JAXBException,
+			ClassNotFoundException {
+
+		EventMessage event = new EventMessage(serviceId, instanceId, serviceId, Action.STARTED, null, null);
+		lcManager.executeAction(event);
+
+	}
+
+	public void stopServiceInstance(String serviceId, String instanceId)
+			throws IOException, JAXBException, ClassNotFoundException {
+
+		EventMessage event = new EventMessage(serviceId, instanceId, serviceId, Action.STOPPED, null,
+				null);
+		lcManager.executeAction(event);
+
+	}
+
+	public void assignSupportingOsu(String serviceId, String instanceId, String osuInstanceId)
+			throws ClassNotFoundException, IOException, JAXBException {
+
+		infoServ.assignSupportingService(serviceId, instanceId, osuInstanceId);
+
+		EventMessage event = new EventMessage(serviceId, instanceId, serviceId, EpsAction.EPS_ASSIGNED.toString(),
+				osuInstanceId);
+		lcManager.executeAction(event);
+
+	}
+
+	public void removeAssignmentOfSupportingOsu(String serviceId, String instanceId, String osuInstanceId)
+			throws ClassNotFoundException, IOException, JAXBException {
+
+		infoServ.removeAssignmentOfSupportingOsu(serviceId, instanceId, osuInstanceId);
+
+		EventMessage event = new EventMessage(serviceId, instanceId, serviceId,
+				EpsAction.EPS_ASSIGNMENT_REMOVED.toString(),
+				osuInstanceId);
+		lcManager.executeAction(event);
+
 	}
 
 	public void triggerCustomEvent(
@@ -73,26 +102,5 @@ public class Coordinator {
 				optionalInput);
 		lcManager.executeAction(event);
 	}
-
-	public List<CloudService> getServices() {
-
-		List<CloudService> list = new ArrayList<CloudService>(infoServ.getServices().values());
-		// Collections.sort(list, comparator);
-
-		return list;
-	}
-
-	public CloudService getServiceInstance(String instanceId) throws CoreServiceException, ComotException,
-			ClassNotFoundException, IOException {
-
-		CloudService service = infoServ.getServiceInstance(instanceId);
-
-		return service;
-	}
-
-	// public ElementMonitoring getMonitoringData(String serviceId) throws CoreServiceException, ComotException {
-	//
-	// return monitoring.getMonitoringData(serviceId);
-	// }
 
 }

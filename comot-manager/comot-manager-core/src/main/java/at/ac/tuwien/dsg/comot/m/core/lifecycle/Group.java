@@ -1,5 +1,6 @@
 package at.ac.tuwien.dsg.comot.m.core.lifecycle;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,9 @@ import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
-public class Group {
+public class Group implements Serializable {
+
+	private static final long serialVersionUID = 2534198672357223629L;
 
 	protected String id;
 	protected State currentState;
@@ -19,63 +22,61 @@ public class Group {
 	protected Type type;
 	protected Group parent;
 	protected List<Group> members = new ArrayList<Group>();
-	protected AggregationStrategy strategy;
 
-	public Group(CloudService service, AggregationStrategy strategy) {
-		this(service.getId(), Type.SERVICE, State.NONE, null, strategy);
+	public Group(CloudService service, State state) {
+		this(service.getId(), Type.SERVICE, state, null);
 
 		for (ServiceTopology topo : service.getServiceTopologies()) {
-			addTopology(topo);
+			addTopology(topo, state);
 		}
 	}
 
-	public Group(ServiceTopology topology, Group parent, AggregationStrategy strategy) {
-		this(topology.getId(), Type.TOPOLOGY, State.NONE, parent, strategy);
+	public Group(ServiceTopology topology, State state, Group parent) {
+		this(topology.getId(), Type.TOPOLOGY, state, parent);
 
 		for (ServiceUnit unit : topology.getServiceUnits()) {
-			addUnit(unit);
+			addUnit(unit, state);
 		}
 
 		for (ServiceTopology topo : topology.getServiceTopologies()) {
-			addTopology(topo);
+			addTopology(topo, state);
 		}
 	}
 
-	public Group(ServiceUnit unit, Group parent, AggregationStrategy strategy) {
-		this(unit.getId(), Type.UNIT, State.NONE, parent, strategy);
+	public Group(ServiceUnit unit, State state, Group parent) {
+		this(unit.getId(), Type.UNIT, state, parent);
 
 		for (UnitInstance instance : unit.getInstances()) {
-			addInstance(instance);
+			addInstance(instance, state);
 		}
 	}
 
-	public Group(UnitInstance instance, Group parent, AggregationStrategy strategy) {
-		this(instance.getId(), Type.INSTANCE, State.IDLE, parent, strategy);
+	public Group(UnitInstance instance, State state, Group parent) {
+		this(instance.getId(), Type.INSTANCE, state, parent);
 	}
 
-	public Group(String id, Type type, State state, Group parent, AggregationStrategy strategy) {
+	public Group(String id, Type type, State state, Group parent) {
 		super();
 		this.id = id;
 		this.currentState = state;
 		this.type = type;
 		this.parent = parent;
-		this.strategy = strategy;
 	}
 
-	public Group addTopology(ServiceTopology topology) {
-		Group temp = new Group(topology, this, strategy);
+	public Group addTopology(ServiceTopology topology, State state) {
+		Group temp = new Group(topology, state, this);
 		members.add(temp);
 		return temp;
 	}
 
-	public Group addUnit(ServiceUnit unit) {
-		Group temp = new Group(unit, this, strategy);
+	public Group addUnit(ServiceUnit unit, State state) {
+		Group temp = new Group(unit, state, this);
 		members.add(temp);
 		return temp;
 	}
 
-	public Group addInstance(UnitInstance instance) {
-		Group temp = new Group(instance, this, strategy);
+	public Group addInstance(UnitInstance instance, State state) {
+		Group temp = new Group(instance, state, this);
 		members.add(temp);
 		return temp;
 	}
@@ -95,7 +96,7 @@ public class Group {
 		}
 	}
 
-	public void executeAction(Action action) {
+	public void executeAction(Action action, AggregationStrategy strategy) {
 
 		State nextState = null;
 
@@ -108,14 +109,32 @@ public class Group {
 			}
 
 			if (parent != null) {
-				parent.refreshState();
+				parent.refreshState(strategy);
 			}
 
 		} else {
 			for (Group member : members) {
-				member.executeAction(action);
+				member.executeAction(action, strategy);
 			}
 		}
+
+	}
+
+	public Group getMemberNested(String gouprId) {
+
+		Group temp = null;
+
+		if (this.getId().equals(gouprId)) {
+			return this;
+		} else {
+			for (Group member : members) {
+				temp = member.getMemberNested(gouprId);
+				if (temp != null) {
+					return temp;
+				}
+			}
+		}
+		return null;
 
 	}
 
@@ -132,7 +151,7 @@ public class Group {
 
 	}
 
-	protected void refreshState() {
+	protected void refreshState(AggregationStrategy strategy) {
 
 		State nextState = strategy.determineState(currentState, type, members);
 
@@ -143,7 +162,7 @@ public class Group {
 		moveToState(nextState);
 
 		if (parent != null) {
-			parent.refreshState();
+			parent.refreshState(strategy);
 		}
 
 	}
@@ -178,10 +197,6 @@ public class Group {
 
 	public List<Group> getMembers() {
 		return members;
-	}
-
-	public AggregationStrategy getStrategy() {
-		return strategy;
 	}
 
 	public State getCurrentState() {

@@ -13,7 +13,9 @@ define(function(require) {
 	var model = {
 		activate : function() {
 			repeated.runWith(null, function() {
-				comot.getServices(processResult)
+				comot.getServices(function(data) {
+					model.services = komapping.fromJS(data);
+				})
 			})
 			activateTab(model.tabs()[activeTabIndex]);
 		},
@@ -160,11 +162,6 @@ define(function(require) {
 				}
 			});
 		}
-	}
-
-	function processResult(data) {
-		model.services = komapping.fromJS(data);
-
 	}
 
 });

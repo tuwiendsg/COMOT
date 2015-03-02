@@ -23,7 +23,7 @@ import at.ac.tuwien.dsg.comot.m.recorder.AppContextServrec;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { AppContextCore.class })
-@ActiveProfiles({ AppContextServrec.IMPERMANENT_NEO4J_DB })
+@ActiveProfiles({ AppContextServrec.IMPERMANENT_NEO4J_DB, AppContextCore.INSERT_INIT_DATA })
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public abstract class AbstractTest {
 
