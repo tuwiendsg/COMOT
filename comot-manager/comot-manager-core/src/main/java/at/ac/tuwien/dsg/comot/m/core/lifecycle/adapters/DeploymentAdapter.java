@@ -6,8 +6,6 @@ import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Binding.DestinationType;
 import org.springframework.amqp.core.Message;
@@ -23,6 +21,7 @@ import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.UtilsLc;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
@@ -36,10 +35,11 @@ import at.ac.tuwien.dsg.comot.model.type.State;
 // @Scope("prototype") //for some reason this creates multip0le instances
 public class DeploymentAdapter extends Adapter {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
-
 	@Autowired
 	protected DeploymentClient deployment;
+
+	protected Binding binding1;
+	protected Binding binding2;
 
 	@Override
 	public void start(String osuInstanceId) {
@@ -63,16 +63,19 @@ public class DeploymentAdapter extends Adapter {
 		deployment.setHost(ip);
 		deployment.setPort(new Integer(port));
 
-		admin.declareBinding(new Binding(queueName(), DestinationType.QUEUE,
-				AppContextCore.EXCHANGE_INSTANCE_HIGH_LEVEL, "*.TRUE.*." + State.IDLE + ".#", null));
-		admin.declareBinding(new Binding(queueName(), DestinationType.QUEUE,
-				AppContextCore.EXCHANGE_INSTANCE_HIGH_LEVEL, "*.TRUE.*." + State.UNDEPLOYMENT + ".#", null));
+		binding1 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_LIFE_CYCLE,
+				"*.TRUE.*." + State.IDLE + ".#", null);
+		binding2 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_LIFE_CYCLE,
+				"*.TRUE.*." + State.UNDEPLOYMENT + ".#", null);
 
-		container.setMessageListener(new DeployListener());
+		admin.declareBinding(binding1);
+		admin.declareBinding(binding2);
+
+		container.setMessageListener(new CustomListener());
 
 	}
 
-	class DeployListener implements MessageListener {
+	class CustomListener implements MessageListener {
 		@Override
 		public void onMessage(Message message) {
 			try {
@@ -86,11 +89,7 @@ public class DeploymentAdapter extends Adapter {
 
 				if (isAssignedTo(instanceId)) {
 
-					log.info("bbbbbbbbbbbb");
-
 					if (action.equals(Action.PREPARED)) {
-
-						log.info("would deploy {}", instanceId);
 
 						CloudService service = infoService.getServiceInstance(instanceId);
 						service.setId(instanceId);
@@ -115,10 +114,12 @@ public class DeploymentAdapter extends Adapter {
 	}
 
 	protected void monitorStatusUntilDeployed(String serviceId, CloudService service) throws CoreServiceException,
-			ComotException, IOException, JAXBException, InterruptedException {
+			ComotException, IOException, JAXBException, InterruptedException, ClassNotFoundException {
 
 		Map<String, State> map;
 		State oldState;
+
+		service = UtilsLc.removeProviderInfo(service);
 
 		do {
 
@@ -146,7 +147,7 @@ public class DeploymentAdapter extends Adapter {
 					}
 
 					// publish
-					Action action = translateToAction(oldState, instance.getState());
+					Action action = UtilsLc.translateToAction(oldState, instance.getState());
 
 					if (action == null) {
 						log.error("invalid transitions {} -> {}", oldState, instance.getState());
@@ -163,19 +164,14 @@ public class DeploymentAdapter extends Adapter {
 
 	}
 
-	public Action translateToAction(State oldState, State newState) {
-
-		State temp;
-
-		for (Action action : Action.values()) {
-			if ((temp = oldState.execute(action)) != null) {
-				if (temp.equals(newState)) {
-					return action;
-				}
-			}
+	@Override
+	protected void clean() {
+		if (binding1 != null) {
+			admin.removeBinding(binding1);
 		}
-
-		return null;
+		if (binding2 != null) {
+			admin.removeBinding(binding2);
+		}
 	}
 
 }

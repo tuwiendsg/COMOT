@@ -68,9 +68,7 @@ public class RevisionApi {
 	protected void insertToDB(ManagedRegion region, String regionId, String changeType) {
 
 		Node regionNode, revisionNode, lastRevisionNode;
-		Relationship firstRel;
 		Revision revision;
-		boolean changeAlreadyCreated = false;
 
 		Long time = System.currentTimeMillis();
 		RegionRepo repo = context.getBean(RegionRepo.class);
@@ -91,7 +89,6 @@ public class RevisionApi {
 
 			neo.createRelationshipBetween(regionNode, revisionNode, RelTypes._FIRST_REV.toString(), null);
 			neo.createRelationshipBetween(regionNode, revisionNode, RelTypes._LAST_REV.toString(), null);
-			changeAlreadyCreated = true;
 		}
 
 		boolean modified = modifyEntities(region, repo, regionNode, time);

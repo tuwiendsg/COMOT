@@ -23,13 +23,24 @@ public class LifecycleTest extends AbstractTest {
 	Coordinator orchestrator;
 
 	@Test
+	public void produceEvent() throws JAXBException, IOException, ClassNotFoundException {
+		Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/tomcat/tomcat_from_salsa.xml");
+		CloudService service = mapperTosca.createModel(tosca1);
+
+		String serviceId = orchestrator.createCloudService(service);
+
+		String instanceId = orchestrator.createServiceInstance(serviceId);
+
+		UtilsTest.sleepInfinit();
+	}
+
+	@Test
 	public void testDeployTomcat() throws IOException, JAXBException, ClassNotFoundException {
 
 		Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/tomcat/tomcat_from_salsa.xml");
 		CloudService service = mapperTosca.createModel(tosca1);
 
 		String serviceId = orchestrator.createCloudService(service);
-
 		String instanceId = orchestrator.createServiceInstance(serviceId);
 
 		orchestrator.assignSupportingOsu(instanceId, InformationServiceMock.SALSA_SERVICE_PUBLIC_ID);

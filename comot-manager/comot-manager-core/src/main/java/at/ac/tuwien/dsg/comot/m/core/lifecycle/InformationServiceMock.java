@@ -17,6 +17,7 @@ import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.DeploymentAdapter;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.RecordingAdapter;
+import at.ac.tuwien.dsg.comot.m.cs.AppContextEps;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.PrimitiveOperation;
@@ -57,8 +58,8 @@ public class InformationServiceMock {
 		Resource resource = new Resource(PUBLIC_INSTANCE, new ResourceOrQualityType(TYPE_STATIC_SERVICE));
 		resource.hasResource(new Resource(DeploymentAdapter.class.getCanonicalName(),
 				new ResourceOrQualityType(ADAPTER_CLASS)));
-		resource.hasResource(new Resource("128.130.172.215", new ResourceOrQualityType(IP)));
-		resource.hasResource(new Resource("8380", new ResourceOrQualityType(PORT)));
+		resource.hasResource(new Resource(AppContextEps.SALSA_IP, new ResourceOrQualityType(IP)));
+		resource.hasResource(new Resource(AppContextEps.SALSA_PORT.toString(), new ResourceOrQualityType(PORT)));
 
 		OfferedServiceUnit deployment = new OfferedServiceUnit();
 		deployment.setId(SALSA_SERVICE_PUBLIC_ID);
@@ -132,8 +133,12 @@ public class InformationServiceMock {
 				}
 			}
 		}
-
 	}
+
+	// public void updateRuntimeAndDevelInfo(String instanceId, CloudService service){
+	//
+	// services.get(service.getId())
+	// }
 
 	public Set<OfferedServiceUnit> getSupportingServices(String instanceId) {
 

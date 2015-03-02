@@ -43,9 +43,6 @@ public class Engine {
 
 	public void update() {
 
-		Set<ServiceUnit> added = new HashSet<>();
-		Set<ServiceUnit> deleted = new HashSet<>();
-
 		Set<ServiceUnit> roots = new HashSet<>();
 
 		for (ServiceUnit unit : navNeu.getAllUnits()) {

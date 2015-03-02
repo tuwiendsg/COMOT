@@ -2,7 +2,9 @@ package at.ac.tuwien.dsg.comot.m.core.lifecycle;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
@@ -88,15 +90,18 @@ public class ManagerOfServiceInstance {
 
 		// sum up transitions
 		Map<String, State> tempStates = new HashMap<>();
-		Map<String, Transition> transitions = new HashMap<>();
+		Set<Transition> transitions = new HashSet<>();
+		boolean fresh;
+		Group tempG;
 
 		for (String key : groups.keySet()) {
-
-			tempStates.put(key, groups.get(key).getCurrentState());
-			if (groups.get(key).getCurrentState().equals(lastStates.get(key))) {
-				continue;
+			tempG = groups.get(key);
+			fresh = true;
+			tempStates.put(key, tempG.getCurrentState());
+			if (tempG.getCurrentState().equals(lastStates.get(key))) {
+				fresh = false;
 			}
-			transitions.put(key, new Transition(lastStates.get(key), groups.get(key).getCurrentState()));
+			transitions.add(new Transition(key, tempG.getType(), lastStates.get(key), tempG.getCurrentState(), fresh));
 		}
 		lastStates = tempStates;
 
@@ -123,16 +128,16 @@ public class ManagerOfServiceInstance {
 		String change;
 
 		if (serviceGroup.getCurrentState().equals(serviceGroup.getPreviousState())) {
-			change = "TRUE";
-		} else {
 			change = "FALSE";
+		} else {
+			change = "TRUE";
 		}
 		String targetLevel = groups.get(event.getGroupId()).getType().toString();
 
 		String bindingKey = csInstanceId + "." + change + "." + serviceGroup.getPreviousState() + "."
 				+ serviceGroup.getCurrentState() + "." + event.getAction() + "." + targetLevel;
 
-		send(AppContextCore.EXCHANGE_INSTANCE_HIGH_LEVEL, bindingKey, new StateMessage(event, transitions));
+		send(AppContextCore.EXCHANGE_LIFE_CYCLE, bindingKey, new StateMessage(event, transitions));
 
 	}
 
@@ -148,7 +153,7 @@ public class ManagerOfServiceInstance {
 		Type targetType = groups.get(groupId).getType();
 		String bindingKey = csInstanceId + "." + event.getCustomEvent() + "." + targetType;
 
-		send(AppContextCore.EXCHANGE_INSTANCE_CUSTOM, bindingKey, new StateMessage(event));
+		send(AppContextCore.EXCHANGE_CUSTOM_EVENT, bindingKey, new StateMessage(event));
 
 	}
 

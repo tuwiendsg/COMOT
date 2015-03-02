@@ -2,6 +2,7 @@ package at.ac.tuwien.dsg.comot.m.common;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
@@ -11,10 +12,15 @@ import at.ac.tuwien.dsg.comot.model.type.Action;
 @XmlRootElement
 public class EventMessage {
 
+	@XmlAttribute
 	protected String serviceId;
+	@XmlAttribute
 	protected String csInstanceId;
+	@XmlAttribute
 	protected String groupId;
+	@XmlAttribute
 	protected Action action;
+	@XmlAttribute
 	protected String customEvent;
 	protected String message;
 	protected CloudService service;

@@ -14,43 +14,6 @@ define(function(require) {
 		deploy : deploy
 	}
 
-	if (!!window.EventSource) {
-		console.log("YES")
-		var source = new EventSource('rest/services/events/uuuuuuuuu');
-
-		source.addEventListener('message', function(e) {
-			console.log(e);
-			console.log("aaaaaaa");
-			console.log(e.data);
-		}, false);
-		
-		source.addEventListener('message-to-client', function(e) {
-			console.log(e);
-			console.log(e.data);
-		}, false);
-
-		source.addEventListener('open', function(e) {
-			console.log(e);
-			console.log(e.data);
-			// Connection was opened.
-		}, false);
-
-		source.addEventListener('error', function(e) {
-			if (e.readyState == EventSource.CLOSED) {
-				console.log("CLOSED");
-				console.log(e);
-				// Connection was closed.
-			}else{
-				console.log("SOMETHING");
-				console.log(e);
-			}
-		}, false);
-
-	} else {
-		console.log("NO")
-		// Result to xhr polling :(
-	}
-
 	function deploy() {
 		var tosca = this.tosca();
 		var mcr = this.mcr();

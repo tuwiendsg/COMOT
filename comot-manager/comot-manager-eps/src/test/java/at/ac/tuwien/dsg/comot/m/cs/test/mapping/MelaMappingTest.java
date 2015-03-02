@@ -99,6 +99,7 @@ public class MelaMappingTest extends AbstractTest {
 
 		ElementMonitoring element = mapperMelaOutput.extractOutput(def);
 
+		log.info("mela {}", Utils.asXmlString(element));
 	}
 
 }

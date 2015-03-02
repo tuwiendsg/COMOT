@@ -1,10 +1,5 @@
 package at.ac.tuwien.dsg.comot.ui.test;
 
-import generated.oasis.tosca.TDefinitions;
-import generated.oasis.tosca.TNodeTemplate;
-import generated.oasis.tosca.TServiceTemplate;
-
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -17,7 +12,6 @@ import javax.xml.bind.Unmarshaller;
 import org.eclipse.persistence.jaxb.JAXBContextProperties;
 import org.junit.Test;
 
-import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
@@ -79,37 +73,6 @@ public class ControlClientTest extends AbstractTest {
 			e.printStackTrace();
 		}
 
-	}
-
-	@Test
-	public void testTosca() throws FileNotFoundException, JAXBException {
-
-		TDefinitions tosca = loadTosca("./../resources/test/tomcat/tomcat.xml");
-
-		TServiceTemplate serviceTemplate = (TServiceTemplate) tosca
-				.getServiceTemplateOrNodeTypeOrNodeTypeImplementation().get(0);
-		TNodeTemplate nodeTemplate = (TNodeTemplate) serviceTemplate.getTopologyTemplate()
-				.getNodeTemplateOrRelationshipTemplate().get(0);
-
-		log.info("{}", Utils.asXmlString(tosca));
-
-		// CloudService service = SalsaToscaDeployer.buildRuntimeDataFromTosca(tosca);
-
-		// log.info("{}", Utils.asXmlString(service));
-	}
-
-	public static TDefinitions loadTosca(String path)
-			throws JAXBException, FileNotFoundException {
-
-		TDefinitions xmlContent = null;
-
-		JAXBContext context = JAXBContext.newInstance(TDefinitions.class);
-		Unmarshaller unmarshaller = context.createUnmarshaller();
-
-		xmlContent = (TDefinitions) unmarshaller
-				.unmarshal(ClassLoader.getSystemResourceAsStream(path));
-
-		return xmlContent;
 	}
 
 }
