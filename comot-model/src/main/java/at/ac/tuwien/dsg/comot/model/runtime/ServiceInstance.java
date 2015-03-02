@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot.model.runtime;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,28 +21,36 @@ import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @NodeEntity
-public class ServiceInstance implements Serializable{
+public class ServiceInstance implements Serializable {
 
 	private static final long serialVersionUID = 5032108831476284465L;
-	
+
 	@GraphId
 	protected Long nodeId;
 	@BusinessId
 	@XmlAttribute
 	protected String id;
+	@XmlAttribute
+	protected Date dateCreated;
 	@XmlElementWrapper(name = "UnitInstances")
 	@XmlElement(name = "Instance")
 	protected Set<UnitInstance> unitInstances = new HashSet<>();
-	
+
 	protected Set<OfferedServiceUnit> support = new HashSet<>();;
-	
-	public ServiceInstance(){
-		
+
+	public ServiceInstance() {
+
 	}
-	
+
 	public ServiceInstance(String id) {
 		super();
 		this.id = id;
+	}
+
+	public ServiceInstance(String id, Date dateCreated) {
+		super();
+		this.id = id;
+		this.dateCreated = dateCreated;
 	}
 
 	public Set<UnitInstance> getUnitInstances() {
@@ -75,6 +84,13 @@ public class ServiceInstance implements Serializable{
 	public void setSupport(Set<OfferedServiceUnit> support) {
 		this.support = support;
 	}
-	
+
+	public Date getDateCreated() {
+		return dateCreated;
+	}
+
+	public void setDateCreated(Date dateCreated) {
+		this.dateCreated = dateCreated;
+	}
 
 }

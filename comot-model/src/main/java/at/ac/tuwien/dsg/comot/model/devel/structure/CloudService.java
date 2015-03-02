@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot.model.devel.structure;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,6 +20,8 @@ public class CloudService extends ServiceEntity {
 
 	@XmlAttribute
 	protected String accessIp;
+	@XmlAttribute
+	protected Date dateCreated;
 	@XmlElement(name = "Topology")
 	protected Set<ServiceTopology> serviceTopologies = new HashSet<>();
 	@XmlElementWrapper(name = "ServiceInstances")
@@ -32,8 +35,13 @@ public class CloudService extends ServiceEntity {
 		super(id);
 	}
 
+	public CloudService(String id, String name, Date dateCreated) {
+		super(id, name);
+		this.dateCreated = dateCreated;
+	}
+
 	public ServiceInstance createServiceInstance(String instanceId) {
-		ServiceInstance instance = new ServiceInstance(instanceId);
+		ServiceInstance instance = new ServiceInstance(instanceId, new Date());
 		instances.add(instance);
 		return instance;
 	}
@@ -47,6 +55,10 @@ public class CloudService extends ServiceEntity {
 
 	public List<ServiceTopology> getServiceTopologiesList() {
 		return new ArrayList<ServiceTopology>(serviceTopologies);
+	}
+	
+	public List<ServiceInstance> getInstancesList() {
+		return new ArrayList<ServiceInstance>(instances);
 	}
 
 	// GENERATED METHODS
@@ -73,6 +85,14 @@ public class CloudService extends ServiceEntity {
 
 	public void setInstances(Set<ServiceInstance> instances) {
 		this.instances = instances;
+	}
+
+	public Date getDateCreated() {
+		return dateCreated;
+	}
+
+	public void setDateCreated(Date dateCreated) {
+		this.dateCreated = dateCreated;
 	}
 
 }

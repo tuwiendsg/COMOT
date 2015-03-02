@@ -16,7 +16,6 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 
 import at.ac.tuwien.dsg.comot.model.HasUniqueId;
 import at.ac.tuwien.dsg.comot.model.SyblDirective;
-import at.ac.tuwien.dsg.comot.model.type.State;
 import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -34,8 +33,6 @@ public abstract class ServiceEntity implements HasUniqueId, Serializable {
 	protected String id;
 	@XmlAttribute
 	protected String name;
-	@XmlAttribute
-	protected State state;
 
 	@XmlElementWrapper(name = "Directives")
 	@XmlElement(name = "Directive")
@@ -68,14 +65,6 @@ public abstract class ServiceEntity implements HasUniqueId, Serializable {
 
 	public void setDirectives(Set<SyblDirective> directives) {
 		this.directives = directives;
-	}
-
-	public State getState() {
-		return state;
-	}
-
-	public void setState(State state) {
-		this.state = state;
 	}
 
 	public String getId() {

@@ -2,38 +2,38 @@ package at.ac.tuwien.dsg.comot.model.type;
 
 public enum State {
 
-	NONE {
+	INIT {
 		@Override
 		public State execute(Action action) {
 			switch (action) {
-			case NEW_INSTANCE_REQUESTED:
-				return PREPARATION;
+			case INSTANCE_CREATION_REQUESTED:
+				return PASSIVE;
 			default:
 				return null;
 			}
 		}
 	},
 
-	PREPARATION {
+	PASSIVE {
 		@Override
 		public State execute(Action action) {
 			switch (action) {
-			case PREPARED:
-				return IDLE;
-			default:
-				return null;
-			}
-		}
-	},
-
-	IDLE {
-		@Override
-		public State execute(Action action) {
-			switch (action) {
-			case DEPLOYMENT_REQUESTED:
-				return DEPLOYMENT_ALLOCATING;
+			case STARTED:
+				return STARTING;
 			case INSTANCE_REMOVAL_REQUESTED:
-				return NONE;
+				return FINAL;
+			default:
+				return null;
+			}
+		}
+	},
+
+	STARTING {
+		@Override
+		public State execute(Action action) {
+			switch (action) {
+			case DEPLOYMENT_STARTED:
+				return DEPLOYMENT_ALLOCATING;
 			default:
 				return null;
 			}
@@ -118,9 +118,9 @@ public enum State {
 		@Override
 		public State execute(Action action) {
 			switch (action) {
-			case UNDEPLOYMENT_REQUESTED:
-				return UNDEPLOYMENT;
-			case TEST_START_REQUESTED:
+			case STOPPED:
+				return STOPPING;
+			case TEST_STARTED:
 				return TEST_RUNNING;
 			default:
 				return null;
@@ -132,22 +132,32 @@ public enum State {
 		@Override
 		public State execute(Action action) {
 			switch (action) {
-			case TEST_STOP_REQUSTED:
+			case TEST_FINISHED:
 				return OPERATION_RUNNING;
-			case UNDEPLOYMENT_REQUESTED:
-				return UNDEPLOYMENT;
+			case STOPPED:
+				return STOPPING;
 			default:
 				return null;
 			}
 		}
 	},
 
-	UNDEPLOYMENT {
+	STOPPING {
 		@Override
 		public State execute(Action action) {
 			switch (action) {
 			case UNDEPLOYED:
-				return IDLE;
+				return PASSIVE;
+			default:
+				return null;
+			}
+		}
+	},
+
+	FINAL {
+		@Override
+		public State execute(Action action) {
+			switch (action) {
 			default:
 				return null;
 			}
