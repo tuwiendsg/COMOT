@@ -34,11 +34,13 @@ public class PropertiesManager {
         return configuration;
     }
     
-    static public String getParameter(String key, String configFile){
-        logger.debug("Trying to get parameter: "+key+" in the configuration file:" + configFile);
+    static public String getParameter(String key, String configFile){        
         Properties configuration = getParameters(configFile);
         if (configuration != null){
+            logger.debug("Trying to get parameter: "+key+" in the configuration file:" + configFile + ", value: " + configuration.getProperty(key));
             return configuration.getProperty(key);
+        } else {
+            logger.debug("Cannot load the configuration file:" + configFile);
         }
         return null;
     }

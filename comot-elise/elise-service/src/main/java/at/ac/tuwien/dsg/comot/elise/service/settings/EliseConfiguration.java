@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.elise.settings;
+package at.ac.tuwien.dsg.comot.elise.service.settings;
 
 public class EliseConfiguration {
 

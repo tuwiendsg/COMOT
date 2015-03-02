@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package at.ac.tuwien.dsg.comot.elise.neo4jAccess;
+package at.ac.tuwien.dsg.comot.elise.service.neo4jAccess;
 
-import at.ac.tuwien.dsg.comot.elise.settings.EliseConfiguration;
+import at.ac.tuwien.dsg.comot.elise.service.settings.EliseConfiguration;
 import javax.ws.rs.core.Context;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;

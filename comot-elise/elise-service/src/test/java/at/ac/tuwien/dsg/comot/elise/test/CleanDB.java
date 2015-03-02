@@ -5,7 +5,7 @@
  */
 package at.ac.tuwien.dsg.comot.elise.test;
 
-import at.ac.tuwien.dsg.comot.elise.common.DataAccessInterface;
+import at.ac.tuwien.dsg.comot.elise.common.DAOInterface.EliseDBService;
 import java.util.Collections;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
@@ -19,7 +19,7 @@ public class CleanDB {
 
     public static void main(String[] args) {
 
-        DataAccessInterface da = JAXRSClientFactory.create(endpoint, DataAccessInterface.class, Collections.singletonList(new JacksonJaxbJsonProvider()));
+        EliseDBService da = JAXRSClientFactory.create(endpoint, EliseDBService.class, Collections.singletonList(new JacksonJaxbJsonProvider()));
 //        DataAccessInterface da = JAXRSClientFactory.create(endpoint, DataAccessInterface.class, Collections.singletonList(new JSONProvider()));
         
         System.out.println(da.health());

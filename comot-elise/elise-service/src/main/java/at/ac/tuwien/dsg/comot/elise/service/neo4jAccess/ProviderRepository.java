@@ -3,10 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package at.ac.tuwien.dsg.comot.elise.neo4jAccess;
+package at.ac.tuwien.dsg.comot.elise.service.neo4jAccess;
 
-import at.ac.tuwien.dsg.comot.model.offeredserviceunit.OfferedServiceUnit;
-import at.ac.tuwien.dsg.comot.model.offeredserviceunit.Provider;
+import at.ac.tuwien.dsg.comot.model.provider.Provider;
 import java.util.Set;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.GraphRepository;

@@ -24,3 +24,6 @@ config_TOSCA/
 
 #neo4j DB
 comotElise.db/
+
+#Elise configuration file
+*.conf

@@ -5,13 +5,16 @@
  */
 package at.ac.tuwien.dsg.comot.elise.test;
 
-import at.ac.tuwien.dsg.comot.elise.common.DataAccessInterface;
-import static at.ac.tuwien.dsg.comot.elise.test.serviceClient.endpoint;
-import at.ac.tuwien.dsg.comot.model.offeredserviceunit.MetricValue;
-import at.ac.tuwien.dsg.comot.model.offeredserviceunit.OfferedServiceUnit;
-import at.ac.tuwien.dsg.comot.model.offeredserviceunit.Provider;
-import at.ac.tuwien.dsg.comot.model.offeredserviceunit.Resource;
-import at.ac.tuwien.dsg.comot.model.offeredserviceunit.ResourceOrQualityType;
+
+import at.ac.tuwien.dsg.comot.elise.common.DAOInterface.EliseDBService;
+import at.ac.tuwien.dsg.comot.elise.common.DAOInterface.OfferedServiceUnitDAO;
+import at.ac.tuwien.dsg.comot.elise.common.DAOInterface.ProviderDAO;
+import at.ac.tuwien.dsg.comot.model.provider.MetricValue;
+import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
+import at.ac.tuwien.dsg.comot.model.provider.Provider;
+import at.ac.tuwien.dsg.comot.model.provider.Resource;
+import at.ac.tuwien.dsg.comot.model.provider.ResourceOrQualityType;
+
 import java.util.Collections;
 import java.util.Set;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
@@ -22,22 +25,25 @@ import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
  * @author hungld
  */
 public class ReadDataTest {
-     static String endpoint = "http://localhost:8080/elise-service/rest";
+     static String endpoint = "http://localhost:8480/elise-service/rest";
 
     public static void main(String[] args) {
-        DataAccessInterface da = JAXRSClientFactory.create(endpoint, DataAccessInterface.class, Collections.singletonList(new JacksonJaxbJsonProvider()));
+        OfferedServiceUnitDAO da = JAXRSClientFactory.create(endpoint, OfferedServiceUnitDAO.class, Collections.singletonList(new JacksonJaxbJsonProvider()));
+        EliseDBService elisedb = JAXRSClientFactory.create(endpoint, EliseDBService.class, Collections.singletonList(new JacksonJaxbJsonProvider()));
+        ProviderDAO providerDAO = JAXRSClientFactory.create(endpoint, ProviderDAO.class, Collections.singletonList(new JacksonJaxbJsonProvider()));
+       
         
-         System.out.println(da.health());
-
-         System.out.println("ALL OSUS");
-         Set<OfferedServiceUnit> osuss = da.getOfferServiceUnits();
-         for(OfferedServiceUnit o:osuss){
-             System.out.println("OSU ID: "+o.getId() + ", name: " + o.getName());
-         }
+//        System.out.println(elisedb.health());
+//
+//         System.out.println("ALL OSUS");
+//         Set<OfferedServiceUnit> osuss = da.getOfferServiceUnits();
+//         for(OfferedServiceUnit o:osuss){
+//             System.out.println("OSU ID: "+o.getId() + ", name: " + o.getName());
+//         }
          
          System.out.println("CHECK FOR EACH PROVIDER");
         // show which just saved 
-        Set<Provider> providers = da.getProviders();
+        Set<Provider> providers = providerDAO.getProviders();
         for (Provider p1 : providers) {
             System.out.println("Provider GraphID: " + p1.getGraphID() + ",provider ID:"+ p1.getId() + ", type:"+p1.getProviderType() +", name:" + p1.getName());
             Set<OfferedServiceUnit> osus = da.getOfferedServiceOfProvider(p1.getId());

@@ -18,5 +18,10 @@
             <artifactId>javax.ws.rs-api</artifactId>
             <version>2.0.1</version>
         </dependency>
+        <dependency>
+            <artifactId>comot-model</artifactId>
+            <groupId>at.ac.tuwien.dsg.comot</groupId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 </project>
