@@ -25,7 +25,6 @@ import static at.ac.tuwien.dsg.comot.common.model.SoftwareNode.SingleSoftwareUni
 import static at.ac.tuwien.dsg.comot.common.model.Strategy.Strategy;
 import at.ac.tuwien.dsg.comot.orchestrator.interraction.COMOTOrchestrator;
 
-
 /**
  *
  * @author http://dsg.tuwien.ac.at
@@ -54,11 +53,10 @@ public class ProgrammingAndControllingElasticityWithCOMOTFlexiant {
         OperatingSystemUnit eventProcessingVM = OperatingSystemUnit("EventProcessingUnitVM")
                 .providedBy(CommonOperatingSystemSpecification.FlexiantSmall()
                 );
-        
-         OperatingSystemUnit momVM = OperatingSystemUnit("MoMVM")
-                 .providedBy(CommonOperatingSystemSpecification.FlexiantSmall()
-                );
 
+        OperatingSystemUnit momVM = OperatingSystemUnit("MoMVM")
+                .providedBy(CommonOperatingSystemSpecification.FlexiantSmall()
+                );
 
         //start with Data End, and first with Data Controller
         ServiceUnit dataControllerUnit = SingleSoftwareUnit("DataControllerUnit")
@@ -81,9 +79,9 @@ public class ProgrammingAndControllingElasticityWithCOMOTFlexiant {
                         .when(Constraint.MetricConstraint("DN_ST1_CO1", new Metric("cpuUsage", "%")).lessThan("40"))
                         .enforce(dataNodeUnitScaleIn)
                 )
-//              
+                //              
                 .withLifecycleAction(LifecyclePhase.STOP, BASHAction("sudo /bin/decommission"));
-                ;
+        ;
 
         //add the service units belonging to the event processing topology
         ServiceUnit momUnit = SingleSoftwareUnit("MOMUnit")
@@ -125,7 +123,6 @@ public class ProgrammingAndControllingElasticityWithCOMOTFlexiant {
         ElasticityCapability localProcessingUnitScaleIn = ElasticityCapability.ScaleIn().withPrimitiveOperations("Salsa.scaleIn");
         ElasticityCapability localProcessingUnitScaleOut = ElasticityCapability.ScaleOut().withPrimitiveOperations("Salsa.scaleOut");
 
-        
         //Describe a Data End service topology containing the previous 2 software service units
         ServiceTopology dataEndTopology = ServiceTopology("DataEndTopology")
                 .withServiceUnits(dataControllerUnit, dataNodeUnit //add also OS units to topology
@@ -142,7 +139,6 @@ public class ProgrammingAndControllingElasticityWithCOMOTFlexiant {
                         , loadbalancerVM, eventProcessingVM, momVM
                 );
 
-        
         eventProcessingTopology.constrainedBy(
                 Constraint.MetricConstraint("EPT_CO1", new Metric("responseTime", "ms")).lessThan("20"));
 
@@ -171,7 +167,6 @@ public class ProgrammingAndControllingElasticityWithCOMOTFlexiant {
                         .withMetricEffect(
                                 MetricEffect().withMetric(new Metric("cpuUsage", "%")).withType(MetricEffect.Type.ADD).withValue(30.0)));
 
- 
         eventProcessingUnitScaleOut
                 .withCapabilityEffect(CapabilityEffect(eventProcessingUnit)
                         .withMetricEffect(
@@ -256,36 +251,14 @@ public class ProgrammingAndControllingElasticityWithCOMOTFlexiant {
                         HostedOnRelation("eventProcessingToVM")
                         .from(eventProcessingUnit)
                         .to(eventProcessingVM)
-                        
                 )
                 // as we have horizontally scalable distributed systems (one service unit can have more instances)
                 //metrics must be aggregated among VMs
                 .withDefaultMetrics();
-                //to find scaling actions, one must assume some effects for each action, to understand
-        //if it makes sense or not to execute the action
-//                .withDefaultActionEffects();
 
-        //instantiate COMOT orchestrator to deploy, monitor and control the service
-        COMOTOrchestrator orchestrator = new COMOTOrchestrator()
-                //we have SALSA as cloud management tool
-                //curently deployed separately
-                .withSalsaIP("109.231.122.193")
-                .withSalsaPort(8380)
-                //we have rSYBL elasticity control service and MELA 
-                //deployed separately
-                //                .withRsyblIP("109.231.121.26")
-                //                .withRsyblIP("localhost")
-                //                                .withRsyblIP("109.231.121.104")
-                .withRsyblIP("109.231.122.193")
-                //                .withRsyblIP("128.131.172.4118")
-                .withRsyblPort(8280);
-//                .withRsyblPort(8080);
+        COMOTOrchestrator orchestrator = new COMOTOrchestrator();
 
-        //deploy, monitor and control
-//        orchestrator.deployAndControl(serviceTemplate);
-//        orchestrator.deploy(serviceTemplate);
-//        orchestrator.deploy(serviceTemplate);;
-        orchestrator.controlExisting(serviceTemplate);
+        orchestrator.deployAndControl(serviceTemplate);
 
     }
 }

@@ -35,7 +35,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
     public static void main(String[] args) {
         //specify service units in terms of software
 
-        String salsaRepo = "http://128.130.172.215/salsa/upload/files/ElasticIoT/";
+        String salsaRepo = "http://128.130.172.215/salsa/upload/files/DaaS_Cost/";
 
         //need to specify details of VM and operating system to deploy the software servide units on
         OperatingSystemUnit dataControllerVM = OperatingSystemUnit("DataControllerUnitVM")
@@ -107,7 +107,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 .deployedBy(SingleScriptArtifact("deployDataNodeArtifact", salsaRepo + "deployCassandraNode.sh"))
                 //data node MUST KNOW the IP of cassandra seed, to connect to it and join data cluster
                 .requires(Requirement.Variable("DataController_IP_Data_Node_Req").withName("requiringDataNodeIP"))
-                .provides(dataNodeUnitScaleIn, dataNodeUnitScaleOut)
+                //.provides(dataNodeUnitScaleIn, dataNodeUnitScaleOut)
                 //express elasticity strategy: Scale IN Data Node when cpu usage < 40%
                 .controlledBy(Strategy("DN_ST1")
                         .when(Constraint.MetricConstraint("DN_ST1_CO1", new Metric("cpuUsage", "%")).lessThan("40"))
@@ -131,10 +131,10 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 //event processing also needs to querry the Data Controller to access data
                 .requires(Requirement.Variable("EventProcessingUnit_DataController_IP_Req"))
                 .requires(Requirement.Variable("EventProcessingUnit_MOM_IP_Req"))
-                .provides(eventProcessingUnitScaleIn, eventProcessingUnitScaleOut)
+                //.provides(eventProcessingUnitScaleIn, eventProcessingUnitScaleOut)
                 //scale IN if throughput < 200 and responseTime < 200
                 .controlledBy(Strategy("EP_ST1")
-                        .when(Constraint.MetricConstraint("EP_ST1_CO1", new Metric("responseTime", "ms")).lessThan("10"))
+                        .when(Constraint.MetricConstraint("EP_ST1_CO1", new Metric("responseTime", "ms")).lessThan("100"))
                         .and(Constraint.MetricConstraint("EP_ST1_CO2", new Metric("avgThroughput", "operations/s")).lessThan("200"))
                         .enforce(eventProcessingUnitScaleIn)
                 )
@@ -149,7 +149,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
         ServiceUnit mqttUnit = SingleSoftwareUnit("QueueUnit")
                 //load balancer must provide IP
                 .exposes(Capability.Variable("brokerIp_Capability"))
-                .deployedBy(SingleScriptArtifact("deployMQTTBroker", salsaRepo + "run_mqtt_broker.sh"));
+                .deployedBy(SingleScriptArtifact("deployMQTTBroker", salsaRepo + "/IoT/installApacheMQ.sh"));
 
         ElasticityCapability localProcessingUnitScaleIn = ElasticityCapability.ScaleIn().withPrimitiveOperations("Salsa.scaleIn");
         ElasticityCapability localProcessingUnitScaleOut = ElasticityCapability.ScaleOut().withPrimitiveOperations("Salsa.scaleOut");
@@ -158,8 +158,8 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 //load balancer must provide IP
                 .requires(Requirement.Variable("brokerIp_Requirement"))
                 .requires(Requirement.Variable("loadBalancerIp_Requirement"))
-                .provides(localProcessingUnitScaleIn, localProcessingUnitScaleOut)
-                .deployedBy(SingleScriptArtifact("deployLocalProcessing", salsaRepo + "install-local-analysis-service.sh"));
+                //.provides(localProcessingUnitScaleIn, localProcessingUnitScaleOut)
+                .deployedBy(SingleScriptArtifact("deployLocalProcessing", salsaRepo + "/IoT/install-local-analysis-service.sh"));
 
         //Describe a Data End service topology containing the previous 2 software service units
         ServiceTopology dataEndTopology = ServiceTopology("DataEndTopology")
@@ -189,7 +189,7 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
 
         //TODO: de verificat de ce nu converteste ok daca pun si constraints si strategies pe topology
         eventProcessingTopology.constrainedBy(
-                Constraint.MetricConstraint("EPT_CO1", new Metric("responseTime", "ms")).lessThan("20"));
+                Constraint.MetricConstraint("EPT_CO1", new Metric("responseTime", "ms")).lessThan("100"));
 
         // elasticity capabilities
         dataNodeUnitScaleOut.withCapabilityEffect(CapabilityEffect(dataNodeUnit)
@@ -346,20 +346,8 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 //to find scaling actions, one must assume some effects for each action, to understand
         //if it makes sense or not to execute the action
 //                .withDefaultActionEffects();
-
-        //instantiate COMOT orchestrator to deploy, monitor and control the service
-        COMOTOrchestrator orchestrator = new COMOTOrchestrator()
-                //we have SALSA as cloud management tool
-                //curently deployed separately
-                .withSalsaIP("localhost")
-                .withSalsaPort(8380)
- 
-                //ifwe have rSYBL elasticity control service and MELA 
-                //deployed separately
-                .withRsyblIP("localhost")
-                .withRsyblPort(8280);
- 
-        orchestrator.deployAndControl(serviceTemplate);
-
+ COMOTOrchestrator orchestrator = new COMOTOrchestrator();
+;
+orchestrator.deployAndControl(serviceTemplate);
     }
 }
