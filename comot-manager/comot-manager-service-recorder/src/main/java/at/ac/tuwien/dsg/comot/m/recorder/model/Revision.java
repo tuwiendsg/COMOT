@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot.m.recorder.model;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -36,9 +37,9 @@ public class Revision implements Serializable {
 		id = UUID.randomUUID();
 	}
 
-	public Revision(Revision oldRev, String changeType, Long timestamp) {
+	public Revision(Revision oldRev, String changeType, Map<String, String> changeProperties, Long timestamp) {
 		this();
-		Change change = new Change(timestamp, changeType, oldRev, this);
+		Change change = new Change(timestamp, changeType, changeProperties, oldRev, this);
 		this.setStart(change);
 		oldRev.setEnd(change);
 

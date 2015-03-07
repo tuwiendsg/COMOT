@@ -15,6 +15,8 @@ import at.ac.tuwien.dsg.comot.m.common.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
+import at.ac.tuwien.dsg.comot.model.runtime.ServiceInstance;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
@@ -26,6 +28,10 @@ public class UtilsLc {
 		for (ServiceUnit unit : Navigator.getAllUnits(service)) {
 			unit.setOsu(null);
 		}
+		for(ServiceInstance instance: service.getInstances()){
+			instance.setSupport(new HashSet<OfferedServiceUnit>());
+		}
+		
 		return service;
 	}
 

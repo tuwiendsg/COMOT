@@ -4,7 +4,10 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.neo4j.kernel.GraphDatabaseAPI;
 import org.oasis.tosca.Definitions;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,6 +28,22 @@ public class LifecycleTest extends AbstractTest {
 	protected Coordinator coordinator;
 	@Autowired
 	protected InformationServiceMock infoService;
+	
+//	protected WrappingNeoServerBootstrapper srv;
+//
+//	@Before
+//	public void setUp() {
+//		// http://neo4j.com/docs/1.8.3/server-embedded.html
+//		// http://127.0.0.1:7474/
+//		srv = new WrappingNeoServerBootstrapper((GraphDatabaseAPI) db);
+//		srv.start();
+//	}
+//
+//	@After
+//	public void cleanUp() {
+//		srv.stop();
+//	}
+
 
 	@Test
 	public void produceEvent() throws JAXBException, IOException, ClassNotFoundException {
@@ -46,19 +65,25 @@ public class LifecycleTest extends AbstractTest {
 		String serviceId = coordinator.createCloudService(service);
 		String instanceId = coordinator.createServiceInstance(serviceId);
 
-		coordinator.assignSupportingOsu(serviceId, instanceId, InformationServiceMock.SALSA_SERVICE_PUBLIC_ID);
-
+	
 		coordinator.startServiceInstance(serviceId, instanceId);
 
-		while (!lcManager.getCurrentState(instanceId, serviceId).equals(State.OPERATION_RUNNING)) {
+		coordinator.assignSupportingOsu(serviceId, instanceId, InformationServiceMock.SALSA_SERVICE_PUBLIC_ID);
+
+		
+		while (lcManager.getCurrentState(instanceId, serviceId) != State.OPERATION_RUNNING) {
 			UtilsTest.sleepSeconds(10);
-			log.info("{}", Utils.asJsonString(infoService.getService(serviceId)));
 		}
 
 		coordinator.stopServiceInstance(serviceId, instanceId);
+		
+		
 
 		log.info("{}", Utils.asJsonString(infoService.getService(serviceId)));
 
+		
+		UtilsTest.sleepSeconds(5);
+		
 		// UtilsTest.sleepInfinit();
 
 	}

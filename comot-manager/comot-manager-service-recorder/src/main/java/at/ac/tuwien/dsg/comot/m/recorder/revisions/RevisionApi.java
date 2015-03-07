@@ -52,7 +52,8 @@ public class RevisionApi {
 	protected Neo4jOperations neo;
 
 	@Transactional
-	public void createOrUpdateRegion(Object obj, String regionId, String changeType)
+	public void createOrUpdateRegion(Object obj, String regionId, String changeType,
+			Map<String, String> changeProperties)
 			throws IllegalArgumentException,
 			IllegalAccessException {
 
@@ -60,12 +61,14 @@ public class RevisionApi {
 		// log.info("tx name {}", TransactionSynchronizationManager.getCurrentTransactionName());
 
 		ManagedRegion region = context.getBean(ConverterToInternal.class).convertToGraph(obj);
-		log.info("count nodes: {}, rels: {}", region.getNodes().size(), region.getRelationships().size());
+		log.info("region '{}'count nodes: {}, rels: {}", regionId, region.getNodes().size(), region.getRelationships()
+				.size());
 
-		insertToDB(region, regionId, changeType);
+		insertToDB(region, regionId, changeType, changeProperties);
 	}
 
-	protected void insertToDB(ManagedRegion region, String regionId, String changeType) {
+	protected void insertToDB(ManagedRegion region, String regionId, String changeType,
+			Map<String, String> changeProperties) {
 
 		Node regionNode, revisionNode, lastRevisionNode;
 		Revision revision;
@@ -96,10 +99,9 @@ public class RevisionApi {
 		// mark new version
 		if (modified) {
 			lastRevisionNode = repo.getLastRevision();
-			log.info("lastRevisionNode.getId() {}", lastRevisionNode.getId());
-			Revision lastRevision = revisionRepo.findOne(lastRevisionNode.getId());
 
-			revision = revisionRepo.save(new Revision(lastRevision, changeType, time));
+			Revision lastRevision = revisionRepo.findOne(lastRevisionNode.getId());
+			revision = revisionRepo.save(new Revision(lastRevision, changeType, changeProperties, time));
 			revisionNode = db.getNodeById(revision.getNodeId());
 
 			// delete old _LAST_REV
@@ -355,6 +357,7 @@ public class RevisionApi {
 		List<ManagedObject> list = new ArrayList<>();
 		ManagedObject obj;
 		Node identityNode;
+
 		for (Relationship rel : repo.getRegion().getRelationships(Direction.OUTGOING, RelTypes._MANAGE)) {
 			identityNode = rel.getEndNode();
 			obj = new ManagedObject();

@@ -19,26 +19,31 @@ public class EventMessage {
 	@XmlAttribute
 	protected String groupId;
 	@XmlAttribute
+	protected String origin;
+	protected String message;
+	@XmlAttribute
 	protected Action action; // not in custom
 	@XmlAttribute
 	protected String customEvent; // not in lifecycle
-	protected String message;
 	protected CloudService service; // not in custom
 
 	public EventMessage() {
 
 	}
 
-	public EventMessage(String serviceId, String csInstanceId, String groupId, String customEvent, String message) {
+	public EventMessage(String serviceId, String csInstanceId, String groupId, String customEvent, String origin,
+			String message) {
 		super();
 		this.serviceId = serviceId;
 		this.csInstanceId = csInstanceId;
 		this.groupId = groupId;
 		this.customEvent = customEvent;
 		this.message = message;
+		this.origin = origin;
 	}
 
-	public EventMessage(String serviceId, String csInstanceId, String groupId, Action action, CloudService service,
+	public EventMessage(String serviceId, String csInstanceId, String groupId, Action action, String origin,
+			CloudService service,
 			String message) {
 		super();
 		this.serviceId = serviceId;
@@ -47,6 +52,7 @@ public class EventMessage {
 		this.action = action;
 		this.message = message;
 		this.service = service;
+		this.origin = origin;
 	}
 
 	public boolean isLifeCycleDefined() {
@@ -106,7 +112,8 @@ public class EventMessage {
 	@Override
 	public String toString() {
 		return "EventMessage [serviceId=" + serviceId + ", csInstanceId=" + csInstanceId + ", groupId=" + groupId
-				+ ", action=" + action + ", customEvent=" + customEvent + ", message=" + message + "]";
+				+ (isLifeCycleDefined() ? (", action=" + action) : (", customEvent=" + customEvent)) +
+				", origin=" + origin + ", message=" + message + "]";
 	}
 
 	public CloudService getService() {
@@ -115,6 +122,14 @@ public class EventMessage {
 
 	public void setService(CloudService service) {
 		this.service = service;
+	}
+
+	public String getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(String origin) {
+		this.origin = origin;
 	}
 
 }

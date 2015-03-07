@@ -90,12 +90,12 @@ public class EpsCoordinatorAdapter extends Adapter {
 		protected void onLifecycleEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
 				Action action, String optionalMessage, CloudService service, Map<String, Transition> transitions) {
 
-			if (action.equals(Action.STARTED)) {
+			if (action == Action.STARTED) {
 
 				for (OfferedServiceUnit osu : infoService.getSupportingServices(serviceId, instanceId)) {
 					for (Quality quality : osu.getQualities()) {
 						if (quality.getType().getName().equals(InformationServiceMock.TYPE_ACTION)
-								&& quality.getName().equals(Action.STARTED)) {
+								&& quality.getName().equals(Action.STARTED.toString())) {
 
 							createOsu(osu.getId());
 						}
@@ -112,13 +112,13 @@ public class EpsCoordinatorAdapter extends Adapter {
 			String osuId = optionalMessage;
 			State serviceState = lcManager.getCurrentState(instanceId, groupId);
 
-			if (action.equals(EpsAction.EPS_ASSIGNED)) {
+			if (action == EpsAction.EPS_ASSIGNED) {
 
 				if (!createdOsus.contains(osuId) && !serviceState.equals(State.PASSIVE)) {
 					createOsu(osuId);
 				}
 
-			} else if (action.equals(EpsAction.EPS_REMOVAL_REQUESTED)) {
+			} else if (action == EpsAction.EPS_REMOVAL_REQUESTED) {
 
 				if (!createdOsus.contains(osuId)) {
 					removeOsu(osuId);

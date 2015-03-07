@@ -69,6 +69,8 @@ public class DeploymentAdapter extends Adapter {
 				"*.TRUE.*." + State.STOPPING + ".#", null);
 		binding3 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_CUSTOM_EVENT,
 				"*." + EpsAction.EPS_ASSIGNMENT_REMOVED + ".SERVICE", null);
+		binding3 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_CUSTOM_EVENT,
+				"*." + EpsAction.EPS_ASSIGNED + ".SERVICE", null);
 
 		admin.declareBinding(binding1);
 		admin.declareBinding(binding2);
@@ -92,30 +94,37 @@ public class DeploymentAdapter extends Adapter {
 				InterruptedException {
 
 			if (isAssignedTo(serviceId, instanceId)) {
-				if (action.equals(Action.STARTED)) {
+				if (action == Action.STARTED) {
 					deployInstance(serviceId, instanceId);
 
-				} else if (action.equals(Action.STOPPED)) {
-					unDeployInstance(serviceId, instanceId, service);
+				} else if (action == Action.STOPPED) {
+					unDeployInstance(serviceId, instanceId);
 				}
 			}
 		}
 
 		@Override
 		protected void onCustomEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
-				String event, String optionalMessage) throws ClassNotFoundException, IOException, JAXBException {
+				String event, String optionalMessage) throws ClassNotFoundException, IOException, JAXBException,
+				CoreServiceException, ComotException, InterruptedException {
 
-			if (isAssignedTo(serviceId, instanceId)) {
-
+			if (adapterId.equals(optionalMessage)) {
 				EpsAction action = EpsAction.valueOf(event);
 
-				log.info("action {} {}", action, EpsAction.EPS_ASSIGNMENT_REMOVED);
+				if (action == EpsAction.EPS_ASSIGNED) {
 
-				if (action.equals(EpsAction.EPS_ASSIGNMENT_REMOVED)) {
-					log.info("go");
-					EventMessage newEvent = new EventMessage(serviceId, instanceId, serviceId, Action.STOPPED, null,
-							null);
+					State state = lcManager.getCurrentState(instanceId, serviceId);
+					if (state == State.STARTING) {
+						deployInstance(serviceId, instanceId);
+					}
+					
+				} else if (action == EpsAction.EPS_ASSIGNMENT_REMOVED) {
+
+					EventMessage newEvent = new EventMessage(serviceId, instanceId, serviceId, Action.STOPPED,
+							adapterId, null, null);
 					lcManager.executeAction(newEvent);
+
+					unDeployInstance(serviceId, instanceId);
 				}
 			}
 		}
@@ -130,7 +139,7 @@ public class DeploymentAdapter extends Adapter {
 
 			State state = lcManager.getCurrentState(instanceId, instances.get(instanceId));
 
-			if (state.equals(State.STARTING)) {
+			if (state == State.STARTING) {
 				try {
 					deployInstance(instances.get(instanceId), instanceId);
 				} catch (ClassNotFoundException | IOException | CoreServiceException | ComotException | JAXBException
@@ -153,8 +162,10 @@ public class DeploymentAdapter extends Adapter {
 		monitorStatusUntilDeployed(serviceId, fullService);
 	}
 
-	protected void unDeployInstance(String serviceId, String instanceId, CloudService service)
+	protected void unDeployInstance(String serviceId, String instanceId)
 			throws CoreServiceException, ClassNotFoundException, IOException, JAXBException {
+
+		CloudService service = infoService.getServiceInstance(serviceId, instanceId);
 
 		deployment.undeploy(instanceId);
 
@@ -163,7 +174,7 @@ public class DeploymentAdapter extends Adapter {
 		}
 
 		lcManager.executeAction(new EventMessage(serviceId, instanceId, serviceId, Action.UNDEPLOYED,
-				service, null));
+				adapterId, service, null));
 	}
 
 	protected void assignmentRemoved() {
@@ -205,7 +216,7 @@ public class DeploymentAdapter extends Adapter {
 						uInstId = instance.getId();
 						newState = instance.getState();
 
-						if (!State.OPERATION_RUNNING.equals(newState)) {
+						if (State.OPERATION_RUNNING != newState) {
 							notAllRunning = true;
 						}
 
@@ -219,7 +230,7 @@ public class DeploymentAdapter extends Adapter {
 							oldState = State.STARTING;
 						}
 
-						if (State.ERROR.equals(newState)) {
+						if (State.ERROR == newState) {
 							// TODO process error
 							log.error("error ocured");
 						}
@@ -231,7 +242,7 @@ public class DeploymentAdapter extends Adapter {
 							log.error("invalid transitions {} -> {}", oldState, newState);
 						} else {
 							lcManager.executeAction(new EventMessage(serviceId, service.getId(), uInstId, action,
-									serviceReturned, null));
+									adapterId, serviceReturned, null));
 						}
 					}
 					if (unit.getInstances().isEmpty()) {

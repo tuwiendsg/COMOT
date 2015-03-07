@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot.m.ui;
 
 import java.io.IOException;
+import java.util.Set;
 
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.OutboundEvent;
@@ -13,11 +14,13 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import at.ac.tuwien.dsg.comot.m.common.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.MonitoringClient;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.UtilsLc;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.Adapter;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
+import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 
 @Component
 @Scope("prototype")
@@ -68,8 +71,15 @@ public class UiAdapter extends Adapter {
 					log.debug("eventOutput.isClosed()");
 					cleanAdapter();
 				}
+				StateMessage msg = UtilsLc.stateMessage(message);
 
-				String msgForClient = Utils.asJsonString(UtilsLc.stateMessage(message));
+				if (msg.getEvent().isLifeCycleDefined()) {
+					Set<OfferedServiceUnit> osus = infoService.getSupportingServices(msg.getServiceId(),
+							msg.getCsInstanceId());
+					msg.getEvent().getService().getInstancesList().get(0).setSupport(osus);
+				}
+
+				String msgForClient = Utils.asJsonString(msg);
 
 				log.info(logId() + "onMessage {}", msgForClient);
 

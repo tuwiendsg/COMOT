@@ -53,7 +53,7 @@ public class ManagerOfServiceInstance {
 		Group targetGroup;
 		boolean found = false;
 
-		if (Action.INSTANCE_CREATION_REQUESTED.equals(action)) {
+		if (Action.INSTANCE_CREATED.equals(action)) {
 
 			this.csInstanceId = event.getCsInstanceId();
 			this.serviceId = event.getServiceId();

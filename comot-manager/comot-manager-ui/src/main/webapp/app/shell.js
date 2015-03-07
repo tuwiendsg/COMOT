@@ -30,11 +30,16 @@ define(function(require) {
 				moduleId : 'instance',
 				nav : true
 			}, {
+				route : 'history',
+				title : 'History',
+				moduleId : 'history',
+				nav : true
+			},{
 				route : 'manage*details',
 				title : 'Manage',
 				moduleId : 'manage',
 				hash : '#manage',
-				nav : true
+				nav : false
 			} ]).buildNavigationModel();
 
 			return router.activate();

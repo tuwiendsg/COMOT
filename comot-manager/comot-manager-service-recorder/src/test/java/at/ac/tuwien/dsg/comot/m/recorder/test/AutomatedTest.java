@@ -44,7 +44,7 @@ public class AutomatedTest extends AbstractTest {
 
 		cutOsus(service);
 
-		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, "init");
+		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, "init", null);
 
 		CloudService sResult = (CloudService) revisionApi.getRevision(STemplates.serviceId,
 				STemplates.serviceId, System.currentTimeMillis());
@@ -83,21 +83,21 @@ public class AutomatedTest extends AbstractTest {
 		ServiceUnit unitV1 = UtilsTest.getServiceUnit(service, STemplates.swNodeId);
 
 		// VERSION 1
-		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, "init");
+		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, "init" , null);
 
 		Long version1Time = System.currentTimeMillis();
 
 		// VERSION 2
 		CloudService updatedService = update1(service);
 		ServiceUnit unitV2 = UtilsTest.getServiceUnit(updatedService, STemplates.swNodeId);
-		revisionApi.createOrUpdateRegion(updatedService, STemplates.serviceId, "config_change");
+		revisionApi.createOrUpdateRegion(updatedService, STemplates.serviceId, "config_change", null);
 
 		Long version2Time = System.currentTimeMillis();
 
 		// VERSION 3
 		CloudService finalService = update2(updatedService);
 		ServiceUnit unitV3 = UtilsTest.getServiceUnit(finalService, STemplates.swNodeId);
-		revisionApi.createOrUpdateRegion(finalService, STemplates.serviceId, "config_change");
+		revisionApi.createOrUpdateRegion(finalService, STemplates.serviceId, "config_change", null);
 
 		// ///////////////////////////
 		// READ VERSION 1
@@ -144,15 +144,15 @@ public class AutomatedTest extends AbstractTest {
 		Long change3Time;
 
 		// VERSION 1
-		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, "init");
+		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, "init", null);
 
 		// VERSION 2
 		CloudService updatedService = update1(service);
-		revisionApi.createOrUpdateRegion(updatedService, STemplates.serviceId, "config_change");
+		revisionApi.createOrUpdateRegion(updatedService, STemplates.serviceId, "config_change", null);
 
 		// VERSION 3
 		CloudService finalService = update2(updatedService);
-		revisionApi.createOrUpdateRegion(finalService, STemplates.serviceId, "config_change");
+		revisionApi.createOrUpdateRegion(finalService, STemplates.serviceId, "config_change", null);
 
 		// UtilsTest.sleepInfinit();
 

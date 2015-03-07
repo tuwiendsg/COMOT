@@ -123,7 +123,7 @@ public class InformationServiceMock {
 		recorder.hasResource(resource4);
 
 		this.addOsu(deployment);
-		// this.addOsu(recorder);
+		this.addOsu(recorder);
 		// this.addOsu(monitoring);
 		// this.addOsu(control);
 

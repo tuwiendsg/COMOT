@@ -1,8 +1,11 @@
 package at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.bind.JAXBException;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Binding.DestinationType;
@@ -10,8 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import at.ac.tuwien.dsg.comot.m.common.EventMessage;
 import at.ac.tuwien.dsg.comot.m.common.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.Transition;
+import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
@@ -25,6 +30,14 @@ import at.ac.tuwien.dsg.comot.model.type.Action;
 
 @Component
 public class RecordingAdapter extends Adapter {
+
+	public static final String CHANGE_TYPE_LIFECYCLE = "LifeCycleEvent";
+	public static final String CHANGE_TYPE_CUSTOM = "CustomEvent";
+
+	public static final String PROP_ORIGIN = "origin";
+	public static final String PROP_MSG = "msg";
+	public static final String PROP_TARGET = "target";
+	public static final String PROP_EVENT_NAME = "eventName";
 
 	@Autowired
 	protected ApplicationContext context;
@@ -59,17 +72,30 @@ public class RecordingAdapter extends Adapter {
 
 		@Override
 		protected void onLifecycleEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
-				Action action, String optionalMessage, CloudService service, Map<String, Transition> transitions) {
+				Action action, String optionalMessage, CloudService service, Map<String, Transition> transitions) throws JAXBException {
 
-			if (isAssignedTo(serviceId, instanceId)) {
+			//if (isAssignedTo(serviceId, instanceId)) {
 
 				try {
-					insertNewVersion(msg.getEvent().getService(), instanceId, msg.getAction());
+
+					EventMessage event = msg.getEvent();
+
+					Map<String, String> changeProperties = new HashMap<>();
+					changeProperties.put(PROP_ORIGIN, event.getOrigin());
+					changeProperties.put(PROP_TARGET, event.getGroupId());
+					changeProperties.put(PROP_EVENT_NAME, event.getAction().toString());
+					if(event.getMessage() != null){
+						changeProperties.put(PROP_MSG, event.getMessage());
+					}
+
+					log.info(logId() + "onMessage {}", Utils.asJsonString(service) );
+					
+					revisionApi.createOrUpdateRegion(service, instanceId, CHANGE_TYPE_LIFECYCLE, changeProperties);
+
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					e.printStackTrace();
 				}
-
-			}
+			//}
 		}
 
 		@Override
@@ -78,13 +104,6 @@ public class RecordingAdapter extends Adapter {
 			// TODO Auto-generated method stub
 
 		}
-
-	}
-
-	public void insertNewVersion(CloudService service, String csInstanceId, Action action)
-			throws IllegalArgumentException, IllegalAccessException {
-
-		revisionApi.createOrUpdateRegion(service, csInstanceId, action.toString());
 
 	}
 

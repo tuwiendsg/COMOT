@@ -50,8 +50,7 @@
 						<h5>
 							<b>Name:</b> <span data-bind="text: id"></span>
 						</h5>
-						<button type="button" class="btn btn-default"
-							data-bind="click: $root.removeEps">
+						<button type="button" class="btn btn-default" data-bind="click: $root.removeEps">
 							<span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Remove
 						</button>
 					</div>
@@ -62,31 +61,35 @@
 	</div>
 
 	<h4>State hierarchy:</h4>
-	<div>&nbsp;</div>
 	<div id="tree_div"></div>
 
 
 	<h4>Life-cycle:</h4>
-	<div class="well well-sm col-md-7">
+	<div class="well well-sm col-md-6">
 		<div id="lifecycle_div"></div>
 	</div>
 
-
-	<div class="col-md-4">
-		<table class="table table-condensed">
-			<thead>
-				<tr>
-					<th>Event</th>
-					<th>Target</th>
-				</tr>
-			</thead>
-			<tbody data-bind="foreach: events">
-				<tr>
-					<td><small data-bind="text: name"></</small></td>
-					<td><small data-bind="text: target"></</small></td>
-				</tr>
-			</tbody>
-		</table>
+	<!-- EVENTS -->
+	<div class="col-md-6">
+		<div class="table-responsive">
+			<table class="table table-condensed">
+				<thead>
+					<tr>
+						<th>Event</th>
+						<th>Target</th>
+						<th>Origin</th>
+					</tr>
+				</thead>
+				<tbody data-bind="foreach: events">
+					<!-- style="display: block; height: 450px; overflow: auto" -->
+					<tr>
+						<td><small data-bind="text: name, style: { fontWeight: lifecycle ? 'bold' : '' }  "></small></td>
+						<td><small data-bind="text: target"></small></td>
+						<td><small data-bind="text: origin"></small></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 	</div>
 
 	<div id="output"></div>

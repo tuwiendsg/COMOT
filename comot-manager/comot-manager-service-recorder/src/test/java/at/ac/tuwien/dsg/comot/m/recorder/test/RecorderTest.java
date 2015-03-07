@@ -59,7 +59,7 @@ public class RecorderTest extends AbstractTest {
 
 		log.info("{}", Utils.asXmlString(service));
 
-		revisionApi.createOrUpdateRegion(service, service.getId(), "init");
+		revisionApi.createOrUpdateRegion(service, service.getId(), "init", null);
 
 		Object oResult = revisionApi.getRevision(service.getId(), "deployWar",
 				Long.MAX_VALUE);

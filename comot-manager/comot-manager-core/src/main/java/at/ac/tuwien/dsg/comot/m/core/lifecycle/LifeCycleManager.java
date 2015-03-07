@@ -72,7 +72,7 @@ public class LifeCycleManager {
 		}
 		event.setService(UtilsLc.removeProviderInfo(service));
 
-		if (Action.INSTANCE_CREATION_REQUESTED.equals(event.getAction())) {
+		if (Action.INSTANCE_CREATED.equals(event.getAction())) {
 
 			if (managers.containsKey(csInstanceId)) {
 				return;
@@ -81,7 +81,7 @@ public class LifeCycleManager {
 			manager = context.getBean(ManagerOfServiceInstance.class);
 			managers.put(csInstanceId, manager);
 
-		} else if (Action.INSTANCE_REMOVAL_REQUESTED.equals(event.getAction())) {
+		} else if (Action.INSTANCE_REMOVED.equals(event.getAction())) {
 
 			// TODO delete manager, remove exchanges
 

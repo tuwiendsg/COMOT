@@ -76,11 +76,11 @@ define(function(require) {
 			var transitions = data.transitions.entry;
 			var service = data.service;
 			var epses = service.ServiceInstances.Instance[0].support;
-	
+
 			for (var i = 0; i < epses.length; i++) {
 				model.selectedEpsServices.push(epses[i]);
 			}
-			
+
 			populateGraphs(lifecycle, service, transitions);
 		});
 
@@ -103,7 +103,7 @@ define(function(require) {
 
 	function stopInstance(serviceId, instanceId) {
 		console.log("stop");
-		
+
 		if (model.serviceId() === "" || model.instanceId() === "") {
 			return;
 		}
@@ -111,8 +111,7 @@ define(function(require) {
 		comot.stopServiceInstance(model.serviceId(), model.instanceId(), function(data) {
 
 		});
-		
-		
+
 	}
 
 	function assignEps(eps) {
@@ -123,14 +122,16 @@ define(function(require) {
 			model.selectedEpsServices.push(eps);
 		});
 	}
-	
+
 	function removeEps(eps) {
 		console.log("eps");
 		var epsId = eps.id;
 
 		comot.removeSupportingEps(model.serviceId(), model.instanceId(), epsId, function(data) {
 
-			model.selectedEpsServices.remove(function(item) { return item.id === epsId });
+			model.selectedEpsServices.remove(function(item) {
+				return item.id === epsId
+			});
 		});
 	}
 
@@ -196,15 +197,20 @@ function populateGraphs(lifecycle, service, transitions) {
 function showEvent(events, event) {
 
 	var name;
+	var lifecycle;
 	if (typeof event.action === 'undefined') {
 		name = event.customEvent;
+		lifecycle = false;
 	} else {
 		name = event.action;
+		lifecycle = true;
 	}
 
 	events.push({
 		'name' : name,
-		'target' : event.groupId
+		'target' : event.groupId,
+		'origin' : event.origin,
+		'lifecycle' : lifecycle
 	});
 
 }
@@ -259,7 +265,7 @@ function createLifecycle(graph, divId, lastState, currentState) {
 	$(divId).empty();
 
 	var circleWidth = 12;
-	var width = 700, height = 500;
+	var width = 595, height = 425;
 	var force = d3.layout.force().charge(-1000).linkDistance(100).size([ width, height ]);
 	var svg = d3.select(divId).append("svg").attr("viewBox", "0 0 " + width + " " + height).attr("preserveAspectRatio",
 			"xMidYMid").append("g").attr("transform", "translate(0,0)");
@@ -339,9 +345,9 @@ function createTree(root, divId) {
 
 	// dimensions
 	var margin = {
-		top : 10,
+		top : 5,
 		right : 10,
-		bottom : 10,
+		bottom : 5,
 		left : 100
 	};
 	var boxWidth = 170;
@@ -357,13 +363,14 @@ function createTree(root, divId) {
 	var countLeafs = 0;
 	transformElement(root);
 
-	var heightCore = countLeafs * (boxHeight + 30);
+	var widthCore = 750;
+	var heightCore = countLeafs * (boxHeight + 20);
 	if (heightCore < 200) {
 		heightCore = 200;
 	}
 	var height = heightCore + margin.top + margin.bottom;
 
-	var cluster = d3.layout.cluster().size([ heightCore, 700 ]);
+	var cluster = d3.layout.cluster().size([ heightCore, widthCore ]);
 	var diagonal = d3.svg.diagonal().projection(function(d) {
 		return [ d.y, d.x ];
 	});

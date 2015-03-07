@@ -3,6 +3,7 @@ package at.ac.tuwien.dsg.comot.m.core.test;
 import javax.annotation.Resource;
 
 import org.junit.runner.RunWith;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,9 @@ public abstract class AbstractTest {
 	protected ControlClient control;
 	@Autowired
 	protected MonitoringClient monitoring;
-
+	@Autowired
+	protected GraphDatabaseService db;
+	
 	@Autowired
 	protected ToscaMapper mapperTosca;
 }

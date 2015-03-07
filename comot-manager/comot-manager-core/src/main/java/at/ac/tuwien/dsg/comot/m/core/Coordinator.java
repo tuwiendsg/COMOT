@@ -26,6 +26,8 @@ public class Coordinator {
 
 	private static final Logger log = LoggerFactory.getLogger(Coordinator.class);
 
+	public static final String USER_ID = "Some User";
+
 	@Autowired
 	protected InformationServiceMock infoServ;
 	@Autowired
@@ -41,8 +43,8 @@ public class Coordinator {
 
 		String instanceId = infoServ.createServiceInstance(serviceId);
 
-		EventMessage event = new EventMessage(serviceId, instanceId, serviceId, Action.INSTANCE_CREATION_REQUESTED,
-				null, null);
+		EventMessage event = new EventMessage(serviceId, instanceId, serviceId, Action.INSTANCE_CREATED,
+				USER_ID, null, null);
 		lcManager.executeAction(event);
 
 		return instanceId;
@@ -51,7 +53,7 @@ public class Coordinator {
 	public void startServiceInstance(String serviceId, String instanceId) throws IOException, JAXBException,
 			ClassNotFoundException {
 
-		EventMessage event = new EventMessage(serviceId, instanceId, serviceId, Action.STARTED, null, null);
+		EventMessage event = new EventMessage(serviceId, instanceId, serviceId, Action.STARTED, USER_ID, null, null);
 		lcManager.executeAction(event);
 
 	}
@@ -59,7 +61,7 @@ public class Coordinator {
 	public void stopServiceInstance(String serviceId, String instanceId)
 			throws IOException, JAXBException, ClassNotFoundException {
 
-		EventMessage event = new EventMessage(serviceId, instanceId, serviceId, Action.STOPPED, null,
+		EventMessage event = new EventMessage(serviceId, instanceId, serviceId, Action.STOPPED, USER_ID, null,
 				null);
 		lcManager.executeAction(event);
 
@@ -71,7 +73,7 @@ public class Coordinator {
 		infoServ.assignSupportingService(serviceId, instanceId, osuInstanceId);
 
 		EventMessage event = new EventMessage(serviceId, instanceId, serviceId, EpsAction.EPS_ASSIGNED.toString(),
-				osuInstanceId);
+				USER_ID, osuInstanceId);
 		lcManager.executeAction(event);
 
 	}
@@ -82,8 +84,7 @@ public class Coordinator {
 		infoServ.removeAssignmentOfSupportingOsu(serviceId, instanceId, osuInstanceId);
 
 		EventMessage event = new EventMessage(serviceId, instanceId, serviceId,
-				EpsAction.EPS_ASSIGNMENT_REMOVED.toString(),
-				osuInstanceId);
+				EpsAction.EPS_ASSIGNMENT_REMOVED.toString(), USER_ID, osuInstanceId);
 		lcManager.executeAction(event);
 
 	}
@@ -98,7 +99,7 @@ public class Coordinator {
 
 		// TODO check that the eps is assigned and the event exist
 
-		EventMessage event = new EventMessage(serviceId, csInstanceId, serviceId, osuInstanceId + eventId,
+		EventMessage event = new EventMessage(serviceId, csInstanceId, serviceId, eventId, USER_ID,
 				optionalInput);
 		lcManager.executeAction(event);
 	}
