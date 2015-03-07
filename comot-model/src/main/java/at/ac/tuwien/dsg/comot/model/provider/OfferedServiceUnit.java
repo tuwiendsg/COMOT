@@ -48,7 +48,7 @@ public class OfferedServiceUnit extends Entity implements HasUniqueId, Serializa
 	@BusinessId
 	@XmlID
 	@XmlAttribute
-	String id;
+	protected String id;
 
 	protected String providerID;
 

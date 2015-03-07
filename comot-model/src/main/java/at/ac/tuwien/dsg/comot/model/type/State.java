@@ -6,7 +6,7 @@ public enum State {
 		@Override
 		public State execute(Action action) {
 			switch (action) {
-			case INSTANCE_CREATION_REQUESTED:
+			case INSTANCE_CREATED:
 				return PASSIVE;
 			default:
 				return null;
@@ -20,7 +20,7 @@ public enum State {
 			switch (action) {
 			case STARTED:
 				return STARTING;
-			case INSTANCE_REMOVAL_REQUESTED:
+			case INSTANCE_REMOVED:
 				return FINAL;
 			default:
 				return null;

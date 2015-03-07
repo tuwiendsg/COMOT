@@ -13,6 +13,7 @@ import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
 import at.ac.tuwien.dsg.comot.model.HasUniqueId;
+import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 
 /**
  *
@@ -22,7 +23,8 @@ import at.ac.tuwien.dsg.comot.model.HasUniqueId;
 public class Quality extends Entity implements HasUniqueId {
 
     @Indexed(unique = true)
-    String id;
+    @BusinessId
+    protected String id;
 
 //    @RelatedTo(direction = Direction.OUTGOING)
     @Fetch

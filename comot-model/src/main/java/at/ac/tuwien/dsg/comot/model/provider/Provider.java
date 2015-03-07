@@ -12,6 +12,7 @@ import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
 import at.ac.tuwien.dsg.comot.model.HasUniqueId;
+import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 
 /**
  *
@@ -21,6 +22,7 @@ import at.ac.tuwien.dsg.comot.model.HasUniqueId;
 public class Provider extends Entity implements HasUniqueId{
     
     @Indexed(unique = true)
+    @BusinessId
     protected String id;
   
     protected ProviderType providerType = ProviderType.IAAS;

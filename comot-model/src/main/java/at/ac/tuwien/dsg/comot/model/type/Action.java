@@ -3,7 +3,7 @@ package at.ac.tuwien.dsg.comot.model.type;
 
 public enum Action {
 	
-	INSTANCE_CREATION_REQUESTED,
+	INSTANCE_CREATED,
 	STARTED,
 	DEPLOYMENT_STARTED,
 	ALLOCATED, 	// when status staging
@@ -14,6 +14,6 @@ public enum Action {
 	UNDEPLOYED,
 	TEST_STARTED,
 	TEST_FINISHED,
-	INSTANCE_REMOVAL_REQUESTED;
+	INSTANCE_REMOVED;
 
 }
