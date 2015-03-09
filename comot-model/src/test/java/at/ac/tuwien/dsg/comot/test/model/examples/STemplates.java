@@ -144,7 +144,7 @@ public class STemplates {
 		// INSTANCES
 		for (ServiceUnit unit : service.getServiceTopologiesList().get(0).getServiceUnits()) {
 			if (unit.getId().equals(osNodeId)) {
-				instanceOs = new UnitInstance(osNodeId + "_instance", "10.99.0.1", State.DEPLOYMENT_ALLOCATING, null);
+				instanceOs = new UnitInstance(osNodeId + "_instance", "10.99.0.1", State.DEPLOYING, null);
 				unit.addUnitInstance(instanceOs);
 			}
 		}
@@ -152,10 +152,10 @@ public class STemplates {
 		for (ServiceUnit unit : service.getServiceTopologiesList().get(0).getServiceUnits()) {
 			if (unit.getId().equals(swNodeId)) {
 				unit.addUnitInstance(new UnitInstance(swNodeId + "_instance", swNodeId + "_processId",
-						State.OPERATION_RUNNING, instanceOs));
+						State.RUNNING, instanceOs));
 			} else if (unit.getId().equals(swNodeId2)) {
 				unit.addUnitInstance(new UnitInstance(swNodeId2 + "_instance", swNodeId2 + "_processId",
-						State.OPERATION_RUNNING, instanceOs));
+						State.RUNNING, instanceOs));
 			}
 		}
 		return service;
