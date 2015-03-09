@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import at.ac.tuwien.dsg.comot.m.common.EventMessage;
 import at.ac.tuwien.dsg.comot.m.common.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.Transition;
-import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
@@ -72,30 +71,31 @@ public class RecordingAdapter extends Adapter {
 
 		@Override
 		protected void onLifecycleEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
-				Action action, String optionalMessage, CloudService service, Map<String, Transition> transitions) throws JAXBException {
+				Action action, String optionalMessage, CloudService service, Map<String, Transition> transitions)
+				throws JAXBException {
 
-			//if (isAssignedTo(serviceId, instanceId)) {
+			// if (isAssignedTo(serviceId, instanceId)) {
 
-				try {
+			try {
 
-					EventMessage event = msg.getEvent();
+				EventMessage event = msg.getEvent();
 
-					Map<String, String> changeProperties = new HashMap<>();
-					changeProperties.put(PROP_ORIGIN, event.getOrigin());
-					changeProperties.put(PROP_TARGET, event.getGroupId());
-					changeProperties.put(PROP_EVENT_NAME, event.getAction().toString());
-					if(event.getMessage() != null){
-						changeProperties.put(PROP_MSG, event.getMessage());
-					}
-
-					log.info(logId() + "onMessage {}", Utils.asJsonString(service) );
-					
-					revisionApi.createOrUpdateRegion(service, instanceId, CHANGE_TYPE_LIFECYCLE, changeProperties);
-
-				} catch (IllegalArgumentException | IllegalAccessException e) {
-					e.printStackTrace();
+				Map<String, String> changeProperties = new HashMap<>();
+				changeProperties.put(PROP_ORIGIN, event.getOrigin());
+				changeProperties.put(PROP_TARGET, event.getGroupId());
+				changeProperties.put(PROP_EVENT_NAME, event.getAction().toString());
+				if (event.getMessage() != null) {
+					changeProperties.put(PROP_MSG, event.getMessage());
 				}
-			//}
+
+				// log.info(logId() + "onMessage {}", Utils.asJsonString(msg) );
+
+				revisionApi.createOrUpdateRegion(service, instanceId, CHANGE_TYPE_LIFECYCLE, changeProperties);
+
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			// }
 		}
 
 		@Override

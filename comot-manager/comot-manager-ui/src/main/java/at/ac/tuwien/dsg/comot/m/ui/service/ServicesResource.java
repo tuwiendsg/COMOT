@@ -28,22 +28,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.m.core.Coordinator;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycle;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleFactory;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.UtilsLc;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.Transition;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.m.ui.UiAdapter;
 import at.ac.tuwien.dsg.comot.m.ui.model.Lc;
 import at.ac.tuwien.dsg.comot.m.ui.model.LcState;
-import at.ac.tuwien.dsg.comot.m.ui.model.LcTransition;
 import at.ac.tuwien.dsg.comot.m.ui.model.ServiceAndInstances;
 import at.ac.tuwien.dsg.comot.m.ui.model.ServiceInstanceUi;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
-import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 // WADL http://localhost:8380/comot/rest/application.wadl
@@ -208,19 +209,18 @@ public class ServicesResource {
 
 	@GET
 	@Consumes(MediaType.WILDCARD)
-	@Path("/lifecycle")
-	public Response getLifeCycle() {
+	@Path("/lifecycle/{level}")
+	public Response getLifeCycle(@PathParam("level") Type level) {
 
+		LifeCycle lifeCycle = LifeCycleFactory.getLifeCycle(level);
 		Lc lc = new Lc();
 
-		for (State tempS : State.values()) {
+		for (State tempS : lifeCycle.getStates()) {
 			lc.getStates().add(new LcState(tempS));
 		}
-		for (State source : State.values()) {
-			for (Action tempA : UtilsLc.allPossibleActions(source)) {
-				lc.getTransitions().add(
-						new LcTransition(tempA.toString(), lc.stateNr(source), lc.stateNr(source.execute(tempA))));
-			}
+
+		for (Transition tr : lifeCycle.getTransitions()) {
+			lc.addTransition(tr.getState(), tr.getAction(), tr.getNextState());
 		}
 
 		return Response.ok(lc).build();

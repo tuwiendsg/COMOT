@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceTopology;
@@ -13,6 +16,8 @@ import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 public class Group implements Serializable {
+
+	protected final Logger log = LoggerFactory.getLogger(getClass());
 
 	private static final long serialVersionUID = 2534198672357223629L;
 
@@ -27,7 +32,8 @@ public class Group implements Serializable {
 		this(service.getId(), Type.SERVICE, state, null);
 
 		for (ServiceTopology topo : service.getServiceTopologies()) {
-			addTopology(topo, state);
+			Group temp = new Group(topo, state, this);
+			members.add(temp);
 		}
 	}
 
@@ -35,11 +41,13 @@ public class Group implements Serializable {
 		this(topology.getId(), Type.TOPOLOGY, state, parent);
 
 		for (ServiceUnit unit : topology.getServiceUnits()) {
-			addUnit(unit, state);
+			Group temp = new Group(unit, state, this);
+			members.add(temp);
 		}
 
 		for (ServiceTopology topo : topology.getServiceTopologies()) {
-			addTopology(topo, state);
+			Group temp = new Group(topo, state, this);
+			members.add(temp);
 		}
 	}
 
@@ -47,12 +55,9 @@ public class Group implements Serializable {
 		this(unit.getId(), Type.UNIT, state, parent);
 
 		for (UnitInstance instance : unit.getInstances()) {
-			addInstance(instance, state);
+			Group temp = new Group(instance.getId(), Type.INSTANCE, state, this);
+			members.add(temp);
 		}
-	}
-
-	public Group(UnitInstance instance, State state, Group parent) {
-		this(instance.getId(), Type.INSTANCE, state, parent);
 	}
 
 	public Group(String id, Type type, State state, Group parent) {
@@ -63,20 +68,8 @@ public class Group implements Serializable {
 		this.parent = parent;
 	}
 
-	public Group addTopology(ServiceTopology topology, State state) {
-		Group temp = new Group(topology, state, this);
-		members.add(temp);
-		return temp;
-	}
-
-	public Group addUnit(ServiceUnit unit, State state) {
-		Group temp = new Group(unit, state, this);
-		members.add(temp);
-		return temp;
-	}
-
-	public Group addInstance(UnitInstance instance, State state) {
-		Group temp = new Group(instance, state, this);
+	public Group addGroup(String id, Type type, State state) {
+		Group temp = new Group(id, type, state, this);
 		members.add(temp);
 		return temp;
 	}
@@ -84,7 +77,13 @@ public class Group implements Serializable {
 	public boolean canExecute(Action action) {
 
 		if (members.isEmpty()) {
-			return (currentState.execute(action) == null) ? false : true;
+			if (LifeCycleFactory.getLifeCycle(type).executeAction(parent.getCurrentState(), currentState, action) == null) {
+				log.warn("Action '{}' is not allowed in state '{}'. GroupId={} , type={}  <- the root of problem",
+						action, getCurrentState(), id, type);
+				return false;
+			} else {
+				return true;
+			}
 
 		} else {
 			for (Group menber : members) {
@@ -102,7 +101,8 @@ public class Group implements Serializable {
 
 		if (members.isEmpty()) {
 
-			nextState = currentState.execute(action);
+			nextState = LifeCycleFactory.getLifeCycle(type)
+					.executeAction(parent.getCurrentState(), currentState, action);
 
 			if (nextState != null) {
 				moveToState(nextState);

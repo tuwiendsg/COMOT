@@ -2,7 +2,6 @@ package at.ac.tuwien.dsg.comot.m.core.lifecycle;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
-import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
@@ -17,8 +16,6 @@ import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 import at.ac.tuwien.dsg.comot.model.runtime.ServiceInstance;
-import at.ac.tuwien.dsg.comot.model.type.Action;
-import at.ac.tuwien.dsg.comot.model.type.State;
 
 public class UtilsLc {
 
@@ -28,61 +25,16 @@ public class UtilsLc {
 		for (ServiceUnit unit : Navigator.getAllUnits(service)) {
 			unit.setOsu(null);
 		}
-		for(ServiceInstance instance: service.getInstances()){
+		for (ServiceInstance instance : service.getInstances()) {
 			instance.setSupport(new HashSet<OfferedServiceUnit>());
 		}
-		
+
 		return service;
 	}
 
 	public static StateMessage stateMessage(Message message) throws UnsupportedEncodingException, JAXBException {
 		StateMessage msg = Utils.asStateMessage(new String(message.getBody(), "UTF-8"));
 		return msg;
-	}
-
-	public static Set<Action> allPossibleActions(State state) {
-		Set<Action> actions = new HashSet<>();
-
-		for (Action action : Action.values()) {
-			if (state.execute(action) != null) {
-				actions.add(action);
-			}
-		}
-
-		log.debug("allPossibleActions(state={}) : {}", state, actions);
-		return actions;
-	}
-
-	public static State translateToOldState(Action action, State newState) {
-
-		State result = null;
-		for (State state : State.values()) {
-			if ((result = state.execute(action)) != null) {
-				if (result.equals(newState)) {
-					break;
-				}
-			}
-		}
-
-		log.debug("translateToOldState(action={}, newState={}) : {}", action, newState, result);
-		return result;
-	}
-
-	public static Action translateToAction(State oldState, State newState) {
-
-		State temp;
-		Action result = null;
-		for (Action action : Action.values()) {
-			if ((temp = oldState.execute(action)) != null) {
-				if (temp.equals(newState)) {
-					result = action;
-					break;
-				}
-			}
-		}
-
-		log.debug("translateToAction(oldState={}, newState={}) : {}", oldState, newState, result);
-		return result;
 	}
 
 }

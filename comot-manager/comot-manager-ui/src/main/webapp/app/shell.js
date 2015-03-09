@@ -10,16 +10,6 @@ define(function(require) {
 				moduleId : 'services',
 				nav : false
 			}, {
-				route : 'create',
-				title : 'Create',
-				moduleId : 'create',
-				nav : true
-			},{
-				route : 'new',
-				title : 'New',
-				moduleId : 'new',
-				nav : true
-			},{
 				route : 'services',
 				title : 'Cloud Services',
 				moduleId : 'services',
@@ -34,13 +24,25 @@ define(function(require) {
 				title : 'History',
 				moduleId : 'history',
 				nav : true
-			},{
-				route : 'manage*details',
-				title : 'Manage',
-				moduleId : 'manage',
-				hash : '#manage',
-				nav : false
-			} ]).buildNavigationModel();
+			}
+//			, {
+//				route : 'create',
+//				title : 'Create',
+//				moduleId : 'create',
+//				nav : true
+//			}, {
+//				route : 'new',
+//				title : 'New',
+//				moduleId : 'new',
+//				nav : true
+//			}, {
+//				route : 'manage*details',
+//				title : 'Manage',
+//				moduleId : 'manage',
+//				hash : '#manage',
+//				nav : false
+//			} 
+			]).buildNavigationModel();
 
 			return router.activate();
 		}

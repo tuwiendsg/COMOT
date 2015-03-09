@@ -163,12 +163,12 @@
 		return $.ajax(request);
 	}
 
-	exports.lifecycle = function(onSuccess, onError) {
+	exports.lifecycle = function(level, onSuccess, onError) {
 
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "GET";
 		request.dataType = "json"
-		request.url = services + "lifecycle";
+		request.url = services + "lifecycle/"+level;
 		return $.ajax(request);
 	}
 

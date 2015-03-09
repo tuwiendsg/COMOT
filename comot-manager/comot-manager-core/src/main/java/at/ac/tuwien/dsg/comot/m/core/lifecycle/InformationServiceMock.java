@@ -199,6 +199,7 @@ public class InformationServiceMock {
 
 		ServiceInstance instance = _getServiceInstance(serviceId, instanceId);
 		instance.getSupport().add(osus.get(osuInstanceId));
+
 	}
 
 	public Map<String, String> getInstancesHavingThisOsuAssigned(String osuInstanceId) {
@@ -235,15 +236,33 @@ public class InformationServiceMock {
 	// services.get(service.getId())
 	// }
 
-	public Set<OfferedServiceUnit> getSupportingServices(String serviceId, String instanceId) {
+	public Set<OfferedServiceUnit> getSupportingServices(String serviceId, String instanceId)
+			throws ClassNotFoundException, IOException {
 
 		ServiceInstance instance = _getServiceInstance(serviceId, instanceId);
-
+		Set<OfferedServiceUnit> result;
 		if (instance != null) {
-			return instance.getSupport();
+			result = (Set<OfferedServiceUnit>) Utils.deepCopy(instance.getSupport());
+		} else {
+			result = new HashSet<OfferedServiceUnit>();
+		}
+		return result;
+
+	}
+
+	public boolean isOsuAssignedToInstance(String serviceId, String instanceId, String osuId)
+			throws ClassNotFoundException, IOException {
+
+		for (OfferedServiceUnit osu : _getServiceInstance(serviceId, instanceId).getSupport()) {
+			if (osu.getId().equals(osuId)) {
+				log.info("isOsuAssignedToInstance(serviceId={}, instanceId={}, osuId={}): true", serviceId, instanceId,
+						osuId);
+				return true;
+			}
 		}
 
-		return new HashSet<OfferedServiceUnit>();
+		log.info("isOsuAssignedToInstance(serviceId={}, instanceId={}, osuId={}): false", serviceId, instanceId, osuId);
+		return false;
 	}
 
 	public CloudService getService(String serviceId) {
@@ -265,12 +284,14 @@ public class InformationServiceMock {
 		boolean isIncluded;
 
 		CloudService service = services.get(serviceId);
-		for (ServiceInstance sInst : service.getInstances()) {
+		for (ServiceInstance servInst : service.getInstances()) {
 
-			if (sInst.getId().equals(instanceId)) {
+			if (servInst.getId().equals(instanceId)) {
 				CloudService copy = (CloudService) Utils.deepCopy(service);
+				ServiceInstance copyInstance = (ServiceInstance) Utils.deepCopy(servInst);
+
 				copy.getInstances().clear();
-				copy.getInstances().add(sInst);
+				copy.getInstances().add(copyInstance);
 
 				Navigator nav = new Navigator(copy);
 
@@ -280,7 +301,7 @@ public class InformationServiceMock {
 
 						isIncluded = false;
 
-						for (UnitInstance uuInst : sInst.getUnitInstances()) {
+						for (UnitInstance uuInst : copyInstance.getUnitInstances()) {
 							if (uuInst.getId().equals(uInst.getId())) {
 								isIncluded = true;
 							}

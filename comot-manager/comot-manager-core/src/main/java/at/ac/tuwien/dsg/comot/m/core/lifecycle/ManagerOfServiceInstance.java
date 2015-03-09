@@ -53,7 +53,7 @@ public class ManagerOfServiceInstance {
 		Group targetGroup;
 		boolean found = false;
 
-		if (Action.INSTANCE_CREATED.equals(action)) {
+		if (Action.CREATED.equals(action)) {
 
 			this.csInstanceId = event.getCsInstanceId();
 			this.serviceId = event.getServiceId();
@@ -73,8 +73,8 @@ public class ManagerOfServiceInstance {
 			for (ServiceUnit unit : Navigator.getAllUnits(service)) {
 				for (UnitInstance instance : unit.getInstances()) {
 					if (instance.getId().equals(groupId)) {
-						Group newGroup = serviceGroup.getMemberNested(unit.getId()).addInstance(instance,
-								State.STARTING);
+						Group newGroup = serviceGroup.getMemberNested(unit.getId()).addGroup(instance.getId(),
+								Type.INSTANCE, State.INIT);
 						lastStates.put(newGroup.getId(), State.PASSIVE);
 
 						infoService.addUnitInstance(serviceId, csInstanceId, unit.getId(), instance);
@@ -103,11 +103,23 @@ public class ManagerOfServiceInstance {
 				}
 			}
 
+		} else if (Action.ELASTIC_CHANGE_FINISHED.equals(action)) {
+
+			targetGroup = checkAndExecute(action, groupId);
+		} else if (Action.UPDATE_FINISHED.equals(action)) {
+
+			targetGroup = checkAndExecute(action, groupId);
+
+			// } else if (Action.ERROR.equals(action)) {
+			//
+			// // TODO process ERROR
+			// targetGroup = serviceGroup.getMemberNested(groupId);
+
 		} else {
 			targetGroup = checkAndExecute(action, groupId);
 		}
 
-		processOutgoingService(event);
+		// processOutgoingService(event);
 
 		// sum up transitions
 		Map<String, State> tempStates = new HashMap<>();
@@ -160,12 +172,12 @@ public class ManagerOfServiceInstance {
 		return group;
 	}
 
-	protected void processOutgoingService(EventMessage event) throws ClassNotFoundException, IOException {
-
-		CloudService service = event.getService();
-		service = infoService.getServiceInstance(serviceId, csInstanceId);
-		event.setService(UtilsLc.removeProviderInfo((CloudService) Utils.deepCopy(service)));
-	}
+	// protected void processOutgoingService(EventMessage event) throws ClassNotFoundException, IOException {
+	//
+	// CloudService service = event.getService();
+	// service = infoService.getServiceInstance(serviceId, csInstanceId);
+	// event.setService(UtilsLc.removeProviderInfo((CloudService) Utils.deepCopy(service)));
+	// }
 
 	public void executeCustomAction(EventMessage event) throws AmqpException, JAXBException {
 

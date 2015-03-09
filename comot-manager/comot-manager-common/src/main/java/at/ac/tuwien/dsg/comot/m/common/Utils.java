@@ -32,6 +32,7 @@ public class Utils {
 
 	protected static final Logger log = LoggerFactory.getLogger(Utils.class);
 
+	@SuppressWarnings("unchecked")
 	public static <T> T toObject(String str, Class<T> clazz, Class<?>... otherClazz) throws JAXBException, IOException {
 
 		List<Object> list = new ArrayList<Object>(Arrays.asList(otherClazz));

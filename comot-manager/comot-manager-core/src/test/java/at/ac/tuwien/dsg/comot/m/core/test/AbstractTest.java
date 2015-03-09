@@ -44,7 +44,7 @@ public abstract class AbstractTest {
 	protected MonitoringClient monitoring;
 	@Autowired
 	protected GraphDatabaseService db;
-	
+
 	@Autowired
 	protected ToscaMapper mapperTosca;
 }

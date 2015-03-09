@@ -83,7 +83,7 @@ public class AutomatedTest extends AbstractTest {
 		ServiceUnit unitV1 = UtilsTest.getServiceUnit(service, STemplates.swNodeId);
 
 		// VERSION 1
-		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, "init" , null);
+		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, "init", null);
 
 		Long version1Time = System.currentTimeMillis();
 

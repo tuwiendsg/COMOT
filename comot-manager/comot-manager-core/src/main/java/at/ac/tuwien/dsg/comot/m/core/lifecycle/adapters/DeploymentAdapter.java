@@ -16,12 +16,16 @@ import at.ac.tuwien.dsg.comot.m.common.EventMessage;
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.Transition;
+import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycle;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleFactory;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.UtilsLc;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
+import at.ac.tuwien.dsg.comot.m.cs.mapper.DeploymentMapper;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
@@ -34,8 +38,12 @@ import at.ac.tuwien.dsg.comot.model.type.State;
 // @Scope("prototype") //for some reason this creates multip0le instances
 public class DeploymentAdapter extends Adapter {
 
+	protected static final LifeCycle unitInstanceLc = LifeCycleFactory.getLifeCycle(Type.INSTANCE);
+
 	@Autowired
 	protected DeploymentClient deployment;
+	@Autowired
+	protected DeploymentMapper mapper;
 
 	protected Binding binding1;
 	protected Binding binding2;
@@ -93,8 +101,11 @@ public class DeploymentAdapter extends Adapter {
 				throws ClassNotFoundException, CoreServiceException, IOException, JAXBException, ComotException,
 				InterruptedException {
 
-			if (isAssignedTo(serviceId, instanceId)) {
+			if (infoService.isOsuAssignedToInstance(serviceId, instanceId, adapterId)) {
+
+				log.info("assigned");
 				if (action == Action.STARTED) {
+					log.info("STARTED");
 					deployInstance(serviceId, instanceId);
 
 				} else if (action == Action.STOPPED) {
@@ -117,7 +128,7 @@ public class DeploymentAdapter extends Adapter {
 					if (state == State.STARTING) {
 						deployInstance(serviceId, instanceId);
 					}
-					
+
 				} else if (action == EpsAction.EPS_ASSIGNMENT_REMOVED) {
 
 					EventMessage newEvent = new EventMessage(serviceId, instanceId, serviceId, Action.STOPPED,
@@ -145,6 +156,7 @@ public class DeploymentAdapter extends Adapter {
 				} catch (ClassNotFoundException | IOException | CoreServiceException | ComotException | JAXBException
 						| InterruptedException e) {
 					e.printStackTrace();
+
 				}
 			}
 		}
@@ -184,11 +196,14 @@ public class DeploymentAdapter extends Adapter {
 	protected void monitorStatusUntilDeployed(String serviceId, CloudService service) throws CoreServiceException,
 			ComotException, IOException, JAXBException, InterruptedException, ClassNotFoundException {
 
-		Map<String, State> map;
-		State oldState, newState;
+		Map<String, String> currentStates = new HashMap<>();
+		Map<String, String> oldStates;
+
+		State lcStateNew, lcStateOld;
+		String stateNew;
 		boolean notAllRunning = false;
-		String uInstId;
 		CloudService serviceReturned = service;
+		Action action;
 
 		service = UtilsLc.removeProviderInfo(service);
 
@@ -196,58 +211,64 @@ public class DeploymentAdapter extends Adapter {
 
 			try {
 
-				map = new HashMap<>();
-				for (ServiceUnit unit : Navigator.getAllUnits(serviceReturned)) {
-					for (UnitInstance instance : unit.getInstances()) {
-						map.put(instance.getId(), instance.getState());
-						// log.info("xxxx: {} {}", instance.getId(), instance.getState());
-					}
-				}
+				oldStates = currentStates;
+				currentStates = new HashMap<>();
 				notAllRunning = false;
 
 				Thread.sleep(1000);
 
-				serviceReturned = deployment.refreshStatus(service);
+				serviceReturned = deployment.refreshStatus(currentStates, service);
 				serviceReturned.setId(serviceId);
 				serviceReturned.setName(serviceId);
 
-				for (ServiceUnit unit : Navigator.getAllUnits(serviceReturned)) {
-					for (UnitInstance instance : unit.getInstances()) {
-						uInstId = instance.getId();
-						newState = instance.getState();
+				// log.info("currentStates: {}", currentStates);
 
-						if (State.OPERATION_RUNNING != newState) {
-							notAllRunning = true;
-						}
+				if (currentStates.isEmpty()) {
+					notAllRunning = true;
+				}
 
-						if (map.containsKey(uInstId)) {
-							if (map.get(uInstId).equals(newState)) {
-								continue;
-							} else {
-								oldState = map.get(uInstId);
-							}
+				for (String uInstId : currentStates.keySet()) {
+
+					stateNew = currentStates.get(uInstId);
+					lcStateNew = DeploymentMapper.convert(currentStates.get(uInstId));
+
+					if (lcStateNew != State.RUNNING) {
+						notAllRunning = true;
+					}
+
+					// check if salsa state have changed
+					if (oldStates.containsKey(uInstId)) {
+						if (oldStates.get(uInstId).equals(stateNew)) {
+							continue; // if not
 						} else {
-							oldState = State.STARTING;
+							lcStateOld = DeploymentMapper.convert(oldStates.get(uInstId));
 						}
+					} else {
+						lcStateOld = State.INIT;
+					}
 
-						if (State.ERROR == newState) {
-							// TODO process error
-							log.error("error ocured");
+					// check if also the translated Life-cycle state have changed
+					if (lcStateNew == lcStateOld) {
+
+						lcManager.executeAction(new EventMessage(serviceId, service.getId(), uInstId, stateNew,
+								adapterId, null));
+
+					} else {
+
+						if (lcStateNew == State.ERROR) {
+							action = Action.ERROR;
+						} else {
+							action = unitInstanceLc.translateToAction(lcStateOld, lcStateNew);
 						}
-
-						// publish
-						Action action = UtilsLc.translateToAction(oldState, newState);
 
 						if (action == null) {
-							log.error("invalid transitions {} -> {}", oldState, newState);
+							log.error("invalid transitions {} -> {}", lcStateOld, lcStateNew);
 						} else {
 							lcManager.executeAction(new EventMessage(serviceId, service.getId(), uInstId, action,
 									adapterId, serviceReturned, null));
 						}
 					}
-					if (unit.getInstances().isEmpty()) {
-						notAllRunning = true;
-					}
+
 				}
 
 			} catch (ComotException e) {

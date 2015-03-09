@@ -1,5 +1,7 @@
 package at.ac.tuwien.dsg.comot.m.common.coreservices;
 
+import java.util.Map;
+
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
@@ -28,6 +30,10 @@ public interface DeploymentClient extends CoreServiceClient {
 			int instanceId) throws CoreServiceException;
 
 	public CloudService refreshStatus(
+			CloudService service) throws CoreServiceException, ComotException;
+
+	public CloudService refreshStatus(
+			Map<String, String> map,
 			CloudService service) throws CoreServiceException, ComotException;
 
 	public CloudService getService(String serviceId) throws CoreServiceException, ComotException;

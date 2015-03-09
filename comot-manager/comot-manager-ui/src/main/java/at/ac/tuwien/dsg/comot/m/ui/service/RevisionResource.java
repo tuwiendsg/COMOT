@@ -19,16 +19,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import at.ac.tuwien.dsg.comot.m.common.coreservices.ControlClient;
-import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
-import at.ac.tuwien.dsg.comot.m.common.coreservices.MonitoringClient;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.RecordingAdapter;
 import at.ac.tuwien.dsg.comot.m.recorder.RecorderException;
 import at.ac.tuwien.dsg.comot.m.recorder.model.Change;
 import at.ac.tuwien.dsg.comot.m.recorder.out.ManagedObject;
-import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 
 // WADL http://localhost:8380/comot/rest/application.wadl
 @Service
@@ -42,18 +38,18 @@ public class RevisionResource {
 	@Autowired
 	protected RecordingAdapter recorder;
 
-//	@GET
-//	@Path("/last")
-//	@Consumes(MediaType.WILDCARD)
-//	public Response getLastRevision(@PathParam("instanceId") String instanceId) throws CoreServiceException,
-//			ComotException, InstantiationException, IllegalAccessException, IllegalArgumentException,
-//			ClassNotFoundException, RecorderException {
-//// TODO wrong !! object id shoud be stringId
-//		CloudService service = (CloudService) recorder.getRevision(instanceId, instanceId, Long.MAX_VALUE);
-//
-//		return Response.ok(service).build();
-//	}
-	
+	// @GET
+	// @Path("/last")
+	// @Consumes(MediaType.WILDCARD)
+	// public Response getLastRevision(@PathParam("instanceId") String instanceId) throws CoreServiceException,
+	// ComotException, InstantiationException, IllegalAccessException, IllegalArgumentException,
+	// ClassNotFoundException, RecorderException {
+	// // TODO wrong !! object id shoud be stringId
+	// CloudService service = (CloudService) recorder.getRevision(instanceId, instanceId, Long.MAX_VALUE);
+	//
+	// return Response.ok(service).build();
+	// }
+
 	@GET
 	@Path("/objects")
 	@Consumes(MediaType.WILDCARD)
@@ -108,7 +104,5 @@ public class RevisionResource {
 		};
 		return Response.ok(entity).build();
 	}
-
-	
 
 }

@@ -29,21 +29,21 @@ public class Coordinator {
 	public static final String USER_ID = "Some User";
 
 	@Autowired
-	protected InformationServiceMock infoServ;
+	protected InformationServiceMock infoService;
 	@Autowired
 	protected LifeCycleManager lcManager;
 
 	public String createCloudService(CloudService service) {
 
-		String serviceId = infoServ.createService(service);
+		String serviceId = infoService.createService(service);
 		return serviceId;
 	}
 
 	public String createServiceInstance(String serviceId) throws IOException, JAXBException, ClassNotFoundException {
 
-		String instanceId = infoServ.createServiceInstance(serviceId);
+		String instanceId = infoService.createServiceInstance(serviceId);
 
-		EventMessage event = new EventMessage(serviceId, instanceId, serviceId, Action.INSTANCE_CREATED,
+		EventMessage event = new EventMessage(serviceId, instanceId, serviceId, Action.CREATED,
 				USER_ID, null, null);
 		lcManager.executeAction(event);
 
@@ -70,7 +70,7 @@ public class Coordinator {
 	public void assignSupportingOsu(String serviceId, String instanceId, String osuInstanceId)
 			throws ClassNotFoundException, IOException, JAXBException {
 
-		infoServ.assignSupportingService(serviceId, instanceId, osuInstanceId);
+		infoService.assignSupportingService(serviceId, instanceId, osuInstanceId);
 
 		EventMessage event = new EventMessage(serviceId, instanceId, serviceId, EpsAction.EPS_ASSIGNED.toString(),
 				USER_ID, osuInstanceId);
@@ -81,7 +81,7 @@ public class Coordinator {
 	public void removeAssignmentOfSupportingOsu(String serviceId, String instanceId, String osuInstanceId)
 			throws ClassNotFoundException, IOException, JAXBException {
 
-		infoServ.removeAssignmentOfSupportingOsu(serviceId, instanceId, osuInstanceId);
+		infoService.removeAssignmentOfSupportingOsu(serviceId, instanceId, osuInstanceId);
 
 		EventMessage event = new EventMessage(serviceId, instanceId, serviceId,
 				EpsAction.EPS_ASSIGNMENT_REMOVED.toString(), USER_ID, osuInstanceId);

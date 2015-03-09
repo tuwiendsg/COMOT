@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -28,7 +29,11 @@ public class Lc {
 
 	}
 
-	public int stateNr(State state) {
+	public void addTransition(State state, Action action, State nextState) {
+		transitions.add(new LcTransition(action.toString(), stateNr(state), stateNr(nextState)));
+	}
+
+	protected int stateNr(State state) {
 		for (int i = 0; i < states.size(); i++) {
 			if (states.get(i).getName().equals(state)) {
 				return i;

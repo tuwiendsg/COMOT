@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
-import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 
 public abstract class Adapter {
 
@@ -71,16 +70,6 @@ public abstract class Adapter {
 	protected abstract void start(String osuInstanceId);
 
 	protected abstract void clean();
-
-	protected boolean isAssignedTo(String serviceId, String instanceId) {
-
-		for (OfferedServiceUnit osu : infoService.getSupportingServices(serviceId, instanceId)) {
-			if (osu.getId().equals(adapterId)) {
-				return true;
-			}
-		}
-		return false;
-	}
 
 	protected String logId() {
 		return "[" + adapterId + "] ";

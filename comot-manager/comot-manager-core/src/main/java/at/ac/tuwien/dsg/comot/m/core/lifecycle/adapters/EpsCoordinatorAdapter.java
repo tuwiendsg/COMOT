@@ -1,5 +1,6 @@
 package at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -88,7 +89,8 @@ public class EpsCoordinatorAdapter extends Adapter {
 
 		@Override
 		protected void onLifecycleEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
-				Action action, String optionalMessage, CloudService service, Map<String, Transition> transitions) {
+				Action action, String optionalMessage, CloudService service, Map<String, Transition> transitions)
+				throws ClassNotFoundException, IOException {
 
 			if (action == Action.STARTED) {
 
@@ -102,6 +104,8 @@ public class EpsCoordinatorAdapter extends Adapter {
 					}
 				}
 			}
+
+			infoService.isOsuAssignedToInstance(serviceId, instanceId, "SALSA_SERVICE");
 		}
 
 		@Override
@@ -124,6 +128,13 @@ public class EpsCoordinatorAdapter extends Adapter {
 					removeOsu(osuId);
 				}
 
+			}
+
+			try {
+				infoService.isOsuAssignedToInstance(serviceId, instanceId, "SALSA_SERVICE");
+			} catch (ClassNotFoundException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 

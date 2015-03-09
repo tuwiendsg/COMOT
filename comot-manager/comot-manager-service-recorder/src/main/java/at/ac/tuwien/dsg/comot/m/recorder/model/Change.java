@@ -10,7 +10,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.springframework.data.neo4j.annotation.EndNode;
 import org.springframework.data.neo4j.annotation.GraphId;
@@ -35,7 +34,7 @@ public class Change implements Serializable {
 	protected Long timestamp;
 	@XmlAttribute
 	protected String type;
-//	@XmlJavaTypeAdapter(ComotDynamicPropertiesContainer.Adapter.class)
+	// @XmlJavaTypeAdapter(ComotDynamicPropertiesContainer.Adapter.class)
 	protected DynamicProperties properties; // instead of Map<String, String>
 
 	@XmlIDREF

@@ -4,10 +4,8 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.neo4j.kernel.GraphDatabaseAPI;
 import org.oasis.tosca.Definitions;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -28,30 +26,21 @@ public class LifecycleTest extends AbstractTest {
 	protected Coordinator coordinator;
 	@Autowired
 	protected InformationServiceMock infoService;
-	
-//	protected WrappingNeoServerBootstrapper srv;
-//
-//	@Before
-//	public void setUp() {
-//		// http://neo4j.com/docs/1.8.3/server-embedded.html
-//		// http://127.0.0.1:7474/
-//		srv = new WrappingNeoServerBootstrapper((GraphDatabaseAPI) db);
-//		srv.start();
-//	}
-//
-//	@After
-//	public void cleanUp() {
-//		srv.stop();
-//	}
 
+	CloudService service;
+	String serviceId;
+	String instanceId;
+
+	@Before
+	public void setUp() throws JAXBException, IOException, ClassNotFoundException {
+		Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/tomcat/tomcat_from_salsa.xml");
+		service = mapperTosca.createModel(tosca1);
+		serviceId = coordinator.createCloudService(service);
+		instanceId = coordinator.createServiceInstance(serviceId);
+	}
 
 	@Test
 	public void produceEvent() throws JAXBException, IOException, ClassNotFoundException {
-		Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/tomcat/tomcat_from_salsa.xml");
-		CloudService service = mapperTosca.createModel(tosca1);
-
-		String serviceId = coordinator.createCloudService(service);
-		String instanceId = coordinator.createServiceInstance(serviceId);
 
 		UtilsTest.sleepInfinit();
 	}
@@ -59,32 +48,36 @@ public class LifecycleTest extends AbstractTest {
 	@Test
 	public void testDeployTomcat() throws IOException, JAXBException, ClassNotFoundException {
 
-		Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/tomcat/tomcat_from_salsa.xml");
-		CloudService service = mapperTosca.createModel(tosca1);
-
-		String serviceId = coordinator.createCloudService(service);
-		String instanceId = coordinator.createServiceInstance(serviceId);
-
-	
 		coordinator.startServiceInstance(serviceId, instanceId);
-
 		coordinator.assignSupportingOsu(serviceId, instanceId, InformationServiceMock.SALSA_SERVICE_PUBLIC_ID);
 
-		
-		while (lcManager.getCurrentState(instanceId, serviceId) != State.OPERATION_RUNNING) {
+		while (lcManager.getCurrentState(instanceId, serviceId) != State.RUNNING) {
 			UtilsTest.sleepSeconds(10);
 		}
 
 		coordinator.stopServiceInstance(serviceId, instanceId);
-		
-		
 
 		log.info("{}", Utils.asJsonString(infoService.getService(serviceId)));
 
-		
 		UtilsTest.sleepSeconds(5);
-		
 		// UtilsTest.sleepInfinit();
+	}
 
+	@Test
+	public void testDeployTomcatNormal() throws IOException, JAXBException, ClassNotFoundException {
+
+		coordinator.assignSupportingOsu(serviceId, instanceId, InformationServiceMock.SALSA_SERVICE_PUBLIC_ID);
+		coordinator.startServiceInstance(serviceId, instanceId);
+
+		while (lcManager.getCurrentState(instanceId, serviceId) != State.RUNNING) {
+			UtilsTest.sleepSeconds(10);
+		}
+
+		coordinator.stopServiceInstance(serviceId, instanceId);
+
+		log.info("{}", Utils.asJsonString(infoService.getService(serviceId)));
+
+		UtilsTest.sleepSeconds(5);
+		// UtilsTest.sleepInfinit();
 	}
 }

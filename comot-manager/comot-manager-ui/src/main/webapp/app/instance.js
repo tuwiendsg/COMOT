@@ -2,14 +2,17 @@ define(function(require) {
 	var app = require('durandal/app'), ko = require('knockout'), http = require('plugins/http'), d3 = require('d3'), JsonHuman = require('json_human'), comot = require('comot_client'), $ = require("jquery"), bootstrap = require('bootstrap'), router = require('plugins/router');
 
 	var notify = require('notify');
-	var lifecycle = {};
+
 	var source = {};
 
 	var model = {
 		// properties
 		serviceId : ko.observable(""),
 		instanceId : ko.observable(""),
-		state : ko.observable(),
+		groupId : ko.observable(""),
+		groupType : ko.observable("SERVICE"),
+		lifecycle : ko.observable(),
+		transitions : ko.observableArray(),
 		events : ko.observableArray(),
 		allEpsServices : ko.observableArray(),
 		selectedEpsServices : ko.observableArray(),
@@ -20,6 +23,7 @@ define(function(require) {
 		assignEps : assignEps,
 		removeEps : removeEps,
 		showThisInstance : showThisInstance,
+		showThisGroup : showThisGroup,
 		// life-cycle
 		deactivate : function() {
 			if (typeof source.close === 'function') {
@@ -42,20 +46,29 @@ define(function(require) {
 		},
 		attached : function() {
 
-			comot.lifecycle(function(data) {
-				lifecycle = data;
+			comot.lifecycle("SERVICE", function(data) {
+				model.lifecycle(data);
 
 				if (model.serviceId() != "" && model.instanceId() != "") {
 					showThisInstance(model.serviceId(), model.instanceId());
 				} else {
-					createLifecycle(lifecycle, "#lifecycle_div", "xxx", "xxx");
+					createLifecycle(model.lifecycle(), "#lifecycle_div", "xxx", "xxx");
 				}
 			});
-
 		}
 	}
 
 	return model;
+
+	function showThisGroup(groupId) {
+
+		console.log(groupId);
+
+		if (model.serviceId() != "" && model.instanceId() != "") {
+			model.groupId(groupId);
+			populateLifecycle();
+		}
+	}
 
 	function showThisInstance(serviceId, instanceId) {
 
@@ -70,6 +83,7 @@ define(function(require) {
 
 		model.serviceId(serviceId);
 		model.instanceId(instanceId);
+		model.groupId(serviceId);
 
 		comot.getServiceInstance(serviceId, instanceId, function(data) {
 
@@ -81,118 +95,128 @@ define(function(require) {
 				model.selectedEpsServices.push(epses[i]);
 			}
 
-			populateGraphs(lifecycle, service, transitions);
+			populateGraphs(service, transitions);
 		});
 
 		var path = comot.eventPath(serviceId, instanceId);
-		source = registerForEvents(path, lifecycle, model.events);
+		source = registerForEvents(path, model.events);
 
 	}
 
 	function startInstance() {
-		console.log("start");
-
-		if (model.serviceId() === "" || model.instanceId() === "") {
-			return;
+		if (model.serviceId() != "" && model.instanceId() != "") {
+			comot.startServiceInstance(model.serviceId(), model.instanceId(), function(data) {
+			});
 		}
-
-		comot.startServiceInstance(model.serviceId(), model.instanceId(), function(data) {
-
-		});
 	}
 
 	function stopInstance(serviceId, instanceId) {
-		console.log("stop");
-
-		if (model.serviceId() === "" || model.instanceId() === "") {
-			return;
+		if (model.serviceId() != "" && model.instanceId() != "") {
+			comot.stopServiceInstance(model.serviceId(), model.instanceId(), function(data) {
+			});
 		}
-
-		comot.stopServiceInstance(model.serviceId(), model.instanceId(), function(data) {
-
-		});
-
 	}
 
 	function assignEps(eps) {
-		console.log("eps");
 
-		comot.assignSupportingEps(model.serviceId(), model.instanceId(), eps.id, function(data) {
-
-			model.selectedEpsServices.push(eps);
-		});
+		if (model.serviceId() != "" && model.instanceId() != "") {
+			comot.assignSupportingEps(model.serviceId(), model.instanceId(), eps.id, function(data) {
+				model.selectedEpsServices.push(eps);
+			});
+		}
 	}
 
 	function removeEps(eps) {
-		console.log("eps");
 		var epsId = eps.id;
 
 		comot.removeSupportingEps(model.serviceId(), model.instanceId(), epsId, function(data) {
-
 			model.selectedEpsServices.remove(function(item) {
 				return item.id === epsId
 			});
 		});
 	}
 
+	function registerForEvents(path, events) {
+
+		if (!!window.EventSource) {
+			var source = new EventSource(path);
+
+			source.addEventListener('message', function(e) {
+				// console.log(e);
+				var message = JSON.parse(e.data);
+				var transitions = message.stateMessage.transitions.entry;
+				var event = message.stateMessage.event;
+				var service = event.service;
+
+				// events
+				showEvent(events, event);
+
+				if (typeof event.action !== 'undefined') {
+					populateGraphs(service, transitions);
+				}
+
+			}, false);
+
+			source.addEventListener('error', function(e) {
+				console.log(e);
+			}, false);
+
+		} else {
+			console.log("NO window.EventSource !!!")
+		}
+
+		return source;
+	}
+
+	function processTransitionsToMap(transitions) {
+
+		var tMap = [];
+		for (i = 0; i < transitions.length; i++) {
+			tMap[transitions[i].value.groupId] = transitions[i].value;
+		}
+		return tMap;
+	}
+
+	function populateGraphs(service, transitions) {
+
+		var tMap = processTransitionsToMap(transitions);
+
+		// store transitions
+		model.transitions.removeAll();
+		for (i = 0; i < transitions.length; i++) {
+			model.transitions.push(transitions[i]);
+		}
+
+		// tree
+		createTree(createElement(service, tMap), "#tree_div");
+		// lifecycle
+		populateLifecycle();
+		// human json
+		// $("#output").html(JsonHuman.format(transitions));
+	}
+
+	function populateLifecycle() {
+
+		var groupId = model.groupId();
+		var tMap = processTransitionsToMap(model.transitions());
+		var type = tMap[groupId].groupType;
+
+		if (type !== model.groupType()) {
+
+			comot.lifecycle(type, function(data) {
+				model.lifecycle(data);
+				model.groupType(type);
+
+				createLifecycle(model.lifecycle(), "#lifecycle_div", tMap[groupId].lastState,
+						tMap[groupId].currentState);
+			});
+
+		} else {
+			createLifecycle(model.lifecycle(), "#lifecycle_div", tMap[groupId].lastState, tMap[groupId].currentState);
+		}
+	}
+
 });
-
-function registerForEvents(path, lifecycle, events) {
-
-	if (!!window.EventSource) {
-		var source = new EventSource(path);
-
-		source.addEventListener('message', function(e) {
-			// console.log(e);
-			var message = JSON.parse(e.data);
-			var transitions = message.stateMessage.transitions.entry;
-			var event = message.stateMessage.event;
-			var service = event.service;
-
-			// events
-			showEvent(events, event);
-
-			if (typeof event.action !== 'undefined') {
-				populateGraphs(lifecycle, service, transitions);
-			}
-
-		}, false);
-
-		source.addEventListener('error', function(e) {
-			console.log(e);
-		}, false);
-
-	} else {
-		console.log("NO window.EventSource !!!")
-	}
-
-	return source;
-}
-
-function populateGraphs(lifecycle, service, transitions) {
-
-	var serviceId = service.id;
-	var tMap = [];
-	for (i = 0; i < transitions.length; i++) {
-		tMap[transitions[i].value.groupId] = transitions[i].value;
-	}
-	console.log("aaaaaaaaaa")
-	console.log(service)
-	console.log(tMap)
-
-	// lifecycle
-	createLifecycle(lifecycle, "#lifecycle_div", tMap[serviceId].lastState, tMap[serviceId].currentState);
-
-	console.log("bbbbbbbbbbb")
-	console.log(service)
-	console.log(tMap)
-
-	// tree
-	createTree(createElement(service, tMap), "#tree_div");
-
-	// human json
-	// $("#output").html(JsonHuman.format(transitions));
-}
 
 function showEvent(events, event) {
 
@@ -217,6 +241,9 @@ function showEvent(events, event) {
 
 function createElement(object, tMap) {
 
+	console.log("object");
+	console.log(object);
+	
 	var type = tMap[object.id].groupType;
 	var members;
 
@@ -388,6 +415,9 @@ function createTree(root, divId) {
 			function(d) {
 				return "translate(" + d.y + "," + d.x + ")";
 			});
+	// .attr("data-bind", function(d) {
+	// return "click: function() { $root.showThisGroup( '" + d.name + "') }";
+	// });
 
 	// set box
 	node.append("rect").attr("x", -(boxWidth / 2)).attr("y", -(boxHeight / 2)).attr("width", boxWidth).attr("height",
@@ -415,7 +445,7 @@ function createTree(root, divId) {
 		}
 	}).attr("dx", lineDX).attr("dy", firstLineDY + (lineSpaceDY * 2)).text(function(d) {
 		return d.state;
-	})
+	});
 
 	function transformElement(element) { // traverse all elements recursively
 

@@ -106,3 +106,4 @@
 2015-03-03 10:40:45.849+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
 2015-03-03 10:40:49.002+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
 2015-03-03 10:40:51.681+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-03-08 13:50:45.928+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]

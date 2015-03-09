@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot.m.cs;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.annotation.PreDestroy;
 import javax.xml.bind.JAXBException;
@@ -100,8 +101,28 @@ public class DeploymentClientSalsa implements DeploymentClient {
 		} catch (ClassNotFoundException | IOException e) {
 			throw new ComotException("Failed to deep-copy CloudService id=" + service.getId(), e);
 		}
+	
+		mapperDepl.enrichModel(copy, status);
+
+		return copy;
+	}
+
+	@Override
+	public CloudService refreshStatus(Map<String, String> map, CloudService service) throws CoreServiceException,
+			ComotException {
+
+		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService status = salsa.getStatus(service.getId());
+
+		CloudService copy;
+		try {
+			copy = (CloudService) Utils.deepCopy(service);
+		} catch (ClassNotFoundException | IOException e) {
+			throw new ComotException("Failed to deep-copy CloudService id=" + service.getId(), e);
+		}
 
 		mapperDepl.enrichModel(copy, status);
+
+		map.putAll(mapperDepl.extractStates(service.getId(), status));
 
 		return copy;
 	}

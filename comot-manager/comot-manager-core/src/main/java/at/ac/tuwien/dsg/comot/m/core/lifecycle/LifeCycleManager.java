@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.common.EventMessage;
 import at.ac.tuwien.dsg.comot.m.common.Transition;
+import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
@@ -62,17 +63,19 @@ public class LifeCycleManager {
 		log.info("EXECUTE ACTION: ( {})", event);
 
 		ManagerOfServiceInstance manager;
-		CloudService service = event.getService();
+		CloudService service;
 		String csInstanceId = event.getCsInstanceId();
 		String serviceId = event.getServiceId();
 
 		// clean service
-		if (service == null) {
+		if (event.getService() == null) {
 			service = infoService.getServiceInstance(serviceId, csInstanceId);
+		} else {
+			service = (CloudService) Utils.deepCopy(event.getService());
 		}
 		event.setService(UtilsLc.removeProviderInfo(service));
 
-		if (Action.INSTANCE_CREATED.equals(event.getAction())) {
+		if (Action.CREATED.equals(event.getAction())) {
 
 			if (managers.containsKey(csInstanceId)) {
 				return;
@@ -81,7 +84,7 @@ public class LifeCycleManager {
 			manager = context.getBean(ManagerOfServiceInstance.class);
 			managers.put(csInstanceId, manager);
 
-		} else if (Action.INSTANCE_REMOVED.equals(event.getAction())) {
+		} else if (Action.REMOVED.equals(event.getAction())) {
 
 			// TODO delete manager, remove exchanges
 

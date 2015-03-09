@@ -61,7 +61,7 @@ public class RevisionApi {
 		// log.info("tx name {}", TransactionSynchronizationManager.getCurrentTransactionName());
 
 		ManagedRegion region = context.getBean(ConverterToInternal.class).convertToGraph(obj);
-		log.info("region '{}'count nodes: {}, rels: {}", regionId, region.getNodes().size(), region.getRelationships()
+		log.debug("region '{}'count nodes: {}, rels: {}", regionId, region.getNodes().size(), region.getRelationships()
 				.size());
 
 		insertToDB(region, regionId, changeType, changeProperties);
@@ -148,7 +148,7 @@ public class RevisionApi {
 			if (currentState == null || update) {
 				modified = true;
 
-				log.info("node modified state: {}", node);
+				log.debug("node modified state: {}", node);
 
 				stateNode = neo.createNode(node.getProperties(), node.getLablesForStateNode());
 
@@ -171,7 +171,7 @@ public class RevisionApi {
 					rel.getType());
 			update = repo.needUpdateRelationship(oldRel, rel);
 
-			log.info("relationship old: {}, update: {} - {}", oldRel, update, rel);
+			log.debug("relationship old: {}, update: {} - {}", oldRel, update, rel);
 
 			if (oldRel == null || update) {
 				modified = true;
@@ -215,7 +215,7 @@ public class RevisionApi {
 		ConverterFromInternal converter = context.getBean(ConverterFromInternal.class);
 
 		Object obj = converter.convertToObject(region);
-		log.info("getRevision(regionId={}, businessId={}, timestamp={}): {}", regionId, id, timestamp, obj);
+		log.debug("getRevision(regionId={}, businessId={}, timestamp={}): {}", regionId, id, timestamp, obj);
 
 		return obj;
 	}
@@ -237,8 +237,6 @@ public class RevisionApi {
 
 		String startBusinessId = identityNode.getProperty(InternalNode.ID).toString();
 
-		log.info("startBusinessId {}", startBusinessId);
-
 		// create nodes
 		for (Node connectedNode : repo.getAllConnectedIdentityNodes(id, timestamp)) {
 
@@ -256,7 +254,7 @@ public class RevisionApi {
 				internalNode.setLabel(label.name());
 			}
 
-			log.info("node from DB: {}", internalNode);
+			log.debug("node from DB: {}", internalNode);
 			nodes.put(connectedNode.getId(), internalNode);
 
 			// set start node of region
@@ -278,7 +276,7 @@ public class RevisionApi {
 				startNode.addRelationship(internalRel);
 				region.addRelationship(internalRel);
 
-				log.info("outgoing rel from DB: {} ", internalRel);
+				log.debug("outgoing rel from DB: {} ", internalRel);
 			}
 		}
 

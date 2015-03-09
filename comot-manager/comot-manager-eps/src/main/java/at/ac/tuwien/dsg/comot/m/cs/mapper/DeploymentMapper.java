@@ -35,6 +35,24 @@ public class DeploymentMapper {
 		return descr;
 	}
 
+	public Map<String, String> extractStates(String csInstanceId,
+			at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService serviceState) {
+
+		Map<String, String> map = new HashMap<>();
+
+		for (at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceTopology topology : serviceState
+				.getComponentTopologyList()) {
+			for (at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceUnit unit : topology.getComponents()) {
+				for (ServiceInstance instance : unit.getInstancesList()) {
+					map.put(
+							IdResolver.uniqueInstance(csInstanceId, unit.getId(), instance.getInstanceId()),
+							instance.getState().toString());
+				}
+			}
+		}
+		return map;
+	}
+
 	public void enrichModel(CloudService cloudService,
 			at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService serviceState) {
 
@@ -95,45 +113,29 @@ public class DeploymentMapper {
 
 	public static State convert(SalsaEntityState state) {
 		switch (state) {
-		case ALLOCATING:
-			return State.DEPLOYMENT_ALLOCATING;
-		case CONFIGURING:
-			return State.DEPLOYMENT_CONFIGURING;
-		case DEPLOYED:
-			return State.OPERATION_RUNNING;
-		case ERROR:
-			return State.ERROR;
-		case INSTALLING:
-			return State.DEPLOYMENT_INSTALLING;
-		case STAGING:
-			return State.DEPLOYMENT_STAGING;
-		case STAGING_ACTION:
-			return State.STAGING_ACTION;
 		case UNDEPLOYED:
 			return State.STARTING;
+		case ALLOCATING:
+			return State.DEPLOYING;
+		case STAGING:
+			return State.DEPLOYING;
+		case CONFIGURING:
+			return State.DEPLOYING;
+		case INSTALLING:
+			return State.DEPLOYING;
+		case DEPLOYED:
+			return State.RUNNING;
+		case ERROR:
+			return State.ERROR;
+		case STAGING_ACTION:
+			return State.STAGING_ACTION;
 		default:
 			return null;
 		}
 	}
 
-	public static SalsaEntityState convert(State state) {
-		switch (state) {
-		case STARTING:
-			return SalsaEntityState.UNDEPLOYED;
-		case DEPLOYMENT_ALLOCATING:
-			return SalsaEntityState.ALLOCATING;
-		case DEPLOYMENT_CONFIGURING:
-			return SalsaEntityState.CONFIGURING;
-		case DEPLOYMENT_INSTALLING:
-			return SalsaEntityState.INSTALLING;
-		case DEPLOYMENT_STAGING:
-			return SalsaEntityState.STAGING;
-		case OPERATION_RUNNING:
-			return SalsaEntityState.DEPLOYED;
-		case ERROR:
-			return SalsaEntityState.ERROR;
-		default:
-			return null;
-		}
+	public static State convert(String state) {
+		return convert(SalsaEntityState.valueOf(state));
 	}
+
 }
