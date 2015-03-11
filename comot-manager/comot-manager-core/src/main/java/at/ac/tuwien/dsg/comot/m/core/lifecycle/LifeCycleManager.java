@@ -19,6 +19,7 @@ import at.ac.tuwien.dsg.comot.m.common.EventMessage;
 import at.ac.tuwien.dsg.comot.m.common.Transition;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.RecordingAdapter;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.type.Action;
@@ -46,6 +47,10 @@ public class LifeCycleManager {
 
 		admin.declareExchange(new TopicExchange(AppContextCore.EXCHANGE_LIFE_CYCLE, false, false));
 		admin.declareExchange(new TopicExchange(AppContextCore.EXCHANGE_CUSTOM_EVENT, false, false));
+
+		RecordingAdapter recording = context.getBean(RecordingAdapter.class);
+		recording.startAdapter(InformationServiceMock.RECORDER);
+
 	}
 
 	public State getCurrentState(String instanceId, String groupId) {

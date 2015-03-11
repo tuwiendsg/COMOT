@@ -53,11 +53,13 @@ public abstract class AdapterListener implements MessageListener {
 			} else {
 
 				String event = msg.getCustomEvent();
+				String epsId = msg.getEvent().getEpsId();
 
-				log.info(logId() + "onCustomEvent: service={}, instance={}, group={}, event={}", serviceId, instanceId,
-						groupId, event);
+				log.info(logId() + "onCustomEvent: service={}, instance={}, group={}, epsId={}, event={}", serviceId,
+						instanceId,
+						groupId, epsId, event);
 
-				onCustomEvent(msg, serviceId, instanceId, groupId, event, optionalMessage);
+				onCustomEvent(msg, serviceId, instanceId, groupId, event, epsId, optionalMessage);
 			}
 
 		} catch (Exception e) {
@@ -86,6 +88,7 @@ public abstract class AdapterListener implements MessageListener {
 			String instanceId,
 			String groupId,
 			String event,
+			String epsId,
 			String optionalMessage) throws Exception;
 
 }

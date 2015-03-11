@@ -35,7 +35,7 @@ public class MonitoringClientMela implements MonitoringClient {
 	protected MelaOutputMapper mapperMelaOutput;
 
 	@Override
-	public void startMonitoring(CloudService service, CompositionRulesConfiguration mcr) throws CoreServiceException,
+	public void startMonitoring(CloudService service) throws CoreServiceException,
 			ComotException {
 
 		if (service == null) {
@@ -52,10 +52,6 @@ public class MonitoringClientMela implements MonitoringClient {
 
 			if (requirements != null && !requirements.getRequirements().isEmpty()) {
 				mela.sendRequirements(service.getId(), requirements);
-			}
-
-			if (mcr != null) {
-				mela.sendMetricsCompositionRules(service.getId(), mcr);
 			}
 
 		} catch (ClassNotFoundException | IOException e) {

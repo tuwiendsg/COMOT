@@ -40,11 +40,11 @@ define(function(require) {
 		attached : function() {
 			console.log(model.serviceId());
 			console.log(model.instanceId());
-			
+
 			if (model.serviceId() != "" && model.instanceId() != "") {
 				showThisInstance(model.serviceId(), model.instanceId());
 			}
-			
+
 			$(document).ready(
 					function() {
 
@@ -75,7 +75,7 @@ define(function(require) {
 	return model;
 
 	function showThisInstance(serviceId, instanceId) {
-				
+
 		repeater.runWith(instanceId, function() {
 
 			if (model.selectedObjectId() == "" || model.instanceId() != instanceId) {
@@ -85,7 +85,7 @@ define(function(require) {
 
 			model.serviceId(serviceId);
 			model.instanceId(instanceId);
-			
+
 			// refresh objects
 			comot.getObjects(instanceId, function(data) {
 				model.serviceObj.removeAll();
@@ -150,10 +150,19 @@ define(function(require) {
 		var objectId = model.selectedObjectId();
 
 		// refresh changes
-		comot.getEvents(instanceId, objectId, function(data) {
+		comot.getAllEvents(instanceId, function(data) {
 			model.changes.removeAll();
 			for (var i = 0; i < data.length; i++) {
+
+				var propsArr = data[i].propertiesMap.entry;
+				var props = {};
+				for (var j = 0; j < propsArr.length; j++) {
+					props[propsArr[j].key] = propsArr[j].value;
+				}
+
+				data[i].props = props;
 				data[i].time = toDateString(data[i].timestamp);
+
 				model.changes.push(data[i]);
 			}
 		}, function(error) {
@@ -164,7 +173,7 @@ define(function(require) {
 
 	function toDateString(long) {
 		var date = new Date(long);
-		var string = "" + date.getDate() + "." + date.getMonth() + 1 + "." + date.getFullYear() + " "
+		var string = "" + date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear() + " "
 				+ (date.getHours() + 1) + ":" + date.getMinutes() + ":" + date.getSeconds();
 		return string;
 	}

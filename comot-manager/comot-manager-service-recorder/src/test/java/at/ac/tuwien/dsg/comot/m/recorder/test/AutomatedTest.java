@@ -4,7 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.xml.bind.JAXBException;
 
 import org.junit.Test;
 import org.unitils.reflectionassert.ReflectionComparatorMode;
@@ -142,6 +146,7 @@ public class AutomatedTest extends AbstractTest {
 
 		Long change1Time;
 		Long change3Time;
+		Change change;
 
 		// VERSION 1
 		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, "init", null);
@@ -157,32 +162,41 @@ public class AutomatedTest extends AbstractTest {
 		// UtilsTest.sleepInfinit();
 
 		// READ CHANGES - WHOLE TIME
-		Change change = revisionApi.getAllChanges(STemplates.serviceId, STemplates.serviceId, 0L, Long.MAX_VALUE);
+		change = revisionApi.getAllChangesThatModifiedThisObject(STemplates.serviceId, STemplates.serviceId, 0L,
+				Long.MAX_VALUE);
 		assertEquals(3, countChanges(change));
 
 		change1Time = change.getTimestamp();
 		change3Time = change.getTo().getEnd().getTo().getEnd().getTimestamp();
 
-		change = revisionApi.getAllChanges(STemplates.serviceId, STemplates.swNodeId, 0L, Long.MAX_VALUE);
+		change = revisionApi.getAllChangesThatModifiedThisObject(STemplates.serviceId, STemplates.swNodeId, 0L,
+				Long.MAX_VALUE);
 		assertEquals(2, countChanges(change));
-		change = revisionApi.getAllChanges(STemplates.serviceId, STemplates.swNodeId2, 0L, Long.MAX_VALUE);
+		change = revisionApi.getAllChangesThatModifiedThisObject(STemplates.serviceId, STemplates.swNodeId2, 0L,
+				Long.MAX_VALUE);
 		assertEquals(3, countChanges(change));// because of connect to relationship
 
 		// READ CHANGES - SELECTED PERIOD
 
-		change = revisionApi.getAllChanges(STemplates.serviceId, STemplates.serviceId, change1Time, Long.MAX_VALUE);
+		change = revisionApi.getAllChangesThatModifiedThisObject(STemplates.serviceId, STemplates.serviceId,
+				change1Time, Long.MAX_VALUE);
 		assertEquals(3, countChanges(change));
-		change = revisionApi.getAllChanges(STemplates.serviceId, STemplates.serviceId, change1Time + 1, Long.MAX_VALUE);
+		change = revisionApi.getAllChangesThatModifiedThisObject(STemplates.serviceId, STemplates.serviceId,
+				change1Time + 1, Long.MAX_VALUE);
 		assertEquals(2, countChanges(change));
-		change = revisionApi.getAllChanges(STemplates.serviceId, STemplates.serviceId, 0L, change3Time);
+		change = revisionApi.getAllChangesThatModifiedThisObject(STemplates.serviceId, STemplates.serviceId, 0L,
+				change3Time);
 		assertEquals(3, countChanges(change));
-		change = revisionApi.getAllChanges(STemplates.serviceId, STemplates.serviceId, 0L, change3Time - 1);
+		change = revisionApi.getAllChangesThatModifiedThisObject(STemplates.serviceId, STemplates.serviceId, 0L,
+				change3Time - 1);
 		assertEquals(2, countChanges(change));
 		change = revisionApi
-				.getAllChanges(STemplates.serviceId, STemplates.serviceId, change1Time + 1, change3Time - 1);
+				.getAllChangesThatModifiedThisObject(STemplates.serviceId, STemplates.serviceId, change1Time + 1,
+						change3Time - 1);
 		assertEquals(1, countChanges(change));
 
-		change = revisionApi.getAllChanges(STemplates.serviceId, STemplates.serviceId, 0L, change1Time - 1);
+		change = revisionApi.getAllChangesThatModifiedThisObject(STemplates.serviceId, STemplates.serviceId, 0L,
+				change1Time - 1);
 		assertEquals(0, countChanges(change));
 
 		// READ REVISION AT SPECIFIC TIME
@@ -197,6 +211,43 @@ public class AutomatedTest extends AbstractTest {
 		assertEquals(6, list.size());
 		log.info("{}", list);
 
+	}
+
+	@Test
+	public void testRevisionsAndEventsAll() throws IllegalArgumentException, IllegalAccessException,
+			ClassNotFoundException, IOException, InstantiationException, RecorderException, JAXBException {
+
+		service = STemplates.simplifiedService();
+		cutOsus(service);
+
+		Change change = null;
+
+		// VERSION 1
+		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, "init", null);
+
+		// EVENT
+		Map<String, String> changeProperties = new HashMap<>();
+		changeProperties.put("PROP_ORIGIN", "SALSA");
+		changeProperties.put("PROP_TARGET", "tomcat");
+		revisionApi.storeEvent(STemplates.serviceId, "event", changeProperties);
+
+		// VERSION 2
+		CloudService updatedService = update1(service);
+		revisionApi.createOrUpdateRegion(updatedService, STemplates.serviceId, "config_change", null);
+
+		// VERSION 3
+		CloudService finalService = update2(updatedService);
+		revisionApi.createOrUpdateRegion(finalService, STemplates.serviceId, "config_change", null);
+
+		change = revisionApi.getAllChangesThatModifiedThisObject(STemplates.serviceId, STemplates.serviceId,
+				0L, Long.MAX_VALUE);
+		assertEquals(3, countChanges(change));
+
+		change = revisionApi.getAllChanges(STemplates.serviceId, 0L, Long.MAX_VALUE);
+		assertEquals(4, countChanges(change));
+
+		// log.info(Utils.asJsonString(change));
+		// UtilsTest.sleepInfinit();
 	}
 
 }

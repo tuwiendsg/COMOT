@@ -1,5 +1,6 @@
 package at.ac.tuwien.dsg.comot.m.ui.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -20,11 +21,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
+import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.RecordingAdapter;
 import at.ac.tuwien.dsg.comot.m.recorder.RecorderException;
 import at.ac.tuwien.dsg.comot.m.recorder.model.Change;
 import at.ac.tuwien.dsg.comot.m.recorder.out.ManagedObject;
+import at.ac.tuwien.dsg.comot.m.recorder.revisions.RevisionApi;
 
 // WADL http://localhost:8380/comot/rest/application.wadl
 @Service
@@ -36,19 +38,7 @@ public class RevisionResource {
 	private static final Logger log = LoggerFactory.getLogger(RevisionResource.class);
 
 	@Autowired
-	protected RecordingAdapter recorder;
-
-	// @GET
-	// @Path("/last")
-	// @Consumes(MediaType.WILDCARD)
-	// public Response getLastRevision(@PathParam("instanceId") String instanceId) throws CoreServiceException,
-	// ComotException, InstantiationException, IllegalAccessException, IllegalArgumentException,
-	// ClassNotFoundException, RecorderException {
-	// // TODO wrong !! object id shoud be stringId
-	// CloudService service = (CloudService) recorder.getRevision(instanceId, instanceId, Long.MAX_VALUE);
-	//
-	// return Response.ok(service).build();
-	// }
+	protected RevisionApi revisionApi;
 
 	@GET
 	@Path("/objects")
@@ -59,7 +49,7 @@ public class RevisionResource {
 					ComotException, InstantiationException, IllegalAccessException, IllegalArgumentException,
 					ClassNotFoundException, RecorderException {
 
-		List<ManagedObject> objects = recorder.getManagedObjects(instanceId);
+		List<ManagedObject> objects = revisionApi.getManagedObjects(instanceId);
 		final GenericEntity<List<ManagedObject>> list = new GenericEntity<List<ManagedObject>>(objects) {
 		};
 		// JaxbList<String> entity = new JaxbList<String>(ids);
@@ -78,9 +68,42 @@ public class RevisionResource {
 
 		log.info("getRevision(serviceId={}, objectId={}, timestamp={})", instanceId, objectId, timestamp);
 
-		Object obj = recorder.getRevision(instanceId, objectId, timestamp);
+		if (!revisionApi.verifyObject(instanceId, objectId)) {
+			throw new ComotIllegalArgumentException("For service " + instanceId + " there is no managed object "
+					+ objectId);
+		}
+
+		Object obj = revisionApi.getRevision(instanceId, objectId, timestamp);
+
+		if (obj == null) {
+			throw new ComotIllegalArgumentException("There is no revision of service" + instanceId + ", object="
+					+ objectId + " at time=" + timestamp + " ");
+		}
 
 		return Response.ok(obj).build();
+	}
+
+	@GET
+	@Path("/events")
+	@Consumes(MediaType.WILDCARD)
+	public Response getAllEventsInRange(
+			@PathParam("instanceId") String instanceId,
+			@DefaultValue("0") @QueryParam("from") Long from,
+			@DefaultValue("9223372036854775807") @QueryParam("to") Long to) // def Long.MAX_VALUE
+			throws CoreServiceException, ComotException, InstantiationException, IllegalAccessException,
+			IllegalArgumentException, ClassNotFoundException, RecorderException, JAXBException {
+
+		Change change = revisionApi.getAllChanges(instanceId, from, to);
+
+		List<Change> list = new ArrayList<>();
+		while (change != null) {
+			list.add(change);
+			change = change.getTo().getEnd();
+		}
+
+		final GenericEntity<List<Change>> entity = new GenericEntity<List<Change>>(list) {
+		};
+		return Response.ok(entity).build();
 	}
 
 	@GET
@@ -94,13 +117,20 @@ public class RevisionResource {
 			throws CoreServiceException, ComotException, InstantiationException, IllegalAccessException,
 			IllegalArgumentException, ClassNotFoundException, RecorderException, JAXBException {
 
-		log.info("getChanges(serviceId={}, objectId={}, from={}, to={})", instanceId, objectId, from, to);
+		if (!revisionApi.verifyObject(instanceId, objectId)) {
+			throw new ComotIllegalArgumentException("For service " + instanceId + " there is no managed object "
+					+ objectId);
+		}
 
-		List<Change> change = recorder.getAllChanges(instanceId, objectId, from, to);
+		Change change = revisionApi.getAllChangesThatModifiedThisObject(instanceId, objectId, from, to);
 
-		// log.info("{}", Utils.asXmlString(change));
+		List<Change> list = new ArrayList<>();
+		while (change != null) {
+			list.add(change);
+			change = change.getTo().getEnd();
+		}
 
-		final GenericEntity<List<Change>> entity = new GenericEntity<List<Change>>(change) {
+		final GenericEntity<List<Change>> entity = new GenericEntity<List<Change>>(list) {
 		};
 		return Response.ok(entity).build();
 	}

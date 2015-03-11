@@ -29,9 +29,7 @@ public class ControlClientRsybl implements ControlClient {
 
 	@Override
 	public void sendInitialConfig(
-			CloudService service,
-			CompositionRulesConfiguration compositionRulesConfiguration,
-			String effectsJSON) throws CoreServiceException {
+			CloudService service) throws CoreServiceException {
 
 		if (service == null) {
 			log.warn("sendInitialConfig(service=null )");
@@ -47,14 +45,6 @@ public class ControlClientRsybl implements ControlClient {
 		rsybl.serviceDescription(serviceId, cloudServiceXML);
 
 		rsybl.serviceDeployment(serviceId, deploymentDescription);
-
-		if (compositionRulesConfiguration != null) {// optional
-			rsybl.sendMetricsCompositionRules(serviceId, compositionRulesConfiguration);
-		}
-
-		if (effectsJSON != null) {// optional
-			rsybl.sendElasticityCapabilitiesEffects(serviceId, effectsJSON);
-		}
 
 	}
 

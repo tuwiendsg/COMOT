@@ -190,7 +190,7 @@
 		return $.ajax(request);
 	}
 
-	// //////////////////////////////// REVISIONS
+	// //////////////////////////////// RECORDER
 
 	exports.getRecording = function(csInstanceId, objectId, timestamp, onSuccess, onError) {
 
@@ -201,12 +201,21 @@
 		return $.ajax(request);
 	}
 
-	exports.getEvents = function(csInstanceId, objectId, onSuccess, onError) {
+	exports.getEventsThanModifiedObject = function(csInstanceId, objectId, onSuccess, onError) {
 
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "GET";
 		request.dataType = "json"
 		request.url = recordings + csInstanceId + "/objects/" + objectId + "/events";
+		return $.ajax(request);
+	}
+	
+	exports.getAllEvents = function(csInstanceId, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "GET";
+		request.dataType = "json"
+		request.url = recordings + csInstanceId + "/events";
 		return $.ajax(request);
 	}
 

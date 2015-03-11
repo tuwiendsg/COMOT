@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,10 +71,10 @@ public class Coordinator {
 	public void assignSupportingOsu(String serviceId, String instanceId, String osuInstanceId)
 			throws ClassNotFoundException, IOException, JAXBException {
 
-		infoService.assignSupportingService(serviceId, instanceId, osuInstanceId);
+		// infoService.assignSupportingService(serviceId, instanceId, osuInstanceId);
 
 		EventMessage event = new EventMessage(serviceId, instanceId, serviceId, EpsAction.EPS_ASSIGNED.toString(),
-				USER_ID, osuInstanceId);
+				USER_ID, osuInstanceId, osuInstanceId); // TODu remove osuInstanceId from the optional msg
 		lcManager.executeAction(event);
 
 	}
@@ -81,10 +82,10 @@ public class Coordinator {
 	public void removeAssignmentOfSupportingOsu(String serviceId, String instanceId, String osuInstanceId)
 			throws ClassNotFoundException, IOException, JAXBException {
 
-		infoService.removeAssignmentOfSupportingOsu(serviceId, instanceId, osuInstanceId);
+		// infoService.removeAssignmentOfSupportingOsu(serviceId, instanceId, osuInstanceId);
 
 		EventMessage event = new EventMessage(serviceId, instanceId, serviceId,
-				EpsAction.EPS_ASSIGNMENT_REMOVED.toString(), USER_ID, osuInstanceId);
+				EpsAction.EPS_ASSIGNMENT_REMOVED.toString(), USER_ID, osuInstanceId, osuInstanceId);
 		lcManager.executeAction(event);
 
 	}
@@ -92,14 +93,16 @@ public class Coordinator {
 	public void triggerCustomEvent(
 			String serviceId,
 			String csInstanceId,
-			String osuInstanceId,
+			String epsId,
 			String eventId,
 			String optionalInput)
 			throws ClassNotFoundException, IOException, JAXBException {
 
-		// TODO check that the eps is assigned and the event exist
+		if (StringUtils.isBlank(eventId)) {
+			return;
+		}
 
-		EventMessage event = new EventMessage(serviceId, csInstanceId, serviceId, eventId, USER_ID,
+		EventMessage event = new EventMessage(serviceId, csInstanceId, serviceId, eventId, USER_ID, epsId,
 				optionalInput);
 		lcManager.executeAction(event);
 	}

@@ -110,7 +110,7 @@ public class EpsCoordinatorAdapter extends Adapter {
 
 		@Override
 		protected void onCustomEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
-				String event, String optionalMessage) {
+				String event, String epsId, String optionalMessage) {
 
 			EpsAction action = EpsAction.valueOf(event);
 			String osuId = optionalMessage;
@@ -118,13 +118,17 @@ public class EpsCoordinatorAdapter extends Adapter {
 
 			if (action == EpsAction.EPS_ASSIGNED) {
 
+				infoService.assignSupportingService(serviceId, instanceId, osuId);
+
 				if (!createdOsus.contains(osuId) && !serviceState.equals(State.PASSIVE)) {
 					createOsu(osuId);
 				}
 
 			} else if (action == EpsAction.EPS_REMOVAL_REQUESTED) {
 
-				if (!createdOsus.contains(osuId)) {
+				infoService.removeAssignmentOfSupportingOsu(serviceId, instanceId, osuId);
+
+				if (createdOsus.contains(osuId)) {
 					removeOsu(osuId);
 				}
 

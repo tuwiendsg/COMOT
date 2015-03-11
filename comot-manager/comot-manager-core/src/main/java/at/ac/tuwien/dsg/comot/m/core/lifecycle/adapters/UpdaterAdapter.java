@@ -53,7 +53,7 @@ public class UpdaterAdapter extends Adapter {
 
 		@Override
 		protected void onCustomEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
-				String event, String optionalMessage) {
+				String event, String epsId, String optionalMessage) {
 			// TODO Auto-generated method stub
 
 		}

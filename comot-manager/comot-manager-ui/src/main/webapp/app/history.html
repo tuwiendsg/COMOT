@@ -1,25 +1,31 @@
 <div class="container">
 
-	<div class="col-md-3">
+	<div class="col-md-6">
 
-		<h4>Changes</h4>
+		<h4>Events</h4>
 
 		<table class="table table-hover table-condensed">
 			<thead>
 				<tr>
 					<th>Time</th>
 					<th>Type</th>
+					<th>Origin</th>
+					<th>Target</th>
 				</tr>
 			</thead>
 			<tbody data-bind="foreach: changes">
-				<tr data-bind="css: {active : $parent.selectedTime() == timestamp}">
-					<td data-bind="text: time, click: function() { $parent.revisionsForChange(timestamp) }"></td>
-					<td data-bind="text: type, click: function() { $parent.revisionsForChange(timestamp) }"></td>
+				<tr
+					data-bind="css: {active : $parent.selectedTime() == timestamp}, click: function() { $parent.revisionsForChange(timestamp)}">
+					<td data-bind="text: time"></td>
+					<td
+						data-bind="text: props.eventName, style: { fontWeight: (type == 'CHANGE_TYPE_LIFECYCLE') ? 'bold' : '' }, click: function() { $parent.revisionsForChange(timestamp)} "></td>
+					<td data-bind="text: props.origin"></td>
+					<td data-bind="text: props.target"></td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
-	<div class="col-md-9">
+	<div class="col-md-6">
 		<h4>Cloud service components</h4>
 
 		<h5>Service</h5>

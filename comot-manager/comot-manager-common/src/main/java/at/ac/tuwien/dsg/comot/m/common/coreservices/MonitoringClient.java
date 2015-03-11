@@ -12,8 +12,7 @@ public interface MonitoringClient extends CoreServiceClient {
 
 	// start
 	public void startMonitoring(
-			CloudService sevice,
-			CompositionRulesConfiguration mcr) throws CoreServiceException, ComotException;
+			CloudService sevice) throws CoreServiceException, ComotException;
 
 	// stop
 	public void stopMonitoring(

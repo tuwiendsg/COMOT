@@ -22,7 +22,7 @@ import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.DeploymentAdapter;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.RecordingAdapter;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.MonitoringAdapter;
 import at.ac.tuwien.dsg.comot.m.cs.AppContextEps;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
@@ -48,7 +48,7 @@ public class InformationServiceMock {
 	public static final String SALSA_SERVICE_PUBLIC_ID = "SALSA_SERVICE";
 	public static final String MELA_SERVICE_PUBLIC_ID = "MELA_SERVICE";
 	public static final String RSYBL_SERVICE_PUBLIC_ID = "RSYBL_SERVICE";
-	public static final String RECORDER_SERVICE = "RECORDER_SERVICE";
+	public static final String RECORDER = "RECORDER";
 
 	public static final String PUBLIC_INSTANCE = "PUBLIC_INSTANCE";
 	public static final String TYPE_STATIC_SERVICE = "TYPE_STATIC_SERVICE";
@@ -86,7 +86,8 @@ public class InformationServiceMock {
 
 		Resource resource2 = new Resource(InformationServiceMock.PUBLIC_INSTANCE, new ResourceOrQualityType(
 				InformationServiceMock.TYPE_STATIC_SERVICE));
-		resource2.hasResource(new Resource("TODO", new ResourceOrQualityType(InformationServiceMock.ADAPTER_CLASS)));
+		resource2.hasResource(new Resource(MonitoringAdapter.class.getCanonicalName(), new ResourceOrQualityType(
+				InformationServiceMock.ADAPTER_CLASS)));
 		resource2.hasResource(new Resource("128.130.172.215", new ResourceOrQualityType(InformationServiceMock.IP)));
 		resource2.hasResource(new Resource("8180", new ResourceOrQualityType(InformationServiceMock.PORT)));
 
@@ -113,18 +114,18 @@ public class InformationServiceMock {
 
 		// RECORDER
 
-		Resource resource4 = new Resource(InformationServiceMock.PUBLIC_INSTANCE, new ResourceOrQualityType(
-				InformationServiceMock.TYPE_STATIC_SERVICE));
-		resource4.hasResource(new Resource(RecordingAdapter.class.getCanonicalName(), new ResourceOrQualityType(
-				InformationServiceMock.ADAPTER_CLASS)));
-
-		OfferedServiceUnit recorder = new OfferedServiceUnit();
-		recorder.setId(InformationServiceMock.RECORDER_SERVICE);
-		recorder.hasResource(resource4);
+		// Resource resource4 = new Resource(InformationServiceMock.PUBLIC_INSTANCE, new ResourceOrQualityType(
+		// InformationServiceMock.TYPE_STATIC_SERVICE));
+		// resource4.hasResource(new Resource(RecordingAdapter.class.getCanonicalName(), new ResourceOrQualityType(
+		// InformationServiceMock.ADAPTER_CLASS)));
+		//
+		// OfferedServiceUnit recorder = new OfferedServiceUnit();
+		// recorder.setId(InformationServiceMock.RECORDER_SERVICE);
+		// recorder.hasResource(resource4);
 
 		this.addOsu(deployment);
-		this.addOsu(recorder);
-		// this.addOsu(monitoring);
+		// this.addOsu(recorder);
+		this.addOsu(monitoring);
 		// this.addOsu(control);
 
 		try {
@@ -146,6 +147,16 @@ public class InformationServiceMock {
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
+		
+
+		try {
+			this.createService(
+					mapperTosca.createModel(
+							UtilsCs.loadTosca("./../resources/test/xml/ExampleExecutableOnVM.xml")));
+		} catch (JAXBException | IOException e) {
+			e.printStackTrace();
+		}
+
 
 	}
 
@@ -275,6 +286,20 @@ public class InformationServiceMock {
 				return instance;
 			}
 		}
+		return null;
+	}
+
+	public CloudService getServiceInstance(String instanceId) throws ClassNotFoundException,
+			IOException {
+
+		for (CloudService service : services.values()) {
+			for (ServiceInstance servInst : service.getInstances()) {
+				if (servInst.getId().equals(instanceId)) {
+					return getServiceInstance(service.getId(), instanceId);
+				}
+			}
+		}
+
 		return null;
 	}
 

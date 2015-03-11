@@ -20,7 +20,7 @@ public class LcState {
 	public LcState(State name) {
 		super();
 		this.name = name;
-		if (name.equals(State.PASSIVE)) {
+		if (name == State.INIT || name == State.FINAL) {
 			initFinal = true;
 		}
 	}

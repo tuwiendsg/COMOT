@@ -18,9 +18,12 @@ import at.ac.tuwien.dsg.comot.m.common.coreservices.ControlClient;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.MonitoringClient;
 import at.ac.tuwien.dsg.comot.m.core.Coordinator;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.m.recorder.AppContextServrec;
+import at.ac.tuwien.dsg.comot.m.recorder.revisions.RevisionApi;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { AppContextCore.class })
@@ -32,9 +35,19 @@ public abstract class AbstractTest {
 
 	@Resource
 	protected Environment env;
+	@Autowired
+	protected GraphDatabaseService db;
+	@Autowired
+	protected ToscaMapper mapperTosca;
 
 	@Autowired
-	protected Coordinator orchestrator;
+	protected LifeCycleManager lcManager;
+	@Autowired
+	protected Coordinator coordinator;
+	@Autowired
+	protected InformationServiceMock infoService;
+	@Autowired
+	protected RevisionApi revisionApi;
 
 	@Autowired
 	protected DeploymentClient deployment;
@@ -42,9 +55,5 @@ public abstract class AbstractTest {
 	protected ControlClient control;
 	@Autowired
 	protected MonitoringClient monitoring;
-	@Autowired
-	protected GraphDatabaseService db;
 
-	@Autowired
-	protected ToscaMapper mapperTosca;
 }

@@ -7,9 +7,7 @@ import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionR
 public interface ControlClient extends CoreServiceClient {
 
 	public void sendInitialConfig(
-			CloudService service,
-			CompositionRulesConfiguration compositionRulesConfiguration,
-			String effectsJSON) throws CoreServiceException;
+			CloudService service) throws CoreServiceException;
 
 	public void createMcr(String serviceId, CompositionRulesConfiguration compositionRulesConfiguration)
 			throws CoreServiceException;

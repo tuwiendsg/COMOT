@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -34,7 +35,7 @@ public class Change implements Serializable {
 	protected Long timestamp;
 	@XmlAttribute
 	protected String type;
-	// @XmlJavaTypeAdapter(ComotDynamicPropertiesContainer.Adapter.class)
+	@XmlTransient
 	protected DynamicProperties properties; // instead of Map<String, String>
 
 	@XmlIDREF
@@ -90,10 +91,12 @@ public class Change implements Serializable {
 		return properties;
 	}
 
+	@XmlElement
 	public Map<String, String> getPropertiesMap() {
 		return convert(properties);
 	}
 
+	@XmlElement
 	public void setPropertiesMap(Map<String, String> properties) {
 		this.properties = convert(properties);
 	}

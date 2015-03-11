@@ -101,7 +101,7 @@ public class DeploymentClientSalsa implements DeploymentClient {
 		} catch (ClassNotFoundException | IOException e) {
 			throw new ComotException("Failed to deep-copy CloudService id=" + service.getId(), e);
 		}
-	
+
 		mapperDepl.enrichModel(copy, status);
 
 		return copy;

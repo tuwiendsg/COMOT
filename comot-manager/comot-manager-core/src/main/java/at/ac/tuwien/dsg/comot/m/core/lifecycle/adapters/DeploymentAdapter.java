@@ -116,7 +116,8 @@ public class DeploymentAdapter extends Adapter {
 
 		@Override
 		protected void onCustomEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
-				String event, String optionalMessage) throws ClassNotFoundException, IOException, JAXBException,
+				String event, String epsId, String optionalMessage) throws ClassNotFoundException, IOException,
+				JAXBException,
 				CoreServiceException, ComotException, InterruptedException {
 
 			if (adapterId.equals(optionalMessage)) {
@@ -148,7 +149,8 @@ public class DeploymentAdapter extends Adapter {
 
 		for (String instanceId : instances.keySet()) {
 
-			State state = lcManager.getCurrentState(instanceId, instances.get(instanceId));
+			String serviceId = instances.get(instanceId);
+			State state = lcManager.getCurrentState(instanceId, serviceId);
 
 			if (state == State.STARTING) {
 				try {
@@ -251,7 +253,7 @@ public class DeploymentAdapter extends Adapter {
 					if (lcStateNew == lcStateOld) {
 
 						lcManager.executeAction(new EventMessage(serviceId, service.getId(), uInstId, stateNew,
-								adapterId, null));
+								adapterId, null, null));
 
 					} else {
 

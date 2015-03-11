@@ -27,6 +27,7 @@ define(function(require) {
 			})
 		},
 		attached : function() {
+			
 
 		}
 	}

@@ -25,6 +25,8 @@ public class EventMessage {
 	protected Action action; // not in custom
 	@XmlAttribute
 	protected String customEvent; // not in lifecycle
+	@XmlAttribute
+	protected String epsId; // not in lifecycle
 	protected CloudService service; // not in custom
 
 	public EventMessage() {
@@ -32,7 +34,7 @@ public class EventMessage {
 	}
 
 	public EventMessage(String serviceId, String csInstanceId, String groupId, String customEvent, String origin,
-			String message) {
+			String epsId, String message) {
 		super();
 		this.serviceId = serviceId;
 		this.csInstanceId = csInstanceId;
@@ -40,6 +42,7 @@ public class EventMessage {
 		this.customEvent = customEvent;
 		this.message = message;
 		this.origin = origin;
+		this.epsId = epsId;
 	}
 
 	public EventMessage(String serviceId, String csInstanceId, String groupId, Action action, String origin,
@@ -130,6 +133,14 @@ public class EventMessage {
 
 	public void setOrigin(String origin) {
 		this.origin = origin;
+	}
+
+	public String getEpsId() {
+		return epsId;
+	}
+
+	public void setEpsId(String epsId) {
+		this.epsId = epsId;
 	}
 
 }
