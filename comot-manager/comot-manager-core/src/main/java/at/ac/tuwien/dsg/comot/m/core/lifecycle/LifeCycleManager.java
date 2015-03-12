@@ -15,7 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.m.common.EventMessage;
+import at.ac.tuwien.dsg.comot.m.common.AbstractEvent;
+import at.ac.tuwien.dsg.comot.m.common.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.Transition;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
@@ -53,16 +54,7 @@ public class LifeCycleManager {
 
 	}
 
-	public State getCurrentState(String instanceId, String groupId) {
-		return managers.get(instanceId).getCurrentState(groupId);
-
-	}
-
-	public Map<String, Transition> getCurrentState(String instanceId) {
-		return managers.get(instanceId).getCurrentState();
-	}
-
-	public void executeAction(EventMessage event) throws IOException,
+	public void executeAction(AbstractEvent event) throws IOException,
 			JAXBException, ClassNotFoundException {
 
 		log.info("EXECUTE ACTION: ( {})", event);
@@ -72,41 +64,77 @@ public class LifeCycleManager {
 		String csInstanceId = event.getCsInstanceId();
 		String serviceId = event.getServiceId();
 
-		// clean service
-		if (event.getService() == null) {
-			service = infoService.getServiceInstance(serviceId, csInstanceId);
-		} else {
-			service = (CloudService) Utils.deepCopy(event.getService());
-		}
-		event.setService(UtilsLc.removeProviderInfo(service));
+		if (event instanceof LifeCycleEvent) {
+			LifeCycleEvent eventLc = (LifeCycleEvent) event;
 
-		if (Action.CREATED.equals(event.getAction())) {
-
-			if (managers.containsKey(csInstanceId)) {
-				return;
+			if (Action.REMOVED != eventLc.getAction()) {
+				// clean service
+				if (eventLc.getService() == null) {
+					service = infoService.getServiceInstance(serviceId, csInstanceId);
+				} else {
+					service = (CloudService) Utils.deepCopy(eventLc.getService());
+				}
+				eventLc.setService(UtilsLc.removeProviderInfo(service));
 			}
 
-			manager = context.getBean(ManagerOfServiceInstance.class);
-			managers.put(csInstanceId, manager);
+			if (Action.CREATED == eventLc.getAction()) {
 
-		} else if (Action.REMOVED.equals(event.getAction())) {
+				if (managers.containsKey(csInstanceId)) {
+					return;
+				}
 
-			// TODO delete manager, remove exchanges
+				manager = context.getBean(ManagerOfServiceInstance.class);
+				managers.put(csInstanceId, manager);
 
+				checkAndExecute(csInstanceId, event);
+
+			} else if (Action.REMOVED == eventLc.getAction()) {
+
+				checkAndExecute(csInstanceId, event);
+
+				managers.remove(managers.get(csInstanceId));
+
+			} else {
+				checkAndExecute(csInstanceId, event);
+			}
+
+		} else {
+			checkAndExecute(csInstanceId, event);
 		}
+
+	}
+
+	protected void checkAndExecute(String csInstanceId, AbstractEvent event) throws ClassNotFoundException,
+			JAXBException, IOException {
 
 		if (!managers.containsKey(csInstanceId)) {
 			throw new ComotIllegalArgumentException("Instance '" + csInstanceId + "' has no managed life-cycle");
 		}
 
-		if (event.isLifeCycleDefined()) {
-			managers.get(csInstanceId).executeAction(event);
+		managers.get(csInstanceId).executeActionAny(event);
+	}
 
-		} else {
-			managers.get(csInstanceId).executeCustomAction(event);
-		}
+	public State getCurrentState(String instanceId, String groupId) {
+		return managers.get(instanceId).getCurrentState(groupId);
+	}
+
+	public State getCurrentStateService(String instanceId) {
+		return managers.get(instanceId).getCurrentStateService();
 
 	}
+
+	public Map<String, Transition> getCurrentState(String instanceId) {
+		return managers.get(instanceId).getCurrentState();
+	}
+
+	public boolean isInstanceManaged(String instanceId) {
+		if (managers.containsKey(instanceId)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	// public void executeAction(EventMessage event) throws IOException, JAXBException {
 	//
 	// for (ManagerOfServiceInstance manager : managers.values()) {

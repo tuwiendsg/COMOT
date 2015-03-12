@@ -1,14 +1,10 @@
 package at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.Binding.DestinationType;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -17,7 +13,6 @@ import org.springframework.stereotype.Component;
 import at.ac.tuwien.dsg.comot.m.common.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.Transition;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
-import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.m.recorder.revisions.RevisionApi;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
@@ -37,12 +32,6 @@ public class EpsCoordinatorAdapter extends Adapter {
 	@Autowired
 	protected ToscaMapper mapperTosca;
 
-	protected Binding binding1;
-	protected Binding binding3;
-	protected Binding binding4;
-
-	protected Set<String> createdOsus = new HashSet<String>();
-
 	@PostConstruct
 	public void setUp() {
 		startAdapter("EPS_COORDINATOR");
@@ -55,7 +44,7 @@ public class EpsCoordinatorAdapter extends Adapter {
 							if (res2.getType().getName().equals(InformationServiceMock.ADAPTER_CLASS)) {
 								Adapter adapter = (Adapter) context.getBean(Class.forName(res2.getName()));
 								adapter.startAdapter(osu.getId());
-								createdOsus.add(osu.getId());
+								managedSet.add(osu.getId());
 							}
 						}
 					}
@@ -69,14 +58,11 @@ public class EpsCoordinatorAdapter extends Adapter {
 	@Override
 	public void start(String osuInstanceId) {
 
-		binding1 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_CUSTOM_EVENT,
-				"*." + EpsAction.EPS_ASSIGNED + ".SERVICE", null);
-		binding3 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_CUSTOM_EVENT,
-				"*." + EpsAction.EPS_REMOVAL_REQUESTED + ".SERVICE", null);
-		binding4 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_LIFE_CYCLE,
-				"*.TRUE.*." + State.STARTING + ".#", null);
+		bindingLifeCycle("*.TRUE.*." + State.STARTING + ".#");
 
-		admin.declareBinding(binding1);
+		bindingCustom("*.*." + EpsAction.EPS_ASSIGNED + ".SERVICE");
+		bindingCustom("*.*." + EpsAction.EPS_REMOVAL_REQUESTED + ".SERVICE");
+
 		container.setMessageListener(new CustomListener(osuInstanceId));
 
 	}
@@ -104,8 +90,6 @@ public class EpsCoordinatorAdapter extends Adapter {
 					}
 				}
 			}
-
-			infoService.isOsuAssignedToInstance(serviceId, instanceId, "SALSA_SERVICE");
 		}
 
 		@Override
@@ -113,32 +97,19 @@ public class EpsCoordinatorAdapter extends Adapter {
 				String event, String epsId, String optionalMessage) {
 
 			EpsAction action = EpsAction.valueOf(event);
-			String osuId = optionalMessage;
-			State serviceState = lcManager.getCurrentState(instanceId, groupId);
+			State serviceState = msg.getTransitions().get(serviceId).getCurrentState();
 
 			if (action == EpsAction.EPS_ASSIGNED) {
 
-				infoService.assignSupportingService(serviceId, instanceId, osuId);
-
-				if (!createdOsus.contains(osuId) && !serviceState.equals(State.PASSIVE)) {
-					createOsu(osuId);
+				if (!managedSet.contains(epsId) && !serviceState.equals(State.PASSIVE)) {
+					createOsu(epsId);
 				}
 
 			} else if (action == EpsAction.EPS_REMOVAL_REQUESTED) {
 
-				infoService.removeAssignmentOfSupportingOsu(serviceId, instanceId, osuId);
-
-				if (createdOsus.contains(osuId)) {
-					removeOsu(osuId);
+				if (managedSet.contains(epsId)) {
+					removeOsu(epsId);
 				}
-
-			}
-
-			try {
-				infoService.isOsuAssignedToInstance(serviceId, instanceId, "SALSA_SERVICE");
-			} catch (ClassNotFoundException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}
 
@@ -146,27 +117,19 @@ public class EpsCoordinatorAdapter extends Adapter {
 
 	protected void createOsu(String osuId) {
 
-		createdOsus.add(osuId);
+		managedSet.add(osuId);
 		// TODO
 	}
 
 	protected void removeOsu(String osuId) {
 
-		createdOsus.remove(osuId);
+		managedSet.remove(osuId);
 		// TODO
 	}
 
 	@Override
 	protected void clean() {
-		if (binding1 != null) {
-			admin.removeBinding(binding1);
-		}
-		if (binding3 != null) {
-			admin.removeBinding(binding3);
-		}
-		if (binding4 != null) {
-			admin.removeBinding(binding4);
-		}
+
 	}
 
 }

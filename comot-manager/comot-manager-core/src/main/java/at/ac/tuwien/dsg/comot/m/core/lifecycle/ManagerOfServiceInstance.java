@@ -11,9 +11,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.m.common.EventMessage;
+import at.ac.tuwien.dsg.comot.m.common.AbstractEvent;
+import at.ac.tuwien.dsg.comot.m.common.CustomEvent;
+import at.ac.tuwien.dsg.comot.m.common.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.Transition;
@@ -27,7 +30,8 @@ import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
-@Component("prototype")
+@Component
+@Scope("prototype")
 public class ManagerOfServiceInstance {
 
 	protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -44,8 +48,19 @@ public class ManagerOfServiceInstance {
 	protected Map<String, State> lastStates = new HashMap<>();
 	protected AggregationStrategy strategy = new AggregationStrategy();
 
-	synchronized public void executeAction(
-			EventMessage event) throws JAXBException, IOException, ClassNotFoundException {
+	synchronized public void executeActionAny(AbstractEvent event) throws ClassNotFoundException, JAXBException,
+			IOException {
+
+		if (event instanceof LifeCycleEvent) {
+			executeAction((LifeCycleEvent) event);
+		} else {
+			executeCustomAction((CustomEvent) event);
+		}
+
+	}
+
+	protected void executeAction(LifeCycleEvent event)
+			throws JAXBException, IOException, ClassNotFoundException {
 
 		String groupId = event.getGroupId();
 		Action action = event.getAction();
@@ -127,10 +142,11 @@ public class ManagerOfServiceInstance {
 		boolean fresh;
 
 		for (Group tempG : serviceGroup.getAllMembersNested()) {
-			fresh = true;
 			tempStates.put(tempG.getId(), tempG.getCurrentState());
 			if (tempG.getCurrentState().equals(lastStates.get(tempG.getId()))) {
 				fresh = false;
+			} else {
+				fresh = true;
 			}
 			transitions.put(tempG.getId(), new Transition(tempG.getId(), tempG.getType(), tempG.getPreviousState(),
 					tempG.getCurrentState(), fresh));
@@ -155,6 +171,33 @@ public class ManagerOfServiceInstance {
 
 	}
 
+	protected void executeCustomAction(CustomEvent event) throws AmqpException, JAXBException {
+
+		String groupId = event.getGroupId();
+		Group group;
+
+		if ((group = serviceGroup.getMemberNested(groupId)) == null) {
+			throw new ComotIllegalArgumentException("The entity '" + groupId + "' of service instance '" + csInstanceId
+					+ "' does not exist.");
+		}
+
+		// sum up transitions
+		Map<String, Transition> transitions = new HashMap<>();
+
+		for (Group tempG : serviceGroup.getAllMembersNested()) {
+			transitions.put(tempG.getId(), new Transition(
+					tempG.getId(), tempG.getType(), tempG.getPreviousState(), tempG.getCurrentState(), false));
+		}
+
+		// create binding
+		// instanceID.epsId.customEvent.targetLevel
+		String bindingKey = csInstanceId + "." + event.getEpsId() + "." + event.getCustomEvent() + "."
+				+ group.getType();
+
+		send(AppContextCore.EXCHANGE_CUSTOM_EVENT, bindingKey, new StateMessage(event, transitions));
+
+	}
+
 	protected Group checkAndExecute(Action action, String groupId) {
 
 		Group group = serviceGroup.getMemberNested(groupId);
@@ -172,29 +215,6 @@ public class ManagerOfServiceInstance {
 		return group;
 	}
 
-	// protected void processOutgoingService(EventMessage event) throws ClassNotFoundException, IOException {
-	//
-	// CloudService service = event.getService();
-	// service = infoService.getServiceInstance(serviceId, csInstanceId);
-	// event.setService(UtilsLc.removeProviderInfo((CloudService) Utils.deepCopy(service)));
-	// }
-
-	public void executeCustomAction(EventMessage event) throws AmqpException, JAXBException {
-
-		String groupId = event.getGroupId();
-		Group group;
-
-		if ((group = serviceGroup.getMemberNested(groupId)) == null) {
-			throw new ComotIllegalArgumentException("The entity '" + groupId + "' of service instance '" + csInstanceId
-					+ "' does not exist.");
-		}
-
-		String bindingKey = csInstanceId + "." + event.getCustomEvent() + "." + group.getType();
-
-		send(AppContextCore.EXCHANGE_CUSTOM_EVENT, bindingKey, new StateMessage(event));
-
-	}
-
 	protected void send(String exchange, String bindingKey, StateMessage message) throws AmqpException, JAXBException {
 
 		log.info("SEND exchange={} key={}", exchange, bindingKey);
@@ -209,6 +229,11 @@ public class ManagerOfServiceInstance {
 	public State getCurrentState(String groupId) {
 		log.info("getCurrentState(instanceId={}, groupId={}): {}", csInstanceId, groupId, serviceGroup);
 		final State temp = serviceGroupReadOnly.getMemberNested(groupId).getCurrentState();
+		return temp;
+	}
+
+	public State getCurrentStateService() {
+		final State temp = serviceGroupReadOnly.getMemberNested(serviceId).getCurrentState();
 		return temp;
 	}
 

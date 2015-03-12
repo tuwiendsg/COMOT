@@ -117,7 +117,7 @@ public class SalsaMappingTest extends AbstractTest {
 		CloudService service = mapperTosca.createModel(def);
 		log.info("service {}", Utils.asXmlString(service));
 
-		mapperDepl.enrichModel(service, serviceState);
+		mapperDepl.enrichModel(TEST_SERVICE_ID, service, serviceState);
 		log.info("service enriched{}", Utils.asXmlString(service));
 
 		// EXTRACT DEPLOYMENT DESCRIOPTION

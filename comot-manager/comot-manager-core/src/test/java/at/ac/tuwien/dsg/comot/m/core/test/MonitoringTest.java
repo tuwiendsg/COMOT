@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.oasis.tosca.Definitions;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.m.core.Coordinator;
@@ -21,10 +20,10 @@ import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.ComotAction;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
+import at.ac.tuwien.dsg.comot.m.cs.connector.SalsaClient;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.type.State;
 
-public class LifecycleStaticEpsTest extends AbstractTest {
+public class MonitoringTest extends AbstractTest {
 
 	@Autowired
 	protected LifeCycleManager lcManager;
@@ -33,83 +32,51 @@ public class LifecycleStaticEpsTest extends AbstractTest {
 	@Autowired
 	protected InformationServiceMock infoService;
 
+	@Autowired
+	protected SalsaClient salsa;
+
 	CloudService service;
 	String serviceId;
 	String instanceId;
-	String monitoringId;
+	protected final String monitoringId = InformationServiceMock.MELA_SERVICE_PUBLIC_ID;
+	protected final String deploymentId = InformationServiceMock.SALSA_SERVICE_PUBLIC_ID;
 
 	@Before
 	public void setUp() throws JAXBException, IOException, ClassNotFoundException {
-		Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/tomcat/tomcat_from_salsa.xml");
+		// Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/tomcat/tomcat_from_salsa.xml");
+		Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/xml/ExampleExecutableOnVM.xml");
+
 		service = mapperTosca.createModel(tosca1);
 		serviceId = coordinator.createCloudService(service);
 		instanceId = coordinator.createServiceInstance(serviceId);
 
-		monitoringId = InformationServiceMock.MELA_SERVICE_PUBLIC_ID;
 	}
 
-	@Test
-	public void produceEvent() throws JAXBException, IOException, ClassNotFoundException {
-
-		UtilsTest.sleepInfinit();
-	}
-
-	@Test
-	public void testDeployTomcat() throws IOException, JAXBException, ClassNotFoundException {
-
-		coordinator.startServiceInstance(serviceId, instanceId);
-		coordinator.assignSupportingOsu(serviceId, instanceId, InformationServiceMock.SALSA_SERVICE_PUBLIC_ID);
-
-		while (lcManager.getCurrentState(instanceId, serviceId) != State.RUNNING) {
-			UtilsTest.sleepSeconds(10);
-		}
-
-		coordinator.stopServiceInstance(serviceId, instanceId);
-
-		log.info("{}", Utils.asJsonString(infoService.getService(serviceId)));
-
-		UtilsTest.sleepSeconds(5);
-		// UtilsTest.sleepInfinit();
-	}
-
-	@Test
-	public void testDeployTomcatNormal() throws IOException, JAXBException, ClassNotFoundException {
-
-		coordinator.assignSupportingOsu(serviceId, instanceId, InformationServiceMock.SALSA_SERVICE_PUBLIC_ID);
-		coordinator.startServiceInstance(serviceId, instanceId);
-
-		while (lcManager.getCurrentState(instanceId, serviceId) != State.RUNNING) {
-			UtilsTest.sleepSeconds(10);
-		}
-
-		coordinator.stopServiceInstance(serviceId, instanceId);
-
-		log.info("{}", Utils.asJsonString(infoService.getService(serviceId)));
-
-		UtilsTest.sleepSeconds(5);
-		// UtilsTest.sleepInfinit();
-
-	}
-
-	@Test
+	@Test(timeout = 240000)
 	public void testMonitoring() throws IOException, JAXBException, ClassNotFoundException, CoreServiceException {
 
-		State state;
+		boolean isFresh = true;
+		assertFalse(deployment.isManaged(instanceId));
 
-		coordinator.assignSupportingOsu(serviceId, instanceId, InformationServiceMock.SALSA_SERVICE_PUBLIC_ID);
+		coordinator.assignSupportingOsu(serviceId, instanceId, deploymentId);
 		coordinator.assignSupportingOsu(serviceId, instanceId, monitoringId);
-
 		coordinator.startServiceInstance(serviceId, instanceId);
 
-		while (lcManager.getCurrentState(instanceId, serviceId) != State.RUNNING) {
-			UtilsTest.sleepSeconds(5);
-
-			state = lcManager.getCurrentState(instanceId, serviceId);
-
-			switch (state) {
+		while (true) {
+			switch (lcManager.getCurrentState(instanceId, serviceId)) {
 
 			case INIT:
+				break;
 			case PASSIVE:
+				if (isFresh) {
+
+				} else {
+					UtilsTest.sleepSeconds(3);
+					assertTrue(infoService.isOsuAssignedToInstance(serviceId, instanceId, monitoringId));
+					assertFalse(isMonitored(instanceId));
+					return;
+				}
+				break;
 			case STARTING:
 			case DEPLOYING:
 				assertTrue(infoService.isOsuAssignedToInstance(serviceId, instanceId, monitoringId));
@@ -117,7 +84,8 @@ public class LifecycleStaticEpsTest extends AbstractTest {
 				break;
 
 			case RUNNING:
-				UtilsTest.sleepSeconds(2);
+
+				UtilsTest.sleepSeconds(3);
 				assertTrue(infoService.isOsuAssignedToInstance(serviceId, instanceId, monitoringId));
 				assertTrue(isMonitored(instanceId));
 
@@ -125,7 +93,7 @@ public class LifecycleStaticEpsTest extends AbstractTest {
 				coordinator.triggerCustomEvent(
 						serviceId, instanceId, monitoringId, ComotAction.MELA_STOP.toString(), null);
 
-				UtilsTest.sleepSeconds(2);
+				UtilsTest.sleepSeconds(3);
 				assertTrue(infoService.isOsuAssignedToInstance(serviceId, instanceId, monitoringId));
 				assertFalse(isMonitored(instanceId));
 
@@ -133,27 +101,25 @@ public class LifecycleStaticEpsTest extends AbstractTest {
 				coordinator.triggerCustomEvent(
 						serviceId, instanceId, monitoringId, ComotAction.MELA_START.toString(), null);
 
-				UtilsTest.sleepSeconds(2);
+				UtilsTest.sleepSeconds(3);
 				assertTrue(infoService.isOsuAssignedToInstance(serviceId, instanceId, monitoringId));
 				assertTrue(isMonitored(instanceId));
 
-				break;
-			case ELASTIC_CHANGE:
-				break;
-			case UPDATE:
+				coordinator.stopServiceInstance(serviceId, instanceId);
+				isFresh = false;
 				break;
 
 			case STOPPING:
-				UtilsTest.sleepSeconds(2);
+			case UNDEPLOYING:
+				UtilsTest.sleepSeconds(3);
 				assertTrue(infoService.isOsuAssignedToInstance(serviceId, instanceId, monitoringId));
 				assertFalse(isMonitored(instanceId));
 				break;
-			case UNDEPLOYING:
-				break;
+
 			case FINAL:
-				UtilsTest.sleepSeconds(2);
-				assertFalse(infoService.isOsuAssignedToInstance(serviceId, instanceId, monitoringId));
-				assertFalse(isMonitored(instanceId));
+				// UtilsTest.sleepSeconds(3);
+				// assertFalse(infoService.isOsuAssignedToInstance(serviceId, instanceId, monitoringId));
+				// assertFalse(isMonitored(instanceId));
 				break;
 
 			case ERROR:
@@ -163,15 +129,9 @@ public class LifecycleStaticEpsTest extends AbstractTest {
 			default:
 				break;
 			}
-
+			UtilsTest.sleepSeconds(5);
 		}
 
-		coordinator.stopServiceInstance(serviceId, instanceId);
-
-		log.info("{}", Utils.asJsonString(infoService.getService(serviceId)));
-
-		UtilsTest.sleepSeconds(5);
-		// UtilsTest.sleepInfinit();
 	}
 
 	protected boolean isMonitored(String instanceId) throws CoreServiceException {

@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageListener;
 
+import at.ac.tuwien.dsg.comot.m.common.CustomEvent;
+import at.ac.tuwien.dsg.comot.m.common.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.Transition;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.UtilsLc;
@@ -36,30 +38,34 @@ public abstract class AdapterListener implements MessageListener {
 			StateMessage msg = UtilsLc.stateMessage(message);
 			String instanceId = msg.getEvent().getCsInstanceId();
 			String serviceId = msg.getEvent().getServiceId();
-			String groupId = msg.getEvent().getServiceId();
-			String optionalMessage = msg.getMessage();
+			String groupId = msg.getEvent().getGroupId();
+			String origin = msg.getEvent().getOrigin();
 
-			if (msg.getEvent().isLifeCycleDefined()) {
+			if (msg.getEvent() instanceof LifeCycleEvent) {
+				LifeCycleEvent event = (LifeCycleEvent) msg.getEvent();
 
-				Action action = msg.getEvent().getAction();
-				CloudService service = msg.getEvent().getService();
+				Action action = event.getAction();
+				CloudService service = event.getService();
 				Map<String, Transition> transitions = msg.getTransitions();
 
-				log.info(logId() + "onLifecycleEvent: service={}, instance={}, group={}, action={}", serviceId,
-						instanceId, groupId, action);
+				log.info(logId() + "onLifecycleEvent: service={}, instance={}, group={}, action={}, origin={}",
+						serviceId,
+						instanceId, groupId, action, origin);
 
-				onLifecycleEvent(msg, serviceId, instanceId, groupId, action, optionalMessage, service, transitions);
+				onLifecycleEvent(msg, serviceId, instanceId, groupId, action, null, service, transitions);
 
 			} else {
 
-				String event = msg.getCustomEvent();
-				String epsId = msg.getEvent().getEpsId();
+				CustomEvent event = (CustomEvent) msg.getEvent();
 
-				log.info(logId() + "onCustomEvent: service={}, instance={}, group={}, epsId={}, event={}", serviceId,
-						instanceId,
-						groupId, epsId, event);
+				String optionalMessage = event.getMessage();
+				String eventName = event.getCustomEvent();
+				String epsId = event.getEpsId();
 
-				onCustomEvent(msg, serviceId, instanceId, groupId, event, epsId, optionalMessage);
+				log.info(logId() + "onCustomEvent: service={}, instance={}, group={}, epsId={}, event={}, origin={}",
+						serviceId, instanceId, groupId, epsId, eventName, origin);
+
+				onCustomEvent(msg, serviceId, instanceId, groupId, eventName, epsId, optionalMessage);
 			}
 
 		} catch (Exception e) {

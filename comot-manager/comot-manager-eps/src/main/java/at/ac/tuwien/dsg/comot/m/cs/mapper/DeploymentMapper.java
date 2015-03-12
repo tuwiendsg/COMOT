@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceInstance;
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityState;
+import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaInstanceDescription_VM;
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.orika.DeploymentOrika;
@@ -53,20 +54,17 @@ public class DeploymentMapper {
 		return map;
 	}
 
-	public void enrichModel(CloudService cloudService,
+	public void enrichModel(String csInstanceId, CloudService cloudService,
 			at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService serviceState) {
 
 		Navigator navigator = new Navigator(cloudService);
 		Map<String, String> hosts = new HashMap<>();
-
-		String csInstanceId = cloudService.getInstancesList().get(0).getId();
 
 		for (at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceTopology topology : serviceState
 				.getComponentTopologyList()) {
 			for (at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceUnit unit : topology.getComponents()) {
 
 				ServiceUnit node = navigator.getUnitFor(unit.getId());
-				UnitInstance nInst;
 				UnitInstance existingInst;
 
 				for (ServiceInstance instance : unit.getInstancesList()) {
@@ -80,12 +78,12 @@ public class DeploymentMapper {
 					}
 
 					if (existingInst == null) {
-						nInst = new UnitInstance(
+						existingInst = new UnitInstance(
 								IdResolver.uniqueInstance(csInstanceId, unit.getId(), instance.getInstanceId()),
-								null, // TODO here set IP
+								extractIpIfThereIsOne(instance, existingInst),
 								convert(instance.getState()),
 								null);
-						node.addUnitInstance(nInst);
+						node.addUnitInstance(existingInst);
 
 					} else {
 						existingInst.setState(convert(instance.getState()));
@@ -109,6 +107,18 @@ public class DeploymentMapper {
 			UnitInstance host = navigator.getInstance(hosts.get(str));
 			node.setHostInstance(host);
 		}
+	}
+
+	public String extractIpIfThereIsOne(ServiceInstance salsaInst, UnitInstance instane) {
+
+		if (salsaInst.getProperties() != null) {
+			if (salsaInst.getProperties().getAny() != null) {
+				SalsaInstanceDescription_VM desc = (SalsaInstanceDescription_VM) salsaInst.getProperties().getAny();
+				String ip = desc.getPrivateIp();
+				return ip;
+			}
+		}
+		return null;
 	}
 
 	public static State convert(SalsaEntityState state) {

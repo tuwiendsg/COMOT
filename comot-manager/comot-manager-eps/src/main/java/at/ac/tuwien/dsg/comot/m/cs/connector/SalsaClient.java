@@ -65,7 +65,7 @@ public class SalsaClient extends CoreServiceClient {
 
 		String serviceId = response.readEntity(String.class);
 
-		log.info(ln + "deployed service. Response: '{}'",
+		log.debug(ln + "deployed service. Response: '{}'",
 				serviceId);
 
 		return serviceId;
@@ -86,7 +86,7 @@ public class SalsaClient extends CoreServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		log.info(ln + "undeployed '{}'. Response: '{}'", serviceId, msg);
+		log.debug(ln + "undeployed '{}'. Response: '{}'", serviceId, msg);
 
 	}
 
@@ -110,7 +110,7 @@ public class SalsaClient extends CoreServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		log.info(
+		log.debug(
 				name + "Spawned additional instances (+{}) for serviceId={}, topologyId={}, nodeId={}. Response: '{}'",
 				instanceCount, serviceId, topologyId, nodeId, msg);
 
@@ -134,7 +134,7 @@ public class SalsaClient extends CoreServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		log.info(ln + "Sestroyed instance with id {} (service={}, topology={}, node={}). Response: '{}'",
+		log.debug(ln + "Sestroyed instance with id {} (service={}, topology={}, node={}). Response: '{}'",
 				instanceId, serviceId, topologyId, nodeId, msg);
 
 	}
@@ -160,7 +160,7 @@ public class SalsaClient extends CoreServiceClient {
 			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 			CloudService service = (CloudService) jaxbUnmarshaller.unmarshal(reader);
 
-			log.info(ln + "Checked status for serviceId '{}'. Response: '{}'", serviceId, service);
+			log.debug(ln + "Checked status for serviceId '{}'. Response: '{}'", serviceId, service);
 
 			return service;
 
@@ -191,7 +191,7 @@ public class SalsaClient extends CoreServiceClient {
 			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 			Definitions service = (Definitions) jaxbUnmarshaller.unmarshal(reader);
 
-			log.info(ln + "Tosca for serviceId '{}'. Response: '{}'", serviceId, service);
+			log.debug(ln + "Tosca for serviceId '{}'. Response: '{}'", serviceId, service);
 
 			return service;
 
@@ -224,7 +224,7 @@ public class SalsaClient extends CoreServiceClient {
 
 		DeploymentDescription description = response.readEntity(DeploymentDescription.class);
 
-		log.info(ln + "DeploymentInfo for serviceId '{}'. Response: '{}'", serviceId, description);
+		log.debug(ln + "DeploymentInfo for serviceId '{}'. Response: '{}'", serviceId, description);
 
 		return description;
 	}
@@ -243,7 +243,7 @@ public class SalsaClient extends CoreServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		log.info(ln + "List of all services. Response: '{}'", msg);
+		log.debug(ln + "List of all services. Response: '{}'", msg);
 
 		return msg;
 	}

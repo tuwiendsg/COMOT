@@ -8,14 +8,13 @@ import org.junit.Test;
 
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
-import at.ac.tuwien.dsg.comot.test.model.examples.ExampleDeployOneVM;
 
 public class ControlClientTest extends AbstractTest {
 
 	@Test
 	public void testTest() throws CoreServiceException, ComotException {
 
-		deployment.deploy(ExampleDeployOneVM.build());
+		// deployment.deploy(ExampleDeployOneVM.build());
 	}
 
 	@Test

@@ -6,6 +6,8 @@ import java.util.Map;
 import javax.annotation.PreDestroy;
 import javax.xml.bind.JAXBException;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.oasis.tosca.Definitions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,7 +104,7 @@ public class DeploymentClientSalsa implements DeploymentClient {
 			throw new ComotException("Failed to deep-copy CloudService id=" + service.getId(), e);
 		}
 
-		mapperDepl.enrichModel(copy, status);
+		mapperDepl.enrichModel(service.getId(), copy, status);
 
 		return copy;
 	}
@@ -120,7 +122,7 @@ public class DeploymentClientSalsa implements DeploymentClient {
 			throw new ComotException("Failed to deep-copy CloudService id=" + service.getId(), e);
 		}
 
-		mapperDepl.enrichModel(copy, status);
+		mapperDepl.enrichModel(service.getId(), copy, status);
 
 		map.putAll(mapperDepl.extractStates(service.getId(), status));
 
@@ -151,6 +153,23 @@ public class DeploymentClientSalsa implements DeploymentClient {
 		}
 
 		return running;
+	}
+
+	@Override
+	public boolean isManaged(String serviceId) throws CoreServiceException {
+
+		String msg = salsa.getServices();
+
+		JSONObject services = new JSONObject(msg);
+		JSONArray array = services.getJSONArray("services");
+
+		for (int i = 0; i < array.length(); i++) {
+			if (serviceId.equals(array.getJSONObject(i).getString("serviceId"))) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	@PreDestroy

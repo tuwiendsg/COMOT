@@ -132,7 +132,7 @@ public class SalsaClientTest extends AbstractTest {
 	@Test
 	public void testStatus() throws CoreServiceException, JAXBException, ComotException {
 		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService serviceInfo = salsa
-				.getStatus("SalsaExample_comot");
+				.getStatus(SERVICE_ID);
 
 		log.info(UtilsCs.asString(serviceInfo));
 	}
@@ -140,14 +140,14 @@ public class SalsaClientTest extends AbstractTest {
 	@SuppressWarnings("deprecation")
 	@Test
 	public void testDeploymentDescription() throws CoreServiceException, JAXBException {
-		DeploymentDescription descr = salsa.getServiceDeploymentInfo("aaaa");
+		DeploymentDescription descr = salsa.getServiceDeploymentInfo(SERVICE_ID);
 
 		log.info(UtilsCs.asString(descr));
 	}
 
 	@Test
 	public void testGetTosca() throws CoreServiceException, JAXBException, ComotException {
-		Definitions def = salsa.getTosca("aaaa");
+		Definitions def = salsa.getTosca(SERVICE_ID);
 
 		log.info(UtilsCs.asString(def));
 	}

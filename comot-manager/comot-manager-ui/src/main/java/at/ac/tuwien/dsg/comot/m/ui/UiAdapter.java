@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import at.ac.tuwien.dsg.comot.m.common.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.MonitoringClient;
@@ -24,7 +25,6 @@ import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 
 @Component
 @Scope("prototype")
-// for some reason this creates multip0le instances
 public class UiAdapter extends Adapter {
 
 	@Autowired
@@ -43,11 +43,9 @@ public class UiAdapter extends Adapter {
 	public void start(String id) {
 
 		binding1 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_LIFE_CYCLE,
-				// csInstanceId + ".#", null);
-				"#", null);
+				csInstanceId + ".#", null);
 		binding2 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_CUSTOM_EVENT,
-				// csInstanceId + ".#", null);
-				"#", null);
+				csInstanceId + ".#", null);
 
 		admin.declareBinding(binding1);
 		admin.declareBinding(binding2);
@@ -73,10 +71,12 @@ public class UiAdapter extends Adapter {
 				}
 				StateMessage msg = UtilsLc.stateMessage(message);
 
-				if (msg.getEvent().isLifeCycleDefined()) {
-					Set<OfferedServiceUnit> osus = infoService.getSupportingServices(msg.getServiceId(),
-							msg.getCsInstanceId());
-					msg.getEvent().getService().getInstancesList().get(0).setSupport(osus);
+				if (msg.isLifeCycleDefined()) {
+					LifeCycleEvent eventLc = (LifeCycleEvent) msg.getEvent();
+
+					Set<OfferedServiceUnit> osus = infoService.getSupportingServices(eventLc.getServiceId(),
+							eventLc.getCsInstanceId());
+					eventLc.getService().getInstancesList().get(0).setSupport(osus);
 				}
 
 				String msgForClient = Utils.asJsonString(msg);
@@ -89,9 +89,7 @@ public class UiAdapter extends Adapter {
 				eventOutput.write(eventBuilder.build());
 
 			} catch (Throwable t) {
-				t.printStackTrace();
-
-				log.info("Throwable -> cleanAdapter()");
+				log.warn("Throwable -> cleanAdapter()");
 				cleanAdapter();
 			}
 

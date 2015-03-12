@@ -39,6 +39,7 @@ public enum State {
 	/**
 	 * the same with STAGING, but for custom configuration action at runtime
 	 */
+	// TODO
 	STAGING_ACTION,
 	ERROR;
 

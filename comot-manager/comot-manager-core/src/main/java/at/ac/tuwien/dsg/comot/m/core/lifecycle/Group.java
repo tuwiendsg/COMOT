@@ -174,17 +174,22 @@ public class Group implements Serializable {
 
 	// GENERATED
 
-	@Override
-	public String toString() {
-		return "{ \"id\" : \"" + id + "\" , \"currentState\" : \""
-				+ currentState + "\" , \"previousState\" : \"" + previousState
-				+ "\" , \"type\" : \"" + type + "\" , \"parent\" : \""
-				+ ((parent == null) ? null : parent.getId())
-				+ "\" , \"members\" : " + members + "}";
-	}
+	// @Override
+	// public String toString() {
+	// return "{ \"id\" : \"" + id + "\" , \"currentState\" : \""
+	// + currentState + "\" , \"previousState\" : \"" + previousState
+	// + "\" , \"type\" : \"" + type + "\" , \"parent\" : \""
+	// + ((parent == null) ? null : parent.getId())
+	// + "\" , \"members\" : " + members + "}";
+	// }
 
 	public String getId() {
 		return id;
+	}
+
+	@Override
+	public String toString() {
+		return "( " + type + ":" + id + ", " + previousState + " -> " + currentState + ", members=" + members + ")";
 	}
 
 	public Group getParent() {

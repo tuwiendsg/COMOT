@@ -44,7 +44,7 @@ public class MelaMappingTest extends AbstractTest {
 	@Autowired
 	protected MelaOutputMapper mapperMelaOutput;
 
-	protected static final String TEST_SERVICE_ID = "comot_tomcat_id";
+	protected static final String TEST_SERVICE_ID = "example_executableOnVM_1";
 
 	protected CloudService serviceForMapping;
 
@@ -63,8 +63,10 @@ public class MelaMappingTest extends AbstractTest {
 		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService serviceState;
 		serviceState = salsaClient.getStatus(TEST_SERVICE_ID);
 
+		log.info("enriched {}", UtilsCs.asString(serviceState));
+
 		CloudService service = mapperTosca.createModel(def);
-		mapperDepl.enrichModel(service, serviceState);
+		mapperDepl.enrichModel(TEST_SERVICE_ID, service, serviceState);
 
 		// log.info("enriched {}", Utils.asJsonString(service));
 

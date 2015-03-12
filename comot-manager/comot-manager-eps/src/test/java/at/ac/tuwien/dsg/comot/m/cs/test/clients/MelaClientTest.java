@@ -30,14 +30,12 @@ public class MelaClientTest extends AbstractTest {
 	public static final String TOPOLOGY_ID = "example_topology";
 	public static final String NODE_ID = "example_OS_comot";
 
-	private static final String NODE_IP = "10.99.0.25"; // <== check this
+	private static final String NODE_IP = "10.99.0.26"; // <== check this
 
 	@Autowired
 	private MelaClient mela;
 	@Autowired
 	private SalsaClient salsa;
-
-	private String xmlTosca;
 
 	private MonitoredElement eService;
 	private MonitoredElement eTopo;
@@ -45,9 +43,7 @@ public class MelaClientTest extends AbstractTest {
 	private MonitoredElement eVM;
 
 	@Before
-	public void setup() throws IOException {
-
-		xmlTosca = Utils.loadFile("./../resources/test/xml/ExampleExecutableOnVM.xml");
+	public void setup() {
 
 		// set up MonitoredElement
 		eVM = new MonitoredElement(NODE_IP);
@@ -67,7 +63,9 @@ public class MelaClientTest extends AbstractTest {
 	}
 
 	@Test
-	public void helperDeploy() throws CoreServiceException {
+	public void helperDeploy() throws CoreServiceException, IOException {
+
+		String xmlTosca = Utils.loadFile("./../resources/test/xml/ExampleExecutableOnVM.xml");
 		salsa.deploy(xmlTosca);
 	}
 
@@ -80,11 +78,7 @@ public class MelaClientTest extends AbstractTest {
 		log.info(Utils.asXmlString(eService));
 
 		// service description
-		mela.sendServiceDescription(eService);
-
-		MonitoredElement returned = mela.getServiceDescription(SERVICE_ID);
-		log.info("getServiceDescription " + Utils.asXmlString(returned));
-		assertEquals(eService.getId(), returned.getId());
+		testStartMonitoring();
 
 		// update
 		updateServiceDescription();
@@ -98,9 +92,19 @@ public class MelaClientTest extends AbstractTest {
 		updateMCR();
 
 		// sendRequirements
-
 		removeService();
 
+	}
+
+	@Test
+	public void testStartMonitoring() throws CoreServiceException, JAXBException {
+		log.info(Utils.asXmlString(eService));
+
+		mela.sendServiceDescription(eService);
+
+		MonitoredElement returned = mela.getServiceDescription(SERVICE_ID);
+		log.info("getServiceDescription " + Utils.asXmlString(returned));
+		assertEquals(eService.getId(), returned.getId());
 	}
 
 	@Test
@@ -174,7 +178,7 @@ public class MelaClientTest extends AbstractTest {
 
 	@Test
 	public void removeService() throws CoreServiceException, InterruptedException, JAXBException {
-		mela.removeServiceDescription(SERVICE_ID);
+		mela.removeServiceDescription("example_executableOnVM_1");
 
 		List<String> list = mela.listAllServices();
 		assertEquals(0, list.size());

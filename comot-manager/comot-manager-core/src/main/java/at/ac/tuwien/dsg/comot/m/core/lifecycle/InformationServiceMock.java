@@ -133,8 +133,6 @@ public class InformationServiceMock {
 					UtilsCs.loadTosca("./../resources/test/tomcat/tomcat_from_salsa.xml"));
 
 			String serviceId = this.createService(service1);
-			// String instanceId = this.createServiceInstance(service1.getId());
-			// this.assignSupportingService(serviceId, instanceId, InformationServiceMock.SALSA_SERVICE_PUBLIC_ID);
 
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
@@ -147,7 +145,6 @@ public class InformationServiceMock {
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
-		
 
 		try {
 			this.createService(
@@ -156,7 +153,6 @@ public class InformationServiceMock {
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
-
 
 	}
 
@@ -180,6 +176,27 @@ public class InformationServiceMock {
 		CloudService service = services.get(serviceId);
 		ServiceInstance instance = service.createServiceInstance(getInstanceId(serviceId));
 		return instance.getId();
+	}
+
+	public void removeServiceInstance(String serviceId, String instanceId) {
+
+		if (!services.containsKey(serviceId)) {
+			throw new ComotIllegalArgumentException("There is no service '" + serviceId + "'");
+		}
+
+		CloudService service = services.get(serviceId);
+
+		for (UnitInstance uInst : _getServiceInstance(serviceId, instanceId).getUnitInstances()) {
+			removeUnitInstance(serviceId, instanceId, uInst.getId());
+		}
+
+		for (ServiceInstance instance : service.getInstances()) {
+			if (instance.getId().equals(instanceId)) {
+				service.getInstances().remove(instance);
+				break;
+			}
+		}
+
 	}
 
 	public void addUnitInstance(String serviceId, String csInstanceId, String unitId, UnitInstance uInst) {
@@ -308,39 +325,49 @@ public class InformationServiceMock {
 
 		boolean isIncluded;
 
-		CloudService service = services.get(serviceId);
-		for (ServiceInstance servInst : service.getInstances()) {
+		CloudService copyServ = (CloudService) Utils.deepCopy(services.get(serviceId));
+		ServiceInstance servInst = null;
 
-			if (servInst.getId().equals(instanceId)) {
-				CloudService copy = (CloudService) Utils.deepCopy(service);
-				ServiceInstance copyInstance = (ServiceInstance) Utils.deepCopy(servInst);
+		for (Iterator<ServiceInstance> i = copyServ.getInstances().iterator(); i.hasNext();) {
+			ServiceInstance tempInst = i.next();
 
-				copy.getInstances().clear();
-				copy.getInstances().add(copyInstance);
-
-				Navigator nav = new Navigator(copy);
-
-				for (ServiceUnit unit : nav.getAllUnits()) {
-					for (Iterator<UnitInstance> i = unit.getInstances().iterator(); i.hasNext();) {
-						UnitInstance uInst = i.next();
-
-						isIncluded = false;
-
-						for (UnitInstance uuInst : copyInstance.getUnitInstances()) {
-							if (uuInst.getId().equals(uInst.getId())) {
-								isIncluded = true;
-							}
-						}
-						if (!isIncluded) {
-							i.remove();
-						}
-					}
-				}
-				return copy;
+			if (tempInst.getId().equals(instanceId)) {
+				servInst = tempInst;
+			} else {
+				i.remove();
 			}
 		}
-		return null;
+		if (servInst == null) {
+			return null;
+		}
+
+		Navigator nav = new Navigator(copyServ);
+
+		for (ServiceUnit unit : nav.getAllUnits()) {
+			for (Iterator<UnitInstance> i = unit.getInstances().iterator(); i.hasNext();) {
+				UnitInstance uInst = i.next();
+
+				isIncluded = false;
+
+				for (UnitInstance uuInst : servInst.getUnitInstances()) {
+					if (uuInst.getId().equals(uInst.getId())) {
+						isIncluded = true;
+					}
+				}
+				if (!isIncluded) {
+					i.remove();
+				}
+			}
+		}
+
+		return copyServ;
 	}
+
+	// protected CloudService cleanServiceOfOtherInstances(CloudService service, String instanceId){
+	//
+	//
+	//
+	// }
 
 	public Map<String, List<String>> getAllInstanceIds() {
 

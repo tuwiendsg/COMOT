@@ -15,7 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.m.common.EventMessage;
+import at.ac.tuwien.dsg.comot.m.common.CustomEvent;
+import at.ac.tuwien.dsg.comot.m.common.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.EpsAction;
@@ -44,8 +45,8 @@ public class Coordinator {
 
 		String instanceId = infoService.createServiceInstance(serviceId);
 
-		EventMessage event = new EventMessage(serviceId, instanceId, serviceId, Action.CREATED,
-				USER_ID, null, null);
+		LifeCycleEvent event = new LifeCycleEvent(serviceId, instanceId, serviceId, Action.CREATED,
+				USER_ID, null);
 		lcManager.executeAction(event);
 
 		return instanceId;
@@ -54,7 +55,7 @@ public class Coordinator {
 	public void startServiceInstance(String serviceId, String instanceId) throws IOException, JAXBException,
 			ClassNotFoundException {
 
-		EventMessage event = new EventMessage(serviceId, instanceId, serviceId, Action.STARTED, USER_ID, null, null);
+		LifeCycleEvent event = new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STARTED, USER_ID, null);
 		lcManager.executeAction(event);
 
 	}
@@ -62,8 +63,17 @@ public class Coordinator {
 	public void stopServiceInstance(String serviceId, String instanceId)
 			throws IOException, JAXBException, ClassNotFoundException {
 
-		EventMessage event = new EventMessage(serviceId, instanceId, serviceId, Action.STOPPED, USER_ID, null,
-				null);
+		LifeCycleEvent event = new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STOPPED, USER_ID, null);
+		lcManager.executeAction(event);
+
+	}
+
+	public void removeServiceInstance(String serviceId, String instanceId) throws IOException, JAXBException,
+			ClassNotFoundException {
+		
+		infoService.removeServiceInstance(serviceId, instanceId);
+
+		LifeCycleEvent event = new LifeCycleEvent(serviceId, instanceId, serviceId, Action.REMOVED, USER_ID, null);
 		lcManager.executeAction(event);
 
 	}
@@ -71,10 +81,10 @@ public class Coordinator {
 	public void assignSupportingOsu(String serviceId, String instanceId, String osuInstanceId)
 			throws ClassNotFoundException, IOException, JAXBException {
 
-		// infoService.assignSupportingService(serviceId, instanceId, osuInstanceId);
+		infoService.assignSupportingService(serviceId, instanceId, osuInstanceId);
 
-		EventMessage event = new EventMessage(serviceId, instanceId, serviceId, EpsAction.EPS_ASSIGNED.toString(),
-				USER_ID, osuInstanceId, osuInstanceId); // TODu remove osuInstanceId from the optional msg
+		CustomEvent event = new CustomEvent(serviceId, instanceId, serviceId, EpsAction.EPS_ASSIGNED.toString(),
+				USER_ID, osuInstanceId, null); // TODu remove osuInstanceId from the optional msg
 		lcManager.executeAction(event);
 
 	}
@@ -82,10 +92,10 @@ public class Coordinator {
 	public void removeAssignmentOfSupportingOsu(String serviceId, String instanceId, String osuInstanceId)
 			throws ClassNotFoundException, IOException, JAXBException {
 
-		// infoService.removeAssignmentOfSupportingOsu(serviceId, instanceId, osuInstanceId);
+		infoService.removeAssignmentOfSupportingOsu(serviceId, instanceId, osuInstanceId);
 
-		EventMessage event = new EventMessage(serviceId, instanceId, serviceId,
-				EpsAction.EPS_ASSIGNMENT_REMOVED.toString(), USER_ID, osuInstanceId, osuInstanceId);
+		CustomEvent event = new CustomEvent(serviceId, instanceId, serviceId,
+				EpsAction.EPS_ASSIGNMENT_REMOVED.toString(), USER_ID, osuInstanceId, null);
 		lcManager.executeAction(event);
 
 	}
@@ -102,7 +112,7 @@ public class Coordinator {
 			return;
 		}
 
-		EventMessage event = new EventMessage(serviceId, csInstanceId, serviceId, eventId, USER_ID, epsId,
+		CustomEvent event = new CustomEvent(serviceId, csInstanceId, serviceId, eventId, USER_ID, epsId,
 				optionalInput);
 		lcManager.executeAction(event);
 	}

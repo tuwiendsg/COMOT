@@ -36,6 +36,8 @@ public interface DeploymentClient extends CoreServiceClient {
 			Map<String, String> map,
 			CloudService service) throws CoreServiceException, ComotException;
 
+	public boolean isManaged(String serviceId) throws CoreServiceException;
+
 	public CloudService getService(String serviceId) throws CoreServiceException, ComotException;
 
 	boolean isRunning(String serviceID) throws CoreServiceException, ComotException;

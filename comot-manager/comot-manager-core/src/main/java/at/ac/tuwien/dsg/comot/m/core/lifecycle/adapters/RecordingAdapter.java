@@ -10,7 +10,8 @@ import org.springframework.amqp.core.Binding.DestinationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.m.common.EventMessage;
+import at.ac.tuwien.dsg.comot.m.common.CustomEvent;
+import at.ac.tuwien.dsg.comot.m.common.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.Transition;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
@@ -66,15 +67,12 @@ public class RecordingAdapter extends Adapter {
 
 			// if (isAssignedTo(serviceId, instanceId)) {
 
-			EventMessage event = msg.getEvent();
+			LifeCycleEvent event = (LifeCycleEvent) msg.getEvent();
 
 			Map<String, String> changeProperties = new HashMap<>();
 			changeProperties.put(PROP_ORIGIN, event.getOrigin());
 			changeProperties.put(PROP_TARGET, groupId);
 			changeProperties.put(PROP_EVENT_NAME, action.toString());
-			if (event.getMessage() != null) {
-				changeProperties.put(PROP_MSG, event.getMessage());
-			}
 
 			// log.info(logId() + "onMessage {}", Utils.asJsonString(msg) );
 
@@ -87,7 +85,7 @@ public class RecordingAdapter extends Adapter {
 		protected void onCustomEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
 				String event, String epsId, String optionalMessage) {
 
-			EventMessage eventMsg = msg.getEvent();
+			CustomEvent eventMsg = (CustomEvent) msg.getEvent();
 
 			Map<String, String> changeProperties = new HashMap<>();
 			changeProperties.put(PROP_ORIGIN, eventMsg.getOrigin());
