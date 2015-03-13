@@ -13,35 +13,24 @@ define(function(require) {
 				route : 'services',
 				title : 'Cloud Services',
 				moduleId : 'services',
-				nav : true
+				nav : false
 			}, {
-				route : 'instance',
+				route : 'services/:serviceId/instances/:instanceId',
 				title : 'Service Instances',
 				moduleId : 'instance',
-				nav : true
+				nav : false
 			}, {
-				route : 'history',
+				route : 'services/:serviceId/instances/:instanceId/history',
 				title : 'History',
 				moduleId : 'history',
-				nav : true
+				nav : false
 			}
-//			, {
-//				route : 'create',
-//				title : 'Create',
-//				moduleId : 'create',
-//				nav : true
-//			}, {
-//				route : 'new',
-//				title : 'New',
-//				moduleId : 'new',
-//				nav : true
-//			}, {
-//				route : 'manage*details',
-//				title : 'Manage',
-//				moduleId : 'manage',
-//				hash : '#manage',
-//				nav : false
-//			} 
+			// , {
+			// route : 'new',
+			// title : 'New',
+			// moduleId : 'new',
+			// nav : true
+			// }
 			]).buildNavigationModel();
 
 			return router.activate();

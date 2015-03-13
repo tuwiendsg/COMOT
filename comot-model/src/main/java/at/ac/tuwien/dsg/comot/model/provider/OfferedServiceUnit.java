@@ -24,6 +24,7 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import at.ac.tuwien.dsg.comot.model.HasUniqueId;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.type.OsuType;
 import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 
@@ -78,6 +79,8 @@ public class OfferedServiceUnit extends Entity implements HasUniqueId, Serializa
 	@XmlElement(name = "Operation")
 	Set<PrimitiveOperation> primitiveOperations;
 
+	protected CloudService service;
+	
 	{
 		// id = UUID.randomUUID().toString();
 		resources = new HashSet<>();
@@ -195,6 +198,14 @@ public class OfferedServiceUnit extends Entity implements HasUniqueId, Serializa
 
 	public void setPrimitiveOperations(Set<PrimitiveOperation> primitiveOperations) {
 		this.primitiveOperations = primitiveOperations;
+	}
+
+	public CloudService getService() {
+		return service;
+	}
+
+	public void setService(CloudService service) {
+		this.service = service;
 	}
 	
 	

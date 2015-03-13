@@ -6,7 +6,8 @@ public enum OsuType {
 	WAR("war"),
 	DOCKER("docker"), // dd Software container
 	TOMCAT("tomcat"), // dd Software container
-	SOFTWARE("software"); // dd Software artifacts
+	SOFTWARE("software"), // dd Software artifacts
+	EPS("EPS");
 
 	final String type;
 

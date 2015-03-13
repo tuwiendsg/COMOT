@@ -13,7 +13,7 @@
 }(function($, notify, exports) {
 
 	var base = "rest/";
-	var services = base + "services/";
+	var services = base + "manager/services/";
 	var recordings = base + "recordings/";
 	var instances = "/instances/";
 
@@ -143,6 +143,14 @@
 		return $.ajax(request);
 	}
 
+	exports.triggerCustomEvent = function(serviceId, instanceId, epsId, eventName, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "PUT";
+		request.url = services + serviceId + instances + instanceId + "/eps/" + epsId + "/events/" + eventName;
+		return $.ajax(request);
+	}
+
 	// GET
 
 	exports.getServices = function(onSuccess, onError) {
@@ -168,7 +176,7 @@
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "GET";
 		request.dataType = "json"
-		request.url = services + "lifecycle/"+level;
+		request.url = services + "lifecycle/" + level;
 		return $.ajax(request);
 	}
 
@@ -209,7 +217,7 @@
 		request.url = recordings + csInstanceId + "/objects/" + objectId + "/events";
 		return $.ajax(request);
 	}
-	
+
 	exports.getAllEvents = function(csInstanceId, onSuccess, onError) {
 
 		var request = getRequestCore(onSuccess, onError);

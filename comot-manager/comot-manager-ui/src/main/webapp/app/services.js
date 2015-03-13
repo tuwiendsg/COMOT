@@ -1,5 +1,5 @@
 define(function(require) {
-	var app = require('durandal/app'), ko = require('knockout'), komapping = require('komapping'), http = require('plugins/http'), d3 = require('d3'), JsonHuman = require('json_human'), comot = require('comot_client'), $ = require("jquery"), router = require('plugins/router');
+	var app = require('durandal/app'), ko = require('knockout'), komapping = require('komapping'), comot = require('comot_client'), $ = require("jquery"), router = require('plugins/router');
 
 	var notify = require('notify');
 
@@ -22,12 +22,22 @@ define(function(require) {
 
 		},
 		activate : function() {
-			comot.getServices(function(data) {
-				model.services = komapping.fromJS(data);
+			model.services.removeAll();
+
+			comot.getServices(function(services) {
+
+				for (var i = 0; i < services.length; i++) {
+					var service = services[i];
+					model.services.push({
+						'name' : service.name,
+						'id' : service.id,
+						'dateCreated' : service.dateCreated,
+						'instances' : ko.observableArray(service.ServiceInstances.Instance)
+					});
+				}
 			})
 		},
 		attached : function() {
-			
 
 		}
 	}
@@ -58,11 +68,11 @@ define(function(require) {
 
 			comot.getServiceInstance(serviceId, instanceId, function(data) {
 
-				var newInstance = komapping.fromJS(data.service.ServiceInstances.Instance[0]);
+				var newInstance = data.service.ServiceInstances.Instance[0];
 
 				for (var i = 0; i < model.services().length; i++) {
-					if (model.services()[i].id() === serviceId) {
-						model.services()[i].ServiceInstances.Instance.push(newInstance);
+					if (model.services()[i].id === serviceId) {
+						model.services()[i].instances.push(newInstance);
 						break;
 					}
 				}

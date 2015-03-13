@@ -178,7 +178,7 @@ public class MelaClientTest extends AbstractTest {
 
 	@Test
 	public void removeService() throws CoreServiceException, InterruptedException, JAXBException {
-		mela.removeServiceDescription("example_executableOnVM_1");
+		mela.removeServiceDescription("example_executableOnVM_12");
 
 		List<String> list = mela.listAllServices();
 		assertEquals(0, list.size());

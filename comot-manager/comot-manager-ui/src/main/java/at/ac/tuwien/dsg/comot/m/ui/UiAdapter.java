@@ -81,7 +81,7 @@ public class UiAdapter extends Adapter {
 
 				String msgForClient = Utils.asJsonString(msg);
 
-				log.info(logId() + "onMessage {}", msgForClient);
+				log.trace(logId() + "onMessage {}", msgForClient);
 
 				OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
 				eventBuilder.data(String.class, msgForClient);

@@ -48,6 +48,12 @@ public class MonitoringClientMela implements MonitoringClient {
 			MonitoredElement element = melaMapper.extractMela(service);
 			Requirements requirements = melaMapper.extractRequirements(service);
 
+			try {
+				log.info("MonitoredElement: {}", UtilsCs.asString(element));
+			} catch (JAXBException e) {
+				e.printStackTrace();
+			}
+			
 			mela.sendServiceDescription(element);
 
 			if (requirements != null && !requirements.getRequirements().isEmpty()) {

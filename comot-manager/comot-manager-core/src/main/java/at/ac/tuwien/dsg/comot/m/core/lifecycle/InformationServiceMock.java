@@ -18,9 +18,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.sun.jersey.api.uri.UriTemplate;
+
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.ComotAction;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.ControlAdapter;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.DeploymentAdapter;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.MonitoringAdapter;
 import at.ac.tuwien.dsg.comot.m.cs.AppContextEps;
@@ -34,6 +38,7 @@ import at.ac.tuwien.dsg.comot.model.provider.Resource;
 import at.ac.tuwien.dsg.comot.model.provider.ResourceOrQualityType;
 import at.ac.tuwien.dsg.comot.model.runtime.ServiceInstance;
 import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
+import at.ac.tuwien.dsg.comot.model.type.OsuType;
 
 @Component
 public class InformationServiceMock {
@@ -50,16 +55,11 @@ public class InformationServiceMock {
 	public static final String RSYBL_SERVICE_PUBLIC_ID = "RSYBL_SERVICE";
 	public static final String RECORDER = "RECORDER";
 
-	public static final String PUBLIC_INSTANCE = "PUBLIC_INSTANCE";
-	public static final String TYPE_STATIC_SERVICE = "TYPE_STATIC_SERVICE";
-
 	public static final String ADAPTER_CLASS = "ADAPTER_CLASS";
 	public static final String IP = "IP";
 	public static final String PORT = "PORT";
-
-	// custom events
-	public static final String SET_MCR = "SET_MCR";
-	public static final String SET_EFFECTS = "SET_EFFECTS";
+	public static final String VIEW = "VIEW";
+	public static final String PLACE_HOLDER_INSTANCE_ID = "PLACE_HOLDER_INSTANCE_ID";
 
 	protected Map<String, CloudService> services = new HashMap<>();
 	protected Map<String, OfferedServiceUnit> osus = new HashMap<>();
@@ -70,47 +70,52 @@ public class InformationServiceMock {
 	public void setUpTestData() {
 
 		// SALSA
-		Resource resource = new Resource(InformationServiceMock.PUBLIC_INSTANCE, new ResourceOrQualityType(
-				InformationServiceMock.TYPE_STATIC_SERVICE));
-		resource.hasResource(new Resource(DeploymentAdapter.class.getCanonicalName(),
-				new ResourceOrQualityType(InformationServiceMock.ADAPTER_CLASS)));
-		resource.hasResource(new Resource(AppContextEps.SALSA_IP, new ResourceOrQualityType(InformationServiceMock.IP)));
-		resource.hasResource(new Resource(AppContextEps.SALSA_PORT.toString(), new ResourceOrQualityType(
-				InformationServiceMock.PORT)));
 
 		OfferedServiceUnit deployment = new OfferedServiceUnit();
 		deployment.setId(InformationServiceMock.SALSA_SERVICE_PUBLIC_ID);
-		deployment.hasResource(resource);
+		deployment.setType(OsuType.EPS);
+		deployment.hasResource(new Resource(DeploymentAdapter.class.getCanonicalName(),
+				new ResourceOrQualityType(InformationServiceMock.ADAPTER_CLASS)));
+		deployment.hasResource(new Resource(AppContextEps.SALSA_IP,
+				new ResourceOrQualityType(InformationServiceMock.IP)));
+		deployment.hasResource(new Resource(AppContextEps.SALSA_PORT.toString(), new ResourceOrQualityType(
+				InformationServiceMock.PORT)));
+		deployment.hasResource(new Resource(
+				"/salsa-engine?id={" + PLACE_HOLDER_INSTANCE_ID + "}",
+				new ResourceOrQualityType(InformationServiceMock.VIEW)));
 
 		// MELA
-
-		Resource resource2 = new Resource(InformationServiceMock.PUBLIC_INSTANCE, new ResourceOrQualityType(
-				InformationServiceMock.TYPE_STATIC_SERVICE));
-		resource2.hasResource(new Resource(MonitoringAdapter.class.getCanonicalName(), new ResourceOrQualityType(
-				InformationServiceMock.ADAPTER_CLASS)));
-		resource2.hasResource(new Resource("128.130.172.215", new ResourceOrQualityType(InformationServiceMock.IP)));
-		resource2.hasResource(new Resource("8180", new ResourceOrQualityType(InformationServiceMock.PORT)));
-
+		// TODO use metrics
 		OfferedServiceUnit monitoring = new OfferedServiceUnit();
 		monitoring.setId(InformationServiceMock.MELA_SERVICE_PUBLIC_ID);
-		monitoring.hasResource(resource2);
-		monitoring.hasPrimitiveOperation(new PrimitiveOperation("Set Metric Composition Rules",
-				InformationServiceMock.SET_MCR));
+		monitoring.setType(OsuType.EPS);
+		monitoring.hasResource(new Resource(MonitoringAdapter.class.getCanonicalName(),
+				new ResourceOrQualityType(InformationServiceMock.ADAPTER_CLASS)));
+		monitoring.hasResource(new Resource("128.130.172.215", new ResourceOrQualityType(InformationServiceMock.IP)));
+		monitoring.hasResource(new Resource("8180", new ResourceOrQualityType(InformationServiceMock.PORT)));
+		monitoring.hasResource(new Resource(
+				"/MELA/mela.html?{" + PLACE_HOLDER_INSTANCE_ID + "}",
+				new ResourceOrQualityType(InformationServiceMock.VIEW)));
+
+		monitoring.hasPrimitiveOperation(
+				new PrimitiveOperation("Set Metric Composition Rules", ComotAction.MELA_SET_MCR.toString()));
+		monitoring.hasPrimitiveOperation(
+				new PrimitiveOperation("Start monitoring", ComotAction.MELA_START.toString()));
+		monitoring.hasPrimitiveOperation(
+				new PrimitiveOperation("Stop monitoring", ComotAction.MELA_STOP.toString()));
 
 		// RSYBL
 
-		Resource resource3 = new Resource(InformationServiceMock.PUBLIC_INSTANCE, new ResourceOrQualityType(
-				InformationServiceMock.TYPE_STATIC_SERVICE));
-		resource3.hasResource(new Resource("TODO", new ResourceOrQualityType(InformationServiceMock.ADAPTER_CLASS)));
-		resource3.hasResource(new Resource("128.130.172.215", new ResourceOrQualityType(InformationServiceMock.IP)));
-		resource3.hasResource(new Resource("8020", new ResourceOrQualityType(InformationServiceMock.PORT)));
-
 		OfferedServiceUnit control = new OfferedServiceUnit();
 		control.setId(InformationServiceMock.RSYBL_SERVICE_PUBLIC_ID);
-		control.hasResource(resource3);
-		control.hasPrimitiveOperation(new PrimitiveOperation("Set Metric Composition Rules",
-				InformationServiceMock.SET_MCR));
-		control.hasPrimitiveOperation(new PrimitiveOperation("Set Effects", InformationServiceMock.SET_EFFECTS));
+		control.setType(OsuType.EPS);
+		control.hasResource(new Resource(ControlAdapter.class.getCanonicalName(), new ResourceOrQualityType(
+				InformationServiceMock.ADAPTER_CLASS)));
+		control.hasResource(new Resource("128.130.172.215", new ResourceOrQualityType(InformationServiceMock.IP)));
+		control.hasResource(new Resource("8020", new ResourceOrQualityType(InformationServiceMock.PORT)));
+		control.hasResource(new Resource(
+				"/rSYBL/",
+				new ResourceOrQualityType(InformationServiceMock.VIEW)));
 
 		// RECORDER
 
@@ -199,6 +204,16 @@ public class InformationServiceMock {
 
 	}
 
+	public void updateUnitInstance(String serviceId, String csInstanceId, UnitInstance uInst) {
+
+		Navigator nav = new Navigator(services.get(serviceId));
+		String unitId = nav.getUnitFor(uInst.getId()).getId();
+
+		removeUnitInstance(serviceId, csInstanceId, uInst.getId());
+		addUnitInstance(serviceId, csInstanceId, unitId, uInst);
+
+	}
+
 	public void addUnitInstance(String serviceId, String csInstanceId, String unitId, UnitInstance uInst) {
 
 		Navigator nav = new Navigator(services.get(serviceId));
@@ -225,6 +240,10 @@ public class InformationServiceMock {
 
 	public void assignSupportingService(String serviceId, String instanceId, String osuInstanceId) {
 
+		if (isOsuAssignedToInstance(serviceId, instanceId, osuInstanceId)) {
+			return;
+		}
+
 		ServiceInstance instance = _getServiceInstance(serviceId, instanceId);
 		instance.getSupport().add(osus.get(osuInstanceId));
 
@@ -248,15 +267,18 @@ public class InformationServiceMock {
 
 	public void removeAssignmentOfSupportingOsu(String serviceId, String instanceId, String osuInstanceId) {
 
-		ServiceInstance instance = _getServiceInstance(serviceId, instanceId);
+		if (isOsuAssignedToInstance(serviceId, instanceId, osuInstanceId)) {
 
-		for (OfferedServiceUnit osu : instance.getSupport()) {
-			if (osu.getId().equals(osuInstanceId)) {
-				instance.getSupport().remove(osu);
-				return;
+			ServiceInstance instance = _getServiceInstance(serviceId, instanceId);
+
+			for (OfferedServiceUnit osu : instance.getSupport()) {
+				if (osu.getId().equals(osuInstanceId)) {
+					instance.getSupport().remove(osu);
+					return;
+				}
 			}
-		}
 
+		}
 	}
 
 	// public void updateRuntimeAndDevelInfo(String instanceId, CloudService service){
@@ -278,8 +300,7 @@ public class InformationServiceMock {
 
 	}
 
-	public boolean isOsuAssignedToInstance(String serviceId, String instanceId, String osuId)
-			throws ClassNotFoundException, IOException {
+	public boolean isOsuAssignedToInstance(String serviceId, String instanceId, String osuId) {
 
 		for (OfferedServiceUnit osu : _getServiceInstance(serviceId, instanceId).getSupport()) {
 			if (osu.getId().equals(osuId)) {
@@ -358,6 +379,13 @@ public class InformationServiceMock {
 					i.remove();
 				}
 			}
+		}
+
+		try {
+			log.trace("getServiceInstance(): {}", Utils.asJsonString(copyServ));
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		return copyServ;

@@ -29,21 +29,15 @@ define(function(require) {
 			getRevision();
 		},
 		// life-cycle
-		activate : function(input) {
+		activate : function(serviceId, instanceId) {
 
-			if (typeof input != 'undefined') {
-				model.serviceId(input.serviceId);
-				model.instanceId(input.instanceId);
-			}
+			model.serviceId(serviceId);
+			model.instanceId(instanceId);
 
 		},
 		attached : function() {
-			console.log(model.serviceId());
-			console.log(model.instanceId());
 
-			if (model.serviceId() != "" && model.instanceId() != "") {
-				showThisInstance(model.serviceId(), model.instanceId());
-			}
+			showThisInstance(model.serviceId(), model.instanceId());
 
 			$(document).ready(
 					function() {

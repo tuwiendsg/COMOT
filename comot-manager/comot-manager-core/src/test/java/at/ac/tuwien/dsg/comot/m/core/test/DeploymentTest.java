@@ -4,12 +4,15 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 
+import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.JAXBException;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.oasis.tosca.Definitions;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.sun.jersey.api.uri.UriTemplate;
 
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
@@ -50,11 +53,13 @@ public class DeploymentTest extends AbstractTest {
 
 	}
 
+
+
 	@Test
 	public void testCreateRemove() throws ClassNotFoundException, IOException, JAXBException {
 
 		// TODO does not work yet
-		
+
 		assertNotNull(infoService.getServiceInstance(instanceId));
 		assertTrue(lcManager.isInstanceManaged(instanceId));
 

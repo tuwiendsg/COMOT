@@ -11,8 +11,7 @@
 		<ul class="dropdown-menu" role="menu" data-bind="foreach: allServices">
 			<li role="presentation" class="dropdown-header" data-bind="text: serviceId"></li>
 			<!-- ko foreach: instanceId -->
-			<li><a href="#"
-				data-bind="text: $data, click: function() { $root.showThisInstance( $parent.serviceId, $data) } "></a></li>
+			<li><a href="#" data-bind="text: $data, attr: { href: '#services/'+$parent.serviceId+'/instances/'+$data }"></a></li>
 			<!-- /ko -->
 		</ul>
 	</div>
@@ -45,12 +44,29 @@
 			<div data-bind="foreach: selectedEpsServices">
 				<div class="panel panel-default col-md-4">
 					<div class="panel-body">
-						<h5>
-							<b>Name:</b> <span data-bind="text: id"></span>
-						</h5>
-						<button type="button" class="btn btn-default" data-bind="click: $root.removeEps">
+						<button type="button" class="btn btn-default pull-right" data-bind="click: $root.removeEps">
 							<span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Remove
 						</button>
+						<h5>
+							<b>Name:</b>
+							<!-- ko if: (typeof viewEndpoint !== 'undefined') -->
+							<a data-bind="text: id, attr: {href: viewEndpoint}" target="_new">view</a>
+							<!-- /ko -->
+							<!-- ko if: (typeof viewEndpoint === 'undefined') -->
+							<span data-bind="text: id"></span>
+							<!-- /ko -->
+						</h5>
+						<!-- ko if: PrimitiveOperations.Operation.length > 0 -->
+						<h5>
+							<b>Actions:</b>
+						</h5>
+						<!-- /ko -->
+						<!-- ko foreach: PrimitiveOperations.Operation -->
+						<button type="button" class="btn btn-default"
+							data-bind="click: function() { $root.triggerCustomEvent( $parent, executeMethod) }">
+							<span data-bind="text: name"></span>
+						</button>
+						<!-- /ko -->
 					</div>
 				</div>
 			</div>

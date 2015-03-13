@@ -51,7 +51,7 @@ import at.ac.tuwien.dsg.comot.model.type.State;
 @Service
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-@Path("/services")
+@Path("/manager")
 public class ServicesResource {
 
 	private static final Logger log = LoggerFactory.getLogger(ServicesResource.class);
@@ -76,7 +76,7 @@ public class ServicesResource {
 	}
 
 	@POST
-	@Path("/")
+	@Path("/services")
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response createService(Definitions def) throws CoreServiceException, ComotException, JAXBException {
 
@@ -85,7 +85,7 @@ public class ServicesResource {
 	}
 
 	@DELETE
-	@Path("/{serviceId}")
+	@Path("/services/{serviceId}")
 	public Response deleteService(@PathParam("serviceId") String serviceId) throws CoreServiceException,
 			ComotException {
 
@@ -94,7 +94,7 @@ public class ServicesResource {
 	}
 
 	@POST
-	@Path("/{serviceId}/instances")
+	@Path("/services/{serviceId}/instances")
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response createServiceInstance(@PathParam("serviceId") String serviceId) throws CoreServiceException,
 			ComotException, ClassNotFoundException, IOException, JAXBException {
@@ -104,7 +104,7 @@ public class ServicesResource {
 	}
 
 	@DELETE
-	@Path("/{serviceId}/instances/{instanceId}")
+	@Path("/services/{serviceId}/instances/{instanceId}")
 	public Response deleteServiceInstance(
 			@PathParam("serviceId") String serviceId,
 			@PathParam("instanceId") String instanceId) throws CoreServiceException, ComotException {
@@ -114,7 +114,7 @@ public class ServicesResource {
 	}
 
 	@PUT
-	@Path("/{serviceId}/instances/{instanceId}/start")
+	@Path("/services/{serviceId}/instances/{instanceId}/start")
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response startServiceInstance(
 			@PathParam("serviceId") String serviceId,
@@ -126,7 +126,7 @@ public class ServicesResource {
 	}
 
 	@PUT
-	@Path("/{serviceId}/instances/{instanceId}/stop")
+	@Path("/services/{serviceId}/instances/{instanceId}/stop")
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response stopServiceInstance(
 			@PathParam("serviceId") String serviceId,
@@ -138,7 +138,7 @@ public class ServicesResource {
 	}
 
 	@PUT
-	@Path("/{serviceId}/instances/{instanceId}/eps/{epsId}")
+	@Path("/services/{serviceId}/instances/{instanceId}/eps/{epsId}")
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response assignSupportingEps(
 			@PathParam("serviceId") String serviceId,
@@ -151,7 +151,7 @@ public class ServicesResource {
 	}
 
 	@DELETE
-	@Path("/{serviceId}/instances/{instanceId}/eps/{epsId}")
+	@Path("/services/{serviceId}/instances/{instanceId}/eps/{epsId}")
 	public Response removeSupportingEps(
 			@PathParam("serviceId") String serviceId,
 			@PathParam("instanceId") String instanceId,
@@ -163,24 +163,26 @@ public class ServicesResource {
 	}
 
 	@PUT
-	@Path("/{serviceId}/instances/{instanceId}/eps/{epsId}/events/{eventId}")
+	@Path("/services/{serviceId}/instances/{instanceId}/eps/{epsId}/events/{eventName}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response triggerCustomEvent(
 			@PathParam("serviceId") String serviceId,
 			@PathParam("instanceId") String instanceId,
 			@PathParam("epsId") String epsId,
-			@PathParam("eventId") String eventId,
+			@PathParam("eventName") String eventName,
 			String optionalInput) throws CoreServiceException, ComotException, ClassNotFoundException, IOException,
 			JAXBException {
+		
+		//log.info(">>>{}<<<", optionalInput);
 
-		coordinator.triggerCustomEvent(serviceId, instanceId, epsId, eventId, optionalInput);
+		coordinator.triggerCustomEvent(serviceId, instanceId, epsId, eventName, optionalInput);
 		return Response.ok().build();
 	}
 
 	// update structure / requirements for monitoring / SYBL directives
 	@PUT
-	@Path("/{serviceId}")
+	@Path("/services/{serviceId}")
 	public Response updateService(@PathParam("serviceId") String serviceId, Definitions def) {
 
 		// TODO
@@ -188,7 +190,7 @@ public class ServicesResource {
 	}
 
 	@GET
-	@Path("/{serviceId}/instances/{instanceId}/events")
+	@Path("/services/{serviceId}/instances/{instanceId}/events")
 	@Consumes(SseFeature.SERVER_SENT_EVENTS)
 	@Produces(SseFeature.SERVER_SENT_EVENTS)
 	public EventOutput getServerSentEvents(
@@ -209,7 +211,7 @@ public class ServicesResource {
 
 	@GET
 	@Consumes(MediaType.WILDCARD)
-	@Path("/lifecycle/{level}")
+	@Path("/services/lifecycle/{level}")
 	public Response getLifeCycle(@PathParam("level") Type level) {
 
 		LifeCycle lifeCycle = LifeCycleFactory.getLifeCycle(level);
@@ -228,7 +230,7 @@ public class ServicesResource {
 
 	@GET
 	@Consumes(MediaType.WILDCARD)
-	@Path("/allInstances")
+	@Path("/services/allInstances")
 	public Response getAllInstances() {
 
 		Map<String, List<String>> map = infoServ.getAllInstanceIds();
@@ -247,7 +249,7 @@ public class ServicesResource {
 
 	@GET
 	@Consumes(MediaType.WILDCARD)
-	@Path("/eps")
+	@Path("/services/eps")
 	public Response getElasticPlatformServices() {
 
 		List<OfferedServiceUnit> list = new ArrayList<>(infoServ.getOsus().values());
@@ -257,7 +259,7 @@ public class ServicesResource {
 
 	@GET
 	@Consumes(MediaType.WILDCARD)
-	@Path("/")
+	@Path("/services")
 	public Response getServices() throws ClassNotFoundException, IOException {
 		List<CloudService> list = new ArrayList<>(infoServ.getServices().values());
 		return Response.ok(list.toArray(new CloudService[list.size()])).build();
@@ -265,7 +267,7 @@ public class ServicesResource {
 
 	@GET
 	@Consumes(MediaType.WILDCARD)
-	@Path("/{serviceId}/instances/{instanceId}")
+	@Path("/services/{serviceId}/instances/{instanceId}")
 	public Response getServicesInstance(
 			@PathParam("serviceId") String serviceId,
 			@PathParam("instanceId") String instanceId) throws ClassNotFoundException, IOException {

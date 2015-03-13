@@ -106,6 +106,16 @@ public class ManagerOfServiceInstance {
 
 			targetGroup = checkAndExecute(action, groupId);
 
+		} else if (Action.DEPLOYED.equals(action)) {
+
+			targetGroup = checkAndExecute(action, groupId);
+
+			if (targetGroup.getType() == Type.INSTANCE) {
+				log.info("updating instance: {}", targetGroup.getId());
+				UnitInstance instance = new Navigator(service).getInstance(targetGroup.getId());
+				infoService.updateUnitInstance(serviceId, csInstanceId, instance);
+			}
+
 		} else if (Action.UNDEPLOYED.equals(action)) {
 
 			// remove new instance groups

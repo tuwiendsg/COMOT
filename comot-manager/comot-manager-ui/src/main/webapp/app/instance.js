@@ -22,24 +22,45 @@ define(function(require) {
 		stopInstance : stopInstance,
 		assignEps : assignEps,
 		removeEps : removeEps,
-		showThisInstance : showThisInstance,
 		showThisGroup : showThisGroup,
+		triggerCustomEvent : triggerCustomEvent,
 		// life-cycle
 		deactivate : function() {
 			if (typeof source.close === 'function') {
 				source.close();
 			}
 		},
-		activate : function(input) {
-
-			if (typeof input != 'undefined') {
-				model.serviceId(input.serviceId);
-				model.instanceId(input.instanceId);
+		activate : function(serviceId, instanceId) {
+			
+			if(instanceId != model.instanceId()){
+				model.events.removeAll();
 			}
+			model.selectedEpsServices.removeAll();
 
-			comot.getEps(function(data) {
-				model.allEpsServices(data);
+			model.serviceId(serviceId);
+			model.instanceId(instanceId);
+			model.groupId(serviceId);
+
+			comot.getEps(function(epses) {
+				processEpses(epses);
+				model.allEpsServices(epses);
+
+				comot.getServiceInstance(model.serviceId(), model.instanceId(), function(data) {
+
+					var service = data.service;
+					var epses = service.ServiceInstances.Instance[0].support;
+
+					for (var i = 0; i < epses.length; i++) {
+						var epsArr = model.allEpsServices.remove(function(item) {
+							return item.id === epses[i].id
+						})
+						model.selectedEpsServices.push(epsArr[0]);
+					}
+
+				});
+
 			});
+
 			comot.getAllInstances(function(data) {
 				model.allServices(data);
 			});
@@ -47,13 +68,19 @@ define(function(require) {
 		attached : function() {
 
 			comot.lifecycle("SERVICE", function(data) {
+
 				model.lifecycle(data);
 
-				if (model.serviceId() != "" && model.instanceId() != "") {
-					showThisInstance(model.serviceId(), model.instanceId());
-				} else {
-					createLifecycle(model.lifecycle(), "#lifecycle_div", "xxx", "xxx");
-				}
+				var path = comot.eventPath(model.serviceId(), model.instanceId());
+				source = registerForEvents(path, model.events);
+
+				comot.getServiceInstance(model.serviceId(), model.instanceId(), function(data) {
+
+					var transitions = data.transitions.entry;
+					var service = data.service;
+					populateGraphs(service, transitions);
+				});
+
 			});
 		}
 	}
@@ -64,75 +91,63 @@ define(function(require) {
 
 		console.log(groupId);
 
-		if (model.serviceId() != "" && model.instanceId() != "") {
-			model.groupId(groupId);
-			populateLifecycle();
-		}
+		model.groupId(groupId);
+		populateLifecycle();
+
 	}
 
-	function showThisInstance(serviceId, instanceId) {
+	function processEpses(epses) {
 
-		console.log("showing: " + serviceId + " " + instanceId);
+		for (var i = 0; i < epses.length; i++) {
+			var eps = epses[i];
 
-		if (typeof source.close === 'function') {
-			source.close();
-		}
-
-		model.events.removeAll();
-		model.selectedEpsServices.removeAll();
-
-		model.serviceId(serviceId);
-		model.instanceId(instanceId);
-		model.groupId(serviceId);
-
-		comot.getServiceInstance(serviceId, instanceId, function(data) {
-
-			var transitions = data.transitions.entry;
-			var service = data.service;
-			var epses = service.ServiceInstances.Instance[0].support;
-
-			for (var i = 0; i < epses.length; i++) {
-				model.selectedEpsServices.push(epses[i]);
+			var map = {};
+			for (var j = 0; j < eps.resources.length; j++) {
+				map[eps.resources[j].type.name] = eps.resources[j].name;
 			}
 
-			populateGraphs(service, transitions);
-		});
-
-		var path = comot.eventPath(serviceId, instanceId);
-		source = registerForEvents(path, model.events);
-
+			if (typeof map["VIEW"] !== 'undefined') {
+				var path = map["VIEW"];
+				path = path.replace("{PLACE_HOLDER_INSTANCE_ID}", model.instanceId());
+				eps.viewEndpoint = "http://" + map["IP"] + ":" + map["PORT"] + path;
+			}
+		}
 	}
 
 	function startInstance() {
-		if (model.serviceId() != "" && model.instanceId() != "") {
-			comot.startServiceInstance(model.serviceId(), model.instanceId(), function(data) {
-			});
-		}
+
+		comot.startServiceInstance(model.serviceId(), model.instanceId(), function(data) {
+		});
 	}
 
 	function stopInstance(serviceId, instanceId) {
-		if (model.serviceId() != "" && model.instanceId() != "") {
-			comot.stopServiceInstance(model.serviceId(), model.instanceId(), function(data) {
-			});
-		}
+
+		comot.stopServiceInstance(model.serviceId(), model.instanceId(), function(data) {
+		});
 	}
 
 	function assignEps(eps) {
 
-		if (model.serviceId() != "" && model.instanceId() != "") {
-			comot.assignSupportingEps(model.serviceId(), model.instanceId(), eps.id, function(data) {
-				model.selectedEpsServices.push(eps);
-			});
-		}
+		comot.assignSupportingEps(model.serviceId(), model.instanceId(), eps.id, function(data) {
+			model.allEpsServices.remove(eps)
+			model.selectedEpsServices.push(eps);
+		});
 	}
 
 	function removeEps(eps) {
 		var epsId = eps.id;
 
 		comot.removeSupportingEps(model.serviceId(), model.instanceId(), epsId, function(data) {
-			model.selectedEpsServices.remove(function(item) {
-				return item.id === epsId
-			});
+			model.allEpsServices.push(eps)
+			model.selectedEpsServices.remove(eps);
+		});
+	}
+
+	function triggerCustomEvent(eps, eventName) {
+
+		var epsId = eps.id;
+		comot.triggerCustomEvent(model.serviceId(), model.instanceId(), epsId, eventName, function(data) {
+
 		});
 	}
 
@@ -182,10 +197,9 @@ define(function(require) {
 		var tMap = processTransitionsToMap(transitions);
 
 		// store transitions
-		model.transitions.removeAll();
-		for (i = 0; i < transitions.length; i++) {
-			model.transitions.push(transitions[i]);
-		}
+		//model.transitions.removeAll();
+		model.transitions(transitions);
+
 
 		// tree
 		createTree(createElement(service, tMap), "#tree_div");
@@ -241,9 +255,6 @@ function showEvent(events, event) {
 
 function createElement(object, tMap) {
 
-	console.log("object");
-	console.log(object);
-	
 	var type = tMap[object.id].groupType;
 	var members;
 
@@ -285,9 +296,9 @@ function createElement(object, tMap) {
 
 function createLifecycle(graph, divId, lastState, currentState) {
 
-	console.log(graph);
-	console.log(lastState);
-	console.log(currentState);
+	// console.log(graph);
+	// console.log(lastState);
+	// console.log(currentState);
 
 	$(divId).empty();
 

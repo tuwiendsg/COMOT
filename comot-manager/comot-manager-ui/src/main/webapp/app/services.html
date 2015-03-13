@@ -39,11 +39,11 @@
 
 				<div>&nbsp;</div>
 				<button type="button" class="btn btn-default pull-right"
-					data-bind="click: function() { $root.newInstanceService( id()) }">
+					data-bind="click: function() { $root.newInstanceService( id) }">
 					<span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> New instance
 				</button>
 
-				<div data-bind="if: (ServiceInstances.Instance().length > 0)">
+				<div data-bind="if: instances().length > 0">
 					<h4>Instances:</h4>
 
 					<table class="table table-hover table-condensed">
@@ -52,28 +52,26 @@
 								<th>#</th>
 								<th>ID</th>
 								<th>Date created</th>
-								<th>State</th>
 								<th colspan="2">Details</th>
 								<th>Remove</th>
 							</tr>
 						</thead>
-						<tbody data-bind="foreach: ServiceInstances.Instance">
+						<tbody data-bind="foreach: instances">
 							<tr>
 								<td data-bind="text: ($index() + 1)"></td>
 								<td data-bind="text: id"></td>
-								<td data-bind="text: dateCreated">01.09.1989 10:14</td>
-								<td>TODO</td>
-								<td><a data-bind="attr: { href: '#instance?serviceId='+$parent.id()+'&instanceId='+id() }"><button
+								<td data-bind="text: dateCreated"></td>
+								<td><a data-bind="attr: { href: '#services/'+$parent.id+'/instances/'+id }"><button
 											type="button" class="btn btn-default">
 											<span class="glyphicon glyphicon-search" aria-hidden="true"></span> View
 										</button></a></td>
-								<td><a data-bind="attr: { href: '#history?serviceId='+$parent.id()+'&instanceId='+id() }"><button
+								<td><a data-bind="attr: { href: '#services/'+$parent.id+'/instances/'+id+'/history' }"><button
 											type="button" class="btn btn-default">
 											<span class="glyphicon glyphicon-search" aria-hidden="true"></span> History
 										</button></a></td>
 								<td>
 									<button type="button" class="btn btn-default"
-										data-bind="click:function() { $root.removeInstance( $parent.id(), id()) }">
+										data-bind="click:function() { $root.removeInstance( $parent.id, id) }">
 										<span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Remove
 									</button>
 								</td>
@@ -84,7 +82,7 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<!-- Modal -->
 	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog" style="width: 900px">
@@ -96,7 +94,7 @@
 					<h4 class="modal-title" id="myModalLabel">Elastic cloud service definition</h4>
 				</div>
 				<div class="modal-body">
-					<textarea class="form-control" data-bind="value: newService()"  rows="30" data-bind="value: mcr"></textarea>
+					<textarea class="form-control" data-bind="value: newService()" rows="30" data-bind="value: mcr"></textarea>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -105,7 +103,7 @@
 			</div>
 		</div>
 	</div>
-	
+
 
 </div>
 

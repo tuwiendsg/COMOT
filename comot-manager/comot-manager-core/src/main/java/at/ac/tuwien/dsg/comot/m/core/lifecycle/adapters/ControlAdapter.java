@@ -5,6 +5,7 @@ import java.util.Map;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Binding.DestinationType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.common.StateMessage;
@@ -19,7 +20,7 @@ import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 @Component
-// @Scope("prototype") //for some reason this creates multip0le instances
+@Scope("prototype")
 public class ControlAdapter extends Adapter {
 
 	@Autowired
@@ -35,15 +36,11 @@ public class ControlAdapter extends Adapter {
 		String ip = null;
 		String port = null;
 
-		for (Resource resource : osu.getResources()) {
-			if (resource.getName().equals(InformationServiceMock.PUBLIC_INSTANCE)) {
-				for (Resource res : resource.getContainsResources()) {
-					if (res.getType().getName().equals(InformationServiceMock.IP)) {
-						ip = res.getName();
-					} else if (res.getType().getName().equals(InformationServiceMock.PORT)) {
-						port = res.getName();
-					}
-				}
+		for (Resource res : osu.getResources()) {
+			if (res.getType().getName().equals(InformationServiceMock.IP)) {
+				ip = res.getName();
+			} else if (res.getType().getName().equals(InformationServiceMock.PORT)) {
+				port = res.getName();
 			}
 		}
 

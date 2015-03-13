@@ -48,15 +48,11 @@ public class DeploymentAdapter extends Adapter {
 		String ip = null;
 		String port = null;
 
-		for (Resource resource : osu.getResources()) {
-			if (resource.getName().equals(InformationServiceMock.PUBLIC_INSTANCE)) {
-				for (Resource res : resource.getContainsResources()) {
-					if (res.getType().getName().equals(InformationServiceMock.IP)) {
-						ip = res.getName();
-					} else if (res.getType().getName().equals(InformationServiceMock.PORT)) {
-						port = res.getName();
-					}
-				}
+		for (Resource res : osu.getResources()) {
+			if (res.getType().getName().equals(InformationServiceMock.IP)) {
+				ip = res.getName();
+			} else if (res.getType().getName().equals(InformationServiceMock.PORT)) {
+				port = res.getName();
 			}
 		}
 
