@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.PreDestroy;
+import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
@@ -27,12 +28,16 @@ public class MonitoringClientMela implements MonitoringClient {
 
 	private final Logger log = LoggerFactory.getLogger(MonitoringClientMela.class);
 
-	@Autowired
 	protected MelaClient mela;
 	@Autowired
 	protected MelaMapper melaMapper;
 	@Autowired
 	protected MelaOutputMapper mapperMelaOutput;
+
+	public MonitoringClientMela(MelaClient mela) {
+		super();
+		this.mela = mela;
+	}
 
 	@Override
 	public void startMonitoring(CloudService service) throws CoreServiceException,
@@ -53,7 +58,7 @@ public class MonitoringClientMela implements MonitoringClient {
 			} catch (JAXBException e) {
 				e.printStackTrace();
 			}
-			
+
 			mela.sendServiceDescription(element);
 
 			if (requirements != null && !requirements.getRequirements().isEmpty()) {
@@ -120,18 +125,16 @@ public class MonitoringClientMela implements MonitoringClient {
 
 	@PreDestroy
 	public void cleanup() {
-		log.info("closing mela client");
-		mela.close();
+		if (mela != null) {
+			log.info("closing mela client");
+			mela.close();
+		}
 	}
 
 	@Override
-	public void setHost(String host) {
-		mela.setHost(host);
-	}
-
-	@Override
-	public void setPort(int port) {
-		mela.setPort(port);
+	public void setHostAndPort(String host, int port) {
+		mela.setBaseUri(UriBuilder.fromUri(mela.getBaseUri())
+				.host(host).port(port).build());
 	}
 
 }

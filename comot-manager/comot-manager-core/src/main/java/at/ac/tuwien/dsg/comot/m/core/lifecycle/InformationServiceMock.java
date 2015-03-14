@@ -18,8 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.sun.jersey.api.uri.UriTemplate;
-
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
@@ -27,7 +25,6 @@ import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.ComotAction;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.ControlAdapter;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.DeploymentAdapter;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.MonitoringAdapter;
-import at.ac.tuwien.dsg.comot.m.cs.AppContextEps;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
@@ -76,9 +73,9 @@ public class InformationServiceMock {
 		deployment.setType(OsuType.EPS);
 		deployment.hasResource(new Resource(DeploymentAdapter.class.getCanonicalName(),
 				new ResourceOrQualityType(InformationServiceMock.ADAPTER_CLASS)));
-		deployment.hasResource(new Resource(AppContextEps.SALSA_IP,
+		deployment.hasResource(new Resource("128.130.172.215",
 				new ResourceOrQualityType(InformationServiceMock.IP)));
-		deployment.hasResource(new Resource(AppContextEps.SALSA_PORT.toString(), new ResourceOrQualityType(
+		deployment.hasResource(new Resource("8380", new ResourceOrQualityType(
 				InformationServiceMock.PORT)));
 		deployment.hasResource(new Resource(
 				"/salsa-engine?id={" + PLACE_HOLDER_INSTANCE_ID + "}",
@@ -139,7 +136,7 @@ public class InformationServiceMock {
 
 			String serviceId = this.createService(service1);
 
-		} catch (JAXBException | IOException e) {
+		} catch (JAXBException | IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 
@@ -147,7 +144,7 @@ public class InformationServiceMock {
 			this.createService(
 					mapperTosca.createModel(
 							UtilsCs.loadTosca("./../resources/test/daas_m2m_fromSalsa.xml")));
-		} catch (JAXBException | IOException e) {
+		} catch (JAXBException | IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 
@@ -155,7 +152,7 @@ public class InformationServiceMock {
 			this.createService(
 					mapperTosca.createModel(
 							UtilsCs.loadTosca("./../resources/test/xml/ExampleExecutableOnVM.xml")));
-		} catch (JAXBException | IOException e) {
+		} catch (JAXBException | IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 
@@ -165,7 +162,9 @@ public class InformationServiceMock {
 		return serviceId + "_" + ++instanceItarator;
 	}
 
-	public String createService(CloudService service) {
+	public String createService(CloudService service) throws ClassNotFoundException, IOException {
+
+		service = (CloudService) Utils.deepCopy(service);
 		service.setDateCreated(new Date());
 		services.put(service.getId(), service);
 
@@ -173,13 +172,17 @@ public class InformationServiceMock {
 	}
 
 	public String createServiceInstance(String serviceId) {
+		return createServiceInstance(serviceId, getInstanceId(serviceId));
+	}
+
+	public String createServiceInstance(String serviceId, String instanceId) {
 
 		if (!services.containsKey(serviceId)) {
 			throw new ComotIllegalArgumentException("There is no service '" + serviceId + "'");
 		}
 
 		CloudService service = services.get(serviceId);
-		ServiceInstance instance = service.createServiceInstance(getInstanceId(serviceId));
+		ServiceInstance instance = service.createServiceInstance(instanceId);
 		return instance.getId();
 	}
 

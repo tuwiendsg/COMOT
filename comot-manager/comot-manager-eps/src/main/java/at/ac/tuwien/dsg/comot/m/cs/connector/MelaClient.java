@@ -1,5 +1,7 @@
 package at.ac.tuwien.dsg.comot.m.cs.connector;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +26,7 @@ public class MelaClient extends CoreServiceClient {
 
 	private static final Logger log = LoggerFactory.getLogger(MelaClient.class);
 
-	protected static final String DEF_BASE_PATH = "/MELA/REST_WS"; // TODO
+	protected static final String DEF_BASE_PATH = "http://127.0.0.1:8180/MELA/REST_WS";
 
 	protected static final String SERVICE_CREATE_PATH = "service";
 	protected static final String SERVICE_PATH = "{serviceId}/structure";
@@ -38,21 +40,12 @@ public class MelaClient extends CoreServiceClient {
 	protected static final String GET_DATA_INTERVAL_PATH = "{serviceId}/historicalmonitoringdata/ininterval/xml";
 	protected static final String GET_DATA_LASTX_PATH = "{serviceId}/historicalmonitoringdata/lastX/xml";
 
-	public MelaClient() {
-		this(DEF_HOST, DEF_PORT);
+	public MelaClient() throws URISyntaxException {
+		this(new URI(DEF_BASE_PATH));
 	}
 
-	public MelaClient(String host) {
-		this(host, DEF_PORT, DEF_BASE_PATH);
-	}
-
-	public MelaClient(String host, int port) {
-		this(host, port, DEF_BASE_PATH);
-	}
-
-	public MelaClient(String host, int port, String basePath) {
-		super(host, port, basePath);
-		setName("MELA");
+	public MelaClient(URI baseUri) {
+		super("MELA", baseUri);
 	}
 
 	// SERVICE STRUCTURE DESCRIPTION --------------------------------------------------

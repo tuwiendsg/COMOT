@@ -72,12 +72,6 @@
 		</dependency>
 		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
-			<artifactId>comot-manager-eps</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-model</artifactId>
 			<type>test-jar</type>
 			<scope>test</scope>

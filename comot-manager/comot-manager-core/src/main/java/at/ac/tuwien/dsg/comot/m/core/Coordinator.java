@@ -7,6 +7,7 @@ package at.ac.tuwien.dsg.comot.m.core;
 
 import java.io.IOException;
 
+import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.StringUtils;
@@ -17,10 +18,16 @@ import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.common.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.LifeCycleEvent;
+import at.ac.tuwien.dsg.comot.m.common.Navigator;
+import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
+import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
+import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.EpsAction;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 
 @Component
@@ -34,8 +41,15 @@ public class Coordinator {
 	protected InformationServiceMock infoService;
 	@Autowired
 	protected LifeCycleManager lcManager;
+	@Autowired
+	protected DeploymentClient deployment;
 
-	public String createCloudService(CloudService service) {
+	@PostConstruct
+	public void setUp() {
+		insertRunningService("HelloElasticity_VM");
+	}
+
+	public String createCloudService(CloudService service) throws ClassNotFoundException, IOException {
 
 		String serviceId = infoService.createService(service);
 		return serviceId;
@@ -70,7 +84,7 @@ public class Coordinator {
 
 	public void removeServiceInstance(String serviceId, String instanceId) throws IOException, JAXBException,
 			ClassNotFoundException {
-		
+
 		infoService.removeServiceInstance(serviceId, instanceId);
 
 		LifeCycleEvent event = new LifeCycleEvent(serviceId, instanceId, serviceId, Action.REMOVED, USER_ID, null);
@@ -115,6 +129,47 @@ public class Coordinator {
 		CustomEvent event = new CustomEvent(serviceId, csInstanceId, serviceId, eventId, USER_ID, epsId,
 				optionalInput);
 		lcManager.executeAction(event);
+	}
+
+	/**
+	 * Only for Testing !
+	 * 
+	 * @param name
+	 */
+	public void insertRunningService(String name) {
+		try {
+
+			log.info("TEST inserting from SALSA '{}'", name);
+
+			String instanceId = name;
+			String serviceId = instanceId + "_FROM_SALSA";
+
+			CloudService service = deployment.getService(instanceId);
+
+			service.setName(serviceId);
+			service.setId(serviceId);
+			infoService.createService(service);
+			infoService.createServiceInstance(service.getId(), instanceId);
+			infoService.assignSupportingService(serviceId, instanceId, InformationServiceMock.SALSA_SERVICE_PUBLIC_ID);
+
+			service = infoService.getServiceInstance(instanceId);
+			service.setName(instanceId);
+			service.setId(instanceId);
+			service = deployment.refreshStatus(service);
+
+			for (ServiceUnit unit : Navigator.getAllUnits(service)) {
+				for (UnitInstance instance : unit.getInstances()) {
+					infoService.addUnitInstance(serviceId, instanceId, unit.getId(), instance);
+				}
+			}
+
+			service.setName(serviceId);
+			service.setId(serviceId);
+			lcManager.hardSetRunning(service, instanceId);
+
+		} catch (CoreServiceException | ComotException | ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

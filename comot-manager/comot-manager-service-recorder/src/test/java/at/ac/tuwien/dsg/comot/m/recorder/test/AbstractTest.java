@@ -35,7 +35,6 @@ import at.ac.tuwien.dsg.comot.m.recorder.revisions.RevisionApi;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceTopology;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.model.repo.CloudServiceRepoWorkaround;
 import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
 
 @SuppressWarnings("deprecation")
@@ -56,9 +55,6 @@ public abstract class AbstractTest {
 	protected RevisionApi revisionApi;
 	@Autowired
 	protected TestBean testBean;
-
-	@Autowired
-	protected CloudServiceRepoWorkaround cloudServiceRepo;
 
 	@Autowired
 	protected ToscaMapper mapperTosca;

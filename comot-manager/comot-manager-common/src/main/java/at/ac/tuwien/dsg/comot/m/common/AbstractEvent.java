@@ -34,10 +34,9 @@ public abstract class AbstractEvent implements Serializable {
 		this.groupId = groupId;
 		this.origin = origin;
 	}
-	
 
 	// GENERATED
-	
+
 	public String getServiceId() {
 		return serviceId;
 	}

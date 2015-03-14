@@ -56,10 +56,10 @@ public class DeploymentAdapter extends Adapter {
 			}
 		}
 
-		deployment.setHost(ip);
-		deployment.setPort(new Integer(port));
+		deployment.setHostAndPort(ip, new Integer(port));
 
 		helper.setAdapterId(osuInstanceId);
+		helper.setDeployment(deployment);
 
 		bindingLifeCycle("*.TRUE.*." + State.STARTING + ".#");
 		bindingLifeCycle("*.TRUE.*." + State.STOPPING + ".#");

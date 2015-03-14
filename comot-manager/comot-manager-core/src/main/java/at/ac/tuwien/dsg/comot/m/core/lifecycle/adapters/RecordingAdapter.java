@@ -95,7 +95,11 @@ public class RecordingAdapter extends Adapter {
 				changeProperties.put(PROP_MSG, eventMsg.getMessage());
 			}
 
-			revisionApi.storeEvent(instanceId, CHANGE_TYPE_CUSTOM, changeProperties);
+			if (revisionApi.verifyObject(instanceId, serviceId)) {
+				revisionApi.storeEvent(instanceId, CHANGE_TYPE_CUSTOM, changeProperties);
+			} else {
+				log.error("Custom event happened, but no managed region. {}", msg.getEvent());
+			}
 		}
 
 	}

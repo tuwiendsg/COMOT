@@ -255,6 +255,11 @@ function showEvent(events, event) {
 
 function createElement(object, tMap) {
 
+	console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+	console.log(object)
+	console.log(object.id)
+	console.log(tMap)
+	
 	var type = tMap[object.id].groupType;
 	var members;
 

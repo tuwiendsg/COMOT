@@ -1,5 +1,7 @@
 package at.ac.tuwien.dsg.comot.m.cs.connector;
 
+import java.net.URI;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
@@ -13,29 +15,22 @@ public abstract class CoreServiceClient {
 
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
-	protected static final String DEF_HOST = "localhost";
-	protected static final int DEF_PORT = 8080;
 	protected String name;
 	protected String ln;
 
 	protected Client client;
-	protected String baseUri;
+	protected URI baseUri;
 
-	protected String host;
-	protected int port;
-	protected String basePath;
+	public CoreServiceClient() {
 
-	public CoreServiceClient(String host, int port, String basePath) {
-		super();
-		this.host = host;
-		this.port = port;
-		this.basePath = basePath;
-
-		client = ClientBuilder.newClient();
 	}
 
-	protected String getBaseUri() {
-		return baseUri = "http://" + host + ":" + port + basePath;
+	public CoreServiceClient(String name, URI baseUri) {
+		super();
+		this.name = name;
+		this.baseUri = baseUri;
+
+		client = ClientBuilder.newClient();
 	}
 
 	public void close() {
@@ -73,16 +68,12 @@ public abstract class CoreServiceClient {
 		ln = "[" + name + "] ";
 	}
 
-	public void setHost(String host) {
-		this.host = host;
+	public URI getBaseUri() {
+		return baseUri;
 	}
 
-	public void setPort(int port) {
-		this.port = port;
-	}
-
-	public void setBasePath(String basePath) {
-		this.basePath = basePath;
+	public void setBaseUri(URI baseUri) {
+		this.baseUri = baseUri;
 	}
 
 }

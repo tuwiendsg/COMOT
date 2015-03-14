@@ -8,7 +8,7 @@ import at.ac.tuwien.dsg.comot.m.common.model.monitoring.ElementMonitoring;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
-public interface MonitoringClient extends CoreServiceClient {
+public interface MonitoringClient extends ElasticPlatformServiceClient {
 
 	// start
 	public void startMonitoring(

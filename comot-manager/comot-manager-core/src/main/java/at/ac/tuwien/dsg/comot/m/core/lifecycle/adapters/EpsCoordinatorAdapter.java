@@ -38,7 +38,7 @@ public class EpsCoordinatorAdapter extends Adapter {
 
 		for (OfferedServiceUnit osu : infoService.getOsus().values()) {
 			try {
-				
+
 				for (Resource res : osu.getResources()) {
 					if (res.getType().getName().equals(InformationServiceMock.ADAPTER_CLASS)) {
 						Adapter adapter = (Adapter) context.getBean(Class.forName(res.getName()));

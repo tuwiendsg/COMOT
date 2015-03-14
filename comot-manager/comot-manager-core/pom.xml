@@ -12,10 +12,6 @@
 	</parent>
 
 	<dependencies>
-
-		<!-- <dependency> just forcing the same version as in comot-cs <groupId>org.glassfish.jersey.media</groupId> <artifactId>jersey-media-moxy</artifactId> 
-			</dependency> -->
-
 		<dependency>
 			<groupId>org.springframework.amqp</groupId>
 			<artifactId>spring-rabbit</artifactId>
@@ -47,12 +43,6 @@
 			<artifactId>salsa-common</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>at.ac.tuwien.dsg.comot</groupId>
-			<artifactId>comot-manager-eps</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-manager-common</artifactId>

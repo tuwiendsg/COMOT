@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<CloudService id="CloudService">
+    <SYBLDirective Constraints="Co4:CONSTRAINT cost.PerHour &lt; 60 Euro;Co5:CONSTRAINT costPerClientPerHour &lt; 3 Euro WHEN clientsNb > 0 ;" Strategies="St2: STRATEGY minimize(cost.PerHour)"/>
+			<ServiceTopology id="DataEndServiceTopology">
+			<SYBLDirective Constraints="Co1:CONSTRAINT latency.average &lt; 30 ms;Co2:CONSTRAINT cpu.usage &lt; 80 %" />
+				<Relationship>
+					<Master>DataControllerServiceUnit</Master>
+					<Slave>DataNodeServiceUnit</Slave>
+				</Relationship>
+				<ServiceUnit  id="DataControllerServiceUnit" />
+				<ServiceUnit id="DataNodeServiceUnit" />
+			</ServiceTopology>
+			<ServiceTopology id="EventProcessingServiceTopology">
+			    <SYBLDirective Constraints="Co3:CONSTRAINT responseTime &lt; 450 ms" />
+				<Relationship>
+					<Master>LoadBalancerServiceUnit</Master>
+					<Slave>EventProcessingServiceUnit</Slave>
+				</Relationship>
+				<ServiceUnit id="LoadBalancerServiceUnit" />
+				<ServiceUnit id="EventProcessingServiceUnit" >
+					<SYBLDirective Strategies="St1:STRATEGY CASE responseTime &lt; 360 ms AND throughput_average &lt; 300 : scalein" />					
+				</ServiceUnit>
+			</ServiceTopology>
+</CloudService>

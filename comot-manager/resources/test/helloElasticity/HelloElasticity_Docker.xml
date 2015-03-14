@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:Definitions id="HelloElasticity_Docker" name="HelloElasticity_Docker" xmlns:ns2="http://docs.oasis-open.org/tosca/ns/2011/12">
+	<ns2:ServiceTemplate id="EventProcessingTopology">
+		<ns2:TopologyTemplate>
+			<ns2:RelationshipTemplate id="loadbalancerToDocker" type="HOSTON">
+				<ns2:SourceElement ref="LoadBalancerUnit" />
+				<ns2:TargetElement ref="LoadBalancerUnitDocker" />
+			</ns2:RelationshipTemplate>
+			<ns2:RelationshipTemplate id="loadbalancerDockerToLocal" type="HOSTON">
+				<ns2:SourceElement ref="LoadBalancerUnitDocker" />
+				<ns2:TargetElement ref="PersonalLaptop" />
+			</ns2:RelationshipTemplate>
+			<ns2:RelationshipTemplate id="eventProcessingDockerToVM" type="HOSTON">
+				<ns2:SourceElement ref="EventProcessingUnitDocker" />
+				<ns2:TargetElement ref="PersonalLaptop" />
+			</ns2:RelationshipTemplate>
+			<ns2:RelationshipTemplate id="eventProcessingToLoadBalancer" type="CONNECTTO">
+				<ns2:SourceElement ref="LoadBalancer_IP_information" />
+				<ns2:TargetElement ref="EventProcessingUnit_LoadBalancer_IP_Req" />
+			</ns2:RelationshipTemplate>
+			<ns2:RelationshipTemplate id="eventProcessingToDocker" type="HOSTON">
+				<ns2:SourceElement ref="EventProcessingUnit" />
+				<ns2:TargetElement ref="EventProcessingUnitDocker" />
+			</ns2:RelationshipTemplate>
+			<ns2:NodeTemplate minInstances="1" maxInstances="1" id="LoadBalancerUnit" type="software">
+				<ns2:Properties>
+					<MappingProperties />
+				</ns2:Properties>
+				<ns2:Requirements />
+				<ns2:Capabilities>
+					<ns2:Capability id="LoadBalancer_IP_information" type="variable" />
+				</ns2:Capabilities>
+				<ns2:Policies />
+				<ns2:DeploymentArtifacts>
+					<ns2:DeploymentArtifact name="Artifact_f91a15e2-e065-4e11-860b-d07230ef209c" artifactType="salsa:sh"
+						artifactRef="Artifact_f91a15e2-e065-4e11-860b-d07230ef209c" xmlns:salsa="https://github.com/tuwiendsg/SALSA" />
+				</ns2:DeploymentArtifacts>
+			</ns2:NodeTemplate>
+			<ns2:NodeTemplate minInstances="1" maxInstances="1" id="EventProcessingUnit" type="software">
+				<ns2:Properties>
+					<MappingProperties>
+						<MappingProperty type="action">
+							<property name="stop">sudo service event-processing stop</property>
+						</MappingProperty>
+					</MappingProperties>
+				</ns2:Properties>
+				<ns2:Requirements>
+					<ns2:Requirement id="EventProcessingUnit_LoadBalancer_IP_Req" type="variable" />
+				</ns2:Requirements>
+				<ns2:Capabilities />
+				<ns2:Policies>
+					<ns2:Policies>
+						<ns2:Policy id="EventProcessingUnit_EP_ST2" policyType="SYBLStrategy"
+							name="EP_ST2: STRATEGY CASE totalPendingRequests &gt; 10 # AND responseTime &gt; 1000 ms : AbstractCloudEntity{id='33c9a0f5-84ca-476b-a300-7c2f75e2c758', description='null', type='scaleOut', name='null'}" />
+						<ns2:Policy id="EventProcessingUnit_EP_ST1" policyType="SYBLStrategy"
+							name="EP_ST1: STRATEGY CASE responseTime &lt; 500 ms AND totalPendingRequests &lt; 10 # : AbstractCloudEntity{id='be86438a-4e6a-478c-ba34-e67c564c8d8a', description='null', type='scaleIn', name='null'}" />
+					</ns2:Policies>
+				</ns2:Policies>
+				<ns2:DeploymentArtifacts>
+					<ns2:DeploymentArtifact name="Artifact_aa301ce1-51e9-4b3f-96d9-597049b2b8e1" artifactType="salsa:sh"
+						artifactRef="Artifact_aa301ce1-51e9-4b3f-96d9-597049b2b8e1" xmlns:salsa="https://github.com/tuwiendsg/SALSA" />
+				</ns2:DeploymentArtifacts>
+			</ns2:NodeTemplate>
+			<ns2:NodeTemplate minInstances="1" maxInstances="2147483647" id="LoadBalancerUnitDocker" type="docker">
+				<ns2:Properties>
+					<MappingProperties>
+						<MappingProperty type="os">
+							<property name="instanceType">000000512</property>
+							<property name="packages"></property>
+							<property name="provider">localhost</property>
+							<property name="baseImage">8f1428ac-f239-42e0-ab35-137f6e234101</property>
+						</MappingProperty>
+					</MappingProperties>
+				</ns2:Properties>
+				<ns2:Requirements />
+				<ns2:Capabilities />
+				<ns2:Policies />
+			</ns2:NodeTemplate>
+			<ns2:NodeTemplate minInstances="1" maxInstances="2147483647" id="EventProcessingUnitDocker" type="docker">
+				<ns2:Properties>
+					<MappingProperties>
+						<MappingProperty type="os">
+							<property name="instanceType">000000512</property>
+							<property name="packages"></property>
+							<property name="provider">localhost</property>
+							<property name="baseImage">8f1428ac-f239-42e0-ab35-137f6e234101</property>
+						</MappingProperty>
+					</MappingProperties>
+				</ns2:Properties>
+				<ns2:Requirements />
+				<ns2:Capabilities />
+				<ns2:Policies />
+			</ns2:NodeTemplate>
+			<ns2:NodeTemplate minInstances="1" maxInstances="2147483647" id="PersonalLaptop" type="os">
+				<ns2:Properties>
+					<MappingProperties>
+						<MappingProperty type="os">
+							<property name="instanceType">000000960</property>
+							<property name="provider">dsg@openstack</property>
+							<property name="baseImage">8f1428ac-f239-42e0-ab35-137f6e234101</property>
+							<property name="packages">gmetad,ganglia-monitor,openjdk-7-jre</property>
+						</MappingProperty>
+					</MappingProperties>
+				</ns2:Properties>
+				<ns2:Requirements />
+				<ns2:Capabilities />
+				<ns2:Policies />
+			</ns2:NodeTemplate>
+		</ns2:TopologyTemplate>
+	</ns2:ServiceTemplate>
+	<ns2:ArtifactTemplate id="Artifact_f91a15e2-e065-4e11-860b-d07230ef209c" type="sh">
+		<ns2:Properties />
+		<ns2:ArtifactReferences>
+			<ns2:ArtifactReference reference="http://128.130.172.215/repository/files/HelloElasticity/deployLoadBalancer.sh" />
+		</ns2:ArtifactReferences>
+	</ns2:ArtifactTemplate>
+	<ns2:ArtifactTemplate id="Artifact_aa301ce1-51e9-4b3f-96d9-597049b2b8e1" type="sh">
+		<ns2:Properties />
+		<ns2:ArtifactReferences>
+			<ns2:ArtifactReference reference="http://128.130.172.215/repository/files/HelloElasticity/deployEventProcessing.sh" />
+		</ns2:ArtifactReferences>
+	</ns2:ArtifactTemplate>
+</ns2:Definitions>

@@ -19,17 +19,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.ControlClient;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.MonitoringClient;
-import at.ac.tuwien.dsg.comot.m.cs.AppContextEps;
 import at.ac.tuwien.dsg.comot.m.cs.connector.SalsaClient;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.AssociatedVM;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentUnit;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { AppContextEps.class })
-// @ActiveProfiles({ ApplicationContext.SPRING_PROFILE_TEST })
-// @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
-// @DatabaseSetup("classpath:iata_codes/airports_functional.xml")
+@ContextConfiguration(classes = { AppContextEpsClients.class })
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public abstract class AbstractTest {
 

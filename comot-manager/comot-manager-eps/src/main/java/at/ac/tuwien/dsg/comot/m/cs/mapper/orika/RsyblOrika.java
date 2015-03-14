@@ -30,6 +30,8 @@ public class RsyblOrika {
 
 	protected final Logger log = LoggerFactory.getLogger(RsyblOrika.class);
 
+	public static final String SEPARATOR = " ; ";
+
 	protected MapperFacade facade;
 
 	@PostConstruct
@@ -88,19 +90,36 @@ public class RsyblOrika {
 
 			for (Object obj : source) {
 				directive = (SyblDirective) obj;
-
+				String strDir = directive.getDirective();
 				switch (directive.getType()) {
 				case CONSTRAINT:
-					rDirecitve.setConstraints(directive.getDirective());
+					if (null == rDirecitve.getConstraints()) {
+						rDirecitve.setConstraints(strDir);
+					} else {
+						rDirecitve.setConstraints(rDirecitve.getConstraints() + SEPARATOR + strDir);
+					}
 					break;
 				case STRATEGY:
-					rDirecitve.setStrategies(directive.getDirective());
+					if (null == rDirecitve.getStrategies()) {
+						rDirecitve.setStrategies(strDir);
+					} else {
+						rDirecitve.setStrategies(rDirecitve.getStrategies() + SEPARATOR + strDir);
+					}
 					break;
+
 				case MONITORING:
-					rDirecitve.setMonitoring(directive.getDirective());
+					if (null == rDirecitve.getMonitoring()) {
+						rDirecitve.setMonitoring(strDir);
+					} else {
+						rDirecitve.setMonitoring(rDirecitve.getMonitoring() + SEPARATOR + strDir);
+					}
 					break;
 				case PRIORIIES:
-					rDirecitve.setPriorities(directive.getDirective());
+					if (null == rDirecitve.getPriorities()) {
+						rDirecitve.setPriorities(strDir);
+					} else {
+						rDirecitve.setPriorities(rDirecitve.getPriorities() + SEPARATOR + strDir);
+					}
 					break;
 				default:
 					throw new IllegalArgumentException("Unexpected value " + directive.getType()

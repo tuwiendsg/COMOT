@@ -20,7 +20,7 @@ import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 @Component
-@Scope("prototype") 
+@Scope("prototype")
 public class MonitoringAdapter extends Adapter {
 
 	@Autowired
@@ -40,9 +40,7 @@ public class MonitoringAdapter extends Adapter {
 				port = res.getName();
 			}
 		}
-
-		monitoring.setHost(ip);
-		monitoring.setPort(new Integer(port));
+		monitoring.setHostAndPort(ip, new Integer(port));
 
 		bindingLifeCycle("*.TRUE." + State.DEPLOYING + "." + State.RUNNING + ".#");
 		bindingLifeCycle("*.*.*.*." + Action.UPDATE_FINISHED + ".#");
@@ -53,7 +51,7 @@ public class MonitoringAdapter extends Adapter {
 
 		container.setMessageListener(new CustomListener(osuInstanceId));
 
-		atStartUpDeployWhatIsWaiting();
+		atStartUpServeWhatIsWaiting();
 
 	}
 
@@ -140,7 +138,7 @@ public class MonitoringAdapter extends Adapter {
 
 	}
 
-	protected void atStartUpDeployWhatIsWaiting() {
+	protected void atStartUpServeWhatIsWaiting() {
 
 		Map<String, String> instances = infoService.getInstancesHavingThisOsuAssigned(adapterId);
 

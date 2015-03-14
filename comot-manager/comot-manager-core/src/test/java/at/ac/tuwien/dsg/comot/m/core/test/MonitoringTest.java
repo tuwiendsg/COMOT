@@ -20,7 +20,6 @@ import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.ComotAction;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
-import at.ac.tuwien.dsg.comot.m.cs.connector.SalsaClient;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 
 public class MonitoringTest extends AbstractTest {
@@ -31,9 +30,6 @@ public class MonitoringTest extends AbstractTest {
 	protected Coordinator coordinator;
 	@Autowired
 	protected InformationServiceMock infoService;
-
-	@Autowired
-	protected SalsaClient salsa;
 
 	CloudService service;
 	String serviceId;

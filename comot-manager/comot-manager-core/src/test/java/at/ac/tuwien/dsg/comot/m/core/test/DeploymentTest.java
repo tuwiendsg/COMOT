@@ -1,18 +1,19 @@
 package at.ac.tuwien.dsg.comot.m.core.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
-import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.JAXBException;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.oasis.tosca.Definitions;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.sun.jersey.api.uri.UriTemplate;
 
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
@@ -21,7 +22,6 @@ import at.ac.tuwien.dsg.comot.m.core.Coordinator;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
-import at.ac.tuwien.dsg.comot.m.cs.connector.SalsaClient;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 
 public class DeploymentTest extends AbstractTest {
@@ -32,9 +32,6 @@ public class DeploymentTest extends AbstractTest {
 	protected Coordinator coordinator;
 	@Autowired
 	protected InformationServiceMock infoService;
-
-	@Autowired
-	protected SalsaClient salsa;
 
 	CloudService service;
 	String serviceId;
@@ -52,8 +49,6 @@ public class DeploymentTest extends AbstractTest {
 		instanceId = coordinator.createServiceInstance(serviceId);
 
 	}
-
-
 
 	@Test
 	public void testCreateRemove() throws ClassNotFoundException, IOException, JAXBException {

@@ -13,7 +13,6 @@ import org.springframework.data.neo4j.config.EnableNeo4jRepositories;
 import org.springframework.data.neo4j.config.Neo4jConfiguration;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.Transactional;
 
 import at.ac.tuwien.dsg.comot.model.AppContextModel;
 
@@ -23,7 +22,7 @@ import at.ac.tuwien.dsg.comot.model.AppContextModel;
 @EnableNeo4jRepositories
 @Import({ AppContextModel.class })
 @ComponentScan
-@Transactional
+// @Transactional
 public class AppContextServrec extends Neo4jConfiguration {
 
 	protected final Logger log = LoggerFactory.getLogger(getClass());

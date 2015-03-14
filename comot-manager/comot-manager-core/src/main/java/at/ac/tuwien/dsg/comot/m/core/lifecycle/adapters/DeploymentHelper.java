@@ -35,7 +35,6 @@ public class DeploymentHelper {
 
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 
-	@Autowired
 	protected DeploymentClient deployment;
 	@Autowired
 	protected DeploymentMapper mapper;
@@ -50,6 +49,10 @@ public class DeploymentHelper {
 
 	public void setAdapterId(String adapterId) {
 		this.adapterId = adapterId;
+	}
+
+	public void setDeployment(DeploymentClient deployment) {
+		this.deployment = deployment;
 	}
 
 	@Async

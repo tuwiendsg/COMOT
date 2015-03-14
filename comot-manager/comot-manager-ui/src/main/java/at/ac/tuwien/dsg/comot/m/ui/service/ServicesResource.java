@@ -78,7 +78,8 @@ public class ServicesResource {
 	@POST
 	@Path("/services")
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response createService(Definitions def) throws CoreServiceException, ComotException, JAXBException {
+	public Response createService(Definitions def) throws CoreServiceException, ComotException, JAXBException,
+			ClassNotFoundException, IOException {
 
 		coordinator.createCloudService(mapperTosca.createModel(def));
 		return Response.ok(def.getId()).build();
@@ -173,8 +174,8 @@ public class ServicesResource {
 			@PathParam("eventName") String eventName,
 			String optionalInput) throws CoreServiceException, ComotException, ClassNotFoundException, IOException,
 			JAXBException {
-		
-		//log.info(">>>{}<<<", optionalInput);
+
+		// log.info(">>>{}<<<", optionalInput);
 
 		coordinator.triggerCustomEvent(serviceId, instanceId, epsId, eventName, optionalInput);
 		return Response.ok().build();

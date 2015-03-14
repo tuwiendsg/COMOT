@@ -257,4 +257,25 @@ public class ManagerOfServiceInstance {
 		return transitions;
 	}
 
+	/**
+	 * Only for testing!
+	 * 
+	 * @param instanceId
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	public void hardSetRunning(String instanceId, CloudService service) throws ClassNotFoundException, IOException {
+
+		this.csInstanceId = instanceId;
+		this.serviceId = service.getId();
+
+		serviceGroup = new Group(service, State.INIT);
+
+		for (Group group : serviceGroup.getAllMembersNested()) {
+			group.currentState = State.RUNNING;
+		}
+
+		serviceGroupReadOnly = (Group) Utils.deepCopy(serviceGroup);
+	}
+
 }

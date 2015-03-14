@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<CloudService id="CloudService">
+	<SYBLDirective Constraints="Co1: CONSTRAINT cost &lt; 1.5 $;" Strategies="St1:STRATEGY CASE fulfilled(Co2): minimize(cost);"/>
+	<ServiceTopology id="MainTopology">
+		<Relationship>
+			<Master>YCSBClient</Master>
+			<Slave>CassandraNode</Slave>
+		</Relationship>
+		<ServiceUnit id="YCSBClient" >
+		<SYBLDirective Strategies="St2:STRATEGY CASE throughput &lt; 1000 AND latency &lt; 500 : scalein(CassandraNode);" Constraints="Co2:CONSTRAINT latency &lt; 1000 ms ;"/>
+		</ServiceUnit>
+		<ServiceUnit id="CassandraNode" >
+		<SYBLDirective Constraints="Co3:CONSTRAINT cpuUsage &gt; 35 % AND cpuUsage &lt; 75 %" />
+		
+		</ServiceUnit>
+	</ServiceTopology>
+</CloudService>
+
+
+

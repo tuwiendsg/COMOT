@@ -1,5 +1,8 @@
 package at.ac.tuwien.dsg.comot.m.cs.connector;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -8,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
-import at.ac.tuwien.dsg.comot.rsybl.CloudServiceXML;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
@@ -16,7 +18,7 @@ public class RsyblClient extends CoreServiceClient {
 
 	private final Logger log = LoggerFactory.getLogger(RsyblClient.class);
 
-	protected static final String DEF_BASE_PATH = "/rSYBL/restWS";
+	protected static final String DEF_BASE_PATH = "http://127.0.0.1:8280/rSYBL/restWS";
 
 	protected static final String PREPARE_CONTROL_PATH = "{id}/prepareControl";
 	protected static final String SERV_DESCRIPTION_PATH = "{id}/description";
@@ -27,21 +29,12 @@ public class RsyblClient extends CoreServiceClient {
 	protected static final String STOP_CONTROL_PATH = "{id}/stopControl";
 	protected static final String REPLACE_REQUIREMENTS_PATH = "{id}/elasticityRequirements/xml";
 
-	public RsyblClient() {
-		this(DEF_HOST, DEF_PORT);
+	public RsyblClient() throws URISyntaxException {
+		this(new URI(DEF_BASE_PATH));
 	}
 
-	public RsyblClient(String host) {
-		this(host, DEF_PORT, DEF_BASE_PATH);
-	}
-
-	public RsyblClient(String host, int port) {
-		this(host, port, DEF_BASE_PATH);
-	}
-
-	public RsyblClient(String host, int port, String basePath) {
-		super(host, port, basePath);
-		setName("rSYBL");
+	public RsyblClient(URI baseUri) {
+		super("rSYBL", baseUri);
 	}
 
 	public void prepareControl(String serviceId) throws CoreServiceException {
@@ -59,7 +52,7 @@ public class RsyblClient extends CoreServiceClient {
 		log.info(ln + "prepareControl '{}'. Response: '{}'", serviceId, msg);
 	}
 
-	public void serviceDescription(String serviceId, CloudServiceXML cloudServiceXML) throws CoreServiceException {
+	public void serviceDescription(String serviceId, String cloudServiceXML) throws CoreServiceException {
 
 		Response response = client.target(getBaseUri())
 				.path(SERV_DESCRIPTION_PATH)
@@ -191,7 +184,7 @@ public class RsyblClient extends CoreServiceClient {
 	 * @param cloudServiceXML
 	 * @throws CoreServiceException
 	 */
-	public void updateElasticityRequirements(String serviceId, CloudServiceXML cloudServiceXML)
+	public void updateElasticityRequirements(String serviceId, String cloudServiceXML)
 			throws CoreServiceException {
 
 		Response response = client.target(getBaseUri())

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import javax.annotation.PreDestroy;
+import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.JAXBException;
 
 import org.json.JSONArray;
@@ -28,12 +29,16 @@ public class DeploymentClientSalsa implements DeploymentClient {
 
 	private final Logger log = LoggerFactory.getLogger(DeploymentClientSalsa.class);
 
-	@Autowired
 	protected SalsaClient salsa;
 	@Autowired
 	protected ToscaMapper mapperTosca;
 	@Autowired
 	protected DeploymentMapper mapperDepl;
+
+	public DeploymentClientSalsa(SalsaClient salsa) {
+		super();
+		this.salsa = salsa;
+	}
 
 	@Override
 	public CloudService deploy(CloudService service) throws CoreServiceException, ComotException {
@@ -174,18 +179,15 @@ public class DeploymentClientSalsa implements DeploymentClient {
 
 	@PreDestroy
 	public void cleanup() {
-		log.info("closing salsa client");
-		salsa.close();
+		if (salsa != null) {
+			log.info("closing salsa client");
+			salsa.close();
+		}
 	}
 
 	@Override
-	public void setHost(String host) {
-		salsa.setHost(host);
-	}
-
-	@Override
-	public void setPort(int port) {
-		salsa.setPort(port);
+	public void setHostAndPort(String host, int port) {
+		salsa.setBaseUri(UriBuilder.fromUri(salsa.getBaseUri()).host(host).port(port).build());
 	}
 
 }

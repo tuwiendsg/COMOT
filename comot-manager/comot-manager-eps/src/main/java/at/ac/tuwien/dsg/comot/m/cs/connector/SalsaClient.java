@@ -1,6 +1,8 @@
 package at.ac.tuwien.dsg.comot.m.cs.connector;
 
 import java.io.StringReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -24,7 +26,7 @@ public class SalsaClient extends CoreServiceClient {
 
 	private final Logger log = LoggerFactory.getLogger(SalsaClient.class);
 
-	protected static final String DEF_BASE_PATH = "/salsa-engine/rest";
+	protected static final String DEF_BASE_PATH = "http://127.0.0.1:8380/salsa-engine/rest";
 
 	protected static final String DEPLOY_PATH = "services/xml";
 	protected static final String UNDEPLOY_PATH = "services/{serviceId}";
@@ -35,21 +37,12 @@ public class SalsaClient extends CoreServiceClient {
 	protected static final String DEPLOYMENT_INFO_PATH = "services/tosca/{serviceId}/sybl";
 	protected static final String SERVICES_LIST = "viewgenerator/cloudservice/json/list";
 
-	public SalsaClient() {
-		this(DEF_HOST, DEF_PORT);
+	public SalsaClient() throws URISyntaxException {
+		this(new URI(DEF_BASE_PATH));
 	}
 
-	public SalsaClient(String host) {
-		this(host, DEF_PORT, DEF_BASE_PATH);
-	}
-
-	public SalsaClient(String host, int port) {
-		this(host, port, DEF_BASE_PATH);
-	}
-
-	public SalsaClient(String host, int port, String basePath) {
-		super(host, port, basePath);
-		setName("SALSA");
+	public SalsaClient(URI baseUri) {
+		super("SALSA", baseUri);
 	}
 
 	public String deploy(String toscaDescriptionXml) throws CoreServiceException {

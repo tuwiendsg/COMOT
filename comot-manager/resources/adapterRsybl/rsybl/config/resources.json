@@ -1,0 +1,121 @@
+
+{
+    "DryRun":{
+        "scaleOut":{
+            "parameters":["m1.small","m1.tiny"]
+        }
+    },
+    "Salsa":{
+    
+    },
+    "OpenStack":{
+        "scaleOut":{
+            "parameters":{
+                "m1.tiny":{
+                    "Virtual cores":1,
+                    "Memory":0.5,
+                    "Disk":1,
+                    "Ephemeral":0
+                },
+                "m1.small":{
+                    "Virtual cores":1,
+                    "Memory":2,
+                    "Disk":10,
+                    "Ephemeral":20
+                },
+                "m1.medium":{
+                    "Virtual cores":2,
+                    "Memory":4,
+                    "Disk":10,
+                    "Ephemeral":40
+                },
+                "m1.large":{
+                    "Virtual cores":4,
+                    "Memory":8,
+                    "Disk":10,
+                    "Ephemeral":80
+                }
+            }
+        }
+    },
+    "FCO":{
+        "scaleOut":{
+            "parameters":{
+                "productOffer":{
+                    "242a0c41-0fc7-3fab-bc09-86d13c34230e":{
+                        "Virtual cores":1,
+                        "Memory":0.5
+                    },
+                    "886ae014-0613-3cc8-a790-16251471e624":{
+                        "Virtual cores":1,
+                        "Memory":1
+                    },
+                    "461e836e-1384-3f0f-9d04-1ce4eb93c01e":{
+                        "Virtual cores":1,
+                        "Memory":2
+                    },
+                    "f01e66b3-5706-333d-8196-438cc7140f8e":{
+                        "Virtual cores":2,
+                        "Memory":2
+                    },
+                    "2fead1bc-40cb-34e2-b4e2-07c45634d7c4":{
+                        "Virtual cores":2,
+                        "Memory":4
+                    },
+                    "ef653507-d81d-3d6b-a052-6a62481d84e9":{
+                        "Virtual cores":3,
+                        "Memory":4
+                    },
+                    "2400445b-105b-3580-bf7a-e584bef90e5a":{
+                        "Virtual cores":4,
+                        "Memory":4
+                    },
+                    "b18da9d1-0afd-374e-99ce-14462cf73bdc":{
+                        "Virtual cores":3,
+                        "Memory":6
+                    },
+                    "2f67a88a-4f4c-3be9-8252-675222855fad":{
+                        "Virtual cores":4,
+                        "Memory":6
+                    },
+                    "53c08809-55f3-37a6-b158-a8b2e6710c2c":{
+                        "Virtual cores":5,
+                        "Memory":6
+                    },
+                    "bb7f371f-fb02-3a1d-be05-c2043216b994":{
+                        "Virtual cores":6,
+                        "Memory":6
+                    },
+                    "22dd1e15-61c7-3e5b-8acb-f60d9c5a5273":{
+                        "Virtual cores":4,
+                        "Memory":8
+                    },
+        
+                    "35d0348b-2626-3252-a33f-7ae38176f783":{
+                        "Virtual cores":5,
+                        "Memory":8
+                    },
+    
+                    "ab1de8eb-d134-3dbd-8dfe-5e617b28ee47":{
+                        "Virtual cores":6,
+                        "Memory":8
+                    },
+
+                    "ab29f895-37db-3ba3-9eed-ead07c1777b4":{
+                        "Virtual cores":7,
+                        "Memory":8
+                    },
+
+                    "c3b0e7b1-5c23-33e5-9384-813692e55a1b":{
+                        "Virtual cores":8,
+                        "Memory":8
+                    }
+            
+            
+                }
+                
+            }
+        }
+
+    }
+}

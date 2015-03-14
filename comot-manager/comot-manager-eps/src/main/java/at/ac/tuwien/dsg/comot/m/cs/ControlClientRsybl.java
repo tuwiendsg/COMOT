@@ -1,6 +1,8 @@
 package at.ac.tuwien.dsg.comot.m.cs;
 
 import javax.annotation.PreDestroy;
+import javax.ws.rs.core.UriBuilder;
+import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,16 +22,20 @@ public class ControlClientRsybl implements ControlClient {
 
 	private final Logger log = LoggerFactory.getLogger(ControlClientRsybl.class);
 
-	@Autowired
 	protected RsyblClient rsybl;
 	@Autowired
 	protected RsyblMapper rsyblMapper;
 	@Autowired
 	protected DeploymentMapper deploymentMapper;
 
+	public ControlClientRsybl(RsyblClient rsybl) {
+		super();
+		this.rsybl = rsybl;
+	}
+
 	@Override
 	public void sendInitialConfig(
-			CloudService service) throws CoreServiceException {
+			CloudService service) throws CoreServiceException, JAXBException {
 
 		if (service == null) {
 			log.warn("sendInitialConfig(service=null )");
@@ -42,7 +48,7 @@ public class ControlClientRsybl implements ControlClient {
 
 		rsybl.prepareControl(serviceId);
 
-		rsybl.serviceDescription(serviceId, cloudServiceXML);
+		rsybl.serviceDescription(serviceId, UtilsCs.asString(cloudServiceXML));
 
 		rsybl.serviceDeployment(serviceId, deploymentDescription);
 
@@ -60,9 +66,9 @@ public class ControlClientRsybl implements ControlClient {
 	}
 
 	@Override
-	public void updateService(CloudService service) throws CoreServiceException {
+	public void updateService(CloudService service) throws CoreServiceException, JAXBException {
 		CloudServiceXML cloudServiceXML = rsyblMapper.extractRsybl(service);
-		rsybl.updateElasticityRequirements(service.getId(), cloudServiceXML);
+		rsybl.updateElasticityRequirements(service.getId(), UtilsCs.asString(cloudServiceXML));
 	}
 
 	@Override
@@ -88,18 +94,16 @@ public class ControlClientRsybl implements ControlClient {
 
 	@PreDestroy
 	public void cleanup() {
-		log.info("closing rsybl client");
-		rsybl.close();
+		if (rsybl != null) {
+			log.info("closing rsybl client");
+			rsybl.close();
+		}
 	}
 
 	@Override
-	public void setHost(String host) {
-		rsybl.setHost(host);
-	}
-
-	@Override
-	public void setPort(int port) {
-		rsybl.setPort(port);
+	public void setHostAndPort(String host, int port) {
+		rsybl.setBaseUri(UriBuilder.fromUri(rsybl.getBaseUri())
+				.host(host).port(port).build());
 	}
 
 }

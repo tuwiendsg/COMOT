@@ -17,6 +17,7 @@ import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
@@ -27,6 +28,9 @@ public abstract class Adapter {
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 
 	public static final String ADAPTER_QUEUE = "ADAPTER_QUEUE_";
+
+	@Autowired
+	protected ApplicationContext context;
 
 	@Autowired
 	protected AmqpAdmin admin;

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SYBLElasticityRequirementsDescription>
+	<SYBLSpecification id="DataEndServiceTopology" type="ServiceTopology">
+			<Constraint Id="Co1">
+				<ToEnforce>
+					<BinaryRestriction Type="lessThan">
+						<LeftHandSide>
+							<Metric>latency.average</Metric>
+						</LeftHandSide>
+						<RightHandSide>
+							<Number>30</Number>
+						</RightHandSide>
+					</BinaryRestriction>
+				</ToEnforce>
+			</Constraint>	
+			<Constraint Id="Co2">
+				<ToEnforce>
+					<BinaryRestriction Type="lessThan">
+						<LeftHandSide>
+							<Metric>cpu.usage</Metric>
+						</LeftHandSide>
+						<RightHandSide>
+							<Number>80</Number>
+						</RightHandSide>
+					</BinaryRestriction>
+				</ToEnforce>
+			</Constraint>
+		</SYBLSpecification>
+		
+		<SYBLSpecification id="EventProcessingServiceTopology" type="ServiceTopology">
+			<Constraint Id="Co3">
+				<ToEnforce>
+					<BinaryRestriction Type="lessThan">
+						<LeftHandSide>
+							<Metric>responseTime</Metric>
+						</LeftHandSide>
+						<RightHandSide>
+							<Number>450</Number>
+						</RightHandSide>
+					</BinaryRestriction>
+				</ToEnforce>
+			</Constraint>
+		</SYBLSpecification>
+		<SYBLSpecification id="EventProcessingServiceUnit" type="ServiceUnit">
+		 <Strategy Id="St1">
+			<Condition>
+				<BinaryRestriction Type="smallerThan">
+					<LeftHandSide>
+						<Metric>throughput_average</Metric>
+					</LeftHandSide>
+					<RightHandSide>
+						<Number>300</Number>
+					</RightHandSide>
+				</BinaryRestriction>
+			    <BinaryRestriction Type="smallerThan">
+					<LeftHandSide>
+						<Metric>responseTime</Metric>
+					</LeftHandSide>
+					<RightHandSide>
+						<Number>360</Number>
+					</RightHandSide>
+				</BinaryRestriction>
+			</Condition>
+			<ToEnforce ActionName="scalein" />
+		</Strategy>
+		</SYBLSpecification>
+		<SYBLSpecification id="CloudService" type="CloudService">
+			<Constraint Id="Co4">
+				<ToEnforce>
+					<BinaryRestriction Type="lessThan">
+						<LeftHandSide>
+							<Metric>cost.PerHour</Metric>
+						</LeftHandSide>
+						<RightHandSide>
+							<Number>60</Number>
+						</RightHandSide>
+					</BinaryRestriction>
+				</ToEnforce>
+			</Constraint>
+		</SYBLSpecification>
+		</SYBLElasticityRequirementsDescription>

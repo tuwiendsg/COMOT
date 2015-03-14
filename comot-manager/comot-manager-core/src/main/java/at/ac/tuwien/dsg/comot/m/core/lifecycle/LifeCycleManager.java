@@ -145,4 +145,18 @@ public class LifeCycleManager {
 	//
 	// }
 
+	/**
+	 * Only for testing!
+	 * 
+	 * @param instanceId
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	public void hardSetRunning(CloudService service, String instanceId) throws ClassNotFoundException, IOException {
+
+		ManagerOfServiceInstance manager = context.getBean(ManagerOfServiceInstance.class);
+		managers.put(instanceId, manager);
+
+		manager.hardSetRunning(instanceId, service);
+	}
 }

@@ -6,7 +6,7 @@ import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 
-public interface DeploymentClient extends CoreServiceClient {
+public interface DeploymentClient extends ElasticPlatformServiceClient {
 
 	public CloudService deploy(
 			CloudService service) throws CoreServiceException, ComotException;

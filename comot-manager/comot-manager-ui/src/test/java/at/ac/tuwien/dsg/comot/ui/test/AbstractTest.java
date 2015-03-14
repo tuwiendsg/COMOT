@@ -22,7 +22,6 @@ import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.MonitoringClient;
 import at.ac.tuwien.dsg.comot.m.core.Coordinator;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
-import at.ac.tuwien.dsg.comot.m.cs.connector.SalsaClient;
 import at.ac.tuwien.dsg.comot.m.ui.service.ServicesResource;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
@@ -42,9 +41,6 @@ public abstract class AbstractTest {
 
 	@Resource
 	protected Environment env;
-
-	@Autowired
-	protected SalsaClient salsaClient;
 
 	@Autowired
 	protected DeploymentClient deployment;

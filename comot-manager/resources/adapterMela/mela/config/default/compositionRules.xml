@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<CompositionRulesConfiguration>
+    <MetricsCompositionRules>
+         
+      <CompositionRule TargetMonitoredElementLevel="SERVICE_UNIT">
+            <ResultingMetric type="RESOURCE" measurementUnit="%" name="avgCpuUsage"/>
+            <Operation value="100" type="ADD">
+                  <Operation value="-1" type="MUL">
+                    <Operation MetricSourceMonitoredElementLevel="VM" type="AVG">
+                   	 <ReferenceMetric type="RESOURCE" measurementUnit="%"  name="cpu_idle"/>
+                    </Operation>
+                 </Operation>
+            </Operation>
+        </CompositionRule> 
+
+               
+        
+        <CompositionRule TargetMonitoredElementLevel="VM">
+            <ResultingMetric type="RESOURCE" measurementUnit="" name="iAmOne"/>
+            <Operation value="1" type="SET_VALUE"/>
+        </CompositionRule>
+
+ 
+        <CompositionRule TargetMonitoredElementLevel="SERVICE_UNIT">
+            <ResultingMetric type="RESOURCE" measurementUnit="ms" name="numberOfVMs"/>
+            <Operation MetricSourceMonitoredElementLevel="VM" type="SUM">
+                <ReferenceMetric type="RESOURCE" name="iAmOne"/>
+            </Operation>
+        </CompositionRule>
+
+       <CompositionRule TargetMonitoredElementLevel="SERVICE">
+            <ResultingMetric type="RESOURCE" measurementUnit="$" name="cost/h"/>
+            <Operation type="MUL" value="0.12">
+            <Operation MetricSourceMonitoredElementLevel="SERVICE_UNIT" type="SUM">
+                <ReferenceMetric type="RESOURCE" name="numberOfVMs"/>
+            </Operation>
+            </Operation>
+        </CompositionRule>
+
+
+         
+    </MetricsCompositionRules>
+     
+</CompositionRulesConfiguration>

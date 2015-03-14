@@ -33,8 +33,6 @@ public class CustomEvent extends AbstractEvent {
 		this.epsId = epsId;
 	}
 
-	
-	
 	// GENERATED
 
 	@Override
