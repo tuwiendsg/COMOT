@@ -4,13 +4,23 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PreDestroy;
 import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.Binding.DestinationType;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageListener;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +33,8 @@ import at.ac.tuwien.dsg.comot.m.common.Transition;
 import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
+import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
+import at.ac.tuwien.dsg.comot.m.core.UtilsLc;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
@@ -36,10 +48,20 @@ public class ManagerOfServiceInstance {
 
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 
+	public static final String LC_MANAGER_QUEUE = "LC_MANAGER_QUEUE_";
+
+	@Autowired
+	protected ApplicationContext context;
+
 	@Autowired
 	protected RabbitTemplate amqp;
 	@Autowired
+	protected AmqpAdmin admin;
+	@Autowired
 	protected InformationServiceMock infoService;
+	@Autowired
+	protected ConnectionFactory connectionFactory;
+	protected SimpleMessageListenerContainer container;
 
 	protected String csInstanceId;
 	protected String serviceId;
@@ -48,13 +70,50 @@ public class ManagerOfServiceInstance {
 	protected Map<String, State> lastStates = new HashMap<>();
 	protected AggregationStrategy strategy = new AggregationStrategy();
 
-	synchronized public void executeActionAny(AbstractEvent event) throws ClassNotFoundException, JAXBException,
-			IOException {
+	public String queueName() {
+		return LC_MANAGER_QUEUE + csInstanceId;
+	}
 
-		if (event instanceof LifeCycleEvent) {
-			executeAction((LifeCycleEvent) event);
-		} else {
-			executeCustomAction((CustomEvent) event);
+	public void createInstance(LifeCycleEvent event) throws ClassNotFoundException, AmqpException, IOException,
+			JAXBException {
+
+		this.csInstanceId = event.getCsInstanceId();
+		this.serviceId = event.getServiceId();
+
+		admin.declareQueue(new Queue(queueName(), false, false, false));
+
+		container = new SimpleMessageListenerContainer();
+		container.setConnectionFactory(connectionFactory);
+		container.setQueueNames(queueName());
+		container.setMessageListener(new CustomListener());
+
+		admin.declareBinding(new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_REQUESTS,
+				csInstanceId + ".#", null));
+
+		container.start();
+
+		executeAction(event);
+
+	}
+
+	public class CustomListener implements MessageListener {
+
+		@Override
+		public void onMessage(Message message) {
+
+			try {
+				AbstractEvent event = UtilsLc.abstractEvent(message);
+
+				if (event instanceof LifeCycleEvent) {
+					executeAction((LifeCycleEvent) event);
+				} else {
+					executeCustomAction((CustomEvent) event);
+				}
+
+			} catch (JAXBException | ClassNotFoundException | IOException e) {
+				e.printStackTrace();
+			}
+
 		}
 
 	}
@@ -68,10 +127,17 @@ public class ManagerOfServiceInstance {
 		Group targetGroup;
 		boolean found = false;
 
-		if (Action.CREATED.equals(action)) {
+		if (Action.REMOVED != event.getAction()) {
+			// clean service
+			if (event.getService() == null) {
+				service = infoService.getServiceInstance(serviceId, csInstanceId);
+			} else {
+				service = (CloudService) Utils.deepCopy(event.getService());
+			}
+			event.setService(UtilsLc.removeProviderInfo(service));
+		}
 
-			this.csInstanceId = event.getCsInstanceId();
-			this.serviceId = event.getServiceId();
+		if (Action.CREATED.equals(action)) {
 
 			serviceGroup = new Group(service, State.INIT);
 
@@ -144,7 +210,11 @@ public class ManagerOfServiceInstance {
 			targetGroup = checkAndExecute(action, groupId);
 		}
 
-		// processOutgoingService(event);
+		processEvent(event, targetGroup);
+	}
+
+	protected void processEvent(LifeCycleEvent event, Group targetGroup) throws ClassNotFoundException, IOException,
+			AmqpException, JAXBException {
 
 		// sum up transitions
 		Map<String, State> tempStates = new HashMap<>();
@@ -165,7 +235,6 @@ public class ManagerOfServiceInstance {
 		serviceGroupReadOnly = (Group) Utils.deepCopy(serviceGroup);
 
 		// create binding
-		// instanceID.changeTRUE/FALSE.stateBefore.stateAfter.action.targetLevel
 		String change;
 
 		if (serviceGroup.getCurrentState().equals(serviceGroup.getPreviousState())) {
@@ -200,7 +269,6 @@ public class ManagerOfServiceInstance {
 		}
 
 		// create binding
-		// instanceID.epsId.customEvent.targetLevel
 		String bindingKey = csInstanceId + "." + event.getEpsId() + "." + event.getCustomEvent() + "."
 				+ group.getType();
 
@@ -216,6 +284,7 @@ public class ManagerOfServiceInstance {
 		log.info("getCurrentState(instanceId={}, groupId={}): {}", csInstanceId, groupId, serviceGroup);
 
 		if (!group.canExecute(action)) {
+			// TODO handle errors, this causes endless loop
 			throw new ComotIllegalArgumentException("Action '" + action + "' is not allowed in state '"
 					+ group.getCurrentState() + "'. Group " + groupId);
 		}
@@ -250,11 +319,28 @@ public class ManagerOfServiceInstance {
 	public Map<String, Transition> getCurrentState() {
 		Map<String, Transition> transitions = new HashMap<>();
 
+		if (serviceGroupReadOnly == null) {
+			return null;
+		}
+
 		for (Group tempG : serviceGroupReadOnly.getAllMembersNested()) {
 			transitions.put(tempG.getId(), new Transition(tempG.getId(), tempG.getType(), tempG.getPreviousState(),
 					tempG.getCurrentState(), false));
 		}
 		return transitions;
+	}
+
+	@PreDestroy
+	public void clean() {
+
+		if (container != null) {
+			container.stop();
+		}
+
+		if (admin != null) {
+			admin.deleteQueue(queueName());
+		}
+
 	}
 
 	/**

@@ -12,9 +12,9 @@ import org.junit.Test;
 import org.oasis.tosca.Definitions;
 
 import at.ac.tuwien.dsg.comot.m.common.Utils;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
+import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.m.recorder.model.Change;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
@@ -39,7 +39,7 @@ public class RecordingTest extends AbstractTest {
 	}
 
 	@Test
-	public void testSimple() throws IOException, JAXBException, ClassNotFoundException, CoreServiceException {
+	public void testSimple() throws IOException, JAXBException, ClassNotFoundException, EpsException {
 
 		State state;
 		Change change;

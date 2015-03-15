@@ -8,11 +8,13 @@ import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.common.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.Transition;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.general.AdapterListener;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.general.SingleQueueAdapter;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 
 @Component
-public class UpdaterAdapter extends Adapter {
+public class UpdaterAdapter extends SingleQueueAdapter {
 
 	@Autowired
 	protected ApplicationContext context;

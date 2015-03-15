@@ -6,7 +6,7 @@ package at.ac.tuwien.dsg.comot.m.common.exception;
  * @author Juraj
  *
  */
-public class CoreServiceException extends Exception {
+public class EpsException extends Exception {
 
 	private static final long serialVersionUID = 7350286958469243223L;
 
@@ -15,7 +15,7 @@ public class CoreServiceException extends Exception {
 	protected String componentName;
 	protected boolean clientError;
 
-	public CoreServiceException(int code, String msg, String componentName) {
+	public EpsException(int code, String msg, String componentName) {
 		super("HTTP code=" + code + ", message='" + msg + "'");
 
 		this.code = code;
@@ -27,11 +27,11 @@ public class CoreServiceException extends Exception {
 		}
 	}
 
-	public CoreServiceException(String message) {
+	public EpsException(String message) {
 		super(message);
 	}
 
-	public CoreServiceException(String message, Exception cause) {
+	public EpsException(String message, Exception cause) {
 		super(message, cause);
 	}
 

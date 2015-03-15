@@ -7,18 +7,18 @@ import javax.xml.bind.JAXBException;
 import org.junit.Test;
 
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 
 public class ControlClientTest extends AbstractTest {
 
 	@Test
-	public void testTest() throws CoreServiceException, ComotException {
+	public void testTest() throws EpsException, ComotException {
 
 		// deployment.deploy(ExampleDeployOneVM.build());
 	}
 
 	@Test
-	public void testJaxb() throws CoreServiceException, JAXBException, IOException {
+	public void testJaxb() throws EpsException, JAXBException, IOException {
 
 		// CompositionRulesConfiguration mcr = UtilsCs.loadMetricCompositionRules("aaaa",
 		// UtilsTest.TEST_FILE_BASE + "mela/defCompositionRules.xml");

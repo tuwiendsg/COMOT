@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 
 public abstract class CoreServiceClient {
 
@@ -27,7 +27,7 @@ public abstract class CoreServiceClient {
 
 	public CoreServiceClient(String name, URI baseUri) {
 		super();
-		this.name = name;
+		setName(name);
 		this.baseUri = baseUri;
 
 		client = ClientBuilder.newClient();
@@ -37,7 +37,7 @@ public abstract class CoreServiceClient {
 		client.close();
 	}
 
-	protected void processResponseStatus(Response response) throws CoreServiceException {
+	protected void processResponseStatus(Response response) throws EpsException {
 
 		int code = response.getStatus();
 		int hundreds = code / 100;
@@ -54,11 +54,11 @@ public abstract class CoreServiceClient {
 		case 4:
 			msg = response.readEntity(String.class);
 			log.trace(name + "HTTP response status code={} , message='{}' ", code, msg);
-			throw new CoreServiceException(code, msg, name);
+			throw new EpsException(code, msg, name);
 		case 5:
 			msg = response.readEntity(String.class);
 			log.trace(name + "HTTP response status code={} , message='{}' ", code, msg);
-			throw new CoreServiceException(code, msg, name);
+			throw new EpsException(code, msg, name);
 		}
 
 	}

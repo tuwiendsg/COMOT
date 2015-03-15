@@ -3,25 +3,25 @@ package at.ac.tuwien.dsg.comot.m.core.lifecycle;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
-public class Transition {
+public class LifeCycleTransition {
 
 	protected State state;
 	protected Action action;
 	protected State nextState;
 	protected State parentState;
 
-	public Transition() {
+	public LifeCycleTransition() {
 
 	}
 
-	public Transition(State state, Action action, State nextState) {
+	public LifeCycleTransition(State state, Action action, State nextState) {
 		super();
 		this.state = state;
 		this.action = action;
 		this.nextState = nextState;
 	}
 
-	public Transition(State state, Action action, State nextState, State parentState) {
+	public LifeCycleTransition(State state, Action action, State nextState, State parentState) {
 		super();
 		this.state = state;
 		this.action = action;

@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.comot.m.common.coreservices.MonitoringClient;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.common.model.monitoring.ElementMonitoring;
 import at.ac.tuwien.dsg.comot.m.cs.connector.MelaClient;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.MelaMapper;
@@ -40,7 +40,7 @@ public class MonitoringClientMela implements MonitoringClient {
 	}
 
 	@Override
-	public void startMonitoring(CloudService service) throws CoreServiceException,
+	public void startMonitoring(CloudService service) throws EpsException,
 			ComotException {
 
 		if (service == null) {
@@ -71,13 +71,13 @@ public class MonitoringClientMela implements MonitoringClient {
 	}
 
 	@Override
-	public void stopMonitoring(String serviceId) throws CoreServiceException {
+	public void stopMonitoring(String serviceId) throws EpsException {
 		mela.removeServiceDescription(serviceId);
 
 	}
 
 	@Override
-	public void updateService(String serviceId, CloudService sevice) throws CoreServiceException, ComotException {
+	public void updateService(String serviceId, CloudService sevice) throws EpsException, ComotException {
 
 		MonitoredElement element;
 		try {
@@ -90,18 +90,18 @@ public class MonitoringClientMela implements MonitoringClient {
 	}
 
 	@Override
-	public void setMcr(String serviceId, CompositionRulesConfiguration mcr) throws CoreServiceException {
+	public void setMcr(String serviceId, CompositionRulesConfiguration mcr) throws EpsException {
 		mela.sendMetricsCompositionRules(serviceId, mcr);
 	}
 
 	@Override
-	public CompositionRulesConfiguration getMcr(String serviceId) throws CoreServiceException {
+	public CompositionRulesConfiguration getMcr(String serviceId) throws EpsException {
 		CompositionRulesConfiguration mcr = mela.getMetricsCompositionRules(serviceId);
 		return mcr;
 	}
 
 	@Override
-	public ElementMonitoring getMonitoringData(String serviceId) throws CoreServiceException, ComotException {
+	public ElementMonitoring getMonitoringData(String serviceId) throws EpsException, ComotException {
 
 		MonitoredElementMonitoringSnapshot snapshot = mela.getMonitoringData(serviceId);
 		try {
@@ -112,9 +112,19 @@ public class MonitoringClientMela implements MonitoringClient {
 	}
 
 	@Override
-	public List<String> listAllServices() throws CoreServiceException {
+	public List<String> listAllServices() throws EpsException {
 		return mela.listAllServices();
 
+	}
+
+	public boolean isMonitored(String instanceId) throws EpsException {
+
+		for (String id : mela.listAllServices()) {
+			if (id.equals(instanceId)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	// @Override

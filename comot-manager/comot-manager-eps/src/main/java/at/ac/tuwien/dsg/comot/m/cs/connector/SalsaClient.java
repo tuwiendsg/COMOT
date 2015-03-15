@@ -19,7 +19,7 @@ import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService;
 import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaInstanceDescription_VM;
 import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 
 public class SalsaClient extends CoreServiceClient {
@@ -45,7 +45,7 @@ public class SalsaClient extends CoreServiceClient {
 		super("SALSA", baseUri);
 	}
 
-	public String deploy(String toscaDescriptionXml) throws CoreServiceException {
+	public String deploy(String toscaDescriptionXml) throws EpsException {
 
 		log.trace(ln + "Deploying cloud application: {}", toscaDescriptionXml);
 
@@ -65,7 +65,7 @@ public class SalsaClient extends CoreServiceClient {
 
 	}
 
-	public void undeploy(String serviceId) throws CoreServiceException {
+	public void undeploy(String serviceId) throws EpsException {
 
 		log.trace(ln + "Undeploying service with serviceId '{}'", serviceId);
 
@@ -84,7 +84,7 @@ public class SalsaClient extends CoreServiceClient {
 	}
 
 	public void spawn(String serviceId, String topologyId, String nodeId, int instanceCount)
-			throws CoreServiceException {
+			throws EpsException {
 
 		log.trace(ln +
 				"Spawning additional instances (+{}) for serviceId={}, topologyId={}, nodeId={}",
@@ -109,7 +109,7 @@ public class SalsaClient extends CoreServiceClient {
 
 	}
 
-	public void destroy(String serviceId, String topologyId, String nodeId, int instanceId) throws CoreServiceException {
+	public void destroy(String serviceId, String topologyId, String nodeId, int instanceId) throws EpsException {
 
 		log.trace(ln + "Destroying instance with id {} (service: {} topology: {} node: {})",
 				instanceId, serviceId, topologyId, nodeId);
@@ -133,7 +133,7 @@ public class SalsaClient extends CoreServiceClient {
 	}
 
 	public CloudService getStatus(String serviceId)
-			throws CoreServiceException, ComotException {
+			throws EpsException, ComotException {
 
 		log.trace(ln + "Checking status for serviceId {}", serviceId);
 
@@ -164,7 +164,7 @@ public class SalsaClient extends CoreServiceClient {
 	}
 
 	public Definitions getTosca(String serviceId)
-			throws CoreServiceException, ComotException {
+			throws EpsException, ComotException {
 
 		log.trace(ln + "Getting tosca for serviceId {}", serviceId);
 
@@ -199,10 +199,10 @@ public class SalsaClient extends CoreServiceClient {
 	 * 
 	 * @param serviceId
 	 * @return
-	 * @throws CoreServiceException
+	 * @throws EpsException
 	 */
 	@Deprecated
-	public DeploymentDescription getServiceDeploymentInfo(String serviceId) throws CoreServiceException {
+	public DeploymentDescription getServiceDeploymentInfo(String serviceId) throws EpsException {
 
 		log.trace(ln + "Getting DeploymentInfo for serviceId {}", serviceId);
 
@@ -223,7 +223,7 @@ public class SalsaClient extends CoreServiceClient {
 	}
 
 	@Deprecated
-	public String getServices() throws CoreServiceException {
+	public String getServices() throws EpsException {
 
 		log.trace(ln + "Getting list of all services {}");
 

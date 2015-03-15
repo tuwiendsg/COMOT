@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.common.model.monitoring.ElementMonitoring;
 import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
@@ -54,7 +54,7 @@ public class MelaMappingTest extends AbstractTest {
 	}
 
 	@Test
-	public void mapperTest() throws JAXBException, ClassNotFoundException, IOException, CoreServiceException,
+	public void mapperTest() throws JAXBException, ClassNotFoundException, IOException, EpsException,
 			ComotException {
 
 		// log.info("original {}", Utils.asJsonString(serviceForMapping));
@@ -87,7 +87,7 @@ public class MelaMappingTest extends AbstractTest {
 
 	@Test
 	public void testMelaOutputOffline() throws JAXBException, ClassNotFoundException, IOException,
-			CoreServiceException,
+			EpsException,
 			ComotException {
 
 		String melaData = Utils.loadFile(UtilsTest.TEST_FILE_BASE + "xml/ViennaChillerSensors_monitoringData.xml");

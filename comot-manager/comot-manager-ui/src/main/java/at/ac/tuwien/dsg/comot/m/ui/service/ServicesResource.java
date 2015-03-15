@@ -30,13 +30,13 @@ import org.springframework.stereotype.Service;
 
 import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.core.Coordinator;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
+import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycle;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleFactory;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.Transition;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleTransition;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.m.ui.UiAdapter;
 import at.ac.tuwien.dsg.comot.m.ui.model.Lc;
@@ -78,7 +78,7 @@ public class ServicesResource {
 	@POST
 	@Path("/services")
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response createService(Definitions def) throws CoreServiceException, ComotException, JAXBException,
+	public Response createService(Definitions def) throws EpsException, ComotException, JAXBException,
 			ClassNotFoundException, IOException {
 
 		coordinator.createCloudService(mapperTosca.createModel(def));
@@ -87,7 +87,7 @@ public class ServicesResource {
 
 	@DELETE
 	@Path("/services/{serviceId}")
-	public Response deleteService(@PathParam("serviceId") String serviceId) throws CoreServiceException,
+	public Response deleteService(@PathParam("serviceId") String serviceId) throws EpsException,
 			ComotException {
 
 		// TODO
@@ -97,7 +97,7 @@ public class ServicesResource {
 	@POST
 	@Path("/services/{serviceId}/instances")
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response createServiceInstance(@PathParam("serviceId") String serviceId) throws CoreServiceException,
+	public Response createServiceInstance(@PathParam("serviceId") String serviceId) throws EpsException,
 			ComotException, ClassNotFoundException, IOException, JAXBException {
 
 		String instanceId = coordinator.createServiceInstance(serviceId);
@@ -108,7 +108,7 @@ public class ServicesResource {
 	@Path("/services/{serviceId}/instances/{instanceId}")
 	public Response deleteServiceInstance(
 			@PathParam("serviceId") String serviceId,
-			@PathParam("instanceId") String instanceId) throws CoreServiceException, ComotException {
+			@PathParam("instanceId") String instanceId) throws EpsException, ComotException {
 
 		// TODO
 		return Response.ok().build();
@@ -119,7 +119,7 @@ public class ServicesResource {
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response startServiceInstance(
 			@PathParam("serviceId") String serviceId,
-			@PathParam("instanceId") String instanceId) throws CoreServiceException,
+			@PathParam("instanceId") String instanceId) throws EpsException,
 			ComotException, ClassNotFoundException, IOException, JAXBException {
 
 		coordinator.startServiceInstance(serviceId, instanceId);
@@ -131,7 +131,7 @@ public class ServicesResource {
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response stopServiceInstance(
 			@PathParam("serviceId") String serviceId,
-			@PathParam("instanceId") String instanceId) throws CoreServiceException,
+			@PathParam("instanceId") String instanceId) throws EpsException,
 			ComotException, ClassNotFoundException, IOException, JAXBException {
 
 		coordinator.stopServiceInstance(serviceId, instanceId);
@@ -144,7 +144,7 @@ public class ServicesResource {
 	public Response assignSupportingEps(
 			@PathParam("serviceId") String serviceId,
 			@PathParam("instanceId") String instanceId,
-			@PathParam("epsId") String epsId) throws CoreServiceException, ComotException, ClassNotFoundException,
+			@PathParam("epsId") String epsId) throws EpsException, ComotException, ClassNotFoundException,
 			IOException, JAXBException {
 
 		coordinator.assignSupportingOsu(serviceId, instanceId, epsId);
@@ -156,7 +156,7 @@ public class ServicesResource {
 	public Response removeSupportingEps(
 			@PathParam("serviceId") String serviceId,
 			@PathParam("instanceId") String instanceId,
-			@PathParam("epsId") String epsId) throws CoreServiceException, ComotException, ClassNotFoundException,
+			@PathParam("epsId") String epsId) throws EpsException, ComotException, ClassNotFoundException,
 			IOException, JAXBException {
 
 		coordinator.removeAssignmentOfSupportingOsu(serviceId, instanceId, epsId);
@@ -172,7 +172,7 @@ public class ServicesResource {
 			@PathParam("instanceId") String instanceId,
 			@PathParam("epsId") String epsId,
 			@PathParam("eventName") String eventName,
-			String optionalInput) throws CoreServiceException, ComotException, ClassNotFoundException, IOException,
+			String optionalInput) throws EpsException, ComotException, ClassNotFoundException, IOException,
 			JAXBException {
 
 		// log.info(">>>{}<<<", optionalInput);
@@ -222,7 +222,7 @@ public class ServicesResource {
 			lc.getStates().add(new LcState(tempS));
 		}
 
-		for (Transition tr : lifeCycle.getTransitions()) {
+		for (LifeCycleTransition tr : lifeCycle.getTransitions()) {
 			lc.addTransition(tr.getState(), tr.getAction(), tr.getNextState());
 		}
 

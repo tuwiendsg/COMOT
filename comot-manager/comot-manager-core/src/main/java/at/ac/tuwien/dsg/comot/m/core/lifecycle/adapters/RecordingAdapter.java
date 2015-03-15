@@ -14,6 +14,8 @@ import at.ac.tuwien.dsg.comot.m.common.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.Transition;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.general.AdapterListener;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.general.SingleQueueAdapter;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.m.recorder.revisions.RevisionApi;
@@ -21,7 +23,7 @@ import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 
 @Component
-public class RecordingAdapter extends Adapter {
+public class RecordingAdapter extends SingleQueueAdapter {
 
 	public static final String CHANGE_TYPE_LIFECYCLE = "CHANGE_TYPE_LIFECYCLE";
 	public static final String CHANGE_TYPE_CUSTOM = "CHANGE_TYPE_CUSTOM";

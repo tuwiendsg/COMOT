@@ -18,14 +18,14 @@ import at.ac.tuwien.dsg.comot.m.common.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.MonitoringClient;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.UtilsLc;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.Adapter;
+import at.ac.tuwien.dsg.comot.m.core.UtilsLc;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.general.SingleQueueAdapter;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 
 @Component
 @Scope("prototype")
-public class UiAdapter extends Adapter {
+public class UiAdapter extends SingleQueueAdapter {
 
 	@Autowired
 	protected MonitoringClient monitoring;

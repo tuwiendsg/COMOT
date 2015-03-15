@@ -1,6 +1,8 @@
-package at.ac.tuwien.dsg.comot.m.core.lifecycle;
+package at.ac.tuwien.dsg.comot.m.core;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,12 +18,13 @@ import javax.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import at.ac.tuwien.dsg.comot.m.common.ComotAction;
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.ComotAction;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.ControlAdapter;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.DeploymentAdapter;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.MonitoringAdapter;
@@ -45,6 +48,9 @@ public class InformationServiceMock {
 	@Autowired
 	protected ToscaMapper mapperTosca;
 
+	@javax.annotation.Resource
+	public Environment env;
+
 	public static final String TYPE_ACTION = "TYPE_ACTION";
 
 	public static final String SALSA_SERVICE_PUBLIC_ID = "SALSA_SERVICE";
@@ -56,7 +62,7 @@ public class InformationServiceMock {
 	public static final String IP = "IP";
 	public static final String PORT = "PORT";
 	public static final String VIEW = "VIEW";
-	public static final String PLACE_HOLDER_INSTANCE_ID = "PLACE_HOLDER_INSTANCE_ID";
+	public static final String PLACE_HOLDER_INSTANCE_ID = "{PLACE_HOLDER_INSTANCE_ID}";
 
 	protected Map<String, CloudService> services = new HashMap<>();
 	protected Map<String, OfferedServiceUnit> osus = new HashMap<>();
@@ -64,7 +70,11 @@ public class InformationServiceMock {
 	protected int instanceItarator = 0;
 
 	@PostConstruct
-	public void setUpTestData() {
+	public void setUpTestData() throws URISyntaxException {
+
+		URI deploymentUri = new URI(env.getProperty("uri.deployemnt"));
+		URI monitoringUri = new URI(env.getProperty("uri.monitoring"));
+		URI controllerUri = new URI(env.getProperty("uri.controller"));
 
 		// SALSA
 
@@ -73,12 +83,12 @@ public class InformationServiceMock {
 		deployment.setType(OsuType.EPS);
 		deployment.hasResource(new Resource(DeploymentAdapter.class.getCanonicalName(),
 				new ResourceOrQualityType(InformationServiceMock.ADAPTER_CLASS)));
-		deployment.hasResource(new Resource("128.130.172.215",
+		deployment.hasResource(new Resource(deploymentUri.getHost(),
 				new ResourceOrQualityType(InformationServiceMock.IP)));
-		deployment.hasResource(new Resource("8380", new ResourceOrQualityType(
+		deployment.hasResource(new Resource("" + deploymentUri.getPort(), new ResourceOrQualityType(
 				InformationServiceMock.PORT)));
 		deployment.hasResource(new Resource(
-				"/salsa-engine?id={" + PLACE_HOLDER_INSTANCE_ID + "}",
+				"/salsa-engine?id=" + PLACE_HOLDER_INSTANCE_ID,
 				new ResourceOrQualityType(InformationServiceMock.VIEW)));
 
 		// MELA
@@ -88,10 +98,12 @@ public class InformationServiceMock {
 		monitoring.setType(OsuType.EPS);
 		monitoring.hasResource(new Resource(MonitoringAdapter.class.getCanonicalName(),
 				new ResourceOrQualityType(InformationServiceMock.ADAPTER_CLASS)));
-		monitoring.hasResource(new Resource("128.130.172.215", new ResourceOrQualityType(InformationServiceMock.IP)));
-		monitoring.hasResource(new Resource("8180", new ResourceOrQualityType(InformationServiceMock.PORT)));
+		monitoring.hasResource(new Resource(monitoringUri.getHost(), new ResourceOrQualityType(
+				InformationServiceMock.IP)));
+		monitoring.hasResource(new Resource("" + monitoringUri.getPort(), new ResourceOrQualityType(
+				InformationServiceMock.PORT)));
 		monitoring.hasResource(new Resource(
-				"/MELA/mela.html?{" + PLACE_HOLDER_INSTANCE_ID + "}",
+				"/MELA/mela.html?" + PLACE_HOLDER_INSTANCE_ID,
 				new ResourceOrQualityType(InformationServiceMock.VIEW)));
 
 		monitoring.hasPrimitiveOperation(
@@ -108,27 +120,23 @@ public class InformationServiceMock {
 		control.setType(OsuType.EPS);
 		control.hasResource(new Resource(ControlAdapter.class.getCanonicalName(), new ResourceOrQualityType(
 				InformationServiceMock.ADAPTER_CLASS)));
-		control.hasResource(new Resource("128.130.172.215", new ResourceOrQualityType(InformationServiceMock.IP)));
-		control.hasResource(new Resource("8020", new ResourceOrQualityType(InformationServiceMock.PORT)));
+		control.hasResource(new Resource(controllerUri.getHost(), new ResourceOrQualityType(InformationServiceMock.IP)));
+		control.hasResource(new Resource("" + controllerUri.getPort(), new ResourceOrQualityType(
+				InformationServiceMock.PORT)));
 		control.hasResource(new Resource(
 				"/rSYBL/",
 				new ResourceOrQualityType(InformationServiceMock.VIEW)));
 
-		// RECORDER
-
-		// Resource resource4 = new Resource(InformationServiceMock.PUBLIC_INSTANCE, new ResourceOrQualityType(
-		// InformationServiceMock.TYPE_STATIC_SERVICE));
-		// resource4.hasResource(new Resource(RecordingAdapter.class.getCanonicalName(), new ResourceOrQualityType(
-		// InformationServiceMock.ADAPTER_CLASS)));
-		//
-		// OfferedServiceUnit recorder = new OfferedServiceUnit();
-		// recorder.setId(InformationServiceMock.RECORDER_SERVICE);
-		// recorder.hasResource(resource4);
+		control.hasPrimitiveOperation(
+				new PrimitiveOperation("Set Metric Composition Rules", ComotAction.RSYBL_SET_MCR.toString()));
+		control.hasPrimitiveOperation(
+				new PrimitiveOperation("Start controller", ComotAction.RSYBL_START.toString()));
+		control.hasPrimitiveOperation(
+				new PrimitiveOperation("Stop controller", ComotAction.RSYBL_STOP.toString()));
 
 		this.addOsu(deployment);
-		// this.addOsu(recorder);
 		this.addOsu(monitoring);
-		// this.addOsu(control);
+		this.addOsu(control);
 
 		try {
 			CloudService service1 = mapperTosca.createModel(

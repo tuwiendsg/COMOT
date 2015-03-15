@@ -1,5 +1,7 @@
 package at.ac.tuwien.dsg.comot.m.cs;
 
+import java.util.List;
+
 import javax.annotation.PreDestroy;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.JAXBException;
@@ -9,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.comot.m.common.coreservices.ControlClient;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.cs.connector.RsyblClient;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.DeploymentMapper;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.RsyblMapper;
@@ -35,7 +37,7 @@ public class ControlClientRsybl implements ControlClient {
 
 	@Override
 	public void sendInitialConfig(
-			CloudService service) throws CoreServiceException, JAXBException {
+			CloudService service) throws EpsException, JAXBException {
 
 		if (service == null) {
 			log.warn("sendInitialConfig(service=null )");
@@ -56,39 +58,39 @@ public class ControlClientRsybl implements ControlClient {
 
 	@Override
 	public void createMcr(String serviceId, CompositionRulesConfiguration compositionRulesConfiguration)
-			throws CoreServiceException {
+			throws EpsException {
 		rsybl.sendMetricsCompositionRules(serviceId, compositionRulesConfiguration);
 	}
 
 	@Override
-	public void createEffects(String serviceId, String effectsJSON) throws CoreServiceException {
+	public void createEffects(String serviceId, String effectsJSON) throws EpsException {
 		rsybl.sendElasticityCapabilitiesEffects(serviceId, effectsJSON);
 	}
 
 	@Override
-	public void updateService(CloudService service) throws CoreServiceException, JAXBException {
+	public void updateService(CloudService service) throws EpsException, JAXBException {
 		CloudServiceXML cloudServiceXML = rsyblMapper.extractRsybl(service);
 		rsybl.updateElasticityRequirements(service.getId(), UtilsCs.asString(cloudServiceXML));
 	}
 
 	@Override
 	public void updateMcr(String serviceId, CompositionRulesConfiguration compositionRulesConfiguration)
-			throws CoreServiceException {
+			throws EpsException {
 		rsybl.updateMetricsCompositionRules(serviceId, compositionRulesConfiguration);
 	}
 
 	@Override
-	public void updateEffects(String serviceId, String effectsJSON) throws CoreServiceException {
+	public void updateEffects(String serviceId, String effectsJSON) throws EpsException {
 		rsybl.updateElasticityCapabilitiesEffects(serviceId, effectsJSON);
 	}
 
 	@Override
-	public void startControl(String serviceId) throws CoreServiceException {
+	public void startControl(String serviceId) throws EpsException {
 		rsybl.startControl(serviceId);
 	}
 
 	@Override
-	public void stopControl(String serviceId) throws CoreServiceException {
+	public void stopControl(String serviceId) throws EpsException {
 		rsybl.stopControl(serviceId);
 	}
 
@@ -104,6 +106,17 @@ public class ControlClientRsybl implements ControlClient {
 	public void setHostAndPort(String host, int port) {
 		rsybl.setBaseUri(UriBuilder.fromUri(rsybl.getBaseUri())
 				.host(host).port(port).build());
+	}
+
+	@Override
+	public List<String> listAllServices() throws EpsException {
+		return rsybl.listAllServices();
+	}
+
+	@Override
+	public void removeService(String serviceId) throws EpsException {
+		rsybl.removeService(serviceId);
+
 	}
 
 }

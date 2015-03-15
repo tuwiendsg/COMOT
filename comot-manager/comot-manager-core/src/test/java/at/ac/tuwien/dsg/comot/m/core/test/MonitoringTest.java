@@ -13,12 +13,12 @@ import org.junit.Test;
 import org.oasis.tosca.Definitions;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.m.common.ComotAction;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.m.core.Coordinator;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
+import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.ComotAction;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 
@@ -49,7 +49,7 @@ public class MonitoringTest extends AbstractTest {
 	}
 
 	@Test(timeout = 240000)
-	public void testMonitoring() throws IOException, JAXBException, ClassNotFoundException, CoreServiceException {
+	public void testMonitoring() throws IOException, JAXBException, ClassNotFoundException, EpsException {
 
 		boolean isFresh = true;
 		assertFalse(deployment.isManaged(instanceId));
@@ -130,7 +130,7 @@ public class MonitoringTest extends AbstractTest {
 
 	}
 
-	protected boolean isMonitored(String instanceId) throws CoreServiceException {
+	protected boolean isMonitored(String instanceId) throws EpsException {
 
 		for (String id : monitoring.listAllServices()) {
 			if (id.equals(instanceId)) {

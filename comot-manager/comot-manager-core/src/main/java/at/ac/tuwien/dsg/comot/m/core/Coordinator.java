@@ -13,18 +13,22 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.common.CustomEvent;
+import at.ac.tuwien.dsg.comot.m.common.EpsAction;
 import at.ac.tuwien.dsg.comot.m.common.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
+import at.ac.tuwien.dsg.comot.m.common.Type;
+import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.EpsAction;
+import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
@@ -43,6 +47,8 @@ public class Coordinator {
 	protected LifeCycleManager lcManager;
 	@Autowired
 	protected DeploymentClient deployment;
+	@Autowired
+	protected RabbitTemplate amqp;
 
 	@PostConstruct
 	public void setUp() {
@@ -59,9 +65,7 @@ public class Coordinator {
 
 		String instanceId = infoService.createServiceInstance(serviceId);
 
-		LifeCycleEvent event = new LifeCycleEvent(serviceId, instanceId, serviceId, Action.CREATED,
-				USER_ID, null);
-		lcManager.executeAction(event);
+		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.CREATED, USER_ID, null));
 
 		return instanceId;
 	}
@@ -69,16 +73,14 @@ public class Coordinator {
 	public void startServiceInstance(String serviceId, String instanceId) throws IOException, JAXBException,
 			ClassNotFoundException {
 
-		LifeCycleEvent event = new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STARTED, USER_ID, null);
-		lcManager.executeAction(event);
+		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STARTED, USER_ID, null));
 
 	}
 
 	public void stopServiceInstance(String serviceId, String instanceId)
 			throws IOException, JAXBException, ClassNotFoundException {
 
-		LifeCycleEvent event = new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STOPPED, USER_ID, null);
-		lcManager.executeAction(event);
+		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STOPPED, USER_ID, null));
 
 	}
 
@@ -87,8 +89,7 @@ public class Coordinator {
 
 		infoService.removeServiceInstance(serviceId, instanceId);
 
-		LifeCycleEvent event = new LifeCycleEvent(serviceId, instanceId, serviceId, Action.REMOVED, USER_ID, null);
-		lcManager.executeAction(event);
+		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.REMOVED, USER_ID, null));
 
 	}
 
@@ -97,9 +98,8 @@ public class Coordinator {
 
 		infoService.assignSupportingService(serviceId, instanceId, osuInstanceId);
 
-		CustomEvent event = new CustomEvent(serviceId, instanceId, serviceId, EpsAction.EPS_ASSIGNED.toString(),
-				USER_ID, osuInstanceId, null); // TODu remove osuInstanceId from the optional msg
-		lcManager.executeAction(event);
+		sendCustom(Type.SERVICE, new CustomEvent(serviceId, instanceId, serviceId, EpsAction.EPS_ASSIGNED.toString(),
+				USER_ID, osuInstanceId, null));
 
 	}
 
@@ -108,9 +108,9 @@ public class Coordinator {
 
 		infoService.removeAssignmentOfSupportingOsu(serviceId, instanceId, osuInstanceId);
 
-		CustomEvent event = new CustomEvent(serviceId, instanceId, serviceId,
-				EpsAction.EPS_ASSIGNMENT_REMOVED.toString(), USER_ID, osuInstanceId, null);
-		lcManager.executeAction(event);
+		sendCustom(Type.SERVICE,
+				new CustomEvent(serviceId, instanceId, serviceId, EpsAction.EPS_ASSIGNMENT_REMOVED.toString(), USER_ID,
+						osuInstanceId, null));
 
 	}
 
@@ -126,9 +126,29 @@ public class Coordinator {
 			return;
 		}
 
-		CustomEvent event = new CustomEvent(serviceId, csInstanceId, serviceId, eventId, USER_ID, epsId,
-				optionalInput);
-		lcManager.executeAction(event);
+		sendCustom(Type.SERVICE, new CustomEvent(serviceId, csInstanceId, serviceId, eventId, USER_ID, epsId,
+				optionalInput));
+
+	}
+
+	protected void sendLifeCycle(Type targetLevel, LifeCycleEvent event) throws AmqpException, JAXBException {
+
+		String bindingKey = event.getCsInstanceId() + "." + event.getClass().getSimpleName() + "." + event.getAction()
+				+ "." + targetLevel;
+
+		// log.info(logId() +"SEND key={}", targetLevel);
+
+		amqp.convertAndSend(AppContextCore.EXCHANGE_REQUESTS, bindingKey, Utils.asJsonString(event));
+	}
+
+	protected void sendCustom(Type targetLevel, CustomEvent event) throws AmqpException, JAXBException {
+
+		String bindingKey = event.getCsInstanceId() + "." + event.getClass().getSimpleName() + "."
+				+ event.getCustomEvent() + "." + targetLevel;
+
+		// log.info(logId() +"SEND key={}", targetLevel);
+
+		amqp.convertAndSend(AppContextCore.EXCHANGE_REQUESTS, bindingKey, Utils.asJsonString(event));
 	}
 
 	/**
@@ -144,30 +164,34 @@ public class Coordinator {
 			String instanceId = name;
 			String serviceId = instanceId + "_FROM_SALSA";
 
-			CloudService service = deployment.getService(instanceId);
+			if (deployment.isManaged(instanceId)) {
 
-			service.setName(serviceId);
-			service.setId(serviceId);
-			infoService.createService(service);
-			infoService.createServiceInstance(service.getId(), instanceId);
-			infoService.assignSupportingService(serviceId, instanceId, InformationServiceMock.SALSA_SERVICE_PUBLIC_ID);
+				CloudService service = deployment.getService(instanceId);
 
-			service = infoService.getServiceInstance(instanceId);
-			service.setName(instanceId);
-			service.setId(instanceId);
-			service = deployment.refreshStatus(service);
+				service.setName(serviceId);
+				service.setId(serviceId);
+				infoService.createService(service);
+				infoService.createServiceInstance(service.getId(), instanceId);
+				infoService.assignSupportingService(serviceId, instanceId,
+						InformationServiceMock.SALSA_SERVICE_PUBLIC_ID);
 
-			for (ServiceUnit unit : Navigator.getAllUnits(service)) {
-				for (UnitInstance instance : unit.getInstances()) {
-					infoService.addUnitInstance(serviceId, instanceId, unit.getId(), instance);
+				service = infoService.getServiceInstance(instanceId);
+				service.setName(instanceId);
+				service.setId(instanceId);
+				service = deployment.refreshStatus(service);
+
+				for (ServiceUnit unit : Navigator.getAllUnits(service)) {
+					for (UnitInstance instance : unit.getInstances()) {
+						infoService.addUnitInstance(serviceId, instanceId, unit.getId(), instance);
+					}
 				}
+
+				service.setName(serviceId);
+				service.setId(serviceId);
+				lcManager.hardSetRunning(service, instanceId);
 			}
 
-			service.setName(serviceId);
-			service.setId(serviceId);
-			lcManager.hardSetRunning(service, instanceId);
-
-		} catch (CoreServiceException | ComotException | ClassNotFoundException | IOException e) {
+		} catch (EpsException | ComotException | ClassNotFoundException | IOException e) {
 			e.printStackTrace();
 		}
 	}

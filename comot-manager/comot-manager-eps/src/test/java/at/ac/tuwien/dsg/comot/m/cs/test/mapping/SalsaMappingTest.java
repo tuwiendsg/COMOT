@@ -14,7 +14,7 @@ import org.unitils.reflectionassert.ReflectionComparatorMode;
 
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.DeploymentMapper;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
@@ -103,7 +103,7 @@ public class SalsaMappingTest extends AbstractTest {
 	}
 
 	@Test
-	public void stateMapperTest() throws CoreServiceException, JAXBException, ComotException {
+	public void stateMapperTest() throws EpsException, JAXBException, ComotException {
 
 		// ENRICH WITH STATE
 

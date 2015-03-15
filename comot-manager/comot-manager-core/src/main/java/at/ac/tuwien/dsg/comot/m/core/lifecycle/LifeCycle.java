@@ -8,6 +8,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.ac.tuwien.dsg.comot.m.core.UtilsLc;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
@@ -16,7 +17,7 @@ public class LifeCycle {
 	private static final Logger log = LoggerFactory.getLogger(UtilsLc.class);
 
 	protected Set<State> states = new HashSet<>();
-	protected List<Transition> transitions = new ArrayList<>();
+	protected List<LifeCycleTransition> transitions = new ArrayList<>();
 
 	public LifeCycle() {
 		states.add(State.ERROR);
@@ -38,7 +39,7 @@ public class LifeCycle {
 		}
 
 		if (states.contains(currentState)) {
-			for (Transition transition : transitions) {
+			for (LifeCycleTransition transition : transitions) {
 
 				log.trace("{}", transition);
 				if (transition.getState() == currentState && transition.getAction() == action) {
@@ -59,7 +60,7 @@ public class LifeCycle {
 
 		Action result = null;
 
-		for (Transition tr : transitions) {
+		for (LifeCycleTransition tr : transitions) {
 			if (tr.getState() == oldState && tr.getNextState() == newState) {
 				result = tr.getAction();
 				break;
@@ -73,20 +74,20 @@ public class LifeCycle {
 	public void addTransition(State state, Action action, State nextState) {
 		states.add(state);
 		states.add(nextState);
-		transitions.add(new Transition(state, action, nextState));
+		transitions.add(new LifeCycleTransition(state, action, nextState));
 	}
 
 	public void addTransition(State state, Action action, State nextState, State parentState) {
 		states.add(state);
 		states.add(nextState);
-		transitions.add(new Transition(state, action, nextState, parentState));
+		transitions.add(new LifeCycleTransition(state, action, nextState, parentState));
 	}
 
 	public Set<State> getStates() {
 		return states;
 	}
 
-	public List<Transition> getTransitions() {
+	public List<LifeCycleTransition> getTransitions() {
 		return transitions;
 	}
 

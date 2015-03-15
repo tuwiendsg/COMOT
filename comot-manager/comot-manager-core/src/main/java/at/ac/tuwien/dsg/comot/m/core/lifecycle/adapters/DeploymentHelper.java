@@ -18,12 +18,12 @@ import at.ac.tuwien.dsg.comot.m.common.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
+import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
+import at.ac.tuwien.dsg.comot.m.core.UtilsLc;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycle;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleFactory;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.UtilsLc;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.DeploymentMapper;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.type.Action;
@@ -36,6 +36,8 @@ public class DeploymentHelper {
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 
 	protected DeploymentClient deployment;
+	protected DeploymentAdapter dAdapt;
+
 	@Autowired
 	protected DeploymentMapper mapper;
 	@Autowired
@@ -47,17 +49,9 @@ public class DeploymentHelper {
 
 	protected static final LifeCycle unitInstanceLc = LifeCycleFactory.getLifeCycle(Type.INSTANCE);
 
-	public void setAdapterId(String adapterId) {
-		this.adapterId = adapterId;
-	}
-
-	public void setDeployment(DeploymentClient deployment) {
-		this.deployment = deployment;
-	}
-
 	@Async
 	public void monitorStatusUntilDeployed(String serviceId, String instanceId, CloudService service)
-			throws CoreServiceException,
+			throws EpsException,
 			ComotException, IOException, JAXBException, InterruptedException, ClassNotFoundException {
 
 		try {
@@ -87,7 +81,7 @@ public class DeploymentHelper {
 					serviceReturned.setId(serviceId);
 					serviceReturned.setName(serviceId);
 
-					// log.info("currentStates: {}", currentStates);
+					log.info("currentStates: {}", currentStates);
 
 					if (currentStates.isEmpty()) {
 						notAllRunning = true;
@@ -118,13 +112,13 @@ public class DeploymentHelper {
 						// check if also the translated Life-cycle state have changed
 						if (lcStateNew == lcStateOld) {
 
-							lcManager.executeAction(new CustomEvent(serviceId, instanceId, uInstId, stateNew,
+							dAdapt.sendCustom(Type.INSTANCE, new CustomEvent(serviceId, instanceId, uInstId, stateNew,
 									adapterId, null, null));
 
 						} else {
 
 							if (lcStateNew == State.ERROR) {
-								lcManager.executeAction(new LifeCycleEvent(serviceId, instanceId, uInstId,
+								dAdapt.sendLifeCycle(Type.INSTANCE, new LifeCycleEvent(serviceId, instanceId, uInstId,
 										Action.ERROR,
 										adapterId, serviceReturned));
 								return;
@@ -135,7 +129,9 @@ public class DeploymentHelper {
 								if (action == null) {
 									log.error("invalid transitions {} -> {}", lcStateOld, lcStateNew);
 								} else {
-									lcManager.executeAction(new LifeCycleEvent(serviceId, instanceId, uInstId, action,
+									dAdapt.sendLifeCycle(Type.INSTANCE, new LifeCycleEvent(serviceId, instanceId,
+											uInstId,
+											action,
 											adapterId, serviceReturned));
 								}
 							}
@@ -154,6 +150,18 @@ public class DeploymentHelper {
 			e.printStackTrace();
 		}
 
+	}
+
+	public void setAdapterId(String adapterId) {
+		this.adapterId = adapterId;
+	}
+
+	public void setDeployment(DeploymentClient deployment) {
+		this.deployment = deployment;
+	}
+
+	public void setDeploymentAdapter(DeploymentAdapter dAdapt) {
+		this.dAdapt = dAdapt;
 	}
 
 }

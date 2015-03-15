@@ -19,7 +19,7 @@ import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityT
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.cs.connector.SalsaClient;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.DeploymentMapper;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
@@ -41,7 +41,7 @@ public class DeploymentClientSalsa implements DeploymentClient {
 	}
 
 	@Override
-	public CloudService deploy(CloudService service) throws CoreServiceException, ComotException {
+	public CloudService deploy(CloudService service) throws EpsException, ComotException {
 
 		String toscaDescriptionXml;
 
@@ -62,7 +62,7 @@ public class DeploymentClientSalsa implements DeploymentClient {
 	}
 
 	@Override
-	public CloudService deploy(String service) throws CoreServiceException, ComotException {
+	public CloudService deploy(String service) throws EpsException, ComotException {
 
 		String serviceId = salsa.deploy(service);
 
@@ -73,23 +73,23 @@ public class DeploymentClientSalsa implements DeploymentClient {
 	}
 
 	@Override
-	public void undeploy(String serviceId) throws CoreServiceException {
+	public void undeploy(String serviceId) throws EpsException {
 		salsa.undeploy(serviceId);
 	}
 
 	@Override
 	public void spawn(String serviceId, String topologyId, String nodeId, int instanceCount)
-			throws CoreServiceException {
+			throws EpsException {
 		salsa.spawn(serviceId, topologyId, nodeId, instanceCount);
 	}
 
 	@Override
-	public void destroy(String serviceId, String topologyId, String nodeId, int instanceId) throws CoreServiceException {
+	public void destroy(String serviceId, String topologyId, String nodeId, int instanceId) throws EpsException {
 		salsa.destroy(serviceId, topologyId, nodeId, instanceId);
 	}
 
 	@Override
-	public CloudService getService(String serviceId) throws CoreServiceException, ComotException {
+	public CloudService getService(String serviceId) throws EpsException, ComotException {
 
 		Definitions definitions = salsa.getTosca(serviceId);
 
@@ -98,7 +98,7 @@ public class DeploymentClientSalsa implements DeploymentClient {
 
 	@Override
 	public CloudService refreshStatus(CloudService service)
-			throws CoreServiceException, ComotException {
+			throws EpsException, ComotException {
 
 		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService status = salsa.getStatus(service.getId());
 
@@ -115,7 +115,7 @@ public class DeploymentClientSalsa implements DeploymentClient {
 	}
 
 	@Override
-	public CloudService refreshStatus(Map<String, String> map, CloudService service) throws CoreServiceException,
+	public CloudService refreshStatus(Map<String, String> map, CloudService service) throws EpsException,
 			ComotException {
 
 		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService status = salsa.getStatus(service.getId());
@@ -135,7 +135,7 @@ public class DeploymentClientSalsa implements DeploymentClient {
 	}
 
 	@Override
-	public boolean isRunning(String serviceId) throws CoreServiceException, ComotException {
+	public boolean isRunning(String serviceId) throws EpsException, ComotException {
 
 		boolean running = false;
 
@@ -161,7 +161,7 @@ public class DeploymentClientSalsa implements DeploymentClient {
 	}
 
 	@Override
-	public boolean isManaged(String serviceId) throws CoreServiceException {
+	public boolean isManaged(String serviceId) throws EpsException {
 
 		String msg = salsa.getServices();
 

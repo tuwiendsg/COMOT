@@ -5,14 +5,20 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.amqp.core.Queue;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import at.ac.tuwien.dsg.comot.m.common.EpsAction;
 import at.ac.tuwien.dsg.comot.m.common.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.Transition;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
+import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.general.AdapterCore;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.general.AdapterListener;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.general.AdapterManager;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.general.SingleQueueAdapter;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.m.recorder.revisions.RevisionApi;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
@@ -23,7 +29,7 @@ import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 @Component
-public class EpsCoordinatorAdapter extends Adapter {
+public class EpsCoordinatorAdapter extends SingleQueueAdapter {
 
 	@Autowired
 	protected ApplicationContext context;
@@ -41,7 +47,12 @@ public class EpsCoordinatorAdapter extends Adapter {
 
 				for (Resource res : osu.getResources()) {
 					if (res.getType().getName().equals(InformationServiceMock.ADAPTER_CLASS)) {
-						Adapter adapter = (Adapter) context.getBean(Class.forName(res.getName()));
+
+						AdapterCore adapter = (AdapterCore) context.getBean(Class.forName(res.getName()));
+
+						admin.declareQueue(new Queue(AdapterManager.queueNameAssignment(osu.getId()), false, false,
+								false));
+
 						adapter.startAdapter(osu.getId());
 						managedSet.add(osu.getId());
 					}
@@ -59,7 +70,7 @@ public class EpsCoordinatorAdapter extends Adapter {
 		bindingLifeCycle("*.TRUE.*." + State.STARTING + ".#");
 
 		bindingCustom("*.*." + EpsAction.EPS_ASSIGNED + ".SERVICE");
-		bindingCustom("*.*." + EpsAction.EPS_REMOVAL_REQUESTED + ".SERVICE");
+		bindingCustom("*.*." + EpsAction.EPS_ASSIGNMENT_REMOVAL_REQUESTED + ".SERVICE");
 
 		container.setMessageListener(new CustomListener(osuInstanceId));
 
@@ -103,7 +114,7 @@ public class EpsCoordinatorAdapter extends Adapter {
 					createOsu(epsId);
 				}
 
-			} else if (action == EpsAction.EPS_REMOVAL_REQUESTED) {
+			} else if (action == EpsAction.EPS_ASSIGNMENT_REMOVAL_REQUESTED) {
 
 				if (managedSet.contains(epsId)) {
 					removeOsu(epsId);

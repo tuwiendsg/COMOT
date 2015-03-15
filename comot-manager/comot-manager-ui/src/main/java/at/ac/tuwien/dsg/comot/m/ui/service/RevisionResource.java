@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.recorder.RecorderException;
 import at.ac.tuwien.dsg.comot.m.recorder.model.Change;
 import at.ac.tuwien.dsg.comot.m.recorder.out.ManagedObject;
@@ -45,7 +45,7 @@ public class RevisionResource {
 	@Consumes(MediaType.WILDCARD)
 	public Response getManagedObjects(
 			@PathParam("instanceId") String instanceId
-			) throws CoreServiceException,
+			) throws EpsException,
 					ComotException, InstantiationException, IllegalAccessException, IllegalArgumentException,
 					ClassNotFoundException, RecorderException {
 
@@ -62,7 +62,7 @@ public class RevisionResource {
 	public Response getRecording(
 			@PathParam("instanceId") String instanceId,
 			@PathParam("objectId") String objectId,
-			@PathParam("timestamp") Long timestamp) throws CoreServiceException,
+			@PathParam("timestamp") Long timestamp) throws EpsException,
 			ComotException, InstantiationException, IllegalAccessException, IllegalArgumentException,
 			ClassNotFoundException, RecorderException {
 
@@ -90,7 +90,7 @@ public class RevisionResource {
 			@PathParam("instanceId") String instanceId,
 			@DefaultValue("0") @QueryParam("from") Long from,
 			@DefaultValue("9223372036854775807") @QueryParam("to") Long to) // def Long.MAX_VALUE
-			throws CoreServiceException, ComotException, InstantiationException, IllegalAccessException,
+			throws EpsException, ComotException, InstantiationException, IllegalAccessException,
 			IllegalArgumentException, ClassNotFoundException, RecorderException, JAXBException {
 
 		Change change = revisionApi.getAllChanges(instanceId, from, to);
@@ -114,7 +114,7 @@ public class RevisionResource {
 			@PathParam("objectId") String objectId,
 			@DefaultValue("0") @QueryParam("from") Long from,
 			@DefaultValue("9223372036854775807") @QueryParam("to") Long to) // def Long.MAX_VALUE
-			throws CoreServiceException, ComotException, InstantiationException, IllegalAccessException,
+			throws EpsException, ComotException, InstantiationException, IllegalAccessException,
 			IllegalArgumentException, ClassNotFoundException, RecorderException, JAXBException {
 
 		if (!revisionApi.verifyObject(instanceId, objectId)) {

@@ -5,21 +5,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.Binding.DestinationType;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageListener;
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.m.common.AbstractEvent;
 import at.ac.tuwien.dsg.comot.m.common.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.Transition;
-import at.ac.tuwien.dsg.comot.m.common.Utils;
-import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
+import at.ac.tuwien.dsg.comot.m.common.Type;
+import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
+import at.ac.tuwien.dsg.comot.m.core.UtilsLc;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.RecordingAdapter;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
@@ -31,10 +40,16 @@ public class LifeCycleManager {
 
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 
+	public static final String MANAGER_QUEUE = "MANAGER_QUEUE";
+
 	@Autowired
 	protected ApplicationContext context;
 	@Autowired
 	protected AmqpAdmin admin;
+	@Autowired
+	protected ConnectionFactory connectionFactory;
+	protected SimpleMessageListenerContainer container;
+
 	@Autowired
 	protected InformationServiceMock infoService;
 
@@ -48,70 +63,57 @@ public class LifeCycleManager {
 
 		admin.declareExchange(new TopicExchange(AppContextCore.EXCHANGE_LIFE_CYCLE, false, false));
 		admin.declareExchange(new TopicExchange(AppContextCore.EXCHANGE_CUSTOM_EVENT, false, false));
+		admin.declareExchange(new TopicExchange(AppContextCore.EXCHANGE_REQUESTS, false, false));
+
+		admin.declareQueue(new Queue(MANAGER_QUEUE, false, false, false));
+
+		container = new SimpleMessageListenerContainer();
+		container.setConnectionFactory(connectionFactory);
+		container.setQueueNames(MANAGER_QUEUE);
+		container.setMessageListener(new CustomListener());
+
+		admin.declareBinding(new Binding(MANAGER_QUEUE, DestinationType.QUEUE, AppContextCore.EXCHANGE_REQUESTS,
+				"*." + LifeCycleEvent.class.getSimpleName() + "." + Action.CREATED + "." + Type.SERVICE, null));
+		admin.declareBinding(new Binding(MANAGER_QUEUE, DestinationType.QUEUE, AppContextCore.EXCHANGE_REQUESTS,
+				"*." + LifeCycleEvent.class.getSimpleName() + "." + Action.REMOVED + "." + Type.SERVICE, null));
+
+		container.start();
 
 		RecordingAdapter recording = context.getBean(RecordingAdapter.class);
 		recording.startAdapter(InformationServiceMock.RECORDER);
 
 	}
 
-	public void executeAction(AbstractEvent event) throws IOException,
-			JAXBException, ClassNotFoundException {
+	public class CustomListener implements MessageListener {
 
-		log.info("EXECUTE ACTION: ( {})", event);
+		@Override
+		public void onMessage(Message message) {
 
-		ManagerOfServiceInstance manager;
-		CloudService service;
-		String csInstanceId = event.getCsInstanceId();
-		String serviceId = event.getServiceId();
+			try {
+				LifeCycleEvent event = (LifeCycleEvent) UtilsLc.abstractEvent(message);
+				String csInstanceId = event.getCsInstanceId();
 
-		if (event instanceof LifeCycleEvent) {
-			LifeCycleEvent eventLc = (LifeCycleEvent) event;
+				if (Action.CREATED == event.getAction()) {
 
-			if (Action.REMOVED != eventLc.getAction()) {
-				// clean service
-				if (eventLc.getService() == null) {
-					service = infoService.getServiceInstance(serviceId, csInstanceId);
-				} else {
-					service = (CloudService) Utils.deepCopy(eventLc.getService());
-				}
-				eventLc.setService(UtilsLc.removeProviderInfo(service));
-			}
+					if (managers.containsKey(csInstanceId)) {
+						return;
+					}
 
-			if (Action.CREATED == eventLc.getAction()) {
+					ManagerOfServiceInstance manager = context.getBean(ManagerOfServiceInstance.class);
+					managers.put(csInstanceId, manager);
 
-				if (managers.containsKey(csInstanceId)) {
-					return;
+					manager.createInstance(event);
+
+				} else if (Action.REMOVED == event.getAction()) {
+
+					managers.remove(managers.get(csInstanceId));
 				}
 
-				manager = context.getBean(ManagerOfServiceInstance.class);
-				managers.put(csInstanceId, manager);
-
-				checkAndExecute(csInstanceId, event);
-
-			} else if (Action.REMOVED == eventLc.getAction()) {
-
-				checkAndExecute(csInstanceId, event);
-
-				managers.remove(managers.get(csInstanceId));
-
-			} else {
-				checkAndExecute(csInstanceId, event);
+			} catch (JAXBException | ClassNotFoundException | AmqpException | IOException e) {
+				e.printStackTrace();
 			}
-
-		} else {
-			checkAndExecute(csInstanceId, event);
 		}
 
-	}
-
-	protected void checkAndExecute(String csInstanceId, AbstractEvent event) throws ClassNotFoundException,
-			JAXBException, IOException {
-
-		if (!managers.containsKey(csInstanceId)) {
-			throw new ComotIllegalArgumentException("Instance '" + csInstanceId + "' has no managed life-cycle");
-		}
-
-		managers.get(csInstanceId).executeActionAny(event);
 	}
 
 	public State getCurrentState(String instanceId, String groupId) {
@@ -124,7 +126,11 @@ public class LifeCycleManager {
 	}
 
 	public Map<String, Transition> getCurrentState(String instanceId) {
-		return managers.get(instanceId).getCurrentState();
+		if (managers.containsKey(instanceId)) {
+			return managers.get(instanceId).getCurrentState();
+		} else {
+			return null;
+		}
 	}
 
 	public boolean isInstanceManaged(String instanceId) {
@@ -135,15 +141,18 @@ public class LifeCycleManager {
 		}
 	}
 
-	// public void executeAction(EventMessage event) throws IOException, JAXBException {
-	//
-	// for (ManagerOfServiceInstance manager : managers.values()) {
-	// if (manager.getServiceGroup().getId().equals(serviceId)) {
-	// executeAction(serviceId, manager.getServiceGroup().getId(), groupId, action);
-	// }
-	// }
-	//
-	// }
+	@PreDestroy
+	public void clean() {
+
+		if (container != null) {
+			container.stop();
+		}
+
+		if (admin != null) {
+			admin.deleteQueue(MANAGER_QUEUE);
+		}
+
+	}
 
 	/**
 	 * Only for testing!

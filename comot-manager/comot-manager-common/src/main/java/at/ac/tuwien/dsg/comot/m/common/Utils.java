@@ -71,6 +71,23 @@ public class Utils {
 		return (StateMessage) unm.unmarshal(r);
 	}
 
+	public static AbstractEvent asAbstractEvent(String str, Class<?>... clazz) throws JAXBException {
+
+		List<Object> list = new ArrayList<Object>(Arrays.asList(clazz));
+		list.add(AbstractEvent.class);
+
+		StringReader r = new StringReader(str);
+
+		Map<String, Object> props = new HashMap<String, Object>();
+		props.put(JAXBContextProperties.MEDIA_TYPE, MediaType.APPLICATION_JSON);
+
+		JAXBContext context = JAXBContextFactory.createContext(list.toArray(new Class[list.size()]), props);
+
+		Unmarshaller unm = context.createUnmarshaller();
+
+		return (AbstractEvent) unm.unmarshal(r);
+	}
+
 	public static String asJsonString(Object obj, Class<?>... clazz) throws JAXBException {
 
 		List<Object> list = new ArrayList<Object>(Arrays.asList(clazz));

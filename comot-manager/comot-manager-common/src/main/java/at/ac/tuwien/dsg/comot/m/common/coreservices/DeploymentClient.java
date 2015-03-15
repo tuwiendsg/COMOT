@@ -3,43 +3,43 @@ package at.ac.tuwien.dsg.comot.m.common.coreservices;
 import java.util.Map;
 
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 
 public interface DeploymentClient extends ElasticPlatformServiceClient {
 
 	public CloudService deploy(
-			CloudService service) throws CoreServiceException, ComotException;
+			CloudService service) throws EpsException, ComotException;
 
 	public CloudService deploy(
-			String service) throws CoreServiceException, ComotException;
+			String service) throws EpsException, ComotException;
 
 	public void undeploy(
-			String serviceId) throws CoreServiceException;
+			String serviceId) throws EpsException;
 
 	public void spawn(
 			String serviceId,
 			String topologyId,
 			String nodeId,
-			int instanceCount) throws CoreServiceException;
+			int instanceCount) throws EpsException;
 
 	public void destroy(
 			String serviceId,
 			String topologyId,
 			String nodeId,
-			int instanceId) throws CoreServiceException;
+			int instanceId) throws EpsException;
 
 	public CloudService refreshStatus(
-			CloudService service) throws CoreServiceException, ComotException;
+			CloudService service) throws EpsException, ComotException;
 
 	public CloudService refreshStatus(
 			Map<String, String> map,
-			CloudService service) throws CoreServiceException, ComotException;
+			CloudService service) throws EpsException, ComotException;
 
-	public boolean isManaged(String serviceId) throws CoreServiceException;
+	public boolean isManaged(String serviceId) throws EpsException;
 
-	public CloudService getService(String serviceId) throws CoreServiceException, ComotException;
+	public CloudService getService(String serviceId) throws EpsException, ComotException;
 
-	boolean isRunning(String serviceID) throws CoreServiceException, ComotException;
+	boolean isRunning(String serviceID) throws EpsException, ComotException;
 
 }

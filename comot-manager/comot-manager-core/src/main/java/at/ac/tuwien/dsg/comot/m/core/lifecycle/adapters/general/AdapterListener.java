@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters;
+package at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.general;
 
 import java.util.Map;
 
@@ -11,7 +11,7 @@ import at.ac.tuwien.dsg.comot.m.common.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.Transition;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.UtilsLc;
+import at.ac.tuwien.dsg.comot.m.core.UtilsLc;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 

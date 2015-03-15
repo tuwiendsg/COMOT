@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot.m.cs.test.clients;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
@@ -11,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.ControlClient;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.m.cs.connector.RsyblClient;
 import at.ac.tuwien.dsg.comot.m.cs.connector.SalsaClient;
@@ -48,14 +49,14 @@ public class RsyblClientTest extends AbstractTest {
 	}
 
 	@Test
-	public void helperDeploy() throws CoreServiceException, IOException {
+	public void helperDeploy() throws EpsException, IOException {
 
 		String xmlTosca = Utils.loadFile("./../resources/test/helloElasticity/HelloElasticity_VM.xml");
 		salsa.deploy(xmlTosca);
 	}
 
 	@Test
-	public void testAutomated() throws CoreServiceException, InterruptedException, JAXBException, IOException,
+	public void testStartControl() throws EpsException, InterruptedException, JAXBException, IOException,
 			ComotException {
 
 		CloudService service = deployment.getService(SERVICE_ID);
@@ -72,8 +73,15 @@ public class RsyblClientTest extends AbstractTest {
 	}
 
 	@Test
-	public void removeService() throws CoreServiceException, InterruptedException, JAXBException {
+	public void removeService() throws EpsException, InterruptedException, JAXBException {
 		controlClient.stopControl(SERVICE_ID);
+	}
+
+	@Test
+	public void listService() throws EpsException, InterruptedException, JAXBException {
+		List<String> list = controlClient.listAllServices();
+
+		log.info("{}", list);
 	}
 
 }

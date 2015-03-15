@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.m.core.lifecycle;
+package at.ac.tuwien.dsg.comot.m.core;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 
+import at.ac.tuwien.dsg.comot.m.common.AbstractEvent;
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
@@ -34,6 +35,11 @@ public class UtilsLc {
 
 	public static StateMessage stateMessage(Message message) throws UnsupportedEncodingException, JAXBException {
 		StateMessage msg = Utils.asStateMessage(new String(message.getBody(), "UTF-8"));
+		return msg;
+	}
+
+	public static AbstractEvent abstractEvent(Message message) throws UnsupportedEncodingException, JAXBException {
+		AbstractEvent msg = Utils.asAbstractEvent(new String(message.getBody(), "UTF-8"));
 		return msg;
 	}
 

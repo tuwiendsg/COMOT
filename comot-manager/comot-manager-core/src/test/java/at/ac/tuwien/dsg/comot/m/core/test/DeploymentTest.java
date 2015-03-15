@@ -16,10 +16,10 @@ import org.oasis.tosca.Definitions;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.m.core.Coordinator;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
+import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
@@ -48,6 +48,8 @@ public class DeploymentTest extends AbstractTest {
 		serviceId = coordinator.createCloudService(service);
 		instanceId = coordinator.createServiceInstance(serviceId);
 
+		UtilsTest.sleepSeconds(5);
+
 	}
 
 	@Test
@@ -69,7 +71,7 @@ public class DeploymentTest extends AbstractTest {
 
 	@Test(timeout = 240000)
 	public void testStartAssignStop() throws IOException, JAXBException, ClassNotFoundException,
-			CoreServiceException, ComotException {
+			EpsException, ComotException {
 
 		boolean wasRunning = false;
 		assertFalse(deployment.isManaged(instanceId));
@@ -106,7 +108,7 @@ public class DeploymentTest extends AbstractTest {
 
 	@Test(timeout = 240000)
 	public void testAssignStartUnassign() throws IOException, JAXBException, ClassNotFoundException,
-			CoreServiceException, ComotException {
+			EpsException, ComotException {
 
 		boolean wasRunning = false;
 		assertFalse(deployment.isManaged(instanceId));

@@ -48,8 +48,20 @@ public class AppContextCore {
 
 	public static final String INSERT_INIT_DATA = "INSERT_INIT_DATA";
 
+	/**
+	 * Key pattern: instanceID.changeTRUE/FALSE.stateBefore.stateAfter.lifeCycleEvent.targetLevel
+	 */
 	public static final String EXCHANGE_LIFE_CYCLE = "EXCHANGE_LIFE_CYCLE";
+
+	/**
+	 * Key pattern: instanceID.epsId.customEvent.targetLevel
+	 */
 	public static final String EXCHANGE_CUSTOM_EVENT = "EXCHANGE_CUSTOM_EVENT";
+
+	/**
+	 * Key pattern: instanceID.EventType.event.targetLevel
+	 */
+	public static final String EXCHANGE_REQUESTS = "EXCHANGE_REQUESTS";
 
 	public static final String SERVER = "localhost";
 
