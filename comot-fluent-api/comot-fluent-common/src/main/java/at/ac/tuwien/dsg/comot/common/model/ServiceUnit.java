@@ -14,6 +14,8 @@ public class ServiceUnit extends AbstractServiceDescriptionEntity {
     private int minInstances = DEFAULT_INSTANCES;
 
     private int maxInstances = DEFAULT_INSTANCES;
+    
+    private String reference = null;
 
     private Set<ArtifactTemplate> deploymentArtifacts = new HashSet<>();
 
@@ -56,6 +58,10 @@ public class ServiceUnit extends AbstractServiceDescriptionEntity {
         return maxInstances;
     }
 
+    public String getReference() {
+        return reference;
+    }
+    
     public ServiceUnit withMinInstances(final int minInstances) {
         this.minInstances = minInstances;
         return this;
@@ -65,6 +71,11 @@ public class ServiceUnit extends AbstractServiceDescriptionEntity {
         this.maxInstances = maxInstances;
         return this;
     }
+    
+    public ServiceUnit withReference(final String reference) {
+        this.reference = reference;
+        return this;
+    }
 
     public ServiceUnit andMaxInstances(final int maxInstances) {
         return withMaxColocatedInstances(maxInstances);
@@ -72,6 +83,10 @@ public class ServiceUnit extends AbstractServiceDescriptionEntity {
 
     public ServiceUnit andMinInstances(final int minInstances) {
         return withMinInstances(minInstances);
+    }
+    
+    public ServiceUnit andReference(final String reference){
+        return withReference(reference);
     }
 
     public ServiceUnit deployedBy(ArtifactTemplate... deploymentArtifacts) {

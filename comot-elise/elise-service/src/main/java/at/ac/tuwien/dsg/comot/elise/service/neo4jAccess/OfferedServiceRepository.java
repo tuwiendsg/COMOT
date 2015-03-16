@@ -1,9 +1,9 @@
-package at.ac.tuwien.dsg.comot.elise.neo4jAccess;
+package at.ac.tuwien.dsg.comot.elise.service.neo4jAccess;
 
-import at.ac.tuwien.dsg.comot.model.offeredserviceunit.MetricValue;
-import at.ac.tuwien.dsg.comot.model.offeredserviceunit.OfferedServiceUnit;
-import at.ac.tuwien.dsg.comot.model.offeredserviceunit.Resource;
-import at.ac.tuwien.dsg.comot.model.offeredserviceunit.ResourceOrQualityType;
+import at.ac.tuwien.dsg.comot.model.provider.MetricValue;
+import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
+import at.ac.tuwien.dsg.comot.model.provider.Resource;
+import at.ac.tuwien.dsg.comot.model.provider.ResourceOrQualityType;
 import java.util.Set;
 
 import org.springframework.data.neo4j.annotation.Query;

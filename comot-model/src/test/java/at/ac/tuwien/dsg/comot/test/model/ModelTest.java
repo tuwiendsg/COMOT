@@ -8,16 +8,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.GraphDatabaseAPI;
-import org.neo4j.server.WrappingNeoServerBootstrapper;
+//import org.neo4j.server.WrappingNeoServerBootstrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+//import org.springframework.test.annotation.DirtiesContext;
+//import org.springframework.test.annotation.DirtiesContext.ClassMode;
+//import org.springframework.test.context.ContextConfiguration;
+//import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import at.ac.tuwien.dsg.comot.model.AppContextModel;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
@@ -25,10 +25,10 @@ import at.ac.tuwien.dsg.comot.model.repo.CloudServiceRepo;
 import at.ac.tuwien.dsg.comot.model.repo.CloudServiceRepoWorkaround;
 import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
 
-@SuppressWarnings("deprecation")
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { AppContextModelTest.class, AppContextModel.class })
-@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
+//@SuppressWarnings("deprecation")
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(classes = { AppContextModelTest.class, AppContextModel.class })
+//@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public class ModelTest {
 
 	protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -40,7 +40,7 @@ public class ModelTest {
 	@Autowired
 	protected GraphDatabaseService db;
 
-	protected WrappingNeoServerBootstrapper srv;
+//	protected WrappingNeoServerBootstrapper srv;
 
 	@Autowired
 	protected CloudServiceRepo csRepo;
@@ -52,13 +52,13 @@ public class ModelTest {
 	public void setUp() {
 		// http://neo4j.com/docs/1.8.3/server-embedded.html
 		// http://127.0.0.1:7474/
-		srv = new WrappingNeoServerBootstrapper((GraphDatabaseAPI) db);
-		srv.start();
+//		srv = new WrappingNeoServerBootstrapper((GraphDatabaseAPI) db);
+//		srv.start();
 	}
 
 	@After
 	public void cleanUp() {
-		srv.stop();
+//		srv.stop();
 	}
 
 	/**

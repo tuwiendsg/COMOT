@@ -71,7 +71,7 @@ public class MachineTaskSimple {
                 )
                 .withDefaultMetrics();
 
-        COMOTOrchestrator orchestrator = new COMOTOrchestrator("localhost").withSalsaPort(8080);
+        COMOTOrchestrator orchestrator = new COMOTOrchestrator("128.130.172.215").withSalsaPort(8380);
 
         orchestrator.controlExisting(serviceTemplate);
     }

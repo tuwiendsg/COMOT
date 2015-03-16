@@ -1,16 +1,8 @@
 package at.ac.tuwien.dsg.comot.elise.collector.openstack;
 
-import at.ac.tuwien.dsg.comot.model.offeredserviceunit.OfferedServiceUnit;
-import at.ac.tuwien.dsg.comot.model.offeredserviceunit.Provider;
-import at.ac.tuwien.dsg.comot.model.offeredserviceunit.Metric;
-import at.ac.tuwien.dsg.comot.model.offeredserviceunit.MetricValue;
-import at.ac.tuwien.dsg.comot.model.offeredserviceunit.Resource;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import at.ac.tuwien.dsg.comot.elise.collector.GenericCollector;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.jclouds.ContextBuilder;
@@ -27,12 +19,14 @@ import org.jclouds.openstack.nova.v2_0.extensions.VolumeApi;
 import org.jclouds.openstack.nova.v2_0.features.ImageApi;
 import org.jclouds.openstack.nova.v2_0.features.ServerApi;
 
-import at.ac.tuwien.dsg.comot.elise.common.DataProviderInterface;
 
-
-
-import at.ac.tuwien.dsg.comot.model.offeredserviceunit.Entity;
-import at.ac.tuwien.dsg.comot.model.offeredserviceunit.ResourceOrQualityType;
+import at.ac.tuwien.dsg.comot.model.provider.Entity;
+import at.ac.tuwien.dsg.comot.model.provider.Metric;
+import at.ac.tuwien.dsg.comot.model.provider.MetricValue;
+import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
+import at.ac.tuwien.dsg.comot.model.provider.Provider;
+import at.ac.tuwien.dsg.comot.model.provider.Resource;
+import at.ac.tuwien.dsg.comot.model.provider.ResourceOrQualityType;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Multimap;
@@ -44,7 +38,7 @@ import com.google.gson.Gson;
  * This will produce a Provider with full information
  * @author hungld
  */
-public class OpenStackCollector implements DataProviderInterface{
+public class OpenStackCollector extends GenericCollector{
 
     Logger logger = Logger.getLogger(OpenStackCollector.class);
     NovaApi client;
@@ -63,15 +57,16 @@ public class OpenStackCollector implements DataProviderInterface{
 //    public OpenStackCollector(){}
 
     public OpenStackCollector() {
+        super();
         System.out.println("THIS IS ON THE SCREEN !!!");        
         logger.info("Reading configuration file ...");
-        Properties prop = readConfig();
-        String siteName = prop.getProperty("name");
+     
+        String siteName = readAdaptorConfig("name");
         logger.info("OpenStackCollector: " + ". Site Name:" + siteName);
-        String tenant = prop.getProperty(OpenStackParameterStrings.TENANT.getString());
-        String username = prop.getProperty(OpenStackParameterStrings.USERNAME.getString());
-        String password = prop.getProperty(OpenStackParameterStrings.PASSWORD.getString());
-        String endpoint = prop.getProperty(OpenStackParameterStrings.KEYSTONE_ENDPOINT.getString());        
+        String tenant = readAdaptorConfig(OpenStackParameterStrings.TENANT.getString());
+        String username = readAdaptorConfig(OpenStackParameterStrings.USERNAME.getString());
+        String password = readAdaptorConfig(OpenStackParameterStrings.PASSWORD.getString());
+        String endpoint = readAdaptorConfig(OpenStackParameterStrings.KEYSTONE_ENDPOINT.getString());        
         logger.debug("Tenant:   "+tenant);
         logger.debug("Username: "+username);
         logger.debug("Password: "+password);
@@ -109,21 +104,6 @@ public class OpenStackCollector implements DataProviderInterface{
         return gson.toJson(this.provider);        
     }
             
-            
-    public Properties readConfig() {
-        Properties prop = new Properties();
-        final String CURRENT_DIR = System.getProperty("user.dir");
-        final String DATA_PROVIDER_CONFIG_FILE = CURRENT_DIR+"/openstack.conf";
-        try {
-            InputStream input = new FileInputStream(DATA_PROVIDER_CONFIG_FILE);
-            prop.load(input);
-        } catch (FileNotFoundException e) {
-            logger.error("Do not found configuration file for dsg@openstack. Error: " + e.getMessage());
-        } catch (IOException e1) {
-            logger.error("Cannot read configuratin file for dsg@openstack. Error: " + e1.getMessage());
-        }
-        return prop;
-    }
 
     public void updateAllService() {
         System.out.println("START TO UPDATE FLAVOR !");
@@ -287,8 +267,14 @@ public class OpenStackCollector implements DataProviderInterface{
     }
 
     @Override
-    public Entity readData() {
+    public Entity collect() {
         updateAllService();
         return this.provider;
+    }
+    
+    // TODO: add update rate, or activate mechanism
+    public static void main(String[] args) {
+		OpenStackCollector osCollector = new OpenStackCollector();
+		osCollector.sendData();
     }
 }

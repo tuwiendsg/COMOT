@@ -6,7 +6,7 @@
     <version>1.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>elise-collector-openstack</artifactId>
+  <artifactId>elise-collector-flexiant</artifactId>
   <build>
     <plugins>
       <plugin>
@@ -25,7 +25,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>at.ac.tuwien.dsg.comot.elise.collector.openstack.OpenStackCollector</mainClass>
+                  <mainClass>at.ac.tuwien.dsg.comot.elise.collector.flexiant.FlexiantConnector</mainClass>
                 </transformer>
               </transformers>
             </configuration>

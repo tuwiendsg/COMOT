@@ -33,6 +33,13 @@
         </CompositionRule>
         
         <CompositionRule TargetMonitoredElementLevel="SERVICE_UNIT">
+            <ResultingMetric type="RESOURCE" measurementUnit="ms" name="totalProcessingTime"/>
+            <Operation MetricSourceMonitoredElementLevel="VM" type="AVG">
+                <ReferenceMetric type="RESOURCE" name="totalProcessingTime"/>
+            </Operation>
+        </CompositionRule>
+        
+        <CompositionRule TargetMonitoredElementLevel="SERVICE_UNIT">
             <TargetMonitoredElementID>LocalProcessingUnit</TargetMonitoredElementID>
             <ResultingMetric type="RESOURCE" measurementUnit="#" name="avgBufferSize"/>
             <Operation MetricSourceMonitoredElementLevel="VM" type="AVG">
@@ -243,6 +250,8 @@
                 <ReferenceMetric type="RESOURCE" name="numberOfVMs"/>
             </Operation>
         </CompositionRule>
+        
+        
         
         <CompositionRule TargetMonitoredElementLevel="SERVICE_TOPOLOGY">
             <ResultingMetric type="RESOURCE" measurementUnit="$/h" name="cost"/>

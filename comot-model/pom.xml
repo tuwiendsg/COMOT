@@ -5,7 +5,7 @@
 	<artifactId>comot-model</artifactId>
 	<name>COMOT Model</name>
 	<version>1.0</version>
-
+        <packaging>jar</packaging>
 	<parent>
 		<artifactId>comot-parent</artifactId>
 		<groupId>at.ac.tuwien.dsg.comot</groupId>
@@ -19,14 +19,14 @@
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-neo4j</artifactId>
 		</dependency>
-		<dependency>
+<!--		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-		</dependency>
+		</dependency>-->
 
 		<dependency>
 			<groupId>org.neo4j</groupId>

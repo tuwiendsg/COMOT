@@ -1,7 +1,7 @@
 package at.ac.tuwien.dsg.comot.model.type;
 
 public enum OsuType {
-
+        IaaS("IaaS"),
 	OS("os"),
 	WAR("war"),
 	DOCKER("docker"), // dd Software container

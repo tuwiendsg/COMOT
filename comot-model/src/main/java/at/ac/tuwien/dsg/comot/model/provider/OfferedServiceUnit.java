@@ -26,6 +26,7 @@ import org.springframework.data.neo4j.annotation.RelatedTo;
 import at.ac.tuwien.dsg.comot.model.HasUniqueId;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.type.OsuType;
+//import at.ac.tuwien.dsg.comot.model.type.OsuType;
 import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 
 /**
@@ -54,7 +55,7 @@ public class OfferedServiceUnit extends Entity implements HasUniqueId, Serializa
 	protected String providerID;
 
 	@XmlAttribute(name = "osuType")
-	protected OsuType type;
+	protected String type;
 
 	@Indexed
 	private String category = "unknown";
@@ -87,6 +88,8 @@ public class OfferedServiceUnit extends Entity implements HasUniqueId, Serializa
 		qualities = new HashSet<>();
 		costFunctions = new HashSet<>();
 		primitiveOperations = new HashSet<>();
+                type=OsuType.IaaS.toString();
+
 	}
 
 	public OfferedServiceUnit() {
@@ -142,6 +145,15 @@ public class OfferedServiceUnit extends Entity implements HasUniqueId, Serializa
 	public Set<Resource> getResources() {
 		return resources;
 	}
+        
+        public Resource getResourceByID(String id){
+            for(Resource rs: this.resources){
+                if (rs.getId().equals(id)){
+                    return rs;
+                }
+            }
+            return null;
+        }
 
 	public Set<Quality> getQualities() {
 		return qualities;
@@ -155,12 +167,16 @@ public class OfferedServiceUnit extends Entity implements HasUniqueId, Serializa
 		return primitiveOperations;
 	}
 
-	public OsuType getType() {
+	public String getType() {
 		return type;
 	}
 
-	public void setType(OsuType type) {
+	public void setType(String type) {
 		this.type = type;
+	}
+        
+        public void setTypeByEnum(OsuType type) {
+		this.type = type.toString();
 	}
 
 	@Override
