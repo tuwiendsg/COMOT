@@ -28,7 +28,7 @@ public class STemplates {
 		// OSUs
 		OfferedServiceUnit osuOs = new OfferedServiceUnit();
 		osuOs.setName(osNodeId);
-		osuOs.setType(OsuType.OS);
+		osuOs.setTypeByEnum(OsuType.OS);
 		osuOs.hasResource(new Resource("000000512", new ResourceOrQualityType("instanceType")));
 		osuOs.hasResource(new Resource("dsg@openstack", new ResourceOrQualityType("provider")));
 		osuOs.hasResource(new Resource("8f1428ac-f239-42e0-ab35-137f6e234101", new ResourceOrQualityType("baseImage")));
@@ -36,11 +36,11 @@ public class STemplates {
 
 		OfferedServiceUnit osuSw = new OfferedServiceUnit();
 		osuOs.setName(swNodeId);
-		osuOs.setType(OsuType.SOFTWARE);
+		osuOs.setTypeByEnum(OsuType.SOFTWARE);
 
 		OfferedServiceUnit osuSw2 = new OfferedServiceUnit();
 		osuOs.setName(swNodeId2);
-		osuOs.setType(OsuType.SOFTWARE);
+		osuOs.setTypeByEnum(OsuType.SOFTWARE);
 
 		// UNITs
 		ServiceUnit unitOs = new ServiceUnit(osNodeId, "Test os", 1, 2);
@@ -78,7 +78,7 @@ public class STemplates {
 		// OSUs
 		OfferedServiceUnit osuOs = new OfferedServiceUnit();
 		osuOs.setName(osNodeId);
-		osuOs.setType(OsuType.OS);
+		osuOs.setTypeByEnum(OsuType.OS);
 		osuOs.hasResource(new Resource("000000512", new ResourceOrQualityType("instanceType")));
 		osuOs.hasResource(new Resource("dsg@openstack", new ResourceOrQualityType("provider")));
 		osuOs.hasResource(new Resource("8f1428ac-f239-42e0-ab35-137f6e234101", new ResourceOrQualityType("baseImage")));
@@ -91,12 +91,12 @@ public class STemplates {
 
 		OfferedServiceUnit osuSw = new OfferedServiceUnit();
 		osuSw.setName(swNodeId);
-		osuSw.setType(OsuType.SOFTWARE);
+		osuSw.setTypeByEnum(OsuType.SOFTWARE);
 		osuSw.hasResource(war);
 
 		OfferedServiceUnit osuSw2 = new OfferedServiceUnit();
 		osuSw2.setName(swNodeId2);
-		osuSw2.setType(OsuType.SOFTWARE);
+		osuSw2.setTypeByEnum(OsuType.SOFTWARE);
 
 		// UNITs
 		ServiceUnit unitOs = new ServiceUnit(osNodeId, "Test os", 1, 2);

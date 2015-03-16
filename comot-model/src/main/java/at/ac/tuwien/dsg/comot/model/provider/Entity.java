@@ -20,21 +20,22 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @NodeEntity
-public abstract class Entity implements Serializable{
-    
-	private static final long serialVersionUID = 4164778764692932101L;
+public abstract class Entity implements Serializable {
 
-	@GraphId 
+    private static final long serialVersionUID = 4164778764692932101L;
+
+    @GraphId
     protected Long graphID;
-    
+
     // Name is the unique identify in local context,
     // e.g. in one service unit, a resource has a unique name
     @XmlAttribute
     protected String name;
-    
-    public Entity(){}
-    
-    public Entity(String name){
+
+    public Entity() {
+    }
+
+    public Entity(String name) {
         this.name = name;
     }
 
@@ -49,8 +50,5 @@ public abstract class Entity implements Serializable{
     public void setName(String name) {
         this.name = name;
     }
-    
 
- 
-      
 }

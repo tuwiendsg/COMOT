@@ -28,9 +28,7 @@ public class ResourceOrQualityType extends Entity implements HasUniqueId, Serial
 
 	private static final long serialVersionUID = -9039493125624891059L;
 
-
 	public static final String ART_REFERENCE_TYPE = "URL";
-
 	
     @Indexed(unique = true)
     @XmlAttribute
