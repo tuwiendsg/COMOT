@@ -78,14 +78,15 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
 
                 TNodeTemplate tNodeTemplate = new TNodeTemplate()
                         .withId(node.getId())
-                        .withName(node.getName())
+                        .withName(node.getName())                        
                         .withType(new QName(node.getType()))
                         .withMinInstances(node.getMinInstances())
                         .withMaxInstances(String.valueOf(node.getMaxInstances()))
                         .withCapabilities(getCapabilities(node))
                         .withRequirements(getRequirements(node))
                         .withPolicies(getPolicies(node))
-                        .withProperties(getProperties(node)
+                        .withProperties(getProperties(node))
+                        .withReference(node.getReference()  // salsa added
                         //aici tre sa bag si actions
 
                         );
