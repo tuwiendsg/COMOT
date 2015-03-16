@@ -43,11 +43,11 @@ public class DeployIoTComponent {
          
          ServiceUnit MqttQueueVM = OperatingSystemUnit("MqttQueueVM")
                  .providedBy(OpenstackSmall())                 
-                 .andReference("ElasticIoTPlatformCost/MqttQueueVM");
+                 .andReference("ElasticIoTPlatform/MqttQueueVM");
          
          ServiceUnit QueueUnit = SoftwareNode.SingleSoftwareUnit("QueueUnit")
                  .exposes(Capability.Variable("brokerIp_Capability"))
-                 .andReference("ElasticIoTPlatformCost/QueueUnit");
+                 .andReference("ElasticIoTPlatform/QueueUnit");
          
          
          
@@ -74,7 +74,7 @@ public class DeployIoTComponent {
                 .withServiceUnits(sensorUnit, gatewayVM, gatewayDocker)
                 .withServiceUnits(MqttQueueVM, QueueUnit);
          
-         CloudService serviceTemplate = ServiceTemplate("Hung_Test_GW")
+         CloudService serviceTemplate = ServiceTemplate("IoTSensors")
 //         CloudService serviceTemplate = ServiceTemplate("GatewayDockerService")
                 .consistsOfTopologies(gatewayTopology)
                 //defining CONNECT_TO and HOSTED_ON relationships
