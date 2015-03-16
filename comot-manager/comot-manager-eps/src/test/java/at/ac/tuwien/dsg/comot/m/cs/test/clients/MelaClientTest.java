@@ -14,7 +14,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.comot.m.common.Utils;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.m.cs.connector.MelaClient;
 import at.ac.tuwien.dsg.comot.m.cs.connector.SalsaClient;
@@ -30,14 +30,12 @@ public class MelaClientTest extends AbstractTest {
 	public static final String TOPOLOGY_ID = "example_topology";
 	public static final String NODE_ID = "example_OS_comot";
 
-	private static final String NODE_IP = "10.99.0.25"; // <== check this
+	private static final String NODE_IP = "10.99.0.26"; // <== check this
 
 	@Autowired
 	private MelaClient mela;
 	@Autowired
 	private SalsaClient salsa;
-
-	private String xmlTosca;
 
 	private MonitoredElement eService;
 	private MonitoredElement eTopo;
@@ -45,9 +43,7 @@ public class MelaClientTest extends AbstractTest {
 	private MonitoredElement eVM;
 
 	@Before
-	public void setup() throws IOException {
-
-		xmlTosca = Utils.loadFile("./../resources/test/xml/ExampleExecutableOnVM.xml");
+	public void setup() {
 
 		// set up MonitoredElement
 		eVM = new MonitoredElement(NODE_IP);
@@ -67,7 +63,9 @@ public class MelaClientTest extends AbstractTest {
 	}
 
 	@Test
-	public void helperDeploy() throws CoreServiceException {
+	public void helperDeploy() throws EpsException, IOException {
+
+		String xmlTosca = Utils.loadFile("./../resources/test/xml/ExampleExecutableOnVM.xml");
 		salsa.deploy(xmlTosca);
 	}
 
@@ -75,16 +73,12 @@ public class MelaClientTest extends AbstractTest {
 	// 1. ExampleExecutableOnVM.xml is deployed to SALSA
 	// 2. NODE_IP is correct
 	@Test
-	public void testAutomated() throws CoreServiceException, InterruptedException, JAXBException, IOException {
+	public void testAutomated() throws EpsException, InterruptedException, JAXBException, IOException {
 
 		log.info(Utils.asXmlString(eService));
 
 		// service description
-		mela.sendServiceDescription(eService);
-
-		MonitoredElement returned = mela.getServiceDescription(SERVICE_ID);
-		log.info("getServiceDescription " + Utils.asXmlString(returned));
-		assertEquals(eService.getId(), returned.getId());
+		testStartMonitoring();
 
 		// update
 		updateServiceDescription();
@@ -98,13 +92,23 @@ public class MelaClientTest extends AbstractTest {
 		updateMCR();
 
 		// sendRequirements
-
 		removeService();
 
 	}
 
 	@Test
-	public void testMonitoringData() throws CoreServiceException, InterruptedException, JAXBException {
+	public void testStartMonitoring() throws EpsException, JAXBException {
+		log.info(Utils.asXmlString(eService));
+
+		mela.sendServiceDescription(eService);
+
+		MonitoredElement returned = mela.getServiceDescription(SERVICE_ID);
+		log.info("getServiceDescription " + Utils.asXmlString(returned));
+		assertEquals(eService.getId(), returned.getId());
+	}
+
+	@Test
+	public void testMonitoringData() throws EpsException, InterruptedException, JAXBException {
 
 		MonitoredElementMonitoringSnapshot data;
 
@@ -132,7 +136,7 @@ public class MelaClientTest extends AbstractTest {
 	}
 
 	@Test
-	public void updateServiceDescription() throws CoreServiceException, JAXBException {
+	public void updateServiceDescription() throws EpsException, JAXBException {
 
 		// add one topology
 		String newTopoId = TOPOLOGY_ID + "_new";
@@ -157,7 +161,7 @@ public class MelaClientTest extends AbstractTest {
 	}
 
 	@Test
-	public void updateMCR() throws CoreServiceException, InterruptedException, JAXBException, IOException {
+	public void updateMCR() throws EpsException, InterruptedException, JAXBException, IOException {
 
 		CompositionRulesConfiguration mcr = mela.getMetricsCompositionRules(SERVICE_ID);
 		log.info("old MCR \n" + Utils.asXmlString(mcr));
@@ -173,8 +177,10 @@ public class MelaClientTest extends AbstractTest {
 	}
 
 	@Test
-	public void removeService() throws CoreServiceException, InterruptedException, JAXBException {
-		mela.removeServiceDescription(SERVICE_ID);
+	public void removeService() throws EpsException, InterruptedException, JAXBException {
+
+		// mela.removeServiceDescription("HelloElasticity_VM");
+		mela.removeServiceDescription("HelloElasticity_VM");
 
 		List<String> list = mela.listAllServices();
 		assertEquals(0, list.size());

@@ -29,9 +29,9 @@ import at.ac.tuwien.dsg.comot.orchestrator.interraction.COMOTOrchestrator;
  *
  * @author http://dsg.tuwien.ac.at
  */
-
 /**
  * Only Load Balancer and Event Processing
+ *
  * @author daniel-tuwien
  */
 public class ProgrammingAndControllingElasticityWithCOMOTWithoutCassandra {
@@ -198,7 +198,7 @@ public class ProgrammingAndControllingElasticityWithCOMOTWithoutCassandra {
                 );
 
         //describe the service template which will hold more topologies
-        CloudService serviceTemplate = ServiceTemplate("ElasticIoTPlatformNoDB")
+        CloudService serviceTemplate = ServiceTemplate("Service")
                 .consistsOfTopologies(eventProcessingTopology)
                 //                .consistsOfTopologies(localProcessinTopology)
                 //defining CONNECT_TO and HOSTED_ON relationships
@@ -236,8 +236,8 @@ public class ProgrammingAndControllingElasticityWithCOMOTWithoutCassandra {
         //if it makes sense or not to execute the action
 //                .withDefaultActionEffects();
 
-        COMOTOrchestrator orchestrator = new COMOTOrchestrator("localhost").withSalsaPort(8380);
+        COMOTOrchestrator orchestrator = new COMOTOrchestrator("localhost").withSalsaPort(8080);
 
-        orchestrator.controlExisting(serviceTemplate);
+        orchestrator.deployAndControl(serviceTemplate);
     }
 }

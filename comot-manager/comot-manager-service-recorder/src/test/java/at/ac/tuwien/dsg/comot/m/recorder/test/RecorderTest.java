@@ -10,7 +10,7 @@ import org.oasis.tosca.Definitions;
 
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.m.recorder.RecorderException;
@@ -27,7 +27,7 @@ public class RecorderTest extends AbstractTest {
 	}
 
 	@Test
-	public void testRecordingManager() throws IOException, JAXBException, CoreServiceException, ComotException,
+	public void testRecordingManager() throws IOException, JAXBException, EpsException, ComotException,
 			IllegalArgumentException, IllegalAccessException {
 
 		Definitions def = UtilsCs.loadTosca(UtilsTest.TEST_FILE_BASE + "tomcat/tomcat.xml");
@@ -59,7 +59,7 @@ public class RecorderTest extends AbstractTest {
 
 		log.info("{}", Utils.asXmlString(service));
 
-		revisionApi.createOrUpdateRegion(service, service.getId(), "init");
+		revisionApi.createOrUpdateRegion(service, service.getId(), "init", null);
 
 		Object oResult = revisionApi.getRevision(service.getId(), "deployWar",
 				Long.MAX_VALUE);

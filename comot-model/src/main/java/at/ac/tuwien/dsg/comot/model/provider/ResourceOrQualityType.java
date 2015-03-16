@@ -16,6 +16,7 @@ import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
 import at.ac.tuwien.dsg.comot.model.HasUniqueId;
+import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 
 /**
  *
@@ -32,7 +33,8 @@ public class ResourceOrQualityType extends Entity implements HasUniqueId, Serial
 	
     @Indexed(unique = true)
     @XmlAttribute
-    String id;
+    @BusinessId
+    protected String id;
     
     @Fetch
     protected Set<Metric> metrics;

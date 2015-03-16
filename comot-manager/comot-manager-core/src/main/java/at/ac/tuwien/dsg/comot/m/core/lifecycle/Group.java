@@ -1,7 +1,11 @@
 package at.ac.tuwien.dsg.comot.m.core.lifecycle;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
@@ -11,7 +15,11 @@ import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
-public class Group {
+public class Group implements Serializable {
+
+	protected final Logger log = LoggerFactory.getLogger(getClass());
+
+	private static final long serialVersionUID = 2534198672357223629L;
 
 	protected String id;
 	protected State currentState;
@@ -19,63 +27,49 @@ public class Group {
 	protected Type type;
 	protected Group parent;
 	protected List<Group> members = new ArrayList<Group>();
-	protected AggregationStrategy strategy;
 
-	public Group(CloudService service, AggregationStrategy strategy) {
-		this(service.getId(), Type.SERVICE, State.NONE, null, strategy);
+	public Group(CloudService service, State state) {
+		this(service.getId(), Type.SERVICE, state, null);
 
 		for (ServiceTopology topo : service.getServiceTopologies()) {
-			addTopology(topo);
+			Group temp = new Group(topo, state, this);
+			members.add(temp);
 		}
 	}
 
-	public Group(ServiceTopology topology, Group parent, AggregationStrategy strategy) {
-		this(topology.getId(), Type.TOPOLOGY, State.NONE, parent, strategy);
+	public Group(ServiceTopology topology, State state, Group parent) {
+		this(topology.getId(), Type.TOPOLOGY, state, parent);
 
 		for (ServiceUnit unit : topology.getServiceUnits()) {
-			addUnit(unit);
+			Group temp = new Group(unit, state, this);
+			members.add(temp);
 		}
 
 		for (ServiceTopology topo : topology.getServiceTopologies()) {
-			addTopology(topo);
+			Group temp = new Group(topo, state, this);
+			members.add(temp);
 		}
 	}
 
-	public Group(ServiceUnit unit, Group parent, AggregationStrategy strategy) {
-		this(unit.getId(), Type.UNIT, State.NONE, parent, strategy);
+	public Group(ServiceUnit unit, State state, Group parent) {
+		this(unit.getId(), Type.UNIT, state, parent);
 
 		for (UnitInstance instance : unit.getInstances()) {
-			addInstance(instance);
+			Group temp = new Group(instance.getId(), Type.INSTANCE, state, this);
+			members.add(temp);
 		}
 	}
 
-	public Group(UnitInstance instance, Group parent, AggregationStrategy strategy) {
-		this(instance.getId(), Type.INSTANCE, State.IDLE, parent, strategy);
-	}
-
-	public Group(String id, Type type, State state, Group parent, AggregationStrategy strategy) {
+	public Group(String id, Type type, State state, Group parent) {
 		super();
 		this.id = id;
 		this.currentState = state;
 		this.type = type;
 		this.parent = parent;
-		this.strategy = strategy;
 	}
 
-	public Group addTopology(ServiceTopology topology) {
-		Group temp = new Group(topology, this, strategy);
-		members.add(temp);
-		return temp;
-	}
-
-	public Group addUnit(ServiceUnit unit) {
-		Group temp = new Group(unit, this, strategy);
-		members.add(temp);
-		return temp;
-	}
-
-	public Group addInstance(UnitInstance instance) {
-		Group temp = new Group(instance, this, strategy);
+	public Group addGroup(String id, Type type, State state) {
+		Group temp = new Group(id, type, state, this);
 		members.add(temp);
 		return temp;
 	}
@@ -83,7 +77,13 @@ public class Group {
 	public boolean canExecute(Action action) {
 
 		if (members.isEmpty()) {
-			return (currentState.execute(action) == null) ? false : true;
+			if (LifeCycleFactory.getLifeCycle(type).executeAction(parent.getCurrentState(), currentState, action) == null) {
+				log.warn("Action '{}' is not allowed in state '{}'. GroupId={} , type={}  <- the root of problem",
+						action, getCurrentState(), id, type);
+				return false;
+			} else {
+				return true;
+			}
 
 		} else {
 			for (Group menber : members) {
@@ -95,27 +95,46 @@ public class Group {
 		}
 	}
 
-	public void executeAction(Action action) {
+	public void executeAction(Action action, AggregationStrategy strategy) {
 
 		State nextState = null;
 
 		if (members.isEmpty()) {
 
-			nextState = currentState.execute(action);
+			nextState = LifeCycleFactory.getLifeCycle(type)
+					.executeAction(parent.getCurrentState(), currentState, action);
 
 			if (nextState != null) {
 				moveToState(nextState);
 			}
 
 			if (parent != null) {
-				parent.refreshState();
+				parent.refreshState(strategy);
 			}
 
 		} else {
 			for (Group member : members) {
-				member.executeAction(action);
+				member.executeAction(action, strategy);
 			}
 		}
+
+	}
+
+	public Group getMemberNested(String gouprId) {
+
+		Group temp = null;
+
+		if (this.getId().equals(gouprId)) {
+			return this;
+		} else {
+			for (Group member : members) {
+				temp = member.getMemberNested(gouprId);
+				if (temp != null) {
+					return temp;
+				}
+			}
+		}
+		return null;
 
 	}
 
@@ -132,7 +151,7 @@ public class Group {
 
 	}
 
-	protected void refreshState() {
+	protected void refreshState(AggregationStrategy strategy) {
 
 		State nextState = strategy.determineState(currentState, type, members);
 
@@ -143,7 +162,7 @@ public class Group {
 		moveToState(nextState);
 
 		if (parent != null) {
-			parent.refreshState();
+			parent.refreshState(strategy);
 		}
 
 	}
@@ -155,17 +174,22 @@ public class Group {
 
 	// GENERATED
 
-	@Override
-	public String toString() {
-		return "{ \"id\" : \"" + id + "\" , \"currentState\" : \""
-				+ currentState + "\" , \"previousState\" : \"" + previousState
-				+ "\" , \"type\" : \"" + type + "\" , \"parent\" : \""
-				+ ((parent == null) ? null : parent.getId())
-				+ "\" , \"members\" : " + members + "}";
-	}
+	// @Override
+	// public String toString() {
+	// return "{ \"id\" : \"" + id + "\" , \"currentState\" : \""
+	// + currentState + "\" , \"previousState\" : \"" + previousState
+	// + "\" , \"type\" : \"" + type + "\" , \"parent\" : \""
+	// + ((parent == null) ? null : parent.getId())
+	// + "\" , \"members\" : " + members + "}";
+	// }
 
 	public String getId() {
 		return id;
+	}
+
+	@Override
+	public String toString() {
+		return "( " + type + ":" + id + ", " + previousState + " -> " + currentState + ", members=" + members + ")";
 	}
 
 	public Group getParent() {
@@ -178,10 +202,6 @@ public class Group {
 
 	public List<Group> getMembers() {
 		return members;
-	}
-
-	public AggregationStrategy getStrategy() {
-		return strategy;
 	}
 
 	public State getCurrentState() {

@@ -25,7 +25,7 @@ public class CloudServiceRepoWorkaround {
 	protected ServiceUnitRepo stackNodeRepo;
 
 	/**
-	 * Saves all stack nodes separately before saving the entire service
+	 * Saves all service unit separately before saving the entire service
 	 * 
 	 * @param service
 	 */

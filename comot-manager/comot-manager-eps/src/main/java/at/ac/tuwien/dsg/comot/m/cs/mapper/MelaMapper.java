@@ -151,7 +151,7 @@ public class MelaMapper {
 		requirements.setTargetServiceID(cloudService.getId());
 		requirements.setRequirements(requirementList);
 
-		for (ServiceEntity part : navigator.getAllServiceParts()) {
+		for (ServiceEntity part : navigator.getAllServiceEntities()) {
 			for (SyblDirective directive : part.getDirectives()) {
 				if (directive.getType().equals(DirectiveType.CONSTRAINT)) {
 					requirementList.addAll(parseToRequirement(part, directive.getDirective()));

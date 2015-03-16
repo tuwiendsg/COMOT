@@ -26,7 +26,7 @@ public class Transition {
 
 	}
 
-	public Transition(String groupId, Type type, State currentState, State lastState, boolean fresh) {
+	public Transition(String groupId, Type type, State lastState, State currentState, boolean fresh) {
 		super();
 		this.groupId = groupId;
 		this.groupType = type;

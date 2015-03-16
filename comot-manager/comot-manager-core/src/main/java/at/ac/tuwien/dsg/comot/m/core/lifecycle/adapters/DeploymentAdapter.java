@@ -1,28 +1,30 @@
 package at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
 import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.Binding.DestinationType;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.m.common.EventMessage;
+import at.ac.tuwien.dsg.comot.m.common.EpsAction;
+import at.ac.tuwien.dsg.comot.m.common.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.StateMessage;
-import at.ac.tuwien.dsg.comot.m.common.Utils;
+import at.ac.tuwien.dsg.comot.m.common.Transition;
+import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.UtilsLc;
-import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
+import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.general.AdapterCore;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
@@ -32,146 +34,163 @@ import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 @Component
-// @Scope("prototype") //for some reason this creates multip0le instances
-public class DeploymentAdapter extends Adapter {
+@Scope("prototype")
+public class DeploymentAdapter extends AdapterCore {
 
 	@Autowired
 	protected DeploymentClient deployment;
 
-	protected Binding binding1;
-	protected Binding binding2;
+	protected DeploymentHelper helper;
 
-	@Override
+	public DeploymentAdapter() {
+	}
+
+	@Autowired
+	protected InformationServiceMock infoService;
+	@Autowired
+	protected LifeCycleManager lcManager;
+
 	public void start(String osuInstanceId) {
 
 		OfferedServiceUnit osu = infoService.getOsus().get(osuInstanceId);
 		String ip = null;
 		String port = null;
 
-		for (Resource resource : osu.getResources()) {
-			if (resource.getName().equals(InformationServiceMock.PUBLIC_INSTANCE)) {
-				for (Resource res : resource.getContainsResources()) {
-					if (res.getType().getName().equals(InformationServiceMock.IP)) {
-						ip = res.getName();
-					} else if (res.getType().getName().equals(InformationServiceMock.PORT)) {
-						port = res.getName();
-					}
-				}
+		for (Resource res : osu.getResources()) {
+			if (res.getType().getName().equals(InformationServiceMock.IP)) {
+				ip = res.getName();
+			} else if (res.getType().getName().equals(InformationServiceMock.PORT)) {
+				port = res.getName();
 			}
 		}
 
-		deployment.setHost(ip);
-		deployment.setPort(new Integer(port));
+		deployment.setHostAndPort(ip, new Integer(port));
 
-		binding1 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_LIFE_CYCLE,
-				"*.TRUE.*." + State.IDLE + ".#", null);
-		binding2 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_LIFE_CYCLE,
-				"*.TRUE.*." + State.UNDEPLOYMENT + ".#", null);
-
-		admin.declareBinding(binding1);
-		admin.declareBinding(binding2);
-
-		container.setMessageListener(new CustomListener());
-
-	}
-
-	class CustomListener implements MessageListener {
-		@Override
-		public void onMessage(Message message) {
-			try {
-
-				StateMessage msg = stateMessage(message);
-				String instanceId = msg.getEvent().getCsInstanceId();
-				String serviceId = msg.getEvent().getServiceId();
-				Action action = msg.getEvent().getAction();
-
-				log.info("onMessage {}", Utils.asJsonString(msg));
-
-				if (isAssignedTo(instanceId)) {
-
-					if (action.equals(Action.PREPARED)) {
-
-						CloudService service = infoService.getServiceInstance(instanceId);
-						service.setId(instanceId);
-						service.setName(instanceId);
-
-						service = deployment.deploy(service);
-
-						monitorStatusUntilDeployed(serviceId, service);
-
-					} else if (action.equals(Action.UNDEPLOYMENT_REQUESTED)) { // TODO this will probably be different
-																				// action
-
-					}
-				}
-
-			} catch (JAXBException | CoreServiceException | ComotException | IOException | InterruptedException
-					| ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-		}
-
-	}
-
-	protected void monitorStatusUntilDeployed(String serviceId, CloudService service) throws CoreServiceException,
-			ComotException, IOException, JAXBException, InterruptedException, ClassNotFoundException {
-
-		Map<String, State> map;
-		State oldState;
-
-		service = UtilsLc.removeProviderInfo(service);
-
-		do {
-
-			map = new HashMap<>();
-			for (ServiceUnit unit : Navigator.getAllUnits(service)) {
-				for (UnitInstance instance : unit.getInstances()) {
-					map.put(instance.getId(), instance.getState());
-				}
-			}
-
-			Thread.sleep(1000);
-
-			service = deployment.refreshStatus(service);
-
-			for (ServiceUnit unit : Navigator.getAllUnits(service)) {
-				for (UnitInstance instance : unit.getInstances()) {
-					if (map.containsKey(instance.getId())) {
-						if (map.get(instance.getId()).equals(instance.getState())) {
-							continue;
-						} else {
-							oldState = map.get(instance.getId());
-						}
-					} else {
-						oldState = State.IDLE;
-					}
-
-					// publish
-					Action action = UtilsLc.translateToAction(oldState, instance.getState());
-
-					if (action == null) {
-						log.error("invalid transitions {} -> {}", oldState, instance.getState());
-					} else {
-						lcManager.executeAction(new EventMessage(serviceId, service.getId(), instance.getId(), action,
-								service, null));
-					}
-				}
-			}
-
-		} while (!service.getState().equals(State.OPERATION_RUNNING));
-
-		log.info("stopped checking");
+		helper = context.getBean(DeploymentHelper.class);
+		helper.setDeploymentAdapter(this);
+		helper.setAdapterId(osuInstanceId);
+		helper.setDeployment(deployment);
 
 	}
 
 	@Override
-	protected void clean() {
-		if (binding1 != null) {
-			admin.removeBinding(binding1);
+	public List<Binding> getBindings(String queueName, String instanceId) {
+
+		List<Binding> bindings = new ArrayList<>();
+
+		bindings.add(bindingLifeCycle(queueName,
+				instanceId + ".TRUE.*." + State.STARTING + ".#"));
+		bindings.add(bindingLifeCycle(queueName,
+				instanceId + ".TRUE.*." + State.STOPPING + ".#"));
+		bindings.add(bindingCustom(queueName,
+				instanceId + "." + adapterId + "." + EpsAction.EPS_ASSIGNMENT_REMOVED + "." + Type.SERVICE));
+		bindings.add(bindingCustom(queueName,
+				instanceId + "." + adapterId + "." + EpsAction.EPS_ASSIGNED + "." + Type.SERVICE));
+
+		return bindings;
+	}
+
+	@Override
+	protected void onLifecycleEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
+			Action action, String optionalMessage, CloudService service, Map<String, Transition> transitions)
+			throws Exception {
+
+		log.info("assigned");
+		if (action == Action.STARTED && !deployment.isManaged(instanceId)) {
+			log.info("STARTED");
+			deployInstance(serviceId, instanceId);
+
+		} else if (action == Action.STOPPED) {
+			unDeployInstance(serviceId, instanceId);
 		}
-		if (binding2 != null) {
-			admin.removeBinding(binding2);
+
+	}
+
+	@Override
+	protected void onCustomEvent(StateMessage msg, String serviceId, String instanceId, String groupId, String event,
+			String epsId, String optionalMessage) throws Exception {
+
+		EpsAction action = EpsAction.valueOf(event);
+
+		if (action == EpsAction.EPS_ASSIGNED) {
+
+			State state = msg.getTransitions().get(serviceId).getCurrentState();
+			if (state == State.STARTING && !deployment.isManaged(instanceId)) {
+				deployInstance(serviceId, instanceId);
+			}
+
+		} else if (action == EpsAction.EPS_ASSIGNMENT_REMOVED) {
+
+			infoService.removeAssignmentOfSupportingOsu(serviceId, instanceId, adapterId);
+
+			sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STOPPED,
+					adapterId, null));
+
+			if (deployment.isManaged(instanceId)) {
+
+				unDeployInstance(serviceId, instanceId);
+			}
+
 		}
+
+	}
+
+	protected void atStartUpDeployWhatIsWaiting() {
+
+		Map<String, String> instances = infoService.getInstancesHavingThisOsuAssigned(adapterId);
+
+		for (String instanceId : instances.keySet()) {
+
+			String serviceId = instances.get(instanceId);
+			State state = lcManager.getCurrentState(instanceId, serviceId);
+
+			if (state == State.STARTING) {
+				try {
+					deployInstance(instances.get(instanceId), instanceId);
+				} catch (ClassNotFoundException | IOException | EpsException | ComotException | JAXBException
+						| InterruptedException e) {
+					e.printStackTrace();
+
+				}
+			}
+		}
+	}
+
+	protected void deployInstance(String serviceId, String instanceId) throws ClassNotFoundException, IOException,
+			EpsException, ComotException, JAXBException, InterruptedException {
+
+		// managedSet.add(instanceId);
+		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.DEPLOYMENT_STARTED,
+				adapterId, null));
+
+		CloudService fullService = infoService.getServiceInstance(serviceId, instanceId);
+		fullService.setId(instanceId);
+		fullService.setName(instanceId);
+
+		deployment.deploy(fullService);
+
+		helper.monitorStatusUntilDeployed(serviceId, instanceId, fullService);
+
+	}
+
+	protected void unDeployInstance(String serviceId, String instanceId)
+			throws EpsException, ClassNotFoundException, IOException, JAXBException {
+
+		// managedSet.remove(instanceId);
+
+		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.UNDEPLOYMENT_STARTED,
+				adapterId, null));
+
+		CloudService service = infoService.getServiceInstance(serviceId, instanceId);
+
+		deployment.undeploy(instanceId);
+
+		for (ServiceUnit unit : Navigator.getAllUnits(service)) {
+			unit.setInstances(new HashSet<UnitInstance>());
+		}
+
+		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.UNDEPLOYED,
+				adapterId, service));
 	}
 
 }

@@ -4,7 +4,7 @@ requirejs.config({
 		durandal : '../lib/durandal/js',
 		plugins : '../lib/durandal/js/plugins',
 		transitions : '../lib/durandal/js/transitions',
-		knockout : '../lib/knockout/knockout-3.1.0',
+		knockout : '../lib/knockout/knockout-3.3.0',
 		komapping : '../lib/knockout/knockout.mapping',
 		jquery : '../lib/jquery/jquery-1.9.1',
 		crel : '../lib/json-human/crel',
@@ -15,6 +15,7 @@ requirejs.config({
 
 		notify : '../js/notifications',
 		comot_client : '../js/comot-client',
+		comot_utils : '../js/comot-utils',
 		repeater : '../js/repeatedAction',
 
 		shim : {

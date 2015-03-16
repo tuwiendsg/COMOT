@@ -1,5 +1,10 @@
 package at.ac.tuwien.dsg.comot.m.cs.connector;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -7,8 +12,7 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
-import at.ac.tuwien.dsg.comot.rsybl.CloudServiceXML;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
@@ -16,7 +20,7 @@ public class RsyblClient extends CoreServiceClient {
 
 	private final Logger log = LoggerFactory.getLogger(RsyblClient.class);
 
-	protected static final String DEF_BASE_PATH = "/rSYBL/restWS";
+	protected static final String DEF_BASE_PATH = "http://127.0.0.1:8280/rSYBL/restWS";
 
 	protected static final String PREPARE_CONTROL_PATH = "{id}/prepareControl";
 	protected static final String SERV_DESCRIPTION_PATH = "{id}/description";
@@ -26,25 +30,18 @@ public class RsyblClient extends CoreServiceClient {
 	protected static final String START_CONTROL_PATH = "{id}/startControl";
 	protected static final String STOP_CONTROL_PATH = "{id}/stopControl";
 	protected static final String REPLACE_REQUIREMENTS_PATH = "{id}/elasticityRequirements/xml";
+	protected static final String LIST_ALL_SERVICES_PATH = "elasticservices";
+	protected static final String REMOVE_PATH = "managedService/{id}";
 
-	public RsyblClient() {
-		this(DEF_HOST, DEF_PORT);
+	public RsyblClient() throws URISyntaxException {
+		this(new URI(DEF_BASE_PATH));
 	}
 
-	public RsyblClient(String host) {
-		this(host, DEF_PORT, DEF_BASE_PATH);
+	public RsyblClient(URI baseUri) {
+		super("rSYBL", baseUri);
 	}
 
-	public RsyblClient(String host, int port) {
-		this(host, port, DEF_BASE_PATH);
-	}
-
-	public RsyblClient(String host, int port, String basePath) {
-		super(host, port, basePath);
-		setName("rSYBL");
-	}
-
-	public void prepareControl(String serviceId) throws CoreServiceException {
+	public void prepareControl(String serviceId) throws EpsException {
 
 		Response response = client.target(getBaseUri())
 				.path(PREPARE_CONTROL_PATH)
@@ -59,7 +56,7 @@ public class RsyblClient extends CoreServiceClient {
 		log.info(ln + "prepareControl '{}'. Response: '{}'", serviceId, msg);
 	}
 
-	public void serviceDescription(String serviceId, CloudServiceXML cloudServiceXML) throws CoreServiceException {
+	public void serviceDescription(String serviceId, String cloudServiceXML) throws EpsException {
 
 		Response response = client.target(getBaseUri())
 				.path(SERV_DESCRIPTION_PATH)
@@ -75,7 +72,7 @@ public class RsyblClient extends CoreServiceClient {
 	}
 
 	public void serviceDeployment(String serviceId, DeploymentDescription deploymentDescription)
-			throws CoreServiceException {
+			throws EpsException {
 
 		Response response = client.target(getBaseUri())
 				.path(SERV_DEPLOYMENT_PATH)
@@ -92,7 +89,7 @@ public class RsyblClient extends CoreServiceClient {
 
 	public void sendMetricsCompositionRules(String serviceId,
 			CompositionRulesConfiguration compositionRulesConfiguration)
-			throws CoreServiceException {
+			throws EpsException {
 
 		Response response = client.target(getBaseUri())
 				.path(MCR_PATH)
@@ -109,7 +106,7 @@ public class RsyblClient extends CoreServiceClient {
 
 	public void updateMetricsCompositionRules(String serviceId,
 			CompositionRulesConfiguration compositionRulesConfiguration)
-			throws CoreServiceException {
+			throws EpsException {
 
 		Response response = client.target(getBaseUri())
 				.path(MCR_PATH)
@@ -124,7 +121,7 @@ public class RsyblClient extends CoreServiceClient {
 		log.info(ln + "updateMetricsCompositionRules '{}'. Response: '{}'", serviceId, msg);
 	}
 
-	public void sendElasticityCapabilitiesEffects(String serviceId, String effectsJSON) throws CoreServiceException {
+	public void sendElasticityCapabilitiesEffects(String serviceId, String effectsJSON) throws EpsException {
 
 		Response response = client.target(getBaseUri())
 				.path(ECE_PATH)
@@ -139,7 +136,7 @@ public class RsyblClient extends CoreServiceClient {
 		log.info(ln + "elasticityCapabilitiesEffects '{}'. Response: '{}'", serviceId, msg);
 	}
 
-	public void updateElasticityCapabilitiesEffects(String serviceId, String effectsJSON) throws CoreServiceException {
+	public void updateElasticityCapabilitiesEffects(String serviceId, String effectsJSON) throws EpsException {
 
 		Response response = client.target(getBaseUri())
 				.path(ECE_PATH)
@@ -154,7 +151,7 @@ public class RsyblClient extends CoreServiceClient {
 		log.info(ln + "updateElasticityCapabilitiesEffects '{}'. Response: '{}'", serviceId, msg);
 	}
 
-	public void startControl(String serviceId) throws CoreServiceException {
+	public void startControl(String serviceId) throws EpsException {
 
 		Response response = client.target(getBaseUri())
 				.path(START_CONTROL_PATH)
@@ -169,7 +166,7 @@ public class RsyblClient extends CoreServiceClient {
 		log.info(ln + "startControl '{}'. Response: '{}'", serviceId, msg);
 	}
 
-	public void stopControl(String serviceId) throws CoreServiceException {
+	public void stopControl(String serviceId) throws EpsException {
 
 		Response response = client.target(getBaseUri())
 				.path(STOP_CONTROL_PATH)
@@ -189,10 +186,10 @@ public class RsyblClient extends CoreServiceClient {
 	 * 
 	 * @param serviceId
 	 * @param cloudServiceXML
-	 * @throws CoreServiceException
+	 * @throws EpsException
 	 */
-	public void updateElasticityRequirements(String serviceId, CloudServiceXML cloudServiceXML)
-			throws CoreServiceException {
+	public void updateElasticityRequirements(String serviceId, String cloudServiceXML)
+			throws EpsException {
 
 		Response response = client.target(getBaseUri())
 				.path(REPLACE_REQUIREMENTS_PATH)
@@ -207,4 +204,36 @@ public class RsyblClient extends CoreServiceClient {
 		log.info(ln + "updateElasticityRequirements '{}'. Response: '{}'", serviceId, msg);
 	}
 
+	public List<String> listAllServices() throws EpsException {
+
+		Response response = client.target(getBaseUri())
+				.path(LIST_ALL_SERVICES_PATH)
+				.request(MediaType.TEXT_PLAIN)
+				.get();
+
+		processResponseStatus(response);
+
+		String result = response.readEntity(String.class);
+
+		log.info(ln + "listAllServices . Response: '{}'", result);
+
+		Arrays.asList(result.split(","));
+
+		return Arrays.asList(result.split(","));
+	}
+
+	public void removeService(String serviceId) throws EpsException {
+
+		Response response = client.target(getBaseUri())
+				.path(REMOVE_PATH)
+				.resolveTemplate("id", serviceId)
+				.request(MediaType.WILDCARD_TYPE)
+				.delete();
+
+		processResponseStatus(response);
+
+		String msg = response.readEntity(String.class);
+
+		log.info(ln + "updateElasticityRequirements '{}'. Response: '{}'", serviceId, msg);
+	}
 }

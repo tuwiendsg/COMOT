@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.ui.model.Error;
 
 @Provider
@@ -42,8 +42,8 @@ public class ComotExceptionMapper implements ExceptionMapper<Exception> {
 			log.warn("Wrong user input: {}", e.getMessage());
 			return Response.status(404).entity(resolve(req, new Error(e.getMessage()))).build();
 
-		} else if (e.getClass().equals(CoreServiceException.class)) {
-			CoreServiceException ce = (CoreServiceException) e;
+		} else if (e.getClass().equals(EpsException.class)) {
+			EpsException ce = (EpsException) e;
 
 			if (ce.isClientError()) {
 				log.warn("Core service CLIENT ERROR", e);

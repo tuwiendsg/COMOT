@@ -137,15 +137,6 @@ public class Navigator {
 
 	// / NAVIGATE
 
-	public ServiceUnit getServiceUnitFor(String id) {
-		for (ServiceUnit unit : getParentTopologyFor(id).getServiceUnits()) {
-			if (unit.getId().equals(id)) {
-				return unit;
-			}
-		}
-		return null;
-	}
-
 	/**
 	 * Finds the immediate parent topology of a topology, node, capability or requirement
 	 * 
@@ -174,7 +165,8 @@ public class Navigator {
 	}
 
 	/**
-	 * Finds either service unit matching with the ID or if ID is of capability or requirement returns the related node
+	 * Finds either service unit matching with the ID or if ID is of capability, requirement, UnitInstance returns the
+	 * related unit
 	 * 
 	 * @param id
 	 * @return
@@ -189,22 +181,25 @@ public class Navigator {
 				result = (ServiceUnit) node.entity;
 			} else if (node.entity.getClass().equals(HelperNode.class)) {
 				result = (ServiceUnit) node.parent.entity;
+			} else if (node.entity.getClass().equals(UnitInstance.class)) {
+				result = (ServiceUnit) node.parent.entity;
 			}
 		}
 		log.debug("getNodeFor(id={}): {}", id, (result == null) ? null : result.getId());
 		return result;
 	}
 
-	public UnitInstance getInstance(String id, int instanceId) {
-		ServiceUnit node = getUnit(id);
+	public UnitInstance getInstance(String uniqueId) {
+		Node node = map.get(uniqueId);
 		if (node == null) {
-			return null;
+			log.error("getInstance(id={}): {} (There is no instance with such id)", uniqueId, null);
+		} else {
+			if (node.entity instanceof UnitInstance) {
+				return (UnitInstance) node.entity;
+			}
 		}
-		UnitInstance instance = node.getInstance(instanceId);
+		return null;
 
-		log.debug("getInstance(id={}, instanceId={}): {}", id, instanceId,
-				(instance == null) ? null : instance.getId());
-		return instance;
 	}
 
 	public ServiceUnit getUnit(String id) {
@@ -212,8 +207,8 @@ public class Navigator {
 		if (node == null) {
 			log.error("getNode(id={}): {} (There is no node with such id)", id, null);
 		} else {
-			if (map.get(id).entity instanceof ServiceUnit) {
-				return (ServiceUnit) map.get(id).entity;
+			if (node.entity instanceof ServiceUnit) {
+				return (ServiceUnit) node.entity;
 			}
 		}
 		return null;
@@ -228,7 +223,7 @@ public class Navigator {
 
 	// GET ALL
 
-	public List<ServiceEntity> getAllServiceParts() {
+	public List<ServiceEntity> getAllServiceEntities() {
 		List<ServiceEntity> list = new ArrayList<>();
 		list.add(service);
 		list.addAll(getAllUnits());
@@ -311,10 +306,14 @@ public class Navigator {
 				}
 
 			} else if (entity instanceof ServiceUnit) {
-				ServiceUnit stackNode = (ServiceUnit) entity;
+				ServiceUnit unit = (ServiceUnit) entity;
 
-				for (ConnectToRel one : stackNode.getConnectTo()) {
+				for (ConnectToRel one : unit.getConnectTo()) {
 					newNode(new HelperNode(one.getCapabilityId()));
+				}
+
+				for (UnitInstance instance : unit.getInstances()) {
+					newNode(instance);
 				}
 			}
 		}

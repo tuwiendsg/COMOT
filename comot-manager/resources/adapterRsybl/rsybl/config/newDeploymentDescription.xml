@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DeploymentDescription CloudServiceID="CloudService" AccessIP="128.130.172.214">
+	<DeploymentUnit serviceUnitID="LoadBalancerServiceUnit" 
+		defaultFlavor="m1.tiny" defaultImage="a4fe953e-d4c8-40a5-9c73-d9fee3f00c08" >
+	<AssociatedVM IP="10.99.0.23"/>
+	</DeploymentUnit>
+	<DeploymentUnit serviceUnitID="EventProcessingServiceUnit"
+		defaultFlavor="m1.tiny" defaultImage="314c76d6-9deb-4a3b-80f7-65ff97967708" >
+			<AssociatedVM IP="10.99.0.35"/>
+		
+		</DeploymentUnit>
+	<DeploymentUnit serviceUnitID="DataControllerServiceUnit"
+		defaultFlavor="m1.tiny" defaultImage="31eceb21-bf20-479e-a674-fe0e400d184b" >
+	<AssociatedVM IP="10.99.0.30"/>
+	</DeploymentUnit>
+	<DeploymentUnit serviceUnitID="DataNodeServiceUnit"
+		defaultFlavor="m1.tiny" defaultImage="851e5130-db42-48d1-a932-0f47d3979c8c" >
+	<AssociatedVM IP="10.99.0.33"/>
+	</DeploymentUnit>
+</DeploymentDescription>

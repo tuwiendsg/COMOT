@@ -17,7 +17,7 @@ import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityS
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityType;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.m.cs.connector.SalsaClient;
 import at.ac.tuwien.dsg.comot.m.cs.test.AbstractTest;
@@ -40,7 +40,7 @@ public class SalsaClientTest extends AbstractTest {
 
 	@SuppressWarnings("deprecation")
 	@Test
-	public void testAutomated() throws CoreServiceException, InterruptedException, ComotException {
+	public void testAutomated() throws EpsException, InterruptedException, ComotException {
 
 		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService service;
 		int countIter = 0;
@@ -119,57 +119,57 @@ public class SalsaClientTest extends AbstractTest {
 			} while (true);
 
 			fail("Did not undeploy");
-		} catch (CoreServiceException e) {
+		} catch (EpsException e) {
 		}
 
 	}
 
 	@Test
-	public void testDeploy() throws CoreServiceException {
+	public void testDeploy() throws EpsException {
 		salsa.deploy(xmlTosca);
 	}
 
 	@Test
-	public void testStatus() throws CoreServiceException, JAXBException, ComotException {
+	public void testStatus() throws EpsException, JAXBException, ComotException {
 		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService serviceInfo = salsa
-				.getStatus("SalsaExample_comot");
+				.getStatus(SERVICE_ID);
 
 		log.info(UtilsCs.asString(serviceInfo));
 	}
 
 	@SuppressWarnings("deprecation")
 	@Test
-	public void testDeploymentDescription() throws CoreServiceException, JAXBException {
-		DeploymentDescription descr = salsa.getServiceDeploymentInfo("aaaa");
+	public void testDeploymentDescription() throws EpsException, JAXBException {
+		DeploymentDescription descr = salsa.getServiceDeploymentInfo(SERVICE_ID);
 
 		log.info(UtilsCs.asString(descr));
 	}
 
 	@Test
-	public void testGetTosca() throws CoreServiceException, JAXBException, ComotException {
-		Definitions def = salsa.getTosca("aaaa");
+	public void testGetTosca() throws EpsException, JAXBException, ComotException {
+		Definitions def = salsa.getTosca(SERVICE_ID);
 
 		log.info(UtilsCs.asString(def));
 	}
 
 	@Test
-	public void testUndeploy() throws CoreServiceException {
+	public void testUndeploy() throws EpsException {
 		salsa.undeploy(SERVICE_ID);
 	}
 
 	@Test
-	public void testSpawnInstance() throws CoreServiceException {
+	public void testSpawnInstance() throws EpsException {
 		salsa.spawn(SERVICE_ID, TOPOLOGY_ID, NODE_ID, 2);
 	}
 
 	@Test
-	public void testDestroyInstance() throws CoreServiceException {
+	public void testDestroyInstance() throws EpsException {
 		salsa.destroy(SERVICE_ID, TOPOLOGY_ID, NODE_ID, 1);
 	}
 
 	@SuppressWarnings("deprecation")
 	@Test
-	public void testGetAllServices() throws CoreServiceException, JAXBException, ComotException {
+	public void testGetAllServices() throws EpsException, JAXBException, ComotException {
 		String def = salsa.getServices();
 		log.info(def);
 	}

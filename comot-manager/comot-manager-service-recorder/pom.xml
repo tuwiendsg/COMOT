@@ -22,7 +22,7 @@
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-neo4j-rest</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-manager-common</artifactId>
@@ -49,8 +49,6 @@
 			<type>test-jar</type>
 			<!-- <scope>test</scope> -->
 		</dependency>
-		<!-- <dependency> <groupId>org.glassfish.jersey.media</groupId> <artifactId>jersey-media-moxy</artifactId> </dependency> 
-			<dependency> <groupId>org.glassfish.jersey.ext</groupId> <artifactId>jersey-spring3</artifactId> </dependency> -->
 		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-manager-eps</artifactId>

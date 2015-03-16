@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot.m.ui;
 
 import java.io.IOException;
+import java.util.Set;
 
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.OutboundEvent;
@@ -13,19 +14,18 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import at.ac.tuwien.dsg.comot.m.common.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.StateMessage;
-import at.ac.tuwien.dsg.comot.m.common.Transition;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.MonitoringClient;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.Adapter;
+import at.ac.tuwien.dsg.comot.m.core.UtilsLc;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.general.SingleQueueAdapter;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
-import at.ac.tuwien.dsg.comot.m.ui.model.JaxbList;
-import at.ac.tuwien.dsg.comot.model.type.Action;
+import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 
 @Component
 @Scope("prototype")
-// for some reason this creates multip0le instances
-public class UiAdapter extends Adapter {
+public class UiAdapter extends SingleQueueAdapter {
 
 	@Autowired
 	protected MonitoringClient monitoring;
@@ -36,15 +36,16 @@ public class UiAdapter extends Adapter {
 	protected String csInstanceId;
 	protected EventOutput eventOutput;
 
+	public static final String MSG_LIFE_CYCLE = "MSG_LIFE_CYCLE";
+	public static final String MSG_CUSTOM_EVENT = "MSG_CUSTOM_EVENT";
+
 	@Override
 	public void start(String id) {
 
 		binding1 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_LIFE_CYCLE,
-				// csInstanceId + ".#", null);
-				"#", null);
-		binding2 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_LIFE_CYCLE,
-				// csInstanceId + ".#", null);
-				"#", null);
+				csInstanceId + ".#", null);
+		binding2 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_CUSTOM_EVENT,
+				csInstanceId + ".#", null);
 
 		admin.declareBinding(binding1);
 		admin.declareBinding(binding2);
@@ -59,37 +60,40 @@ public class UiAdapter extends Adapter {
 	}
 
 	class CustomListener implements MessageListener {
+
 		@Override
 		public void onMessage(Message message) {
 			try {
 
 				if (eventOutput.isClosed()) {
-					log.info("eventOutput.isClosed()");
+					log.debug("eventOutput.isClosed()");
 					cleanAdapter();
 				}
+				StateMessage msg = UtilsLc.stateMessage(message);
 
-				StateMessage msg = stateMessage(message);
-				String instanceId = msg.getCsInstanceId();
-				String serviceId = msg.getServiceId();
-				Action action = msg.getAction();
+				if (msg.isLifeCycleDefined()) {
+					LifeCycleEvent eventLc = (LifeCycleEvent) msg.getEvent();
 
-				log.info(logId() + "onMessage {}", Utils.asJsonString(msg));
+					Set<OfferedServiceUnit> osus = infoService.getSupportingServices(eventLc.getServiceId(),
+							eventLc.getCsInstanceId());
+					eventLc.getService().getInstancesList().get(0).setSupport(osus);
+				}
 
-				String msgForClient = Utils.asJsonString(new JaxbList<Transition>(msg.getTransitions()),
-						Transition.class);
+				String msgForClient = Utils.asJsonString(msg);
+
+				log.trace(logId() + "onMessage {}", msgForClient);
 
 				OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
 				eventBuilder.data(String.class, msgForClient);
+				// eventBuilder.name(MSG_LIFE_CYCLE);
 				eventOutput.write(eventBuilder.build());
 
 			} catch (Throwable t) {
-				t.printStackTrace();
-
-				log.info("Throwable -> cleanAdapter()");
+				log.warn("Throwable -> cleanAdapter()");
 				cleanAdapter();
 			}
-		}
 
+		}
 	}
 
 	@Async
@@ -98,7 +102,7 @@ public class UiAdapter extends Adapter {
 		while (true) {
 
 			try {
-				log.info("checking eventOutput");
+				log.trace("checking eventOutput");
 				OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
 				eventBuilder.name("ping");
 				eventBuilder.data(String.class, "ping");
@@ -110,7 +114,7 @@ public class UiAdapter extends Adapter {
 			Thread.sleep(10000);
 		}
 
-		log.info("regular check request cleanAdapter()");
+		log.debug("regular check request cleanAdapter()");
 		cleanAdapter();
 	}
 

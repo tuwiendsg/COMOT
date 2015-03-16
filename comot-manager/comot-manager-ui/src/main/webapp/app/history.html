@@ -1,0 +1,69 @@
+<div class="container">
+
+	<h2>History of service instance</h2>
+
+	<h4>
+		<b>ID:</b> <span data-bind="text: instanceId"></span>
+	</h4>
+	<div>&nbsp;</div>
+
+	<div class="col-md-8">
+
+		<h4>Events</h4>
+
+		<table class="table table-hover table-condensed">
+			<thead>
+				<tr>
+					<th>Time</th>
+					<th>Type</th>
+					<th>Origin</th>
+					<th>Target</th>
+				</tr>
+			</thead>
+			<tbody data-bind="foreach: changes">
+				<tr
+					data-bind="css: {active : $parent.selectedTime() == timestamp}, click: function() { $parent.revisionsForChange(timestamp)}">
+					<td data-bind="text: time"></td>
+					<td
+						data-bind="text: props.eventName, style: { fontWeight: (type == 'CHANGE_TYPE_LIFECYCLE') ? 'bold' : '' }, click: function() { $parent.revisionsForChange(timestamp)} "></td>
+					<td data-bind="text: props.origin"></td>
+					<td data-bind="text: props.target"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="col-md-4">
+		<h4>Cloud service components</h4>
+
+		<h5>Service</h5>
+
+		<div data-bind="foreach: serviceObj">
+			<button type="button" class="btn btn-default"
+				data-bind="text: $data, click: function() { $parent.revisionsForObject($data)}, css: { active: $parent.selectedObjectId() == $data}"></button>
+		</div>
+
+		<h5>Topologies</h5>
+		<div data-bind="foreach: topologiesObj">
+			<button type="button" class="btn btn-default"
+				data-bind="text: $data, click: function() { $parent.revisionsForObject($data)}, css: { active: $parent.selectedObjectId() == $data}"></button>
+		</div>
+
+		<h5>Units</h5>
+		<div data-bind="foreach: unitsObj">
+			<button type="button" class="btn btn-default"
+				data-bind="text: $data, click: function() { $parent.revisionsForObject($data)}, css: { active: $parent.selectedObjectId() == $data}"></button>
+		</div>
+
+		<h5>Other</h5>
+		<div data-bind="foreach: otherObj">
+			<button type="button" class="btn btn-default"
+				data-bind="text: $data, click: function() { $parent.revisionsForObject($data)}, css: { active: $parent.selectedObjectId() == $data}"></button>
+		</div>
+
+	</div>
+
+
+	<div id="output_revisions" class="col-md-12"></div>
+
+
+</div>

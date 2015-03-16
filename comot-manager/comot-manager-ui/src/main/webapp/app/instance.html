@@ -1,0 +1,128 @@
+
+<div class="container">
+
+	<h2>Life-cycle of service instance</h2>
+
+	<div class="btn-group pull-right">
+		<button type="button" class="btn btn-default">Cloud Service Instance</button>
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+			<span class="caret"></span> <span class="sr-only">Toggle Dropdown</span>
+		</button>
+		<ul class="dropdown-menu" role="menu" data-bind="foreach: allServices">
+			<li role="presentation" class="dropdown-header" data-bind="text: serviceId"></li>
+			<!-- ko foreach: instanceId -->
+			<li><a href="#" data-bind="text: $data, attr: { href: '#services/'+$parent.serviceId+'/instances/'+$data }"></a></li>
+			<!-- /ko -->
+		</ul>
+	</div>
+
+	<h4>
+		<b>ID:</b> <span data-bind="text: instanceId"></span>
+	</h4>
+	<div>&nbsp;</div>
+
+	<h4>Management:</h4>
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<button type="button" class="btn btn-default" data-bind="click: startInstance">
+				<span class="glyphicon glyphicon-play" aria-hidden="true"></span> Start
+			</button>
+			<button type="button" class="btn btn-default" data-bind="click: stopInstance">
+				<span class="glyphicon glyphicon-stop" aria-hidden="true"></span> Stop
+			</button>
+			<div class="btn-group">
+				<button type="button" class="btn btn-default">Elastic platform services</button>
+				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+					<span class="caret"></span> <span class="sr-only"></span>
+				</button>
+				<ul class="dropdown-menu" role="menu" data-bind="foreach: allEpsServices">
+					<li><a href="#" data-bind="click: $parent.assignEps, text: id"></a></li>
+				</ul>
+			</div>
+			<div>&nbsp;</div>
+
+			<div data-bind="foreach: selectedEpsServices">
+				<div class="panel panel-default col-md-4">
+					<div class="panel-body">
+						<button type="button" class="btn btn-default pull-right" data-bind="click: $root.removeEps">
+							<span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Remove
+						</button>
+						<h5>
+							<b>Name:</b>
+							<!-- ko if: (typeof viewEndpoint !== 'undefined') -->
+							<a data-bind="text: id, attr: {href: viewEndpoint}" target="_new">view</a>
+							<!-- /ko -->
+							<!-- ko if: (typeof viewEndpoint === 'undefined') -->
+							<span data-bind="text: id"></span>
+							<!-- /ko -->
+						</h5>
+						<!-- ko if: PrimitiveOperations.Operation.length > 0 -->
+						<h5>
+							<b>Actions:</b>
+						</h5>
+						<!-- /ko -->
+						<!-- ko foreach: PrimitiveOperations.Operation -->
+						<button type="button" class="btn btn-default"
+							data-bind="click: function() { $root.triggerCustomEvent( $parent, executeMethod) }">
+							<span data-bind="text: name"></span>
+						</button>
+						<!-- /ko -->
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<h4>State hierarchy:</h4>
+	<div id="tree_div"></div>
+	<div>&nbsp;</div>
+
+	<div class="col-md-6">
+		<div class="btn-group pull-right">
+			<button type="button" class="btn btn-default" data-bind="text: groupId"></button>
+			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+				<span class="caret"></span> <span class="sr-only">Toggle Dropdown</span>
+			</button>
+			<ul class="dropdown-menu" role="menu" data-bind="foreach: transitions">
+				<li><a href="#" data-bind="text: value.groupId, click: function() { $root.showThisGroup( value.groupId ) } "></a></li>
+			</ul>
+		</div>
+		<h4>
+			Life-cycle of <span data-bind="text: groupType"></span>
+		</h4>
+		<div class="well well-sm">
+			<div id="lifecycle_div"></div>
+		</div>
+	</div>
+
+	<!-- EVENTS -->
+	<div class="col-md-6">
+		<div class="table-responsive">
+			<table class="table table-condensed">
+				<thead>
+					<tr>
+						<th>Event</th>
+						<th>Target</th>
+						<th>Origin</th>
+					</tr>
+				</thead>
+				<tbody data-bind="foreach: events">
+					<!-- style="display: block; height: 450px; overflow: auto" -->
+					<tr>
+						<td><small data-bind="text: name, style: { fontWeight: lifecycle ? 'bold' : '' }  "></small></td>
+						<td><small data-bind="text: target"></small></td>
+						<td><small data-bind="text: origin"></small></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div id="output"></div>
+
+
+
+</div>
+
+<!-- /.container -->

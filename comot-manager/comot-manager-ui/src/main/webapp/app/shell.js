@@ -1,5 +1,5 @@
 define(function(require) {
-	var router = require('plugins/router');
+	var router = require('plugins/router'), bootstrap = require('bootstrap');
 
 	return {
 		router : router,
@@ -7,25 +7,31 @@ define(function(require) {
 			router.map([ {
 				route : '',
 				title : 'Home',
-				moduleId : 'lifecycle',
+				moduleId : 'services',
 				nav : false
 			}, {
-				route : 'create',
-				title : 'Create',
-				moduleId : 'create',
-				nav : true
+				route : 'services',
+				title : 'Cloud Services',
+				moduleId : 'services',
+				nav : false
 			}, {
-				route : 'lifecycle',
-				title : 'Lifecycle',
-				moduleId : 'lifecycle',
-				nav : true
+				route : 'services/:serviceId/instances/:instanceId',
+				title : 'Service Instances',
+				moduleId : 'instance',
+				nav : false
 			}, {
-				route : 'manage*details',
-				title : 'Manage',
-				moduleId : 'manage',
-				hash : '#manage',
-				nav : true
-			} ]).buildNavigationModel();
+				route : 'services/:serviceId/instances/:instanceId/history',
+				title : 'History',
+				moduleId : 'history',
+				nav : false
+			}
+			// , {
+			// route : 'new',
+			// title : 'New',
+			// moduleId : 'new',
+			// nav : true
+			// }
+			]).buildNavigationModel();
 
 			return router.activate();
 		}

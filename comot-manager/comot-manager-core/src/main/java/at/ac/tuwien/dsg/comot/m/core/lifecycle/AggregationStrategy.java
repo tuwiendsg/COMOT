@@ -10,20 +10,36 @@ public class AggregationStrategy {
 	public State determineState(State currentState, Type type,
 			List<Group> members) {
 
-		State one;
 		if (members.isEmpty()) {
 			return currentState;
 		} else {
-			one = members.get(0).getCurrentState();
-		}
 
-		for (Group member : members) {
-			if (!member.getCurrentState().equals(one)) {
+			State one = members.get(0).getCurrentState();
+
+			if (allMembersTheSameState(members)) {
+				if (type == Type.UNIT && one == State.FINAL) {
+					return State.PASSIVE;
+				} else {
+					return one;
+				}
+			} else {
 				return currentState;
 			}
 		}
 
-		return one;
+	}
 
+	protected boolean allMembersTheSameState(List<Group> members) {
+
+		State one = null;
+
+		for (Group member : members) {
+			if (one == null) {
+				one = member.getCurrentState();
+			} else if (!member.getCurrentState().equals(one)) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

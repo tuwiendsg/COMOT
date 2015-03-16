@@ -12,13 +12,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
+import at.ac.tuwien.dsg.comot.model.HasUniqueId;
 import at.ac.tuwien.dsg.comot.model.type.State;
 import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @NodeEntity
-public class UnitInstance implements Serializable {
+public class UnitInstance implements Serializable, HasUniqueId {
 
 	private static final long serialVersionUID = 6826825251009392073L;
 
@@ -28,8 +29,6 @@ public class UnitInstance implements Serializable {
 	@XmlAttribute
 	@BusinessId
 	protected String id;
-	@XmlAttribute
-	protected Integer instanceId;
 	@XmlAttribute
 	protected String envId;
 	@XmlAttribute
@@ -42,24 +41,15 @@ public class UnitInstance implements Serializable {
 
 	}
 
-	public UnitInstance(String id, int instanceId, String envId, State state, UnitInstance hostInstance) {
+	public UnitInstance(String id, String envId, State state, UnitInstance hostInstance) {
 		super();
 		this.id = id;
-		this.instanceId = instanceId;
 		this.envId = envId;
 		this.state = state;
 		this.hostInstance = hostInstance;
 	}
 
 	// GENERATED METHODS
-
-	public Integer getInstanceId() {
-		return instanceId;
-	}
-
-	public void setInstanceId(Integer instanceId) {
-		this.instanceId = instanceId;
-	}
 
 	public State getState() {
 		return state;
@@ -85,6 +75,7 @@ public class UnitInstance implements Serializable {
 		this.hostInstance = hostInstance;
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
@@ -100,6 +91,33 @@ public class UnitInstance implements Serializable {
 	public void setEnvId(String envId) {
 		this.envId = envId;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UnitInstance other = (UnitInstance) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+	
+	
 	
 
 }

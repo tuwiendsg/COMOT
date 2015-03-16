@@ -2,18 +2,27 @@ package at.ac.tuwien.dsg.comot.model.type;
 
 
 public enum Action {
-	NEW_INSTANCE_REQUESTED,
-	PREPARED,
-	DEPLOYMENT_REQUESTED,
+	
+	CREATED,
+	STARTED,
+	DEPLOYMENT_STARTED,
+	DEPLOYED,	// when status deployed / running
+	ELASTIC_CHANGE_STARTED,
+	ELASTIC_CHANGE_FINISHED,
+	UPDATE_STARTED,
+	UPDATE_FINISHED,
+	STOPPED,
+	UNDEPLOYMENT_STARTED,
+	UNDEPLOYED,
+	REMOVED,
+	ERROR,
+	
 	ALLOCATED, 	// when status staging
 	STAGED,		// when status configuring
-	CONFIGURED, // when status installing
-	INSTALLED,	// when status deployed / running
-	UNDEPLOYMENT_REQUESTED,
-	UNDEPLOYED,
-	TEST_START_REQUESTED,
-	TEST_STOP_REQUSTED,
-	INSTANCE_REMOVAL_REQUESTED;
+	CONFIGURED, // when status installing	
 	
+	RECONFIGURED_ELASTICITY,
+	TEST_STARTED,
+	TEST_FINISHED;
 
 }

@@ -6,22 +6,32 @@
 package at.ac.tuwien.dsg.comot.m.core;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.m.common.EventMessage;
+import at.ac.tuwien.dsg.comot.m.common.CustomEvent;
+import at.ac.tuwien.dsg.comot.m.common.EpsAction;
+import at.ac.tuwien.dsg.comot.m.common.LifeCycleEvent;
+import at.ac.tuwien.dsg.comot.m.common.Navigator;
+import at.ac.tuwien.dsg.comot.m.common.Type;
+import at.ac.tuwien.dsg.comot.m.common.Utils;
+import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.InformationServiceMock;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
+import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 
 @Component
@@ -29,70 +39,161 @@ public class Coordinator {
 
 	private static final Logger log = LoggerFactory.getLogger(Coordinator.class);
 
+	public static final String USER_ID = "Some User";
+
 	@Autowired
-	protected InformationServiceMock infoServ;
+	protected InformationServiceMock infoService;
 	@Autowired
 	protected LifeCycleManager lcManager;
+	@Autowired
+	protected DeploymentClient deployment;
+	@Autowired
+	protected RabbitTemplate amqp;
 
-	public String createCloudService(CloudService service) {
+	@PostConstruct
+	public void setUp() {
+		insertRunningService("HelloElasticity_VM");
+	}
 
-		String serviceId = infoServ.createService(service);
+	public String createCloudService(CloudService service) throws ClassNotFoundException, IOException {
 
+		String serviceId = infoService.createService(service);
 		return serviceId;
 	}
 
 	public String createServiceInstance(String serviceId) throws IOException, JAXBException, ClassNotFoundException {
 
-		String instanceId = infoServ.createServiceInstance(serviceId);
-		log.info("instanceId {}", instanceId);
+		String instanceId = infoService.createServiceInstance(serviceId);
 
-		CloudService service = infoServ.getServiceInstance(instanceId);
-
-		EventMessage event = new EventMessage(serviceId, instanceId, serviceId, Action.NEW_INSTANCE_REQUESTED, service,
-				null);
-		lcManager.executeAction(event);
+		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.CREATED, USER_ID, null));
 
 		return instanceId;
 	}
 
-	public void assignSupportingOsu(String csInstanceId, String osuInstanceId) {
-		infoServ.assignSupportingService(csInstanceId, osuInstanceId);
+	public void startServiceInstance(String serviceId, String instanceId) throws IOException, JAXBException,
+			ClassNotFoundException {
+
+		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STARTED, USER_ID, null));
+
+	}
+
+	public void stopServiceInstance(String serviceId, String instanceId)
+			throws IOException, JAXBException, ClassNotFoundException {
+
+		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STOPPED, USER_ID, null));
+
+	}
+
+	public void removeServiceInstance(String serviceId, String instanceId) throws IOException, JAXBException,
+			ClassNotFoundException {
+
+		infoService.removeServiceInstance(serviceId, instanceId);
+
+		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.REMOVED, USER_ID, null));
+
+	}
+
+	public void assignSupportingOsu(String serviceId, String instanceId, String osuInstanceId)
+			throws ClassNotFoundException, IOException, JAXBException {
+
+		infoService.assignSupportingService(serviceId, instanceId, osuInstanceId);
+
+		sendCustom(Type.SERVICE, new CustomEvent(serviceId, instanceId, serviceId, EpsAction.EPS_ASSIGNED.toString(),
+				USER_ID, osuInstanceId, null));
+
+	}
+
+	public void removeAssignmentOfSupportingOsu(String serviceId, String instanceId, String osuInstanceId)
+			throws ClassNotFoundException, IOException, JAXBException {
+
+		infoService.removeAssignmentOfSupportingOsu(serviceId, instanceId, osuInstanceId);
+
+		sendCustom(Type.SERVICE,
+				new CustomEvent(serviceId, instanceId, serviceId, EpsAction.EPS_ASSIGNMENT_REMOVED.toString(), USER_ID,
+						osuInstanceId, null));
+
 	}
 
 	public void triggerCustomEvent(
 			String serviceId,
 			String csInstanceId,
-			String osuInstanceId,
+			String epsId,
 			String eventId,
 			String optionalInput)
 			throws ClassNotFoundException, IOException, JAXBException {
 
-		// TODO check that the eps is assigned and the event exist
+		if (StringUtils.isBlank(eventId)) {
+			return;
+		}
 
-		EventMessage event = new EventMessage(serviceId, csInstanceId, serviceId, osuInstanceId + eventId,
-				optionalInput);
-		lcManager.executeAction(event);
+		sendCustom(Type.SERVICE, new CustomEvent(serviceId, csInstanceId, serviceId, eventId, USER_ID, epsId,
+				optionalInput));
+
 	}
 
-	public List<CloudService> getServices() {
+	protected void sendLifeCycle(Type targetLevel, LifeCycleEvent event) throws AmqpException, JAXBException {
 
-		List<CloudService> list = new ArrayList<CloudService>(infoServ.getServices().values());
-		// Collections.sort(list, comparator);
+		String bindingKey = event.getCsInstanceId() + "." + event.getClass().getSimpleName() + "." + event.getAction()
+				+ "." + targetLevel;
 
-		return list;
+		// log.info(logId() +"SEND key={}", targetLevel);
+
+		amqp.convertAndSend(AppContextCore.EXCHANGE_REQUESTS, bindingKey, Utils.asJsonString(event));
 	}
 
-	public CloudService getServiceInstance(String instanceId) throws CoreServiceException, ComotException,
-			ClassNotFoundException, IOException {
+	protected void sendCustom(Type targetLevel, CustomEvent event) throws AmqpException, JAXBException {
 
-		CloudService service = infoServ.getServiceInstance(instanceId);
+		String bindingKey = event.getCsInstanceId() + "." + event.getClass().getSimpleName() + "."
+				+ event.getCustomEvent() + "." + targetLevel;
 
-		return service;
+		// log.info(logId() +"SEND key={}", targetLevel);
+
+		amqp.convertAndSend(AppContextCore.EXCHANGE_REQUESTS, bindingKey, Utils.asJsonString(event));
 	}
 
-	// public ElementMonitoring getMonitoringData(String serviceId) throws CoreServiceException, ComotException {
-	//
-	// return monitoring.getMonitoringData(serviceId);
-	// }
+	/**
+	 * Only for Testing !
+	 * 
+	 * @param name
+	 */
+	public void insertRunningService(String name) {
+		try {
+
+			log.info("TEST inserting from SALSA '{}'", name);
+
+			String instanceId = name;
+			String serviceId = instanceId + "_FROM_SALSA";
+
+			if (deployment.isManaged(instanceId)) {
+
+				CloudService service = deployment.getService(instanceId);
+
+				service.setName(serviceId);
+				service.setId(serviceId);
+				infoService.createService(service);
+				infoService.createServiceInstance(service.getId(), instanceId);
+				infoService.assignSupportingService(serviceId, instanceId,
+						InformationServiceMock.SALSA_SERVICE_PUBLIC_ID);
+
+				service = infoService.getServiceInstance(instanceId);
+				service.setName(instanceId);
+				service.setId(instanceId);
+				service = deployment.refreshStatus(service);
+
+				for (ServiceUnit unit : Navigator.getAllUnits(service)) {
+					for (UnitInstance instance : unit.getInstances()) {
+						infoService.addUnitInstance(serviceId, instanceId, unit.getId(), instance);
+					}
+				}
+
+				service.setName(serviceId);
+				service.setId(serviceId);
+				lcManager.hardSetRunning(service, instanceId);
+			}
+
+		} catch (EpsException | ComotException | ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 }

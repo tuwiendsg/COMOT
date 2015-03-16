@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<CompositionRulesConfiguration>
+    <MetricsCompositionRules>
+        <CompositionRule TargetMonitoredElementLevel="SERVICE_UNIT">
+            <TargetMonitoredElementID>CassandraNode</TargetMonitoredElementID>
+            <ResultingMetric type="RESOURCE" measurementUnit="%" name="cpuUsage"/>
+            <Operation value="100" type="ADD">
+                <Operation value="-1" type="MUL">
+                    <Operation MetricSourceMonitoredElementLevel="VM" type="AVG">
+                        <ReferenceMetric type="RESOURCE" measurementUnit="%"  name="cpuIdle"/>
+                    </Operation>
+                </Operation>
+            </Operation>
+        </CompositionRule> 
+        
+        
+        <CompositionRule TargetMonitoredElementLevel="VM">
+            <ResultingMetric type="RESOURCE" measurementUnit="no" name="numberOfVMs"/>
+            <Operation value="1" type="SET_VALUE"/>
+        </CompositionRule>
+  			
+        <CompositionRule TargetMonitoredElementLevel="SERVICE_UNIT">
+            <TargetMonitoredElementID>YCSBClient</TargetMonitoredElementID>
+            <ResultingMetric type="RESOURCE" measurementUnit="ms" name="latency"/>
+            <Operation value="0.001" type="MUL">
+            <Operation MetricSourceMonitoredElementLevel="VM" type="AVG">
+                <ReferenceMetric type="RESOURCE" measurementUnit="ms"  name="ycsb_latency"/>
+            </Operation>
+            </Operation>
+        </CompositionRule>
+        
+        <CompositionRule TargetMonitoredElementLevel="SERVICE_UNIT">
+            <TargetMonitoredElementID>YCSBClient</TargetMonitoredElementID>
+            <ResultingMetric type="RESOURCE" measurementUnit="ops/s" name="throughput"/>
+            <Operation MetricSourceMonitoredElementLevel="VM" type="SUM">
+                <ReferenceMetric type="RESOURCE" measurementUnit="ops/s"  name="ycsb_throughput"/>     
+            </Operation>
+        </CompositionRule>
+        
+        <CompositionRule TargetMonitoredElementLevel="SERVICE_UNIT">
+            <TargetMonitoredElementID>YCSBClient</TargetMonitoredElementID>
+            <ResultingMetric type="RESOURCE" measurementUnit="ops/s" name="throughputExpected"/>
+            <Operation MetricSourceMonitoredElementLevel="VM" type="SUM">
+                <ReferenceMetric type="RESOURCE" measurementUnit="ops/s"  name="ycsb_target"/>     
+            </Operation>
+        </CompositionRule>
+        
+        <CompositionRule TargetMonitoredElementLevel="SERVICE_UNIT">
+            <ResultingMetric type="RESOURCE" measurementUnit="no" name="numberOfVMs"/>
+            <Operation MetricSourceMonitoredElementLevel="VM" type="SUM">
+                <ReferenceMetric type="RESOURCE" name="numberOfVMs"/>
+            </Operation>
+        </CompositionRule>
+        <CompositionRule TargetMonitoredElementLevel="SERVICE_UNIT">
+            <ResultingMetric type="RESOURCE" measurementUnit="$" name="cost"/>
+            <Operation MetricSourceMonitoredElementLevel="SERVICE_UNIT" value="0.12" type="MUL">
+                <ReferenceMetric type="RESOURCE" name="numberOfVMs"/>
+            </Operation>
+        </CompositionRule>   
+        <CompositionRule TargetMonitoredElementLevel="SERVICE_TOPOLOGY">
+            <ResultingMetric type="RESOURCE" measurementUnit="ms" name="latency"/>
+            <Operation MetricSourceMonitoredElementLevel="SERVICE_UNIT" type="KEEP">
+                <ReferenceMetric type="RESOURCE" name="latency"/>
+                <SourceMonitoredElementID>YCSBClient</SourceMonitoredElementID>
+            </Operation>
+        </CompositionRule>
+        
+        <CompositionRule TargetMonitoredElementLevel="SERVICE_TOPOLOGY">
+            <ResultingMetric type="RESOURCE" measurementUnit="ops/s" name="throughput"/>
+            <Operation MetricSourceMonitoredElementLevel="SERVICE_UNIT" type="KEEP">
+                <ReferenceMetric type="RESOURCE" name="throughput"/>
+                <SourceMonitoredElementID>YCSBClient</SourceMonitoredElementID>
+            </Operation>
+        </CompositionRule>
+               <CompositionRule TargetMonitoredElementLevel="SERVICE_TOPOLOGY">
+            <ResultingMetric type="RESOURCE" measurementUnit="no" name="numberOfVMs"/>
+            <Operation MetricSourceMonitoredElementLevel="SERVICE_UNIT" type="SUM">
+                <ReferenceMetric type="RESOURCE" name="numberOfVMs"/>
+            </Operation>
+        </CompositionRule>
+        <CompositionRule TargetMonitoredElementLevel="SERVICE_TOPOLOGY">
+            <ResultingMetric type="RESOURCE" measurementUnit="$" name="cost"/>
+            <Operation MetricSourceMonitoredElementLevel="SERVICE_UNIT" type="SUM">
+                <ReferenceMetric type="RESOURCE" name="cost"/>
+            </Operation>
+        </CompositionRule>
+          
+      
+        <CompositionRule TargetMonitoredElementLevel="SERVICE">
+            <ResultingMetric type="RESOURCE" measurementUnit="$" name="cost"/>
+            <Operation MetricSourceMonitoredElementLevel="SERVICE_TOPOLOGY" type="SUM">
+                <ReferenceMetric type="RESOURCE" name="cost"/>
+            </Operation>
+        </CompositionRule>
+        
+    <CompositionRule TargetMonitoredElementLevel="SERVICE">
+        
+            <ResultingMetric type="RESOURCE" measurementUnit="val" name="QualityIndicator"/>
+            <Operation  type="SUM">
+                <Operation value="-0.0833" type="MUL">
+                    <Operation MetricSourceMonitoredElementLevel="SERVICE_TOPOLOGY" type="KEEP"> 
+                        <ReferenceMetric type="RESOURCE" name="latency"/>
+                    </Operation>
+                </Operation>
+                <Operation value="0.000058" type="MUL">
+                    <Operation MetricSourceMonitoredElementLevel="SERVICE_TOPOLOGY" type="KEEP"> 
+                        <ReferenceMetric type="RESOURCE" name="throughput"/>
+                    </Operation>
+                </Operation>
+            </Operation>
+        </CompositionRule>
+    </MetricsCompositionRules>
+</CompositionRulesConfiguration>

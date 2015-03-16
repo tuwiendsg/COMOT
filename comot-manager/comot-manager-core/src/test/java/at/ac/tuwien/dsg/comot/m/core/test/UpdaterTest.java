@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.m.core.updater.Engine;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
@@ -29,7 +29,7 @@ public class UpdaterTest extends AbstractTest {
 	public static final String SEED_OS_UNIT_ID = "os_OF_CassandraSeed";
 
 	@Test
-	public void dostuff() throws CoreServiceException, ComotException, JAXBException, IOException,
+	public void dostuff() throws EpsException, ComotException, JAXBException, IOException,
 			ClassNotFoundException {
 
 		Definitions def = UtilsCs.loadTosca(UtilsTest.TEST_FILE_BASE + "daas_m2m_fromSalsa.xml");

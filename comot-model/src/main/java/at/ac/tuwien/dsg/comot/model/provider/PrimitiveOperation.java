@@ -15,13 +15,17 @@ import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @NodeEntity
-public class PrimitiveOperation implements Serializable{
+public class PrimitiveOperation implements Serializable {
 
 	private static final long serialVersionUID = -1082005301481421855L;
 
 	@GraphId
 	protected Long nodeId;
+
 	@BusinessId
+	@XmlAttribute
+	protected String id;
+
 	@XmlAttribute
 	protected String name;
 	@XmlAttribute
@@ -32,13 +36,12 @@ public class PrimitiveOperation implements Serializable{
 	public PrimitiveOperation() {
 
 	}
-	public PrimitiveOperation(String name, String executeMethod) {
+
+	public PrimitiveOperation( String name, String executeMethod) {
 		super();
 		this.name = name;
 		this.executeMethod = executeMethod;
 	}
-	
-
 
 	public String getName() {
 		return name;
@@ -63,13 +66,25 @@ public class PrimitiveOperation implements Serializable{
 	public void setEndpoint(String endpoint) {
 		this.endpoint = endpoint;
 	}
+
 	public Long getNodeId() {
 		return nodeId;
 	}
+
 	public void setNodeId(Long nodeId) {
 		this.nodeId = nodeId;
 	}
-	
-	
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 
 }

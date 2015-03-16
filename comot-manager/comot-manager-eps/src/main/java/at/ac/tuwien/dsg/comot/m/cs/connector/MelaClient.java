@@ -1,5 +1,7 @@
 package at.ac.tuwien.dsg.comot.m.cs.connector;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +15,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitoringSnapshot;
@@ -24,7 +26,7 @@ public class MelaClient extends CoreServiceClient {
 
 	private static final Logger log = LoggerFactory.getLogger(MelaClient.class);
 
-	protected static final String DEF_BASE_PATH = "/MELA/REST_WS"; // TODO
+	protected static final String DEF_BASE_PATH = "http://127.0.0.1:8180/MELA/REST_WS";
 
 	protected static final String SERVICE_CREATE_PATH = "service";
 	protected static final String SERVICE_PATH = "{serviceId}/structure";
@@ -38,27 +40,18 @@ public class MelaClient extends CoreServiceClient {
 	protected static final String GET_DATA_INTERVAL_PATH = "{serviceId}/historicalmonitoringdata/ininterval/xml";
 	protected static final String GET_DATA_LASTX_PATH = "{serviceId}/historicalmonitoringdata/lastX/xml";
 
-	public MelaClient() {
-		this(DEF_HOST, DEF_PORT);
+	public MelaClient() throws URISyntaxException {
+		this(new URI(DEF_BASE_PATH));
 	}
 
-	public MelaClient(String host) {
-		this(host, DEF_PORT, DEF_BASE_PATH);
-	}
-
-	public MelaClient(String host, int port) {
-		this(host, port, DEF_BASE_PATH);
-	}
-
-	public MelaClient(String host, int port, String basePath) {
-		super(host, port, basePath);
-		setName("MELA");
+	public MelaClient(URI baseUri) {
+		super("MELA", baseUri);
 	}
 
 	// SERVICE STRUCTURE DESCRIPTION --------------------------------------------------
 
 	// create service
-	public void sendServiceDescription(MonitoredElement element) throws CoreServiceException {
+	public void sendServiceDescription(MonitoredElement element) throws EpsException {
 
 		Response response = client.target(getBaseUri())
 				.path(SERVICE_CREATE_PATH)
@@ -74,7 +67,7 @@ public class MelaClient extends CoreServiceClient {
 	}
 
 	// get
-	public MonitoredElement getServiceDescription(String serviceId) throws CoreServiceException {
+	public MonitoredElement getServiceDescription(String serviceId) throws EpsException {
 
 		Response response = client.target(getBaseUri())
 				.path(SERVICE_PATH)
@@ -93,7 +86,7 @@ public class MelaClient extends CoreServiceClient {
 	}
 
 	// update structure
-	public void updateServiceDescription(String serviceId, MonitoredElement element) throws CoreServiceException {
+	public void updateServiceDescription(String serviceId, MonitoredElement element) throws EpsException {
 
 		Response response = client.target(getBaseUri())
 				.path(SERVICE_PATH)
@@ -110,7 +103,7 @@ public class MelaClient extends CoreServiceClient {
 	}
 
 	// remove
-	public void removeServiceDescription(String serviceId) throws CoreServiceException {
+	public void removeServiceDescription(String serviceId) throws EpsException {
 
 		Response response = client.target(getBaseUri())
 				.path(SERVICE_DELETE_PATH)
@@ -128,7 +121,7 @@ public class MelaClient extends CoreServiceClient {
 	}
 
 	// list all
-	public List<String> listAllServices() throws CoreServiceException {
+	public List<String> listAllServices() throws EpsException {
 
 		Response response = client.target(getBaseUri())
 				.path(LIST_ALL_SERVICES_PATH)
@@ -157,7 +150,7 @@ public class MelaClient extends CoreServiceClient {
 
 	// create MCR
 	public void sendMetricsCompositionRules(String serviceId, CompositionRulesConfiguration rules)
-			throws CoreServiceException {
+			throws EpsException {
 
 		Response response = client.target(getBaseUri())
 				.path(CREAT_MCR_PATH)
@@ -174,7 +167,7 @@ public class MelaClient extends CoreServiceClient {
 	}
 
 	// get
-	public CompositionRulesConfiguration getMetricsCompositionRules(String serviceId) throws CoreServiceException {
+	public CompositionRulesConfiguration getMetricsCompositionRules(String serviceId) throws EpsException {
 
 		Response response = client.target(getBaseUri())
 				.path(GET_MCR_PATH)
@@ -195,7 +188,7 @@ public class MelaClient extends CoreServiceClient {
 	// REQUIREMENTS --------------------------------------------------
 
 	// create requirements
-	public void sendRequirements(String serviceId, Requirements requirements) throws CoreServiceException {
+	public void sendRequirements(String serviceId, Requirements requirements) throws EpsException {
 
 		Response response = client.target(getBaseUri())
 				.path(REQUIREMENTS_PATH)
@@ -214,7 +207,7 @@ public class MelaClient extends CoreServiceClient {
 	// MONITORING DATA --------------------------------------------------
 
 	// get monitoring data
-	public MonitoredElementMonitoringSnapshot getMonitoringData(String serviceId) throws CoreServiceException {
+	public MonitoredElementMonitoringSnapshot getMonitoringData(String serviceId) throws EpsException {
 
 		Response response = client.target(getBaseUri())
 				.path(DATA_PATH)
@@ -233,7 +226,7 @@ public class MelaClient extends CoreServiceClient {
 	}
 
 	public MonitoredElementMonitoringSnapshot getMonitoringData(String serviceId, MonitoredElement element)
-			throws CoreServiceException {
+			throws EpsException {
 
 		Response response = client.target(getBaseUri())
 				.path(DATA_PATH)
@@ -251,7 +244,7 @@ public class MelaClient extends CoreServiceClient {
 	}
 
 	public MonitoredElementMonitoringSnapshots getAllAggregatedMonitoringData(String serviceId)
-			throws CoreServiceException {
+			throws EpsException {
 
 		Response response = client.target(getBaseUri())
 				.path(GET_DATA_ALL_PATH)
@@ -276,7 +269,7 @@ public class MelaClient extends CoreServiceClient {
 	public MonitoredElementMonitoringSnapshots getAllAggregatedMonitoringDataInTimeInterval(
 			String serviceId,
 			int startTimestampId,
-			int endTimestampId) throws CoreServiceException {
+			int endTimestampId) throws EpsException {
 
 		Response response = client.target(getBaseUri())
 				.path(GET_DATA_INTERVAL_PATH)
@@ -298,7 +291,7 @@ public class MelaClient extends CoreServiceClient {
 
 	public MonitoredElementMonitoringSnapshots getLastXAggregatedMonitoringData(
 			String serviceId,
-			int count) throws CoreServiceException {
+			int count) throws EpsException {
 
 		Response response = client.target(getBaseUri())
 				.path(GET_DATA_LASTX_PATH)
@@ -323,7 +316,7 @@ public class MelaClient extends CoreServiceClient {
 	// returns Collection<Metric>
 	public String getAvailableMetrics(
 			String serviceId,
-			String monitoredElementID) throws CoreServiceException {
+			String monitoredElementID) throws EpsException {
 
 		Response response = client.target(getBaseUri())
 				.path(GET_DATA_LASTX_PATH)

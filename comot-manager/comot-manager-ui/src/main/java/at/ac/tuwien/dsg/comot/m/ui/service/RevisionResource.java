@@ -1,5 +1,6 @@
 package at.ac.tuwien.dsg.comot.m.ui.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -19,101 +20,119 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import at.ac.tuwien.dsg.comot.m.common.coreservices.ControlClient;
-import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
-import at.ac.tuwien.dsg.comot.m.common.coreservices.MonitoringClient;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.RecordingAdapter;
+import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.recorder.RecorderException;
 import at.ac.tuwien.dsg.comot.m.recorder.model.Change;
 import at.ac.tuwien.dsg.comot.m.recorder.out.ManagedObject;
-import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.m.recorder.revisions.RevisionApi;
 
 // WADL http://localhost:8380/comot/rest/application.wadl
 @Service
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-@Path("/services/{serviceId}/revisions")
+@Path("/recordings/{instanceId}")
 public class RevisionResource {
 
 	private static final Logger log = LoggerFactory.getLogger(RevisionResource.class);
 
 	@Autowired
-	protected RecordingAdapter recordingManager;
-
-	@Autowired
-	protected DeploymentClient deployment;
-	@Autowired
-	protected ControlClient control;
-	@Autowired
-	protected MonitoringClient monitoring;
-
-	@GET
-	@Path("/last")
-	@Consumes(MediaType.WILDCARD)
-	public Response getLastRevision(@PathParam("serviceId") String serviceId) throws CoreServiceException,
-			ComotException, InstantiationException, IllegalAccessException, IllegalArgumentException,
-			ClassNotFoundException, RecorderException {
-
-		CloudService service = (CloudService) recordingManager.getRevision(serviceId, serviceId, Long.MAX_VALUE);
-
-		return Response.ok(service).build();
-	}
-
-	@GET
-	@Path("/{objectId}/{timestamp}")
-	@Consumes(MediaType.WILDCARD)
-	public Response getRevision(
-			@PathParam("serviceId") String serviceId,
-			@PathParam("objectId") String objectId,
-			@PathParam("timestamp") Long timestamp) throws CoreServiceException,
-			ComotException, InstantiationException, IllegalAccessException, IllegalArgumentException,
-			ClassNotFoundException, RecorderException {
-
-		log.info("getRevision(serviceId={}, objectId={}, timestamp={})", serviceId, objectId, timestamp);
-
-		Object obj = recordingManager.getRevision(serviceId, objectId, timestamp);
-
-		return Response.ok(obj).build();
-	}
-
-	@GET
-	@Path("/changes/{objectId}")
-	@Consumes(MediaType.WILDCARD)
-	public Response getChanges(
-			@PathParam("serviceId") String serviceId,
-			@PathParam("objectId") String objectId,
-			@DefaultValue("0") @QueryParam("from") Long from,
-			@DefaultValue("9223372036854775807") @QueryParam("to") Long to) // def Long.MAX_VALUE
-			throws CoreServiceException, ComotException, InstantiationException, IllegalAccessException,
-			IllegalArgumentException, ClassNotFoundException, RecorderException, JAXBException {
-
-		log.info("getChanges(serviceId={}, objectId={}, from={}, to={})", serviceId, objectId, from, to);
-
-		List<Change> change = recordingManager.getAllChanges(serviceId, objectId, from, to);
-
-		// log.info("{}", Utils.asXmlString(change));
-
-		final GenericEntity<List<Change>> entity = new GenericEntity<List<Change>>(change) {
-		};
-		return Response.ok(entity).build();
-	}
+	protected RevisionApi revisionApi;
 
 	@GET
 	@Path("/objects")
 	@Consumes(MediaType.WILDCARD)
 	public Response getManagedObjects(
-			@PathParam("serviceId") String serviceId
-			) throws CoreServiceException,
+			@PathParam("instanceId") String instanceId
+			) throws EpsException,
 					ComotException, InstantiationException, IllegalAccessException, IllegalArgumentException,
 					ClassNotFoundException, RecorderException {
 
-		List<ManagedObject> objects = recordingManager.getManagedObjects(serviceId);
+		List<ManagedObject> objects = revisionApi.getManagedObjects(instanceId);
 		final GenericEntity<List<ManagedObject>> list = new GenericEntity<List<ManagedObject>>(objects) {
 		};
 		// JaxbList<String> entity = new JaxbList<String>(ids);
 		return Response.ok(list).build();
+	}
+
+	@GET
+	@Path("/objects/{objectId}/{timestamp}")
+	@Consumes(MediaType.WILDCARD)
+	public Response getRecording(
+			@PathParam("instanceId") String instanceId,
+			@PathParam("objectId") String objectId,
+			@PathParam("timestamp") Long timestamp) throws EpsException,
+			ComotException, InstantiationException, IllegalAccessException, IllegalArgumentException,
+			ClassNotFoundException, RecorderException {
+
+		log.info("getRevision(serviceId={}, objectId={}, timestamp={})", instanceId, objectId, timestamp);
+
+		if (!revisionApi.verifyObject(instanceId, objectId)) {
+			throw new ComotIllegalArgumentException("For service " + instanceId + " there is no managed object "
+					+ objectId);
+		}
+
+		Object obj = revisionApi.getRevision(instanceId, objectId, timestamp);
+
+		if (obj == null) {
+			throw new ComotIllegalArgumentException("There is no revision of service" + instanceId + ", object="
+					+ objectId + " at time=" + timestamp + " ");
+		}
+
+		return Response.ok(obj).build();
+	}
+
+	@GET
+	@Path("/events")
+	@Consumes(MediaType.WILDCARD)
+	public Response getAllEventsInRange(
+			@PathParam("instanceId") String instanceId,
+			@DefaultValue("0") @QueryParam("from") Long from,
+			@DefaultValue("9223372036854775807") @QueryParam("to") Long to) // def Long.MAX_VALUE
+			throws EpsException, ComotException, InstantiationException, IllegalAccessException,
+			IllegalArgumentException, ClassNotFoundException, RecorderException, JAXBException {
+
+		Change change = revisionApi.getAllChanges(instanceId, from, to);
+
+		List<Change> list = new ArrayList<>();
+		while (change != null) {
+			list.add(change);
+			change = change.getTo().getEnd();
+		}
+
+		final GenericEntity<List<Change>> entity = new GenericEntity<List<Change>>(list) {
+		};
+		return Response.ok(entity).build();
+	}
+
+	@GET
+	@Path("/objects/{objectId}/events")
+	@Consumes(MediaType.WILDCARD)
+	public Response getEvents(
+			@PathParam("instanceId") String instanceId,
+			@PathParam("objectId") String objectId,
+			@DefaultValue("0") @QueryParam("from") Long from,
+			@DefaultValue("9223372036854775807") @QueryParam("to") Long to) // def Long.MAX_VALUE
+			throws EpsException, ComotException, InstantiationException, IllegalAccessException,
+			IllegalArgumentException, ClassNotFoundException, RecorderException, JAXBException {
+
+		if (!revisionApi.verifyObject(instanceId, objectId)) {
+			throw new ComotIllegalArgumentException("For service " + instanceId + " there is no managed object "
+					+ objectId);
+		}
+
+		Change change = revisionApi.getAllChangesThatModifiedThisObject(instanceId, objectId, from, to);
+
+		List<Change> list = new ArrayList<>();
+		while (change != null) {
+			list.add(change);
+			change = change.getTo().getEnd();
+		}
+
+		final GenericEntity<List<Change>> entity = new GenericEntity<List<Change>>(list) {
+		};
+		return Response.ok(entity).build();
 	}
 
 }

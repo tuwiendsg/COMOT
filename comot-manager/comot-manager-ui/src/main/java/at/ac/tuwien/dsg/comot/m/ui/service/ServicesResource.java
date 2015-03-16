@@ -1,6 +1,9 @@
 package at.ac.tuwien.dsg.comot.m.ui.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
@@ -25,24 +28,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.CoreServiceException;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.core.Coordinator;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.UtilsLc;
+import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycle;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleFactory;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
+import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleTransition;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.m.ui.UiAdapter;
-import at.ac.tuwien.dsg.comot.m.ui.mapper.SalsaOutputMapper;
 import at.ac.tuwien.dsg.comot.m.ui.model.Lc;
 import at.ac.tuwien.dsg.comot.m.ui.model.LcState;
-import at.ac.tuwien.dsg.comot.m.ui.model.LcTransition;
-import at.ac.tuwien.dsg.comot.model.type.Action;
+import at.ac.tuwien.dsg.comot.m.ui.model.ServiceAndInstances;
+import at.ac.tuwien.dsg.comot.m.ui.model.ServiceInstanceUi;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 // WADL http://localhost:8380/comot/rest/application.wadl
 @Service
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-@Path("/services")
+@Path("/manager")
 public class ServicesResource {
 
 	private static final Logger log = LoggerFactory.getLogger(ServicesResource.class);
@@ -52,12 +61,14 @@ public class ServicesResource {
 	@Autowired
 	protected ApplicationContext context;
 	@Autowired
-	protected SalsaOutputMapper mapperOutput;
-	@Autowired
 	protected ToscaMapper mapperTosca;
+	@Autowired
+	protected LifeCycleManager lcManager;
 
 	@Autowired
 	protected Coordinator coordinator;
+	@Autowired
+	protected InformationServiceMock infoServ;
 
 	@PostConstruct
 	public void startUp() {
@@ -65,96 +76,122 @@ public class ServicesResource {
 	}
 
 	@POST
-	@Path("/")
+	@Path("/services")
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response createService(Definitions def) throws CoreServiceException, ComotException, JAXBException {
+	public Response createService(Definitions def) throws EpsException, ComotException, JAXBException,
+			ClassNotFoundException, IOException {
 
 		coordinator.createCloudService(mapperTosca.createModel(def));
 		return Response.ok(def.getId()).build();
 	}
 
-	@POST
-	@Path("/{serviceId}/instances")
-	@Produces(MediaType.TEXT_PLAIN)
-	public Response createServiceInstance(@PathParam("serviceId") String serviceId) throws CoreServiceException,
-			ComotException, ClassNotFoundException, IOException, JAXBException {
-
-		String instanceId = coordinator.createServiceInstance(serviceId);
-		return Response.ok(instanceId).build();
-	}
-
-	@PUT
-	@Path("/{serviceId}/instances/{instanceId}/eps/{epsId}")
-	@Produces(MediaType.TEXT_PLAIN)
-	public Response assignSupportingEps(
-			@PathParam("serviceId") String serviceId,
-			@PathParam("instanceId") String instanceId,
-			@PathParam("epsId") String epsId) throws CoreServiceException, ComotException, ClassNotFoundException,
-			IOException, JAXBException {
-
-		coordinator.assignSupportingOsu(instanceId, epsId);
-		return Response.ok().build();
-	}
-
-	@PUT
-	@Path("/{serviceId}/instances/{instanceId}/eps/{epsId}/events/{eventId}")
-	@Consumes(MediaType.TEXT_PLAIN)
-	@Produces(MediaType.TEXT_PLAIN)
-	public Response triggerCustomEvent(
-			@PathParam("serviceId") String serviceId,
-			@PathParam("instanceId") String instanceId,
-			@PathParam("epsId") String epsId,
-			@PathParam("eventId") String eventId,
-			String optionalInput) throws CoreServiceException, ComotException, ClassNotFoundException, IOException,
-			JAXBException {
-
-		coordinator.triggerCustomEvent(serviceId, instanceId, epsId, eventId, optionalInput);
-		return Response.ok().build();
-	}
-
-	// update structure / requirements for monitoring / SYBL directives
-	@PUT
-	@Path("/{serviceId}")
-	public Response updateService(@PathParam("serviceId") String serviceId, Definitions def) {
-
-		// TODO
-		return null;
-	}
-
-	// DELETE
-
 	@DELETE
-	@Path("/{serviceId}")
-	public Response deleteService(@PathParam("serviceId") String serviceId) throws CoreServiceException,
+	@Path("/services/{serviceId}")
+	public Response deleteService(@PathParam("serviceId") String serviceId) throws EpsException,
 			ComotException {
 
 		// TODO
 		return Response.ok().build();
 	}
 
+	@POST
+	@Path("/services/{serviceId}/instances")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response createServiceInstance(@PathParam("serviceId") String serviceId) throws EpsException,
+			ComotException, ClassNotFoundException, IOException, JAXBException {
+
+		String instanceId = coordinator.createServiceInstance(serviceId);
+		return Response.ok(instanceId).build();
+	}
+
 	@DELETE
-	@Path("/{serviceId}/instances/{instanceId}")
+	@Path("/services/{serviceId}/instances/{instanceId}")
 	public Response deleteServiceInstance(
 			@PathParam("serviceId") String serviceId,
-			@PathParam("instanceId") String instanceId) throws CoreServiceException, ComotException {
+			@PathParam("instanceId") String instanceId) throws EpsException, ComotException {
 
 		// TODO
 		return Response.ok().build();
 	}
 
+	@PUT
+	@Path("/services/{serviceId}/instances/{instanceId}/start")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response startServiceInstance(
+			@PathParam("serviceId") String serviceId,
+			@PathParam("instanceId") String instanceId) throws EpsException,
+			ComotException, ClassNotFoundException, IOException, JAXBException {
+
+		coordinator.startServiceInstance(serviceId, instanceId);
+		return Response.ok().build();
+	}
+
+	@PUT
+	@Path("/services/{serviceId}/instances/{instanceId}/stop")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response stopServiceInstance(
+			@PathParam("serviceId") String serviceId,
+			@PathParam("instanceId") String instanceId) throws EpsException,
+			ComotException, ClassNotFoundException, IOException, JAXBException {
+
+		coordinator.stopServiceInstance(serviceId, instanceId);
+		return Response.ok().build();
+	}
+
+	@PUT
+	@Path("/services/{serviceId}/instances/{instanceId}/eps/{epsId}")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response assignSupportingEps(
+			@PathParam("serviceId") String serviceId,
+			@PathParam("instanceId") String instanceId,
+			@PathParam("epsId") String epsId) throws EpsException, ComotException, ClassNotFoundException,
+			IOException, JAXBException {
+
+		coordinator.assignSupportingOsu(serviceId, instanceId, epsId);
+		return Response.ok().build();
+	}
+
 	@DELETE
-	@Path("/{serviceId}/instances/{instanceId}/eps/{epsId}")
+	@Path("/services/{serviceId}/instances/{instanceId}/eps/{epsId}")
 	public Response removeSupportingEps(
 			@PathParam("serviceId") String serviceId,
 			@PathParam("instanceId") String instanceId,
-			@PathParam("epsId") String epsId) throws CoreServiceException, ComotException {
+			@PathParam("epsId") String epsId) throws EpsException, ComotException, ClassNotFoundException,
+			IOException, JAXBException {
 
-		// TODO
+		coordinator.removeAssignmentOfSupportingOsu(serviceId, instanceId, epsId);
 		return Response.ok().build();
 	}
 
+	@PUT
+	@Path("/services/{serviceId}/instances/{instanceId}/eps/{epsId}/events/{eventName}")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response triggerCustomEvent(
+			@PathParam("serviceId") String serviceId,
+			@PathParam("instanceId") String instanceId,
+			@PathParam("epsId") String epsId,
+			@PathParam("eventName") String eventName,
+			String optionalInput) throws EpsException, ComotException, ClassNotFoundException, IOException,
+			JAXBException {
+
+		// log.info(">>>{}<<<", optionalInput);
+
+		coordinator.triggerCustomEvent(serviceId, instanceId, epsId, eventName, optionalInput);
+		return Response.ok().build();
+	}
+
+	// update structure / requirements for monitoring / SYBL directives
+	@PUT
+	@Path("/services/{serviceId}")
+	public Response updateService(@PathParam("serviceId") String serviceId, Definitions def) {
+
+		// TODO
+		return null;
+	}
+
 	@GET
-	@Path("/{serviceId}/instances/{instanceId}/events")
+	@Path("/services/{serviceId}/instances/{instanceId}/events")
 	@Consumes(SseFeature.SERVER_SENT_EVENTS)
 	@Produces(SseFeature.SERVER_SENT_EVENTS)
 	public EventOutput getServerSentEvents(
@@ -163,87 +200,85 @@ public class ServicesResource {
 
 		final EventOutput eventOutput = new EventOutput();
 
-		log.info("input: {}", instanceId);
-
 		UiAdapter adapter = context.getBean(UiAdapter.class);
 		adapter.setUiAdapter(instanceId, eventOutput);
-		adapter.startAdapter(UUID.randomUUID().toString());
+		adapter.startAdapter("UI_" + UUID.randomUUID().toString());
 		adapter.checkClient();
 
 		return eventOutput;
 	}
 
-	// GUI
+	// READ
 
 	@GET
 	@Consumes(MediaType.WILDCARD)
-	@Path("/lifecycle")
-	public Response getLifeCycle() {
+	@Path("/services/lifecycle/{level}")
+	public Response getLifeCycle(@PathParam("level") Type level) {
 
+		LifeCycle lifeCycle = LifeCycleFactory.getLifeCycle(level);
 		Lc lc = new Lc();
 
-		for (State tempS : State.values()) {
+		for (State tempS : lifeCycle.getStates()) {
 			lc.getStates().add(new LcState(tempS));
 		}
-		for (State source : State.values()) {
-			for (Action tempA : UtilsLc.allPossibleActions(source)) {
-				lc.getTransitions().add(
-						new LcTransition(tempA.toString(), lc.stateNr(source), lc.stateNr(source.execute(tempA))));
-			}
+
+		for (LifeCycleTransition tr : lifeCycle.getTransitions()) {
+			lc.addTransition(tr.getState(), tr.getAction(), tr.getNextState());
 		}
 
 		return Response.ok(lc).build();
 	}
-	// READ
 
-	// @GET
-	// @Consumes(MediaType.WILDCARD)
-	// @Path("/")
-	// public Response getServices() {
-	//
-	// List<ServiceEntity> list = orchestrator.getServices();
-	// return Response.ok(list.toArray(new ServiceEntity[list.size()])).build();
-	// }
-	//
-	// @GET
-	// @Consumes(MediaType.WILDCARD)
-	// @Path("/{serviceId}")
-	// public Response getService(@PathParam("serviceId") String serviceId) throws CoreServiceException, ComotException
-	// {
-	//
-	// CloudService service = orchestrator.getStatus(serviceId);
-	// ElementState element = mapperOutput.extractOutput(service);
-	// return Response.ok(element).build();
-	// }
-	//
-	// // return status from salsa & monitoring (depends on what is turned on)
-	// @GET
-	// @Consumes(MediaType.WILDCARD)
-	// @Path("/{serviceId}/state")
-	// public Response getState(@PathParam("serviceId") String serviceId) throws CoreServiceException, ComotException {
-	//
-	// CloudService service = orchestrator.getStatus(serviceId);
-	// ElementState element = mapperOutput.extractOutput(service);
-	// return Response.ok(element).build();
-	// }
-	//
-	// @GET
-	// @Consumes(MediaType.WILDCARD)
-	// @Path("/{serviceId}/monitoring/snapshots/last")
-	// public Response getMonitoringData(@PathParam("serviceId") String serviceId) throws CoreServiceException,
-	// ComotException {
-	//
-	// ElementMonitoring element = orchestrator.getMonitoringData(serviceId);
-	// return Response.ok(element).build();
-	// }
-	//
-	// @GET
-	// @Consumes(MediaType.WILDCARD)
-	// @Path("/{serviceId}/mcr")
-	// public Response getMcr(@PathParam("serviceId") String serviceId) throws CoreServiceException {
-	//
-	// CompositionRulesConfiguration mcr = orchestrator.getMcr(serviceId);
-	// return Response.ok(mcr).build();
-	// }
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Path("/services/allInstances")
+	public Response getAllInstances() {
+
+		Map<String, List<String>> map = infoServ.getAllInstanceIds();
+		ServiceAndInstances[] array = new ServiceAndInstances[map.keySet().size()];
+		int i = 0;
+
+		for (String serviceId : map.keySet()) {
+			array[i] = new ServiceAndInstances(serviceId, map.get(serviceId));
+			i++;
+		}
+
+		log.info("" + array);
+
+		return Response.ok(array).build();
+	}
+
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Path("/services/eps")
+	public Response getElasticPlatformServices() {
+
+		List<OfferedServiceUnit> list = new ArrayList<>(infoServ.getOsus().values());
+
+		return Response.ok(list.toArray(new OfferedServiceUnit[list.size()])).build();
+	}
+
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Path("/services")
+	public Response getServices() throws ClassNotFoundException, IOException {
+		List<CloudService> list = new ArrayList<>(infoServ.getServices().values());
+		return Response.ok(list.toArray(new CloudService[list.size()])).build();
+	}
+
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Path("/services/{serviceId}/instances/{instanceId}")
+	public Response getServicesInstance(
+			@PathParam("serviceId") String serviceId,
+			@PathParam("instanceId") String instanceId) throws ClassNotFoundException, IOException {
+
+		ServiceInstanceUi instanceUi = new ServiceInstanceUi(
+				instanceId,
+				infoServ.getServiceInstance(serviceId, instanceId),
+				lcManager.getCurrentState(instanceId));
+
+		return Response.ok(instanceUi).build();
+	}
 
 }

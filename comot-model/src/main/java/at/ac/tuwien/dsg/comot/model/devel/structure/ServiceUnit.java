@@ -81,15 +81,6 @@ public class ServiceUnit extends ServiceEntity {
 		instances.add(instance);
 	}
 
-	public UnitInstance getInstance(Integer instanceId) {
-		for (UnitInstance one : instances) {
-			if (one.getInstanceId() == instanceId) {
-				return one;
-			}
-		}
-		return null;
-	}
-
 	public void setId(String id) {
 		this.id = id;
 	}

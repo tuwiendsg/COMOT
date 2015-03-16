@@ -13,8 +13,13 @@
 }(function($, notify, exports) {
 
 	var base = "rest/";
-	var services = base + "services/";
-	var revisions = "/revisions";
+	var services = base + "manager/services/";
+	var recordings = base + "recordings/";
+	var instances = "/instances/";
+
+	exports.eventPath = function(serviceId, instanceId) {
+		return services + serviceId + instances + instanceId + "/events";
+	}
 
 	function getRequestCore(onSuccess, onError) {
 
@@ -88,189 +93,146 @@
 
 	// API
 
-	exports.createAndDeploy = function(tosca, onSuccess, onError) {
+	exports.createService = function(tosca, onSuccess, onError) {
 
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "POST";
 		request.url = services;
 		request.data = tosca;
-		// request.dataType = "json"
 		request.contentType = "application/xml";
 		return $.ajax(request);
 	}
 
-	exports.deploy = function(serviceId, onSuccess, onError) {
+	exports.createServiceInstance = function(serviceId, onSuccess, onError) {
 
 		var request = getRequestCore(onSuccess, onError);
-		request.type = "PUT";
-		request.url = services + serviceId + "/deployment";
+		request.type = "POST";
+		request.url = services + serviceId + instances;
 		return $.ajax(request);
 	}
 
-	exports.undeploy = function(serviceId, onSuccess, onError) {
+	exports.startServiceInstance = function(serviceId, instanceId, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "PUT";
+		request.url = services + serviceId + instances + instanceId + "/start";
+		return $.ajax(request);
+	}
+
+	exports.stopServiceInstance = function(serviceId, instanceId, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "PUT";
+		request.url = services + serviceId + instances + instanceId + "/stop";
+		return $.ajax(request);
+	}
+
+	exports.assignSupportingEps = function(serviceId, instanceId, epsId, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "PUT";
+		request.url = services + serviceId + instances + instanceId + "/eps/" + epsId;
+		return $.ajax(request);
+	}
+
+	exports.removeSupportingEps = function(serviceId, instanceId, epsId, onSuccess, onError) {
 
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "DELETE";
-		request.url = services + serviceId + "/deployment";
+		request.url = services + serviceId + instances + instanceId + "/eps/" + epsId;
 		return $.ajax(request);
 	}
 
-	exports.startMonitoring = function(serviceId, onSuccess, onError) {
+	exports.triggerCustomEvent = function(serviceId, instanceId, epsId, eventName, onSuccess, onError) {
 
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "PUT";
-		request.url = services + serviceId + "/monitoring";
+		request.url = services + serviceId + instances + instanceId + "/eps/" + epsId + "/events/" + eventName;
 		return $.ajax(request);
 	}
 
-	exports.startControl = function(serviceId, onSuccess, onError) {
-
-		console.log(mcr);
-
-		return $.ajax({
-			type : "PUT",
-			url : services + serviceId + "/control",
-			success : onSuccess,
-			error : onError
-		});
-	}
-
-	exports.stopMonitoring = function(serviceId, onSuccess, onError) {
-
-		var request = getRequestCore(onSuccess, onError);
-		request.type = "DELETE";
-		request.url = services + serviceId + "/monitoring";
-		return $.ajax(request);
-	}
-
-	exports.stopControl = function(serviceId, onSuccess, onError) {
-
-		console.log(mcr);
-
-		$.ajax({
-			type : "DELETE",
-			url : services + serviceId + "/control",
-			success : onSuccess,
-			error : onError
-		});
-	}
-
-	exports.createMcr = function(serviceId, mcr, onSuccess, onError) {
-
-		var request = getRequestCore(onSuccess, onError);
-		request.type = "PUT";
-		request.url = services + serviceId + "/mcr";
-		request.data = mcr;
-		request.contentType = "application/xml";
-		return $.ajax(request);
-	}
-
-	exports.getMcr = function(serviceId, onSuccess, onError) {
-		$.ajax({
-			type : "GET",
-			url : services + serviceId + "/mcr",
-			dataType : "text",
-			success : onSuccess,
-			error : onError
-		});
-	}
+	// GET
 
 	exports.getServices = function(onSuccess, onError) {
-		$.ajax({
-			type : "GET",
-			url : services,
-			dataType : "json",
-			success : onSuccess,
-			error : onError
-		});
-	}
-
-	exports.checkStatus = function(serviceId, onSuccess, onError) {
-
-		$.ajax({
-			type : "GET",
-			url : services + serviceId + "/state",
-			dataType : "json",
-			success : onSuccess,
-			error : onError
-		});
-	}
-
-	exports.monitoringData = function(serviceId, onSuccess, onError) {
-
-		$.ajax({
-			type : "GET",
-			url : services + serviceId + "/monitoring/snapshots/last",
-			dataType : "json",
-			success : onSuccess,
-			error : onError
-		});
-	}
-
-	// //////////////////////////////// LIFECYCLE
-	exports.eventPath = function(serviceId, instanceId) {
-		return services + serviceId + "/instances/" + instanceId+"/events";
-	}
-
-	exports.lifecycle = function(onSuccess, onError) {
 
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "GET";
 		request.dataType = "json"
-		request.url = services + "lifecycle";
+		request.url = services;
 		return $.ajax(request);
 	}
 
-	// //////////////////////////////// REVISIONS
-
-	exports.startRecording = function(serviceId, onSuccess, onError) {
-
-		var request = getRequestCore(onSuccess, onError);
-		request.type = "PUT";
-		request.url = services + serviceId + revisions + "/recording";
-		return $.ajax(request);
-	}
-
-	exports.stopRecording = function(serviceId, onSuccess, onError) {
-
-		var request = getRequestCore(onSuccess, onError);
-		request.type = "DELETE";
-		request.url = services + serviceId + revisions + "/recording";
-		return $.ajax(request);
-	}
-
-	exports.stopRecordingAndDeleteData = function(serviceId, onSuccess, onError) {
-
-		var request = getRequestCore(onSuccess, onError);
-		request.type = "DELETE";
-		request.url = services + serviceId + revisions;
-		return $.ajax(request);
-	}
-
-	exports.getRevision = function(serviceId, objectId, timestamp, onSuccess, onError) {
+	exports.getServiceInstance = function(serviceId, instanceId, onSuccess, onError) {
 
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "GET";
 		request.dataType = "json"
-		request.url = services + serviceId + revisions + "/" + objectId + "/" + timestamp;
+		request.url = services + serviceId + instances + instanceId;
 		return $.ajax(request);
 	}
 
-	exports.getChanges = function(serviceId, objectId, onSuccess, onError) {
+	exports.lifecycle = function(level, onSuccess, onError) {
 
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "GET";
 		request.dataType = "json"
-		request.url = services + serviceId + revisions + "/changes/" + objectId;
+		request.url = services + "lifecycle/" + level;
 		return $.ajax(request);
 	}
 
-	exports.getObjects = function(serviceId, onSuccess, onError) {
+	exports.getEps = function(onSuccess, onError) {
 
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "GET";
 		request.dataType = "json"
-		request.url = services + serviceId + revisions + "/objects";
+		request.url = services + "eps";
+		return $.ajax(request);
+	}
+
+	exports.getAllInstances = function(onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "GET";
+		request.dataType = "json"
+		request.url = services + "allInstances";
+		return $.ajax(request);
+	}
+
+	// //////////////////////////////// RECORDER
+
+	exports.getRecording = function(csInstanceId, objectId, timestamp, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "GET";
+		request.dataType = "json"
+		request.url = recordings + csInstanceId + "/objects/" + objectId + "/" + timestamp;
+		return $.ajax(request);
+	}
+
+	exports.getEventsThanModifiedObject = function(csInstanceId, objectId, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "GET";
+		request.dataType = "json"
+		request.url = recordings + csInstanceId + "/objects/" + objectId + "/events";
+		return $.ajax(request);
+	}
+
+	exports.getAllEvents = function(csInstanceId, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "GET";
+		request.dataType = "json"
+		request.url = recordings + csInstanceId + "/events";
+		return $.ajax(request);
+	}
+
+	exports.getObjects = function(csInstanceId, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "GET";
+		request.dataType = "json"
+		request.url = recordings + csInstanceId + "/objects";
 		return $.ajax(request);
 	}
 }));
