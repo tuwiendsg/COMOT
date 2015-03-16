@@ -102,7 +102,7 @@ public class ControlAdapter extends AdapterCore {
 
 		State stateService = msg.getTransitions().get(serviceId).getCurrentState();
 
-		if (EpsAction.EPS_ASSIGNED.toString().equals(event)) {
+		if (EpsAction.EPS_ASSIGNMENT_REQUESTED.toString().equals(event)) {
 			if (stateService == State.RUNNING) {
 				control(instanceId);
 			}

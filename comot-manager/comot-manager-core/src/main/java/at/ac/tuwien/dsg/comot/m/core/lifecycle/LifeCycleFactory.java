@@ -7,11 +7,36 @@ import at.ac.tuwien.dsg.comot.model.type.State;
 public class LifeCycleFactory {
 
 	protected static LifeCycle unitInstanceLc;
+	protected static LifeCycle serviceLc;
 	protected static LifeCycle othersLc;
 
 	static {
 
-		// UNIT INSTANCE
+		// SERVICE
+		serviceLc = new LifeCycle();
+
+		serviceLc.addTransition(State.INIT, Action.CREATED, State.PASSIVE);
+
+		serviceLc.addTransition(State.PASSIVE, Action.STARTED, State.STARTING);
+		serviceLc.addTransition(State.PASSIVE, Action.REMOVED, State.FINAL);
+
+		serviceLc.addTransition(State.STARTING, Action.DEPLOYMENT_STARTED, State.DEPLOYING);
+
+		serviceLc.addTransition(State.DEPLOYING, Action.DEPLOYED, State.RUNNING);
+
+		serviceLc.addTransition(State.RUNNING, Action.ELASTIC_CHANGE_STARTED, State.ELASTIC_CHANGE);
+		serviceLc.addTransition(State.RUNNING, Action.UPDATE_STARTED, State.UPDATE);
+		serviceLc.addTransition(State.RUNNING, Action.STOPPED, State.STOPPING);
+
+		serviceLc.addTransition(State.ELASTIC_CHANGE, Action.UPDATE_FINISHED, State.RUNNING);
+
+		serviceLc.addTransition(State.UPDATE, Action.UPDATE_FINISHED, State.RUNNING);
+
+		serviceLc.addTransition(State.STOPPING, Action.UNDEPLOYMENT_STARTED, State.UNDEPLOYING);
+
+		serviceLc.addTransition(State.UNDEPLOYING, Action.UNDEPLOYED, State.PASSIVE);
+
+		// UNIT , TOPOLOGY
 		othersLc = new LifeCycle();
 
 		othersLc.addTransition(State.INIT, Action.CREATED, State.PASSIVE);
@@ -37,7 +62,7 @@ public class LifeCycleFactory {
 
 		othersLc.addTransition(State.UNDEPLOYING, Action.UNDEPLOYED, State.PASSIVE);
 
-		// OTHERS
+		// UNIT INSTANCE
 		unitInstanceLc = new LifeCycle();
 
 		unitInstanceLc.addTransition(State.INIT, Action.DEPLOYMENT_STARTED, State.DEPLOYING);
@@ -68,7 +93,7 @@ public class LifeCycleFactory {
 		case INSTANCE:
 			return unitInstanceLc;
 		case SERVICE:
-			return othersLc;
+			return serviceLc;
 		case TOPOLOGY:
 			return othersLc;
 		case UNIT:

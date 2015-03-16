@@ -104,6 +104,8 @@ public class ManagerOfServiceInstance {
 			try {
 				AbstractEvent event = UtilsLc.abstractEvent(message);
 
+				log.info(logId() + " processing: {}", event);
+
 				if (event instanceof LifeCycleEvent) {
 					executeAction((LifeCycleEvent) event);
 				} else {
@@ -296,7 +298,7 @@ public class ManagerOfServiceInstance {
 
 	protected void send(String exchange, String bindingKey, StateMessage message) throws AmqpException, JAXBException {
 
-		log.info("SEND exchange={} key={}", exchange, bindingKey);
+		log.info(logId() + "SEND exchange={} key={}", exchange, bindingKey);
 
 		amqp.convertAndSend(exchange, bindingKey, Utils.asJsonString(message));
 	}
@@ -306,14 +308,19 @@ public class ManagerOfServiceInstance {
 	}
 
 	public State getCurrentState(String groupId) {
-		log.info("getCurrentState(instanceId={}, groupId={}): {}", csInstanceId, groupId, serviceGroup);
+
+		if (serviceGroupReadOnly == null || serviceGroupReadOnly.getMemberNested(groupId) == null) {
+			return null;
+		}
 		final State temp = serviceGroupReadOnly.getMemberNested(groupId).getCurrentState();
+
+		log.info("getCurrentState(instanceId={}, groupId={}): {}", csInstanceId, groupId, temp);
+
 		return temp;
 	}
 
 	public State getCurrentStateService() {
-		final State temp = serviceGroupReadOnly.getMemberNested(serviceId).getCurrentState();
-		return temp;
+		return getCurrentState(serviceId);
 	}
 
 	public Map<String, Transition> getCurrentState() {
@@ -341,6 +348,10 @@ public class ManagerOfServiceInstance {
 			admin.deleteQueue(queueName());
 		}
 
+	}
+
+	public String logId() {
+		return "[ MANAGER_" + csInstanceId + "] ";
 	}
 
 	/**

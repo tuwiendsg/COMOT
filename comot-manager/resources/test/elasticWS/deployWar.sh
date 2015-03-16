@@ -2,7 +2,7 @@
 
 echo "war deploy"
 
-wget http://128.130.172.215/salsa/upload/files/juraj/elasticWS/artifactWar-1.0.tar.gz
+wget -q http://128.130.172.215/salsa/upload/files/juraj/elasticWS/artifactWar-1.0.tar.gz
 tar -xzf ./artifactWar-1.0.tar.gz
 cd ./artifactWar
 

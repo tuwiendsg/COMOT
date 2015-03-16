@@ -74,8 +74,7 @@ public class UiAdapter extends SingleQueueAdapter {
 				if (msg.isLifeCycleDefined()) {
 					LifeCycleEvent eventLc = (LifeCycleEvent) msg.getEvent();
 
-					Set<OfferedServiceUnit> osus = infoService.getSupportingServices(eventLc.getServiceId(),
-							eventLc.getCsInstanceId());
+					Set<OfferedServiceUnit> osus = infoService.getSupportingServices(eventLc.getCsInstanceId());
 					eventLc.getService().getInstancesList().get(0).setSupport(osus);
 				}
 

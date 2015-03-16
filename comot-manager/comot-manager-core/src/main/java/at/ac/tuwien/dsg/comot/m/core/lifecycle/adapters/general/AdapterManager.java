@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 import at.ac.tuwien.dsg.comot.m.common.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.EpsAction;
 import at.ac.tuwien.dsg.comot.m.common.Type;
+import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.core.UtilsLc;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
 
@@ -39,6 +40,8 @@ public class AdapterManager {
 	protected AmqpAdmin admin;
 	@Autowired
 	protected ConnectionFactory connectionFactory;
+	@Autowired
+	protected InformationServiceMock infoService;
 
 	protected SimpleMessageListenerContainer container;
 	protected Map<String, SimpleMessageListenerContainer> containers = new HashMap<>();
@@ -58,7 +61,7 @@ public class AdapterManager {
 
 		admin.declareBinding(new Binding(queueNameAssignment(), DestinationType.QUEUE,
 				AppContextCore.EXCHANGE_CUSTOM_EVENT,
-				"*." + adapter.getId() + "." + EpsAction.EPS_ASSIGNED + "." + Type.SERVICE, null));
+				"*." + adapter.getId() + "." + EpsAction.EPS_ASSIGNMENT_REQUESTED + "." + Type.SERVICE, null));
 
 		container = new SimpleMessageListenerContainer();
 		container.setConnectionFactory(connectionFactory);
@@ -93,12 +96,34 @@ public class AdapterManager {
 			try {
 				CustomEvent event = (CustomEvent) UtilsLc.stateMessage(message).getEvent();
 				String instanceId = event.getCsInstanceId();
+				String serviceId = event.getServiceId();
+				String groupId = event.getGroupId();
 
 				startServiceInstanceListener(instanceId);
+
+				infoService.assignSupportingService(serviceId, instanceId, adapter.getId());
+
+				adapter.sendCustom(Type.SERVICE,
+						new CustomEvent(serviceId, instanceId, groupId, EpsAction.EPS_ASSIGNED.toString(),
+								adapter.getId(), adapter.getId(), null));
 
 			} catch (UnsupportedEncodingException | JAXBException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	public void removeInstanceListener(String instanceId) {
+
+		infoService.removeAssignmentOfSupportingOsu(instanceId, adapter.getId());
+
+		SimpleMessageListenerContainer container = containers.get(instanceId);
+		if (container != null) {
+			container.stop();
+		}
+
+		if (admin != null) {
+			admin.deleteQueue(queueNameInstance(instanceId));
 		}
 	}
 
@@ -121,14 +146,12 @@ public class AdapterManager {
 			container.stop();
 		}
 
-		for (SimpleMessageListenerContainer container : containers.values()) {
-			if (container != null) {
-				container.stop();
-			}
-		}
-
 		if (admin != null) {
 			admin.deleteQueue(queueNameAssignment());
+		}
+
+		for (String instanceId : containers.keySet()) {
+			removeInstanceListener(instanceId);
 		}
 
 	}

@@ -68,7 +68,7 @@ public class SalsaMappingTest extends AbstractTest {
 	public void testToscaFromFile() throws JAXBException, IOException {
 
 		// Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/daas_m2m_fromSalsa.xml");
-		Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/tomcat/tomcat_from_salsa.xml");
+		Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/tosca/tomcat_from_salsa.xml");
 		log.info("tosca1 {}", UtilsCs.asString(tosca1));
 
 		CloudService service1 = mapperTosca.createModel(tosca1);

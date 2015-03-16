@@ -2,7 +2,7 @@
 
 echo "tomcat deploy"
 
-wget http://128.130.172.215/salsa/upload/files/juraj/elasticWS/artifactTomcat-1.0.tar.gz
+wget -q http://128.130.172.215/salsa/upload/files/juraj/elasticWS/artifactTomcat-1.0.tar.gz
 tar -xzf ./artifactTomcat-1.0.tar.gz
 cd ./artifactTomcat
 

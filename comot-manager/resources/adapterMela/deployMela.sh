@@ -2,7 +2,7 @@
 
 echo "mela deploy"
 
-wget http://128.130.172.215/salsa/upload/files/juraj/dynamic_eps/mela.tar.gz
+wget -q http://128.130.172.215/salsa/upload/files/juraj/dynamic_eps/mela.tar.gz
 tar -xzf ./mela.tar.gz
 cd ./mela
 

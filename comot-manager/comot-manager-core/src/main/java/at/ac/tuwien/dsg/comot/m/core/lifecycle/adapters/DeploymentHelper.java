@@ -81,7 +81,7 @@ public class DeploymentHelper {
 					serviceReturned.setId(serviceId);
 					serviceReturned.setName(serviceId);
 
-					log.info("currentStates: {}", currentStates);
+					log.trace("currentStates: {}", currentStates);
 
 					if (currentStates.isEmpty()) {
 						notAllRunning = true;

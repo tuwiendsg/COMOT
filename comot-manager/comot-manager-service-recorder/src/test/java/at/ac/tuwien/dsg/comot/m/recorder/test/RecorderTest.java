@@ -30,7 +30,7 @@ public class RecorderTest extends AbstractTest {
 	public void testRecordingManager() throws IOException, JAXBException, EpsException, ComotException,
 			IllegalArgumentException, IllegalAccessException {
 
-		Definitions def = UtilsCs.loadTosca(UtilsTest.TEST_FILE_BASE + "tomcat/tomcat.xml");
+		Definitions def = UtilsCs.loadTosca(UtilsTest.TEST_FILE_BASE + "tosca/tomcat.xml");
 		// CloudService service = mapperTosca.createModel(def);
 
 		// // deploy
@@ -54,7 +54,7 @@ public class RecorderTest extends AbstractTest {
 	public void testAtTomcat() throws JAXBException, IOException, IllegalArgumentException, IllegalAccessException,
 			InstantiationException, ClassNotFoundException, RecorderException {
 
-		Definitions def = UtilsCs.loadTosca(UtilsTest.TEST_FILE_BASE + "tomcat/tomcat.xml");
+		Definitions def = UtilsCs.loadTosca(UtilsTest.TEST_FILE_BASE + "tosca/tomcat.xml");
 		CloudService service = mapperTosca.createModel(def);
 
 		log.info("{}", Utils.asXmlString(service));

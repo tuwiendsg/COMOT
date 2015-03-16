@@ -32,7 +32,7 @@ public class UpdaterTest extends AbstractTest {
 	public void dostuff() throws EpsException, ComotException, JAXBException, IOException,
 			ClassNotFoundException {
 
-		Definitions def = UtilsCs.loadTosca(UtilsTest.TEST_FILE_BASE + "daas_m2m_fromSalsa.xml");
+		Definitions def = UtilsCs.loadTosca(UtilsTest.TEST_FILE_BASE + "tosca/daas_m2m_fromSalsa.xml");
 
 		CloudService serviceOld = mapperTosca.createModel(def);
 		CloudService serviceNew = (CloudService) Utils.deepCopy(serviceOld);

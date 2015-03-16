@@ -21,6 +21,7 @@ import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.type.State;
 
 public class MonitoringTest extends AbstractTest {
 
@@ -40,7 +41,7 @@ public class MonitoringTest extends AbstractTest {
 	@Before
 	public void setUp() throws JAXBException, IOException, ClassNotFoundException {
 		// Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/tomcat/tomcat_from_salsa.xml");
-		Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/xml/ExampleExecutableOnVM.xml");
+		Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/tosca/ExampleExecutableOnVM.xml");
 
 		service = mapperTosca.createModel(tosca1);
 		serviceId = coordinator.createCloudService(service);
@@ -59,71 +60,75 @@ public class MonitoringTest extends AbstractTest {
 		coordinator.startServiceInstance(serviceId, instanceId);
 
 		while (true) {
-			switch (lcManager.getCurrentState(instanceId, serviceId)) {
+			State state = lcManager.getCurrentState(instanceId, serviceId);
 
-			case INIT:
-				break;
-			case PASSIVE:
-				if (isFresh) {
+			if (state != null) {
+				switch (state) {
 
-				} else {
-					UtilsTest.sleepSeconds(3);
-					assertTrue(infoService.isOsuAssignedToInstance(serviceId, instanceId, monitoringId));
+				case INIT:
+					break;
+				case PASSIVE:
+					if (isFresh) {
+
+					} else {
+						UtilsTest.sleepSeconds(3);
+						assertTrue(infoService.isOsuAssignedToInstance(instanceId, monitoringId));
+						assertFalse(isMonitored(instanceId));
+						return;
+					}
+					break;
+				case STARTING:
+				case DEPLOYING:
+					assertTrue(infoService.isOsuAssignedToInstance(instanceId, monitoringId));
 					assertFalse(isMonitored(instanceId));
-					return;
+					break;
+
+				case RUNNING:
+
+					UtilsTest.sleepSeconds(3);
+					assertTrue(infoService.isOsuAssignedToInstance(instanceId, monitoringId));
+					assertTrue(isMonitored(instanceId));
+
+					// manually stop
+					coordinator.triggerCustomEvent(
+							serviceId, instanceId, monitoringId, ComotAction.MELA_STOP.toString(), null);
+
+					UtilsTest.sleepSeconds(3);
+					assertTrue(infoService.isOsuAssignedToInstance(instanceId, monitoringId));
+					assertFalse(isMonitored(instanceId));
+
+					// manually start
+					coordinator.triggerCustomEvent(
+							serviceId, instanceId, monitoringId, ComotAction.MELA_START.toString(), null);
+
+					UtilsTest.sleepSeconds(3);
+					assertTrue(infoService.isOsuAssignedToInstance(instanceId, monitoringId));
+					assertTrue(isMonitored(instanceId));
+
+					coordinator.stopServiceInstance(serviceId, instanceId);
+					isFresh = false;
+					break;
+
+				case STOPPING:
+				case UNDEPLOYING:
+					UtilsTest.sleepSeconds(3);
+					assertTrue(infoService.isOsuAssignedToInstance(instanceId, monitoringId));
+					assertFalse(isMonitored(instanceId));
+					break;
+
+				case FINAL:
+					// UtilsTest.sleepSeconds(3);
+					// assertFalse(infoService.isOsuAssignedToInstance(serviceId, instanceId, monitoringId));
+					// assertFalse(isMonitored(instanceId));
+					break;
+
+				case ERROR:
+					fail("Should not reach ERROR state");
+					break;
+
+				default:
+					break;
 				}
-				break;
-			case STARTING:
-			case DEPLOYING:
-				assertTrue(infoService.isOsuAssignedToInstance(serviceId, instanceId, monitoringId));
-				assertFalse(isMonitored(instanceId));
-				break;
-
-			case RUNNING:
-
-				UtilsTest.sleepSeconds(3);
-				assertTrue(infoService.isOsuAssignedToInstance(serviceId, instanceId, monitoringId));
-				assertTrue(isMonitored(instanceId));
-
-				// manually stop
-				coordinator.triggerCustomEvent(
-						serviceId, instanceId, monitoringId, ComotAction.MELA_STOP.toString(), null);
-
-				UtilsTest.sleepSeconds(3);
-				assertTrue(infoService.isOsuAssignedToInstance(serviceId, instanceId, monitoringId));
-				assertFalse(isMonitored(instanceId));
-
-				// manually start
-				coordinator.triggerCustomEvent(
-						serviceId, instanceId, monitoringId, ComotAction.MELA_START.toString(), null);
-
-				UtilsTest.sleepSeconds(3);
-				assertTrue(infoService.isOsuAssignedToInstance(serviceId, instanceId, monitoringId));
-				assertTrue(isMonitored(instanceId));
-
-				coordinator.stopServiceInstance(serviceId, instanceId);
-				isFresh = false;
-				break;
-
-			case STOPPING:
-			case UNDEPLOYING:
-				UtilsTest.sleepSeconds(3);
-				assertTrue(infoService.isOsuAssignedToInstance(serviceId, instanceId, monitoringId));
-				assertFalse(isMonitored(instanceId));
-				break;
-
-			case FINAL:
-				// UtilsTest.sleepSeconds(3);
-				// assertFalse(infoService.isOsuAssignedToInstance(serviceId, instanceId, monitoringId));
-				// assertFalse(isMonitored(instanceId));
-				break;
-
-			case ERROR:
-				fail("Should not reach ERROR state");
-				break;
-
-			default:
-				break;
 			}
 			UtilsTest.sleepSeconds(5);
 		}

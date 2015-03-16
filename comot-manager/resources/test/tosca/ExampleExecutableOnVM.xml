@@ -36,7 +36,7 @@
 
 	<tosca:ArtifactTemplate id="deployScript" type="salsa:sh">
 		<tosca:ArtifactReferences>
-			<tosca:ArtifactReference reference="http://128.130.172.215/salsa/upload/files/comot/run.sh" />
+			<tosca:ArtifactReference reference="http://128.130.172.215/salsa/upload/files/juraj/elasticWS/dummy.sh" />
 		</tosca:ArtifactReferences>
 	</tosca:ArtifactTemplate>
 	

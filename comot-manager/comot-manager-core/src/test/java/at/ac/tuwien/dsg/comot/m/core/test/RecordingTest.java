@@ -30,7 +30,7 @@ public class RecordingTest extends AbstractTest {
 
 	@Before
 	public void setUp() throws JAXBException, IOException, ClassNotFoundException {
-		Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/tomcat/tomcat_from_salsa.xml");
+		Definitions tosca1 = UtilsCs.loadTosca("./../resources/tosca/tomcat/tomcat_from_salsa.xml");
 		service = mapperTosca.createModel(tosca1);
 		serviceId = coordinator.createCloudService(service);
 

@@ -96,17 +96,16 @@ public class Coordinator {
 	public void assignSupportingOsu(String serviceId, String instanceId, String osuInstanceId)
 			throws ClassNotFoundException, IOException, JAXBException {
 
-		infoService.assignSupportingService(serviceId, instanceId, osuInstanceId);
+		// infoService.assignSupportingService(serviceId, instanceId, osuInstanceId);
 
-		sendCustom(Type.SERVICE, new CustomEvent(serviceId, instanceId, serviceId, EpsAction.EPS_ASSIGNED.toString(),
-				USER_ID, osuInstanceId, null));
+		sendCustom(Type.SERVICE,
+				new CustomEvent(serviceId, instanceId, serviceId, EpsAction.EPS_ASSIGNMENT_REQUESTED.toString(),
+						USER_ID, osuInstanceId, null));
 
 	}
 
 	public void removeAssignmentOfSupportingOsu(String serviceId, String instanceId, String osuInstanceId)
 			throws ClassNotFoundException, IOException, JAXBException {
-
-		infoService.removeAssignmentOfSupportingOsu(serviceId, instanceId, osuInstanceId);
 
 		sendCustom(Type.SERVICE,
 				new CustomEvent(serviceId, instanceId, serviceId, EpsAction.EPS_ASSIGNMENT_REMOVED.toString(), USER_ID,

@@ -42,7 +42,7 @@ public class DeploymentTest extends AbstractTest {
 	@Before
 	public void setUp() throws JAXBException, IOException, ClassNotFoundException {
 		// Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/tomcat/tomcat_from_salsa.xml");
-		Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/xml/ExampleExecutableOnVM.xml");
+		Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/tosca/ExampleExecutableOnVM.xml");
 
 		service = mapperTosca.createModel(tosca1);
 		serviceId = coordinator.createCloudService(service);
@@ -69,7 +69,7 @@ public class DeploymentTest extends AbstractTest {
 
 	}
 
-	@Test(timeout = 240000)
+	@Test(timeout = 300000)
 	public void testStartAssignStop() throws IOException, JAXBException, ClassNotFoundException,
 			EpsException, ComotException {
 
@@ -106,7 +106,7 @@ public class DeploymentTest extends AbstractTest {
 		}
 	}
 
-	@Test(timeout = 240000)
+	@Test(timeout = 300000)
 	public void testAssignStartUnassign() throws IOException, JAXBException, ClassNotFoundException,
 			EpsException, ComotException {
 

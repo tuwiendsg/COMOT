@@ -140,7 +140,7 @@ public class InformationServiceMock {
 
 		try {
 			CloudService service1 = mapperTosca.createModel(
-					UtilsCs.loadTosca("./../resources/test/tomcat/tomcat_from_salsa.xml"));
+					UtilsCs.loadTosca("./../resources/test/elasticWS/elasticWS_tosca_enhanced.xml"));
 
 			String serviceId = this.createService(service1);
 
@@ -151,7 +151,7 @@ public class InformationServiceMock {
 		try {
 			this.createService(
 					mapperTosca.createModel(
-							UtilsCs.loadTosca("./../resources/test/daas_m2m_fromSalsa.xml")));
+							UtilsCs.loadTosca("./../resources/test/tosca/daas_m2m_fromSalsa.xml")));
 		} catch (JAXBException | IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -159,7 +159,7 @@ public class InformationServiceMock {
 		try {
 			this.createService(
 					mapperTosca.createModel(
-							UtilsCs.loadTosca("./../resources/test/xml/ExampleExecutableOnVM.xml")));
+							UtilsCs.loadTosca("./../resources/test/tosca/ExampleExecutableOnVM.xml")));
 		} catch (JAXBException | IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -202,7 +202,7 @@ public class InformationServiceMock {
 
 		CloudService service = services.get(serviceId);
 
-		for (UnitInstance uInst : _getServiceInstance(serviceId, instanceId).getUnitInstances()) {
+		for (UnitInstance uInst : _getServiceInstance(instanceId).getUnitInstances()) {
 			removeUnitInstance(serviceId, instanceId, uInst.getId());
 		}
 
@@ -230,7 +230,7 @@ public class InformationServiceMock {
 		Navigator nav = new Navigator(services.get(serviceId));
 		nav.getUnit(unitId).addUnitInstance(uInst);
 
-		ServiceInstance instance = _getServiceInstance(serviceId, csInstanceId);
+		ServiceInstance instance = _getServiceInstance(csInstanceId);
 		instance.getUnitInstances().add(uInst);
 	}
 
@@ -241,7 +241,7 @@ public class InformationServiceMock {
 
 		nav.getUnitFor(uInstId).getInstances().remove(uInst);
 
-		ServiceInstance instance = _getServiceInstance(serviceId, csInstanceId);
+		ServiceInstance instance = _getServiceInstance(csInstanceId);
 		instance.getUnitInstances().remove(uInst);
 	}
 
@@ -251,11 +251,11 @@ public class InformationServiceMock {
 
 	public void assignSupportingService(String serviceId, String instanceId, String osuInstanceId) {
 
-		if (isOsuAssignedToInstance(serviceId, instanceId, osuInstanceId)) {
+		if (isOsuAssignedToInstance(instanceId, osuInstanceId)) {
 			return;
 		}
 
-		ServiceInstance instance = _getServiceInstance(serviceId, instanceId);
+		ServiceInstance instance = _getServiceInstance(instanceId);
 		instance.getSupport().add(osus.get(osuInstanceId));
 
 	}
@@ -276,11 +276,11 @@ public class InformationServiceMock {
 		return instances;
 	}
 
-	public void removeAssignmentOfSupportingOsu(String serviceId, String instanceId, String osuInstanceId) {
+	public void removeAssignmentOfSupportingOsu(String instanceId, String osuInstanceId) {
 
-		if (isOsuAssignedToInstance(serviceId, instanceId, osuInstanceId)) {
+		if (isOsuAssignedToInstance(instanceId, osuInstanceId)) {
 
-			ServiceInstance instance = _getServiceInstance(serviceId, instanceId);
+			ServiceInstance instance = _getServiceInstance(instanceId);
 
 			for (OfferedServiceUnit osu : instance.getSupport()) {
 				if (osu.getId().equals(osuInstanceId)) {
@@ -297,10 +297,10 @@ public class InformationServiceMock {
 	// services.get(service.getId())
 	// }
 
-	public Set<OfferedServiceUnit> getSupportingServices(String serviceId, String instanceId)
+	public Set<OfferedServiceUnit> getSupportingServices(String instanceId)
 			throws ClassNotFoundException, IOException {
 
-		ServiceInstance instance = _getServiceInstance(serviceId, instanceId);
+		ServiceInstance instance = _getServiceInstance(instanceId);
 		Set<OfferedServiceUnit> result;
 		if (instance != null) {
 			result = (Set<OfferedServiceUnit>) Utils.deepCopy(instance.getSupport());
@@ -311,17 +311,17 @@ public class InformationServiceMock {
 
 	}
 
-	public boolean isOsuAssignedToInstance(String serviceId, String instanceId, String osuId) {
+	public boolean isOsuAssignedToInstance(String instanceId, String osuId) {
 
-		for (OfferedServiceUnit osu : _getServiceInstance(serviceId, instanceId).getSupport()) {
+		for (OfferedServiceUnit osu : _getServiceInstance(instanceId).getSupport()) {
 			if (osu.getId().equals(osuId)) {
-				log.info("isOsuAssignedToInstance(serviceId={}, instanceId={}, osuId={}): true", serviceId, instanceId,
+				log.info("isOsuAssignedToInstance( instanceId={}, osuId={}): true", instanceId,
 						osuId);
 				return true;
 			}
 		}
 
-		log.info("isOsuAssignedToInstance(serviceId={}, instanceId={}, osuId={}): false", serviceId, instanceId, osuId);
+		log.info("isOsuAssignedToInstance( instanceId={}, osuId={}): false", instanceId, osuId);
 		return false;
 	}
 
@@ -329,10 +329,12 @@ public class InformationServiceMock {
 		return services.get(serviceId);
 	}
 
-	private ServiceInstance _getServiceInstance(String serviceId, String instanceId) {
-		for (ServiceInstance instance : services.get(serviceId).getInstances()) {
-			if (instance.getId().equals(instanceId)) {
-				return instance;
+	private ServiceInstance _getServiceInstance(String instanceId) {
+		for (CloudService service : services.values()) {
+			for (ServiceInstance instance : service.getInstances()) {
+				if (instance.getId().equals(instanceId)) {
+					return instance;
+				}
 			}
 		}
 		return null;

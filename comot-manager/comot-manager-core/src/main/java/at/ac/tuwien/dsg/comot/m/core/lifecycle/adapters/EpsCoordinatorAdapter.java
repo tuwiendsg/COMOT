@@ -23,7 +23,6 @@ import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.m.recorder.revisions.RevisionApi;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
-import at.ac.tuwien.dsg.comot.model.provider.Quality;
 import at.ac.tuwien.dsg.comot.model.provider.Resource;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
@@ -44,20 +43,7 @@ public class EpsCoordinatorAdapter extends SingleQueueAdapter {
 
 		for (OfferedServiceUnit osu : infoService.getOsus().values()) {
 			try {
-
-				for (Resource res : osu.getResources()) {
-					if (res.getType().getName().equals(InformationServiceMock.ADAPTER_CLASS)) {
-
-						AdapterCore adapter = (AdapterCore) context.getBean(Class.forName(res.getName()));
-
-						admin.declareQueue(new Queue(AdapterManager.queueNameAssignment(osu.getId()), false, false,
-								false));
-
-						adapter.startAdapter(osu.getId());
-						managedSet.add(osu.getId());
-					}
-				}
-
+				createStaticEps(osu);
 			} catch (BeansException | ClassNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -67,10 +53,10 @@ public class EpsCoordinatorAdapter extends SingleQueueAdapter {
 	@Override
 	public void start(String osuInstanceId) {
 
-		bindingLifeCycle("*.TRUE.*." + State.STARTING + ".#");
+		bindingCustom("*.*." + EpsAction.EPS_DYNAMIC_REQUESTED + ".SERVICE");
+		bindingCustom("*.*." + EpsAction.EPS_DYNAMIC_REMOVED + ".SERVICE");
 
-		bindingCustom("*.*." + EpsAction.EPS_ASSIGNED + ".SERVICE");
-		bindingCustom("*.*." + EpsAction.EPS_ASSIGNMENT_REMOVAL_REQUESTED + ".SERVICE");
+		// TODO bindings for dynamic eps created
 
 		container.setMessageListener(new CustomListener(osuInstanceId));
 
@@ -87,53 +73,77 @@ public class EpsCoordinatorAdapter extends SingleQueueAdapter {
 				Action action, String optionalMessage, CloudService service, Map<String, Transition> transitions)
 				throws ClassNotFoundException, IOException {
 
-			if (action == Action.STARTED) {
-
-				for (OfferedServiceUnit osu : infoService.getSupportingServices(serviceId, instanceId)) {
-					for (Quality quality : osu.getQualities()) {
-						if (quality.getType().getName().equals(InformationServiceMock.TYPE_ACTION)
-								&& quality.getName().equals(Action.STARTED.toString())) {
-
-							createOsu(osu.getId());
-						}
-					}
-				}
-			}
 		}
 
 		@Override
 		protected void onCustomEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
-				String event, String epsId, String optionalMessage) {
+				String event, String epsId, String optionalMessage) throws ClassNotFoundException {
 
 			EpsAction action = EpsAction.valueOf(event);
 			State serviceState = msg.getTransitions().get(serviceId).getCurrentState();
 
-			if (action == EpsAction.EPS_ASSIGNED) {
+			if (action == EpsAction.EPS_DYNAMIC_REQUESTED) {
 
-				if (!managedSet.contains(epsId) && !serviceState.equals(State.PASSIVE)) {
-					createOsu(epsId);
-				}
+				createDynamicEps(epsId);
 
-			} else if (action == EpsAction.EPS_ASSIGNMENT_REMOVAL_REQUESTED) {
+			} else if (action == EpsAction.EPS_DYNAMIC_CREATED) {
+				// TODO this replace by observation of lifecycle of the dynamic eps
 
-				if (managedSet.contains(epsId)) {
-					removeOsu(epsId);
-				}
+				managedSet.add(epsId);
+
+			} else if (action == EpsAction.EPS_DYNAMIC_REMOVED) {
+
+				removeDynamicEps(epsId);
+
 			}
 		}
 
 	}
 
-	protected void createOsu(String osuId) {
+	protected void createStaticEps(OfferedServiceUnit osu) throws ClassNotFoundException {
 
-		managedSet.add(osuId);
-		// TODO
+		for (Resource res : osu.getResources()) {
+			if (res.getType().getName().equals(InformationServiceMock.ADAPTER_CLASS)) {
+
+				String epsId = osu.getId();
+				Class<?> clazz = Class.forName(res.getName());
+
+				AdapterCore adapter = (AdapterCore) context.getBean(clazz);
+
+				admin.declareQueue(new Queue(AdapterManager.queueNameAssignment(epsId), false, false,
+						false));
+
+				adapter.startAdapter(epsId);
+				managedSet.add(epsId);
+
+				break;
+			}
+		}
+
 	}
 
-	protected void removeOsu(String osuId) {
+	protected void createDynamicEps(String epsId) {
 
-		managedSet.remove(osuId);
-		// TODO
+		// on EPS_INSTANTIATE_REQUEST
+
+		// create the service
+
+		// EPS creates its assignment queue on its own
+
+		// EPS writes itself to the DB
+
+		// coordinator listens on the lifecycle and notices when the eps is created
+
+		throw new UnsupportedOperationException("createDynamicEps");
+	}
+
+	protected void removeDynamicEps(String epsId) {
+
+		if (managedSet.contains(epsId)) {
+			// TODO
+
+			managedSet.remove(epsId);
+		}
 	}
 
 	@Override

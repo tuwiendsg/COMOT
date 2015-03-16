@@ -121,39 +121,18 @@ public class DeploymentAdapter extends AdapterCore {
 
 		} else if (action == EpsAction.EPS_ASSIGNMENT_REMOVED) {
 
-			infoService.removeAssignmentOfSupportingOsu(serviceId, instanceId, adapterId);
-
-			sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STOPPED,
-					adapterId, null));
+			manager.removeInstanceListener(instanceId);
 
 			if (deployment.isManaged(instanceId)) {
+
+				sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STOPPED,
+						adapterId, null));
 
 				unDeployInstance(serviceId, instanceId);
 			}
 
 		}
 
-	}
-
-	protected void atStartUpDeployWhatIsWaiting() {
-
-		Map<String, String> instances = infoService.getInstancesHavingThisOsuAssigned(adapterId);
-
-		for (String instanceId : instances.keySet()) {
-
-			String serviceId = instances.get(instanceId);
-			State state = lcManager.getCurrentState(instanceId, serviceId);
-
-			if (state == State.STARTING) {
-				try {
-					deployInstance(instances.get(instanceId), instanceId);
-				} catch (ClassNotFoundException | IOException | EpsException | ComotException | JAXBException
-						| InterruptedException e) {
-					e.printStackTrace();
-
-				}
-			}
-		}
 	}
 
 	protected void deployInstance(String serviceId, String instanceId) throws ClassNotFoundException, IOException,

@@ -118,7 +118,7 @@ public class MonitoringAdapter extends AdapterCore {
 
 		State stateService = msg.getTransitions().get(serviceId).getCurrentState();
 
-		if (EpsAction.EPS_ASSIGNED.toString().equals(event)) {
+		if (EpsAction.EPS_ASSIGNMENT_REQUESTED.toString().equals(event)) {
 			startIfActive(instanceId, stateService);
 
 		} else if (EpsAction.EPS_ASSIGNMENT_REMOVED.toString().equals(event)) {
