@@ -30,7 +30,7 @@
 				<!-- <module>comot-compact-distribution</module> -->
 				<!-- <module>comot-elise</module> -->
 				<module>comot-fluent-api</module>
-				<module>comot-manager</module>
+				<module>comot-manager</module> 
 				<module>comot-model</module>
 				<module>comot-visualization-service</module>
 			</modules>
