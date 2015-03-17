@@ -80,7 +80,7 @@ public class InformationServiceMock {
 
 		OfferedServiceUnit deployment = new OfferedServiceUnit();
 		deployment.setId(InformationServiceMock.SALSA_SERVICE_PUBLIC_ID);
-		deployment.setType(OsuType.EPS);
+		deployment.setType(OsuType.EPS.toString());
 		deployment.hasResource(new Resource(DeploymentAdapter.class.getCanonicalName(),
 				new ResourceOrQualityType(InformationServiceMock.ADAPTER_CLASS)));
 		deployment.hasResource(new Resource(deploymentUri.getHost(),
@@ -95,7 +95,7 @@ public class InformationServiceMock {
 		// TODO use metrics
 		OfferedServiceUnit monitoring = new OfferedServiceUnit();
 		monitoring.setId(InformationServiceMock.MELA_SERVICE_PUBLIC_ID);
-		monitoring.setType(OsuType.EPS);
+		monitoring.setType(OsuType.EPS.toString());
 		monitoring.hasResource(new Resource(MonitoringAdapter.class.getCanonicalName(),
 				new ResourceOrQualityType(InformationServiceMock.ADAPTER_CLASS)));
 		monitoring.hasResource(new Resource(monitoringUri.getHost(), new ResourceOrQualityType(
@@ -117,7 +117,7 @@ public class InformationServiceMock {
 
 		OfferedServiceUnit control = new OfferedServiceUnit();
 		control.setId(InformationServiceMock.RSYBL_SERVICE_PUBLIC_ID);
-		control.setType(OsuType.EPS);
+		control.setType(OsuType.EPS.toString());
 		control.hasResource(new Resource(ControlAdapter.class.getCanonicalName(), new ResourceOrQualityType(
 				InformationServiceMock.ADAPTER_CLASS)));
 		control.hasResource(new Resource(controllerUri.getHost(), new ResourceOrQualityType(InformationServiceMock.IP)));
