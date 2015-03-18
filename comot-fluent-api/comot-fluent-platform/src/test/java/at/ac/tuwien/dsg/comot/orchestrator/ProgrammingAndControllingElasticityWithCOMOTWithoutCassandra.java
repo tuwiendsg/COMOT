@@ -37,7 +37,7 @@ import at.ac.tuwien.dsg.comot.orchestrator.interraction.COMOTOrchestrator;
 public class ProgrammingAndControllingElasticityWithCOMOTWithoutCassandra {
 
     public static void main(String[] args) {
-        //specify service units in terms of software
+           //specify service units in terms of software
 
         String salsaRepo = "http://128.130.172.215/salsa/upload/files/ElasticIoTNoDB/";
 
@@ -86,7 +86,7 @@ public class ProgrammingAndControllingElasticityWithCOMOTWithoutCassandra {
                 //scale IN if throughput < 200 and responseTime < 200
                 .controlledBy(Strategy("EP_ST1")
                         .when(Constraint.MetricConstraint("EP_ST1_CO1", new Metric("responseTime", "ms")).lessThan("10"))
-                        .and(Constraint.MetricConstraint("EP_ST1_CO2", new Metric("avgThroughput", "operations/s")).lessThan("200"))
+                        .and(Constraint.MetricConstraint("EP_ST1_CO2", new Metric("responseTime", "ms")).greaterThan("50"))
                         .enforce(eventProcessingUnitScaleIn)
                 )
                 .withLifecycleAction(LifecyclePhase.STOP, BASHAction("sudo service event-processing stop"));
@@ -198,7 +198,7 @@ public class ProgrammingAndControllingElasticityWithCOMOTWithoutCassandra {
                 );
 
         //describe the service template which will hold more topologies
-        CloudService serviceTemplate = ServiceTemplate("Service")
+        CloudService serviceTemplate = ServiceTemplate("HelloElasticityNoDB")
                 .consistsOfTopologies(eventProcessingTopology)
                 //                .consistsOfTopologies(localProcessinTopology)
                 //defining CONNECT_TO and HOSTED_ON relationships
