@@ -67,6 +67,7 @@ public class DeployIoTComponent {
         ServiceUnit sensorUnit = SingleSoftwareUnit("sensorUnit")
                 .requires(Requirement.Variable("brokerIp_Requirement"))
                 .deployedBy(SingleScriptArtifact("deploySensorUnit", salsaRepo + "deploySensorUnit.sh"))
+                .withLifecycleAction(LifecyclePhase.UNDEPLOY, new BASHAction("decommission"))
                 .withMaxColocatedInstances(1);
 //                , MiscArtifact("sensor.tar.gz", salsaRepo + "sensor.tar.gz"));
 
