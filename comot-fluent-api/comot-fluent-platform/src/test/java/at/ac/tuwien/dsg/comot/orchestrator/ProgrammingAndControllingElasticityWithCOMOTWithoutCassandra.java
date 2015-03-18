@@ -37,8 +37,9 @@ import at.ac.tuwien.dsg.comot.orchestrator.interraction.COMOTOrchestrator;
 public class ProgrammingAndControllingElasticityWithCOMOTWithoutCassandra {
 
     public static void main(String[] args) {
-        
-         String salsaRepo = "http://128.130.172.215/salsa/upload/files/ElasticIoTNoDB/";
+        //specify service units in terms of software
+
+        String salsaRepo = "http://128.130.172.215/salsa/upload/files/ElasticIoTNoDB/";
 
         //finally, we define Vm types for event processing
         OperatingSystemUnit loadbalancerVM = OperatingSystemUnit("LoadBalancerUnitVM")
@@ -110,8 +111,8 @@ public class ProgrammingAndControllingElasticityWithCOMOTWithoutCassandra {
         //if it makes sense or not to execute the action
 //                .withDefaultActionEffects();
 
-        COMOTOrchestrator orchestrator = new COMOTOrchestrator("localhost").withSalsaPort(8080);
+        COMOTOrchestrator orchestrator = new COMOTOrchestrator() ;
 
-        orchestrator.deployAndControl(serviceTemplate);
+        orchestrator.controlExisting(serviceTemplate);
     }
 }
