@@ -30,7 +30,7 @@ import at.ac.tuwien.dsg.comot.orchestrator.interraction.COMOTOrchestrator;
  *
  * @author http://dsg.tuwien.ac.at
  */
-public class ProgrammingAndControllingElasticityWithCOMOT {
+public class CassandraWithCost {
 
     public static void main(String[] args) {
         //specify service units in terms of software

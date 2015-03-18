@@ -26,6 +26,8 @@ import at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit;
 import static at.ac.tuwien.dsg.comot.common.model.OperatingSystemUnit.OperatingSystemUnit;
 import at.ac.tuwien.dsg.comot.common.model.Requirement;
 import static at.ac.tuwien.dsg.comot.common.model.ServiceTopology.ServiceTopology;
+import at.ac.tuwien.dsg.comot.common.model.BASHAction;
+import at.ac.tuwien.dsg.comot.common.model.LifecyclePhase;
 import at.ac.tuwien.dsg.comot.common.model.ServiceTopology;
 import at.ac.tuwien.dsg.comot.common.model.ServiceUnit;
 import at.ac.tuwien.dsg.comot.common.model.SoftwareNode;
