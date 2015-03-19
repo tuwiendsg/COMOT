@@ -14,7 +14,7 @@
 		<java.version>1.7</java.version>
 		<spring.version>4.1.0.RELEASE</spring.version>
 		<spring.neo4j.version>3.2.1.RELEASE</spring.neo4j.version>
-		<jersey.version>2.15</jersey.version> 
+		<jersey.version>2.15</jersey.version>
 		<neo4j.version>2.1.6</neo4j.version>
 		<slf4j.version>1.7.7</slf4j.version>
 		<junit.version>4.11</junit.version>
@@ -30,7 +30,7 @@
 				<!-- <module>comot-compact-distribution</module> -->
 				<!-- <module>comot-elise</module> -->
 				<module>comot-fluent-api</module>
-				<module>comot-manager</module> 
+				<module>comot-manager</module>
 				<module>comot-model</module>
 				<module>comot-visualization-service</module>
 			</modules>
@@ -201,5 +201,18 @@
 		</plugins>
 	</build>
 
+	<repositories>
+		<repository>
+			<id>neo4j</id>
+			<name>Neo4j</name>
+			<url>http://m2.neo4j.org/</url>
+		</repository>
+
+		<repository>
+			<id>spring-releases</id>
+			<name>Spring Releases</name>
+			<url>http://repo.spring.io/libs-release</url>
+		</repository>
+	</repositories>
 
 </project>
