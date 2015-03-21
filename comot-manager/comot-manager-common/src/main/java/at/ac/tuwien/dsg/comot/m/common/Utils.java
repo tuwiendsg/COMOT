@@ -33,7 +33,8 @@ public class Utils {
 	protected static final Logger log = LoggerFactory.getLogger(Utils.class);
 
 	@SuppressWarnings("unchecked")
-	public static <T> T toObject(String str, Class<T> clazz, Class<?>... otherClazz) throws JAXBException, IOException {
+	public static <T> T asObjectFromXml(String str, Class<T> clazz, Class<?>... otherClazz) throws JAXBException,
+			IOException {
 
 		List<Object> list = new ArrayList<Object>(Arrays.asList(otherClazz));
 		list.add(clazz);
@@ -44,6 +45,21 @@ public class Utils {
 		return (T) unmarshaller.unmarshal(new StringReader(str));
 	}
 
+	@SuppressWarnings("unchecked")
+	public static <T> T asObjectFromJson(String str, Class<T> clazz, Class<?>... otherClazz) throws JAXBException {
+
+		List<Object> list = new ArrayList<Object>(Arrays.asList(otherClazz));
+		list.add(clazz);
+
+		Map<String, Object> props = new HashMap<String, Object>();
+		props.put(JAXBContextProperties.MEDIA_TYPE, MediaType.APPLICATION_JSON);
+
+		JAXBContext context = JAXBContextFactory.createContext(list.toArray(new Class[list.size()]), props);
+		Unmarshaller unm = context.createUnmarshaller();
+
+		return (T) unm.unmarshal(new StringReader(str));
+	}
+
 	public static String asXmlStringLog(Object obj, Class<?>... clazz) {
 		try {
 			return asXmlString(obj, clazz);
@@ -51,41 +67,6 @@ public class Utils {
 			log.error("Fail to marshall to XML", e);
 			return null;
 		}
-	}
-
-	public static StateMessage asStateMessage(String str, Class<?>... clazz) throws JAXBException {
-
-		List<Object> list = new ArrayList<Object>(Arrays.asList(clazz));
-		list.add(StateMessage.class);
-
-		StringReader r = new StringReader(str);
-
-		Map<String, Object> props = new HashMap<String, Object>();
-		// props.put(JAXBContextProperties.JSON_INCLUDE_ROOT, false);
-		props.put(JAXBContextProperties.MEDIA_TYPE, MediaType.APPLICATION_JSON);
-
-		JAXBContext context = JAXBContextFactory.createContext(list.toArray(new Class[list.size()]), props);
-
-		Unmarshaller unm = context.createUnmarshaller();
-
-		return (StateMessage) unm.unmarshal(r);
-	}
-
-	public static AbstractEvent asAbstractEvent(String str, Class<?>... clazz) throws JAXBException {
-
-		List<Object> list = new ArrayList<Object>(Arrays.asList(clazz));
-		list.add(AbstractEvent.class);
-
-		StringReader r = new StringReader(str);
-
-		Map<String, Object> props = new HashMap<String, Object>();
-		props.put(JAXBContextProperties.MEDIA_TYPE, MediaType.APPLICATION_JSON);
-
-		JAXBContext context = JAXBContextFactory.createContext(list.toArray(new Class[list.size()]), props);
-
-		Unmarshaller unm = context.createUnmarshaller();
-
-		return (AbstractEvent) unm.unmarshal(r);
 	}
 
 	public static String asJsonString(Object obj, Class<?>... clazz) throws JAXBException {
@@ -135,14 +116,7 @@ public class Utils {
 		return w.toString();
 	}
 
-	// public static String asJsonString(Object obj) {
-	//
-	// Gson gson = new GsonBuilder().setPrettyPrinting().create();
-	// return gson.toJson(obj);
-	//
-	// }
-
-	static public Object deepCopy(Object oldObj) throws IOException, ClassNotFoundException {
+	public static Object deepCopy(Object oldObj) throws IOException, ClassNotFoundException {
 
 		ObjectOutputStream oos = null;
 		ObjectInputStream ois = null;
@@ -166,7 +140,7 @@ public class Utils {
 		}
 	}
 
-	public static String loadFile(String path) throws IOException {
+	public static String loadFileFromSystemAsString(String path) throws IOException {
 		return IOUtils.toString(loadFileFromSystem(path), "UTF-8");
 	}
 

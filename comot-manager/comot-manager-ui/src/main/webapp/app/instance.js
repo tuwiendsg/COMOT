@@ -309,7 +309,7 @@ function createLifecycle(graph, divId, lastState, currentState) {
 
 	var circleWidth = 12;
 	var width = 595, height = 425;
-	var force = d3.layout.force().charge(-2000).linkDistance(100).size([ width, height ]);
+	var force = d3.layout.force().charge(-1000).linkDistance(100).size([ width, height ]);
 	var svg = d3.select(divId).append("svg").attr("viewBox", "0 0 " + width + " " + height).attr("preserveAspectRatio",
 			"xMidYMid").append("g").attr("transform", "translate(0,0)");
 

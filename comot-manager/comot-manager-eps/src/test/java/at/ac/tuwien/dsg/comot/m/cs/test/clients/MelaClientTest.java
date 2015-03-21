@@ -5,6 +5,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
@@ -65,7 +67,7 @@ public class MelaClientTest extends AbstractTest {
 	@Test
 	public void helperDeploy() throws EpsException, IOException {
 
-		String xmlTosca = Utils.loadFile("./../resources/test/xml/ExampleExecutableOnVM.xml");
+		String xmlTosca = Utils.loadFileFromSystemAsString("./../resources/test/xml/ExampleExecutableOnVM.xml");
 		salsa.deploy(xmlTosca);
 	}
 
@@ -73,7 +75,8 @@ public class MelaClientTest extends AbstractTest {
 	// 1. ExampleExecutableOnVM.xml is deployed to SALSA
 	// 2. NODE_IP is correct
 	@Test
-	public void testAutomated() throws EpsException, InterruptedException, JAXBException, IOException {
+	public void testAutomated() throws EpsException, InterruptedException, JAXBException, IOException,
+			URISyntaxException {
 
 		log.info(Utils.asXmlString(eService));
 
@@ -177,10 +180,10 @@ public class MelaClientTest extends AbstractTest {
 	}
 
 	@Test
-	public void removeService() throws EpsException, InterruptedException, JAXBException {
-
-		// mela.removeServiceDescription("HelloElasticity_VM");
-		mela.removeServiceDescription("HelloElasticity_VM");
+	public void removeService() throws EpsException, InterruptedException, JAXBException, URISyntaxException {
+		mela.setBaseUri(new URI("http://localhost:8180/MELA/REST_WS"));
+		// mela.removeServiceDescription("HelloElasticityNoDB"); ExampleExecutableOnVM
+		mela.removeServiceDescription("example_executableOnVM_1");
 
 		List<String> list = mela.listAllServices();
 		assertEquals(0, list.size());

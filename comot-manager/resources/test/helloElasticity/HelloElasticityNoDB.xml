@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:Definitions xmlns:ns2="http://docs.oasis-open.org/tosca/ns/2011/12" id="HelloElasticityNoDB" name="HelloElasticityNoDB">
+	<ns2:ServiceTemplate id="EventProcessingTopology">
+		<ns2:TopologyTemplate>
+			<ns2:RelationshipTemplate id="loadbalancerToVM" type="HOSTON">
+				<ns2:SourceElement ref="LoadBalancerUnit" />
+				<ns2:TargetElement ref="LoadBalancerUnitVM" />
+			</ns2:RelationshipTemplate>
+			<ns2:RelationshipTemplate id="eventProcessingToLoadBalancer" type="CONNECTTO">
+				<ns2:SourceElement ref="LoadBalancer_IP_information" />
+				<ns2:TargetElement ref="EventProcessingUnit_LoadBalancer_IP_Req" />
+			</ns2:RelationshipTemplate>
+			<ns2:RelationshipTemplate id="eventProcessingToVM" type="HOSTON">
+				<ns2:SourceElement ref="EventProcessingUnit" />
+				<ns2:TargetElement ref="EventProcessingUnitVM" />
+			</ns2:RelationshipTemplate>
+			<ns2:NodeTemplate minInstances="1" maxInstances="1" id="LoadBalancerUnit" type="software">
+				<ns2:Properties>
+					<MappingProperties />
+				</ns2:Properties>
+				<ns2:Requirements />
+				<ns2:Capabilities>
+					<ns2:Capability id="LoadBalancer_IP_information" type="variable" />
+				</ns2:Capabilities>
+				<ns2:Policies />
+				<ns2:DeploymentArtifacts>
+					<ns2:DeploymentArtifact xmlns:salsa="https://github.com/tuwiendsg/SALSA" name="deployLoadBalancerArtifact"
+						artifactType="salsa:sh" artifactRef="deployLoadBalancerArtifact" />
+				</ns2:DeploymentArtifacts>
+			</ns2:NodeTemplate>
+			<ns2:NodeTemplate minInstances="1" maxInstances="1" id="EventProcessingUnit" type="software">
+				<ns2:Properties>
+					<MappingProperties>
+						<MappingProperty type="action">
+							<property name="stop">sudo service event-processing stop</property>
+						</MappingProperty>
+					</MappingProperties>
+				</ns2:Properties>
+				<ns2:Requirements>
+					<ns2:Requirement fulfilled="false" id="EventProcessingUnit_LoadBalancer_IP_Req" type="variable" />
+				</ns2:Requirements>
+				<ns2:Capabilities />
+				<ns2:Policies>
+					<ns2:Policy id="EventProcessingUnit_EP_ST1" policyType="SYBLStrategy"
+						name="EP_ST1:STRATEGY CASE responseTime &lt; 10 ms:scaleIn" />
+					<ns2:Policy id="EventProcessingUnit_EP_ST2" policyType="SYBLStrategy"
+						name="EP_ST2:STRATEGY CASE responseTime &gt; 50 ms:scaleOut" />
+				</ns2:Policies>
+				<ns2:DeploymentArtifacts>
+					<ns2:DeploymentArtifact xmlns:salsa="https://github.com/tuwiendsg/SALSA" name="deployEventProcessingArtifact"
+						artifactType="salsa:sh" artifactRef="deployEventProcessingArtifact" />
+				</ns2:DeploymentArtifacts>
+			</ns2:NodeTemplate>
+			<ns2:NodeTemplate minInstances="1" maxInstances="2147483647" id="LoadBalancerUnitVM" type="os">
+				<ns2:Properties>
+					<MappingProperties>
+						<MappingProperty type="os">
+							<property name="instanceType">000001920</property>
+							<property name="packages">openjdk-7-jre,ganglia-monitor,gmetad</property>
+							<property name="provider">dsg@openstack</property>
+							<property name="baseImage">be6ae07b-7deb-4926-bfd7-b11afe228d6a</property>
+						</MappingProperty>
+					</MappingProperties>
+				</ns2:Properties>
+				<ns2:Requirements />
+				<ns2:Capabilities />
+				<ns2:Policies />
+			</ns2:NodeTemplate>
+			<ns2:NodeTemplate minInstances="1" maxInstances="2147483647" id="EventProcessingUnitVM" type="os">
+				<ns2:Properties>
+					<MappingProperties>
+						<MappingProperty type="os">
+							<property name="instanceType">000001920</property>
+							<property name="packages">openjdk-7-jre,ganglia-monitor,gmetad</property>
+							<property name="provider">dsg@openstack</property>
+							<property name="baseImage">be6ae07b-7deb-4926-bfd7-b11afe228d6a</property>
+						</MappingProperty>
+					</MappingProperties>
+				</ns2:Properties>
+				<ns2:Requirements />
+				<ns2:Capabilities />
+				<ns2:Policies />
+			</ns2:NodeTemplate>
+		</ns2:TopologyTemplate>
+	</ns2:ServiceTemplate>
+	<ns2:ArtifactTemplate id="deployLoadBalancerArtifact" type="sh">
+		<ns2:Properties />
+		<ns2:ArtifactReferences>
+			<ns2:ArtifactReference reference="http://128.130.172.215/salsa/upload/files/ElasticIoTNoDB/deployLoadBalancer.sh" />
+		</ns2:ArtifactReferences>
+	</ns2:ArtifactTemplate>
+	<ns2:ArtifactTemplate id="deployEventProcessingArtifact" type="sh">
+		<ns2:Properties />
+		<ns2:ArtifactReferences>
+			<ns2:ArtifactReference reference="http://128.130.172.215/salsa/upload/files/ElasticIoTNoDB/deployEventProcessing.sh" />
+		</ns2:ArtifactReferences>
+	</ns2:ArtifactTemplate>
+</ns2:Definitions>

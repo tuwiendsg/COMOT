@@ -9,10 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 
-import at.ac.tuwien.dsg.comot.m.common.AbstractEvent;
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
-import at.ac.tuwien.dsg.comot.m.common.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
+import at.ac.tuwien.dsg.comot.m.common.events.AbstractEvent;
+import at.ac.tuwien.dsg.comot.m.common.events.ComotMessage;
+import at.ac.tuwien.dsg.comot.m.common.events.StateMessage;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
@@ -33,14 +34,16 @@ public class UtilsLc {
 		return service;
 	}
 
+	public static ComotMessage comotMessage(Message message) throws UnsupportedEncodingException, JAXBException {
+		return Utils.asObjectFromJson(new String(message.getBody(), "UTF-8"), ComotMessage.class);
+	}
+
 	public static StateMessage stateMessage(Message message) throws UnsupportedEncodingException, JAXBException {
-		StateMessage msg = Utils.asStateMessage(new String(message.getBody(), "UTF-8"));
-		return msg;
+		return Utils.asObjectFromJson(new String(message.getBody(), "UTF-8"), StateMessage.class);
 	}
 
 	public static AbstractEvent abstractEvent(Message message) throws UnsupportedEncodingException, JAXBException {
-		AbstractEvent msg = Utils.asAbstractEvent(new String(message.getBody(), "UTF-8"));
-		return msg;
+		return Utils.asObjectFromJson(new String(message.getBody(), "UTF-8"), AbstractEvent.class);
 	}
 
 }

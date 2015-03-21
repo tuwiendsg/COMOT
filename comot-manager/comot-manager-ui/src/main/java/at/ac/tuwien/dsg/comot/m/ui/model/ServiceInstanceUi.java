@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import at.ac.tuwien.dsg.comot.m.common.Transition;
+import at.ac.tuwien.dsg.comot.m.common.events.Transition;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 
 @XmlAccessorType(XmlAccessType.FIELD)

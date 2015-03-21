@@ -24,15 +24,18 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.m.common.AbstractEvent;
-import at.ac.tuwien.dsg.comot.m.common.CustomEvent;
-import at.ac.tuwien.dsg.comot.m.common.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
-import at.ac.tuwien.dsg.comot.m.common.StateMessage;
-import at.ac.tuwien.dsg.comot.m.common.Transition;
 import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
+import at.ac.tuwien.dsg.comot.m.common.events.AbstractEvent;
+import at.ac.tuwien.dsg.comot.m.common.events.ComotMessage;
+import at.ac.tuwien.dsg.comot.m.common.events.CustomEvent;
+import at.ac.tuwien.dsg.comot.m.common.events.ExceptionMessage;
+import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
+import at.ac.tuwien.dsg.comot.m.common.events.StateMessage;
+import at.ac.tuwien.dsg.comot.m.common.events.Transition;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
+import at.ac.tuwien.dsg.comot.m.common.exception.ComotLifecycleException;
 import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.core.UtilsLc;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
@@ -80,7 +83,7 @@ public class ManagerOfServiceInstance {
 		this.csInstanceId = event.getCsInstanceId();
 		this.serviceId = event.getServiceId();
 
-		admin.declareQueue(new Queue(queueName(), false, false, false));
+		admin.declareQueue(new Queue(queueName(), false, false, true));
 
 		container = new SimpleMessageListenerContainer();
 		container.setConnectionFactory(connectionFactory);
@@ -90,9 +93,13 @@ public class ManagerOfServiceInstance {
 		admin.declareBinding(new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_REQUESTS,
 				csInstanceId + ".#", null));
 
-		container.start();
+		try {
+			executeAction(event);
+		} catch (ComotLifecycleException e) {
+			exception(e);
+		}
 
-		executeAction(event);
+		container.start();
 
 	}
 
@@ -107,13 +114,23 @@ public class ManagerOfServiceInstance {
 				log.info(logId() + " processing: {}", event);
 
 				if (event instanceof LifeCycleEvent) {
-					executeAction((LifeCycleEvent) event);
+					LifeCycleEvent incomingEvent = (LifeCycleEvent) event;
+					if (incomingEvent.getAction() != Action.CREATED) {
+						executeAction(incomingEvent);
+					}
+
 				} else {
 					executeCustomAction((CustomEvent) event);
 				}
 
-			} catch (JAXBException | ClassNotFoundException | IOException e) {
-				e.printStackTrace();
+			} catch (JAXBException | ClassNotFoundException | IOException | ComotLifecycleException e) {
+
+				try {
+					exception(e);
+					e.printStackTrace();
+				} catch (AmqpException | JAXBException e1) {
+					e1.printStackTrace();
+				}
 			}
 
 		}
@@ -121,13 +138,12 @@ public class ManagerOfServiceInstance {
 	}
 
 	protected void executeAction(LifeCycleEvent event)
-			throws JAXBException, IOException, ClassNotFoundException {
+			throws JAXBException, IOException, ClassNotFoundException, ComotLifecycleException {
 
 		String groupId = event.getGroupId();
 		Action action = event.getAction();
 		CloudService service = event.getService();
 		Group targetGroup;
-		boolean found = false;
 
 		if (Action.REMOVED != event.getAction()) {
 			// clean service
@@ -139,44 +155,32 @@ public class ManagerOfServiceInstance {
 			event.setService(UtilsLc.removeProviderInfo(service));
 		}
 
-		if (Action.CREATED.equals(action)) {
+		if (Action.CREATED == action) {
 
-			serviceGroup = new Group(service, State.INIT);
+			if (serviceGroup == null) {
 
-			for (Group group : serviceGroup.getAllMembersNested()) {
-				lastStates.put(group.getId(), State.INIT);
+				serviceGroup = new Group(service, State.INIT);
+
+				for (Group group : serviceGroup.getAllMembersNested()) {
+					lastStates.put(group.getId(), State.INIT);
+				}
+
+			} else {
+				// TODO throw exception here
+				log.error("can not be created twice");
 			}
 
-			targetGroup = checkAndExecute(action, groupId);
+			targetGroup = checkAndExecute(event, groupId);
 
-		} else if (Action.DEPLOYMENT_STARTED.equals(action) && serviceGroup.getMemberNested(groupId) == null) {
-			log.info("creating new group {}", service);
+		} else if (Action.DEPLOYMENT_STARTED == action && serviceGroup.getMemberNested(groupId) == null) {
 
-			// add new instance groups
-			for (ServiceUnit unit : Navigator.getAllUnits(service)) {
-				for (UnitInstance instance : unit.getInstances()) {
-					if (instance.getId().equals(groupId)) {
-						Group newGroup = serviceGroup.getMemberNested(unit.getId()).addGroup(instance.getId(),
-								Type.INSTANCE, State.INIT);
-						lastStates.put(newGroup.getId(), State.PASSIVE);
+			addNewInstanceGroup(service, groupId);
 
-						infoService.addUnitInstance(serviceId, csInstanceId, unit.getId(), instance);
-
-						log.info("newGroup: {}", newGroup);
-						found = true;
-						break;
-					}
-				}
-				if (found) {
-					break;
-				}
-			}
-
-			targetGroup = checkAndExecute(action, groupId);
+			targetGroup = checkAndExecute(event, groupId);
 
 		} else if (Action.DEPLOYED.equals(action)) {
 
-			targetGroup = checkAndExecute(action, groupId);
+			targetGroup = checkAndExecute(event, groupId);
 
 			if (targetGroup.getType() == Type.INSTANCE) {
 				log.info("updating instance: {}", targetGroup.getId());
@@ -184,10 +188,10 @@ public class ManagerOfServiceInstance {
 				infoService.updateUnitInstance(serviceId, csInstanceId, instance);
 			}
 
-		} else if (Action.UNDEPLOYED.equals(action)) {
+		} else if (Action.UNDEPLOYED == action) {
 
 			// remove new instance groups
-			targetGroup = checkAndExecute(action, groupId);
+			targetGroup = checkAndExecute(event, groupId);
 
 			for (Group member : targetGroup.getAllMembersNested()) {
 				if (member.getType() == Type.INSTANCE) {
@@ -196,12 +200,12 @@ public class ManagerOfServiceInstance {
 				}
 			}
 
-		} else if (Action.ELASTIC_CHANGE_FINISHED.equals(action)) {
+		} else if (Action.ELASTIC_CHANGE_FINISHED == action) {
 
-			targetGroup = checkAndExecute(action, groupId);
+			targetGroup = checkAndExecute(event, groupId);
 		} else if (Action.UPDATE_FINISHED.equals(action)) {
 
-			targetGroup = checkAndExecute(action, groupId);
+			targetGroup = checkAndExecute(event, groupId);
 
 			// } else if (Action.ERROR.equals(action)) {
 			//
@@ -209,10 +213,36 @@ public class ManagerOfServiceInstance {
 			// targetGroup = serviceGroup.getMemberNested(groupId);
 
 		} else {
-			targetGroup = checkAndExecute(action, groupId);
+			targetGroup = checkAndExecute(event, groupId);
 		}
 
 		processEvent(event, targetGroup);
+	}
+
+	protected void addNewInstanceGroup(CloudService service, String groupId) {
+		log.info("creating new group {}", service);
+
+		boolean found = false;
+
+		// add new instance groups
+		for (ServiceUnit unit : Navigator.getAllUnits(service)) {
+			for (UnitInstance instance : unit.getInstances()) {
+				if (instance.getId().equals(groupId)) {
+					Group newGroup = serviceGroup.getMemberNested(unit.getId()).addGroup(instance.getId(),
+							Type.INSTANCE, State.INIT);
+					lastStates.put(newGroup.getId(), State.PASSIVE);
+
+					infoService.addUnitInstance(serviceId, csInstanceId, unit.getId(), instance);
+
+					log.info("newGroup: {}", newGroup);
+					found = true;
+					break;
+				}
+			}
+			if (found) {
+				break;
+			}
+		}
 	}
 
 	protected void processEvent(LifeCycleEvent event, Group targetGroup) throws ClassNotFoundException, IOException,
@@ -246,7 +276,8 @@ public class ManagerOfServiceInstance {
 		}
 
 		String bindingKey = csInstanceId + "." + change + "." + serviceGroup.getPreviousState() + "."
-				+ serviceGroup.getCurrentState() + "." + event.getAction() + "." + targetGroup.getType();
+				+ serviceGroup.getCurrentState() + "." + event.getAction() + "." + targetGroup.getType() + "."
+				+ event.getOrigin();
 
 		send(AppContextCore.EXCHANGE_LIFE_CYCLE, bindingKey, new StateMessage(event, transitions));
 
@@ -278,17 +309,23 @@ public class ManagerOfServiceInstance {
 
 	}
 
-	protected Group checkAndExecute(Action action, String groupId) {
+	protected void exception(Exception e) throws AmqpException, JAXBException {
 
+		send(AppContextCore.EXCHANGE_EXCEPTIONS, csInstanceId + "." + csInstanceId, new ExceptionMessage(serviceId,
+				csInstanceId, csInstanceId, e));
+
+	}
+
+	protected Group checkAndExecute(LifeCycleEvent event, String groupId) throws ComotLifecycleException {
+
+		Action action = event.getAction();
 		Group group = serviceGroup.getMemberNested(groupId);
 
-		log.info("[Manager_{}] group check: {} {}", csInstanceId, groupId, group);
-		log.info("getCurrentState(instanceId={}, groupId={}): {}", csInstanceId, groupId, serviceGroup);
+		log.info(logId() + "checkAndExecute groupId={} : {}", groupId, serviceGroup);
 
 		if (!group.canExecute(action)) {
-			// TODO handle errors, this causes endless loop
-			throw new ComotIllegalArgumentException("Action '" + action + "' is not allowed in state '"
-					+ group.getCurrentState() + "'. Group " + groupId);
+			throw new ComotLifecycleException("Action '" + action + "' is not allowed in state '"
+					+ group.getCurrentState() + "'. Group " + groupId, event);
 		}
 
 		group.executeAction(action, strategy);
@@ -296,9 +333,9 @@ public class ManagerOfServiceInstance {
 		return group;
 	}
 
-	protected void send(String exchange, String bindingKey, StateMessage message) throws AmqpException, JAXBException {
+	protected void send(String exchange, String bindingKey, ComotMessage message) throws AmqpException, JAXBException {
 
-		log.info(logId() + "SEND exchange={} key={}", exchange, bindingKey);
+		log.info(logId() + "STAT-EVENT exchange={} key={}", exchange, bindingKey);
 
 		amqp.convertAndSend(exchange, bindingKey, Utils.asJsonString(message));
 	}
@@ -314,7 +351,7 @@ public class ManagerOfServiceInstance {
 		}
 		final State temp = serviceGroupReadOnly.getMemberNested(groupId).getCurrentState();
 
-		log.info("getCurrentState(instanceId={}, groupId={}): {}", csInstanceId, groupId, temp);
+		log.debug("getCurrentState(instanceId={}, groupId={}): {}", csInstanceId, groupId, temp);
 
 		return temp;
 	}
@@ -360,13 +397,16 @@ public class ManagerOfServiceInstance {
 	 * @param instanceId
 	 * @throws IOException
 	 * @throws ClassNotFoundException
+	 * @throws JAXBException
 	 */
-	public void hardSetRunning(String instanceId, CloudService service) throws ClassNotFoundException, IOException {
+	public void hardSetRunning(String instanceId, CloudService service) throws ClassNotFoundException, IOException,
+			JAXBException {
 
-		this.csInstanceId = instanceId;
-		this.serviceId = service.getId();
-
-		serviceGroup = new Group(service, State.INIT);
+		for (ServiceUnit unit : Navigator.getAllUnits(service)) {
+			for (UnitInstance uInst : unit.getInstances()) {
+				addNewInstanceGroup(service, uInst.getId());
+			}
+		}
 
 		for (Group group : serviceGroup.getAllMembersNested()) {
 			group.currentState = State.RUNNING;
@@ -374,5 +414,4 @@ public class ManagerOfServiceInstance {
 
 		serviceGroupReadOnly = (Group) Utils.deepCopy(serviceGroup);
 	}
-
 }

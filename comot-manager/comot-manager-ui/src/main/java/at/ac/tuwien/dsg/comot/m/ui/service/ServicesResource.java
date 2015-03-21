@@ -33,6 +33,8 @@ import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.core.Coordinator;
 import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
+import at.ac.tuwien.dsg.comot.m.core.adapter.general.Manager;
+import at.ac.tuwien.dsg.comot.m.core.adapter.general.SingleQueueManager;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycle;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleFactory;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
@@ -200,10 +202,12 @@ public class ServicesResource {
 
 		final EventOutput eventOutput = new EventOutput();
 
-		UiAdapter adapter = context.getBean(UiAdapter.class);
-		adapter.setUiAdapter(instanceId, eventOutput);
-		adapter.startAdapter("UI_" + UUID.randomUUID().toString());
-		adapter.checkClient();
+		UiAdapter processor = context.getBean(UiAdapter.class);
+		processor.setUiAdapter(instanceId, eventOutput);
+		processor.checkClient();
+
+		Manager manager = context.getBean(SingleQueueManager.class);
+		manager.start("UI_" + UUID.randomUUID().toString(), processor);
 
 		return eventOutput;
 	}

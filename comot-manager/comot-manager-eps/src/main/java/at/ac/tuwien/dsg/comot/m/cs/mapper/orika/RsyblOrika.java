@@ -30,7 +30,7 @@ public class RsyblOrika {
 
 	protected final Logger log = LoggerFactory.getLogger(RsyblOrika.class);
 
-	public static final String SEPARATOR = " ; ";
+	public static final String SEPARATOR = ";";
 
 	protected MapperFacade facade;
 
@@ -91,19 +91,25 @@ public class RsyblOrika {
 			for (Object obj : source) {
 				directive = (SyblDirective) obj;
 				String strDir = directive.getDirective();
+
+				if (!strDir.trim().endsWith(SEPARATOR)) {
+					strDir += SEPARATOR;
+				}
+
 				switch (directive.getType()) {
+
 				case CONSTRAINT:
 					if (null == rDirecitve.getConstraints()) {
 						rDirecitve.setConstraints(strDir);
 					} else {
-						rDirecitve.setConstraints(rDirecitve.getConstraints() + SEPARATOR + strDir);
+						rDirecitve.setConstraints(rDirecitve.getConstraints() + strDir);
 					}
 					break;
 				case STRATEGY:
 					if (null == rDirecitve.getStrategies()) {
 						rDirecitve.setStrategies(strDir);
 					} else {
-						rDirecitve.setStrategies(rDirecitve.getStrategies() + SEPARATOR + strDir);
+						rDirecitve.setStrategies(rDirecitve.getStrategies() + strDir);
 					}
 					break;
 
@@ -111,20 +117,21 @@ public class RsyblOrika {
 					if (null == rDirecitve.getMonitoring()) {
 						rDirecitve.setMonitoring(strDir);
 					} else {
-						rDirecitve.setMonitoring(rDirecitve.getMonitoring() + SEPARATOR + strDir);
+						rDirecitve.setMonitoring(rDirecitve.getMonitoring() + strDir);
 					}
 					break;
 				case PRIORIIES:
 					if (null == rDirecitve.getPriorities()) {
 						rDirecitve.setPriorities(strDir);
 					} else {
-						rDirecitve.setPriorities(rDirecitve.getPriorities() + SEPARATOR + strDir);
+						rDirecitve.setPriorities(rDirecitve.getPriorities() + strDir);
 					}
 					break;
 				default:
 					throw new IllegalArgumentException("Unexpected value " + directive.getType()
 							+ " of enum at.ac.tuwien.dsg.comot.common.model.type.DirectiveType");
 				}
+
 			}
 			return rDirecitve;
 		}

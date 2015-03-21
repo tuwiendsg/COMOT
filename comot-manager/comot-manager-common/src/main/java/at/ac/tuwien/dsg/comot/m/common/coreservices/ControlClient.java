@@ -30,9 +30,15 @@ public interface ControlClient extends ElasticPlatformServiceClient {
 	public void updateMcr(String serviceId, CompositionRulesConfiguration compositionRulesConfiguration)
 			throws EpsException;
 
-	public void updateService(CloudService service) throws EpsException, JAXBException;
+	public void updateService(CloudService service) throws EpsException, Exception;
 
 	public List<String> listAllServices() throws EpsException;
 
 	public void removeService(String serviceId) throws EpsException;
+
+	public boolean isControlled(String instanceId) throws EpsException;
+
+	public void registerForEvents(String serviceId, ControlEventsListener listener) throws Exception;
+
+	public void removeListener(String serviceId);
 }

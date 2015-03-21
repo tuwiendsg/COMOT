@@ -32,6 +32,8 @@ public class UnitInstance implements Serializable, HasUniqueId {
 	@XmlAttribute
 	protected String envId;
 	@XmlAttribute
+	protected String ip;
+	@XmlAttribute
 	protected State state;
 	@XmlIDREF
 	@XmlAttribute
@@ -92,6 +94,14 @@ public class UnitInstance implements Serializable, HasUniqueId {
 		this.envId = envId;
 	}
 
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -116,8 +126,5 @@ public class UnitInstance implements Serializable, HasUniqueId {
 			return false;
 		return true;
 	}
-	
-	
-	
 
 }

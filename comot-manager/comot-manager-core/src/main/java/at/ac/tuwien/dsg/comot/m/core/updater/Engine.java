@@ -46,7 +46,7 @@ public class Engine {
 		Set<ServiceUnit> roots = new HashSet<>();
 
 		for (ServiceUnit unit : navNeu.getAllUnits()) {
-			if (unit.getOsu().getType().equals(OsuType.OS) && navOld.getUnit(unit.getId()) != null) {
+			if (unit.getOsu().getType().equals(OsuType.OS.toString()) && navOld.getUnit(unit.getId()) != null) {
 				roots.add(unit);
 			}
 		}

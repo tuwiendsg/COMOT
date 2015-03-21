@@ -35,7 +35,7 @@ public class SalsaClientTest extends AbstractTest {
 
 	@Before
 	public void setup() throws IOException {
-		xmlTosca = Utils.loadFile("./../resources/test/xml/ExampleDeployOneVM.xml");
+		xmlTosca = Utils.loadFileFromSystemAsString("./../resources/test/tosca/ExampleExecutableOnVM.xml");
 	}
 
 	@SuppressWarnings("deprecation")

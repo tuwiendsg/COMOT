@@ -92,6 +92,7 @@ public class VersionManager {
 		regionNode = repo.getRegion();
 
 		Revision lastRevision = revisionRepo.findOne(lastRevisionNode.getId());
+
 		revision = revisionRepo.save(new Revision(lastRevision, changeType, changeProperties, time));
 		revisionNode = db.getNodeById(revision.getNodeId());
 

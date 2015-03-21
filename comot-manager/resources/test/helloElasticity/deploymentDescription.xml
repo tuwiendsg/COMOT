@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DeploymentDescription AccessIP="localhost" CloudServiceID="HelloElasticityNoDB">
+    <DeploymentUnit defaultImage="" defaultFlavor="" serviceUnitID="LoadBalancerUnit">
+        <AssociatedVM IP="10.99.0.67" UUID="67594620-46bc-4e86-b099-9922227ff3c2"/>
+    </DeploymentUnit>
+    <DeploymentUnit defaultImage="" defaultFlavor="" serviceUnitID="EventProcessingUnit">
+        <AssociatedVM IP="10.99.0.102" UUID="507c4931-17be-452c-8a7e-1890c296d0bd"/>
+        <ElasticityCapability Name="scaleIn" PrimitiveOperationsSequence="scaleIn" Type=""/>
+        <ElasticityCapability Name="scaleOut" PrimitiveOperationsSequence="scaleOut" Type=""/>
+    </DeploymentUnit>
+</DeploymentDescription>

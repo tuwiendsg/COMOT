@@ -76,4 +76,8 @@ public abstract class CoreServiceClient {
 		this.baseUri = baseUri;
 	}
 
+	public String getHost() {
+		return baseUri.getHost();
+	}
+
 }

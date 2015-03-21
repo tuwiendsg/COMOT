@@ -1,37 +1,36 @@
 package at.ac.tuwien.dsg.comot.m.ui;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.OutboundEvent;
 import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.Binding.DestinationType;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.m.common.LifeCycleEvent;
-import at.ac.tuwien.dsg.comot.m.common.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
-import at.ac.tuwien.dsg.comot.m.common.coreservices.MonitoringClient;
-import at.ac.tuwien.dsg.comot.m.core.UtilsLc;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.general.SingleQueueAdapter;
-import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
+import at.ac.tuwien.dsg.comot.m.common.events.ExceptionMessage;
+import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
+import at.ac.tuwien.dsg.comot.m.common.events.StateMessage;
+import at.ac.tuwien.dsg.comot.m.common.events.Transition;
+import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
+import at.ac.tuwien.dsg.comot.m.core.adapter.general.Processor;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
+import at.ac.tuwien.dsg.comot.model.type.Action;
 
 @Component
 @Scope("prototype")
-public class UiAdapter extends SingleQueueAdapter {
+public class UiAdapter extends Processor {
 
 	@Autowired
-	protected MonitoringClient monitoring;
-
-	protected Binding binding1;
-	protected Binding binding2;
+	protected InformationServiceMock infoService;
 
 	protected String csInstanceId;
 	protected EventOutput eventOutput;
@@ -40,18 +39,20 @@ public class UiAdapter extends SingleQueueAdapter {
 	public static final String MSG_CUSTOM_EVENT = "MSG_CUSTOM_EVENT";
 
 	@Override
-	public void start(String id) {
+	public void start() {
 
-		binding1 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_LIFE_CYCLE,
-				csInstanceId + ".#", null);
-		binding2 = new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_CUSTOM_EVENT,
-				csInstanceId + ".#", null);
+	}
 
-		admin.declareBinding(binding1);
-		admin.declareBinding(binding2);
+	@Override
+	public List<Binding> getBindings(String queueName, String instanceId) {
 
-		container.setMessageListener(new CustomListener());
+		List<Binding> bindings = new ArrayList<>();
 
+		bindings.add(bindingLifeCycle(queueName, csInstanceId + ".#"));
+		bindings.add(bindingCustom(queueName, csInstanceId + ".#"));
+		bindings.add(bindingException(queueName, csInstanceId + ".#"));
+
+		return bindings;
 	}
 
 	public void setUiAdapter(String csInstanceId, EventOutput eventOutput) {
@@ -59,39 +60,56 @@ public class UiAdapter extends SingleQueueAdapter {
 		this.eventOutput = eventOutput;
 	}
 
-	class CustomListener implements MessageListener {
+	@Override
+	public void onLifecycleEvent(StateMessage msg, String serviceId, String instanceId, String groupId, Action action,
+			String originId, CloudService service, Map<String, Transition> transitions) throws Exception {
 
-		@Override
-		public void onMessage(Message message) {
-			try {
+		sendToClient(msg);
+	}
 
-				if (eventOutput.isClosed()) {
-					log.debug("eventOutput.isClosed()");
-					cleanAdapter();
-				}
-				StateMessage msg = UtilsLc.stateMessage(message);
+	@Override
+	public void onCustomEvent(StateMessage msg, String serviceId, String instanceId, String groupId, String event,
+			String epsId, String originId, String optionalMessage) throws Exception {
 
-				if (msg.isLifeCycleDefined()) {
-					LifeCycleEvent eventLc = (LifeCycleEvent) msg.getEvent();
+		sendToClient(msg);
 
-					Set<OfferedServiceUnit> osus = infoService.getSupportingServices(eventLc.getCsInstanceId());
-					eventLc.getService().getInstancesList().get(0).setSupport(osus);
-				}
+	}
 
-				String msgForClient = Utils.asJsonString(msg);
+	@Override
+	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String instanceId, String originId, Exception e)
+			throws Exception {
+		// TODO Auto-generated method stub
 
-				log.trace(logId() + "onMessage {}", msgForClient);
+	}
 
-				OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
-				eventBuilder.data(String.class, msgForClient);
-				// eventBuilder.name(MSG_LIFE_CYCLE);
-				eventOutput.write(eventBuilder.build());
+	public void sendToClient(StateMessage msg) {
 
-			} catch (Throwable t) {
-				log.warn("Throwable -> cleanAdapter()");
-				cleanAdapter();
+		try {
+
+			if (eventOutput.isClosed()) {
+				log.debug("eventOutput.isClosed()");
+				clean();
 			}
 
+			if (msg.isLifeCycleDefined()) {
+				LifeCycleEvent eventLc = (LifeCycleEvent) msg.getEvent();
+
+				Set<OfferedServiceUnit> osus = infoService.getSupportingServices(eventLc.getCsInstanceId());
+				eventLc.getService().getInstancesList().get(0).setSupport(osus);
+			}
+
+			String msgForClient = Utils.asJsonString(msg);
+
+			log.trace(logId() + "onMessage {}", msgForClient);
+
+			OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
+			eventBuilder.data(String.class, msgForClient);
+			// eventBuilder.name(MSG_LIFE_CYCLE);
+			eventOutput.write(eventBuilder.build());
+
+		} catch (Throwable t) {
+			log.warn("Throwable -> cleanAdapter()");
+			clean();
 		}
 	}
 
@@ -114,17 +132,12 @@ public class UiAdapter extends SingleQueueAdapter {
 		}
 
 		log.debug("regular check request cleanAdapter()");
-		cleanAdapter();
+		clean();
 	}
 
-	@Override
 	protected void clean() {
-		if (binding1 != null) {
-			admin.removeBinding(binding1);
-		}
-		if (binding2 != null) {
-			admin.removeBinding(binding2);
-		}
+
+		manager.clean();
 
 		try {
 			if (eventOutput != null) {
@@ -134,18 +147,5 @@ public class UiAdapter extends SingleQueueAdapter {
 			e1.printStackTrace();
 		}
 	}
-
-	// class Client {
-	//
-	// String csInstanceId;
-	// EventOutput eventOutput;
-	//
-	// public Client(String csInstanceId, EventOutput eventOutput) {
-	// super();
-	// this.csInstanceId = csInstanceId;
-	// this.eventOutput = eventOutput;
-	// }
-	//
-	// }
 
 }

@@ -76,17 +76,23 @@ public class Navigator {
 	 */
 	public static boolean isTrueServiceUnit(ServiceUnit node, Set<ServiceUnit> potentialHosted) {
 
-		if (node.getOsu().getType().equals(OsuType.OS) ||
-				node.getOsu().getType().equals(OsuType.DOCKER) ||
-				node.getOsu().getType().equals(OsuType.TOMCAT)) {
-			log.debug("isServiceUnit(nodeId={} ): false", node.getId());
-			return false;
+		boolean result = false;
+		// log.info("aaaa "+OsuType.OS.toString());
+
+		if (node.getOsu().getType().equals(OsuType.OS.toString()) ||
+				node.getOsu().getType().equals(OsuType.DOCKER.toString()) ||
+				node.getOsu().getType().equals(OsuType.TOMCAT.toString())) {
+		} else {
+
+			Set<ServiceUnit> hostedOnThis = getHostedOn(node, potentialHosted);
+
+			if (hostedOnThis.isEmpty()) {
+				result = true;
+			}
 		}
 
-		Set<ServiceUnit> hostedOnThis = getHostedOn(node, potentialHosted);
-
-		log.debug("isServiceUnit(nodeId={} ): children={}", node.getId(), hostedOnThis);
-		return true;
+		log.debug("isServiceUnit(nodeId={} ): {}", node.getId(), result);
+		return result;
 	}
 
 	public Set<ServiceUnit> getHostedOn(ServiceUnit node) {
@@ -112,7 +118,7 @@ public class Navigator {
 		ServiceUnit host = getHost(id);
 
 		if (host != null) {
-			if (host.getOsu().getType().equals(OsuType.OS)) {
+			if (host.getOsu().getType().equals(OsuType.OS.toString())) {
 				return host;
 			} else {
 				return getOsForServiceUnit(host.getId());

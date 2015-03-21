@@ -1,0 +1,155 @@
+<CreateRowsStatement>
+	<Table name="sensor">
+		<Keyspace name="m2m" />
+	</Table>
+	<Row>
+		<Column name="key" value="6a44d07b-3301-46cc-8afa-9625e7ab7bcc" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="19029.61" />
+	</Row>
+	<Row>
+		<Column name="key" value="ee0ebf4b-85d9-470b-a743-313dc0ff9b08" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="3599.83" />
+	</Row>
+	<Row>
+		<Column name="key" value="d18c80e2-5726-4935-a73f-86ab1bbfd534" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="13415.92" />
+	</Row>
+	<Row>
+		<Column name="key" value="f508e5eb-b039-47ad-9795-12b37d9b1e2e" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="16866.67" />
+	</Row>
+	<Row>
+		<Column name="key" value="cb38dedf-dd1a-4703-a15c-ba92c3f454d1" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="14055.11" />
+	</Row>
+	<Row>
+		<Column name="key" value="fbf80693-825d-4281-bf3e-4c8fe8155073" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="11540.76" />
+	</Row>
+	<Row>
+		<Column name="key" value="dee1bfb3-75a8-40ba-b7a0-90977e6de421" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="15706.4" />
+	</Row>
+	<Row>
+		<Column name="key" value="ad4c8ae1-0e21-4429-be52-53c359c0731f" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="18405.47" />
+	</Row>
+	<Row>
+		<Column name="key" value="1fc3e5f5-5582-4ae8-a642-0db23dc6199f" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="15927.08" />
+	</Row>
+	<Row>
+		<Column name="key" value="fa74616e-288e-4b79-8256-4f7b47f9f4ea" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="10528.97" />
+	</Row>
+	<Row>
+		<Column name="key" value="79614f79-0b5e-47b4-a74e-4e8f589ea551" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="4316.18" />
+	</Row>
+	<Row>
+		<Column name="key" value="64feb299-c9fc-4ad0-b0c5-9fb746ce9ee3" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="8773.79" />
+	</Row>
+	<Row>
+		<Column name="key" value="53fd8c49-e98c-4f99-814c-d328f128bb54" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="8003.29" />
+	</Row>
+	<Row>
+		<Column name="key" value="5560f417-3130-4d26-a08b-7c4cdd76b449" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="17327.05" />
+	</Row>
+	<Row>
+		<Column name="key" value="b5c258aa-dd3a-4e51-aacc-1dee1d15d206" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="3933.98" />
+	</Row>
+	<Row>
+		<Column name="key" value="77dede4c-d23a-43ea-9fb3-0e8559a9c191" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="13916.2" />
+	</Row>
+	<Row>
+		<Column name="key" value="f3f931c0-b359-4df2-b8fe-542591610181" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="9587.17" />
+	</Row>
+	<Row>
+		<Column name="key" value="0e58493a-6668-45de-ad57-14e0c74a8318" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="14283.68" />
+	</Row>
+	<Row>
+		<Column name="key" value="6ad792e1-4e6f-4764-97ec-975551802b7b" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="8169.15" />
+	</Row>
+	<Row>
+		<Column name="key" value="63dfb83e-e5f9-4cc2-a3e1-b82ec19f5b15" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="14149.79" />
+	</Row>
+	<Row>
+		<Column name="key" value="7aadb83a-e4b6-4756-948f-a812f072829a" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="17663.21" />
+	</Row>
+	<Row>
+		<Column name="key" value="1be40b2a-b205-4f74-af27-2c1f1317aceb" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="15142.55" />
+	</Row>
+	<Row>
+		<Column name="key" value="b2ecd424-7dc2-44da-91c1-2a3297cec67f" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="7787.12" />
+	</Row>
+	<Row>
+		<Column name="key" value="be59d6b0-27c8-45d1-85b6-d748e756e4da" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="4027.29" />
+	</Row>
+	<Row>
+		<Column name="key" value="7b4aa147-1a9c-4a51-bd4f-81ae174e88ba" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="8644.4" />
+	</Row>
+	<Row>
+		<Column name="key" value="b1afb606-e2f8-4b9f-afec-cdd08f114afb" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="10962.79" />
+	</Row>
+	<Row>
+		<Column name="key" value="2b4f42d1-a42a-48c0-a472-9b64a416f1d7" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="192.76" />
+	</Row>
+	<Row>
+		<Column name="key" value="779bc22a-5c7b-4c16-b356-0a3e4bc39bdf" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="15573.1" />
+	</Row>
+	<Row>
+		<Column name="key" value="ed6b67fb-9907-4cff-93dc-b250ffe707c1" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="4416.8" />
+	</Row>
+	<Row>
+		<Column name="key" value="419ebdfd-d675-4e14-b71c-7c93435f0899" />
+		<Column name="sensorName" value="SensorY" />
+		<Column name="sensorValue" value="16406.64" />
+	</Row>
+</CreateRowsStatement>

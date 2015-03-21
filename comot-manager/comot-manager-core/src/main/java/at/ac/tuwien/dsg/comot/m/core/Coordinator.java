@@ -7,7 +7,6 @@ package at.ac.tuwien.dsg.comot.m.core;
 
 import java.io.IOException;
 
-import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.StringUtils;
@@ -18,20 +17,17 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.m.common.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.EpsAction;
-import at.ac.tuwien.dsg.comot.m.common.LifeCycleEvent;
-import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
+import at.ac.tuwien.dsg.comot.m.common.events.CustomEvent;
+import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 
 @Component
@@ -39,7 +35,7 @@ public class Coordinator {
 
 	private static final Logger log = LoggerFactory.getLogger(Coordinator.class);
 
-	public static final String USER_ID = "Some User";
+	public static final String USER_ID = "Some_User";
 
 	@Autowired
 	protected InformationServiceMock infoService;
@@ -49,11 +45,6 @@ public class Coordinator {
 	protected DeploymentClient deployment;
 	@Autowired
 	protected RabbitTemplate amqp;
-
-	@PostConstruct
-	public void setUp() {
-		insertRunningService("HelloElasticity_VM");
-	}
 
 	public String createCloudService(CloudService service) throws ClassNotFoundException, IOException {
 
@@ -65,6 +56,7 @@ public class Coordinator {
 
 		String instanceId = infoService.createServiceInstance(serviceId);
 
+		log.info("sending CREATE");
 		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.CREATED, USER_ID, null));
 
 		return instanceId;
@@ -169,28 +161,29 @@ public class Coordinator {
 
 				service.setName(serviceId);
 				service.setId(serviceId);
-				infoService.createService(service);
-				infoService.createServiceInstance(service.getId(), instanceId);
-				infoService.assignSupportingService(serviceId, instanceId,
-						InformationServiceMock.SALSA_SERVICE_PUBLIC_ID);
+
+				createCloudService(service);
+
+				infoService.createServiceInstance(serviceId, instanceId);
+				sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.CREATED,
+						USER_ID, null));
+
+				assignSupportingOsu(serviceId, instanceId, InformationServiceMock.SALSA_SERVICE_PUBLIC_ID);
 
 				service = infoService.getServiceInstance(instanceId);
 				service.setName(instanceId);
 				service.setId(instanceId);
 				service = deployment.refreshStatus(service);
 
-				for (ServiceUnit unit : Navigator.getAllUnits(service)) {
-					for (UnitInstance instance : unit.getInstances()) {
-						infoService.addUnitInstance(serviceId, instanceId, unit.getId(), instance);
-					}
-				}
+				Thread.sleep(3000);
 
 				service.setName(serviceId);
 				service.setId(serviceId);
 				lcManager.hardSetRunning(service, instanceId);
 			}
 
-		} catch (EpsException | ComotException | ClassNotFoundException | IOException e) {
+		} catch (EpsException | ComotException | ClassNotFoundException | IOException | JAXBException
+				| InterruptedException e) {
 			e.printStackTrace();
 		}
 	}

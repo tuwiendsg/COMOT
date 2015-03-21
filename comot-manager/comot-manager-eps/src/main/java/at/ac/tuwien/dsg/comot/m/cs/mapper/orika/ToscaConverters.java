@@ -5,7 +5,6 @@ import javax.xml.namespace.QName;
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;
 import at.ac.tuwien.dsg.comot.model.type.DirectiveType;
-import at.ac.tuwien.dsg.comot.model.type.OsuType;
 import at.ac.tuwien.dsg.comot.model.type.RelationshipType;
 import at.ac.tuwien.dsg.comot.model.type.ResourceType;
 
@@ -18,16 +17,16 @@ public class ToscaConverters {
 		return new QName(NS_SALSA, name, PREFIX_SALSA);
 	}
 
-	public static class NodeTypeConverter extends BidirectionalConverter<OsuType, QName> {
+	public static class NodeTypeConverter extends BidirectionalConverter<String, QName> {
 
 		@Override
-		public QName convertTo(OsuType source, Type<QName> destinationType) {
+		public QName convertTo(String source, Type<QName> destinationType) {
 			return toSalsaQName(source.toString());
 		}
 
 		@Override
-		public OsuType convertFrom(QName source, Type<OsuType> destinationType) {
-			return OsuType.fromString(source.getLocalPart());
+		public String convertFrom(QName source, Type<String> destinationType) {
+			return source.getLocalPart();
 		}
 	}
 

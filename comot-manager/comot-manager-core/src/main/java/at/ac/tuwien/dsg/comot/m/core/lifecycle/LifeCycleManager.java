@@ -24,12 +24,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.m.common.LifeCycleEvent;
-import at.ac.tuwien.dsg.comot.m.common.Transition;
 import at.ac.tuwien.dsg.comot.m.common.Type;
+import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
+import at.ac.tuwien.dsg.comot.m.common.events.Transition;
 import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.core.UtilsLc;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.adapters.RecordingAdapter;
+import at.ac.tuwien.dsg.comot.m.core.adapter.general.SingleQueueManager;
+import at.ac.tuwien.dsg.comot.m.core.processor.EpsCoordinator;
+import at.ac.tuwien.dsg.comot.m.core.processor.Recording;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.type.Action;
@@ -48,6 +50,7 @@ public class LifeCycleManager {
 	protected AmqpAdmin admin;
 	@Autowired
 	protected ConnectionFactory connectionFactory;
+
 	protected SimpleMessageListenerContainer container;
 
 	@Autowired
@@ -64,8 +67,9 @@ public class LifeCycleManager {
 		admin.declareExchange(new TopicExchange(AppContextCore.EXCHANGE_LIFE_CYCLE, false, false));
 		admin.declareExchange(new TopicExchange(AppContextCore.EXCHANGE_CUSTOM_EVENT, false, false));
 		admin.declareExchange(new TopicExchange(AppContextCore.EXCHANGE_REQUESTS, false, false));
+		admin.declareExchange(new TopicExchange(AppContextCore.EXCHANGE_EXCEPTIONS, false, false));
 
-		admin.declareQueue(new Queue(MANAGER_QUEUE, false, false, false));
+		admin.declareQueue(new Queue(MANAGER_QUEUE, false, false, true));
 
 		container = new SimpleMessageListenerContainer();
 		container.setConnectionFactory(connectionFactory);
@@ -79,8 +83,11 @@ public class LifeCycleManager {
 
 		container.start();
 
-		RecordingAdapter recording = context.getBean(RecordingAdapter.class);
-		recording.startAdapter(InformationServiceMock.RECORDER);
+		SingleQueueManager manager1 = context.getBean(SingleQueueManager.class);
+		manager1.start("EPS_BUILDER", context.getBean(EpsCoordinator.class));
+
+		SingleQueueManager manager2 = context.getBean(SingleQueueManager.class);
+		manager2.start(InformationServiceMock.RECORDER, context.getBean(Recording.class));
 
 	}
 
@@ -95,25 +102,35 @@ public class LifeCycleManager {
 
 				if (Action.CREATED == event.getAction()) {
 
-					if (managers.containsKey(csInstanceId)) {
-						return;
-					}
-
-					ManagerOfServiceInstance manager = context.getBean(ManagerOfServiceInstance.class);
-					managers.put(csInstanceId, manager);
-
-					manager.createInstance(event);
+					createInstanceManager(csInstanceId, event);
 
 				} else if (Action.REMOVED == event.getAction()) {
 
-					managers.remove(managers.get(csInstanceId));
+					removeInstanceManager(csInstanceId);
 				}
 
 			} catch (JAXBException | ClassNotFoundException | AmqpException | IOException e) {
 				e.printStackTrace();
 			}
 		}
+	}
 
+	protected void createInstanceManager(String csInstanceId, LifeCycleEvent event) throws ClassNotFoundException,
+			AmqpException, IOException, JAXBException {
+
+		if (managers.containsKey(csInstanceId)) {
+			return;
+		}
+
+		ManagerOfServiceInstance manager = context.getBean(ManagerOfServiceInstance.class);
+		managers.put(csInstanceId, manager);
+
+		manager.createInstance(event);
+
+	}
+
+	protected void removeInstanceManager(String csInstanceId) {
+		managers.remove(managers.get(csInstanceId));
 	}
 
 	public State getCurrentState(String instanceId, String groupId) {
@@ -160,12 +177,11 @@ public class LifeCycleManager {
 	 * @param instanceId
 	 * @throws IOException
 	 * @throws ClassNotFoundException
+	 * @throws JAXBException
 	 */
-	public void hardSetRunning(CloudService service, String instanceId) throws ClassNotFoundException, IOException {
+	public void hardSetRunning(CloudService service, String instanceId) throws ClassNotFoundException, IOException,
+			JAXBException {
 
-		ManagerOfServiceInstance manager = context.getBean(ManagerOfServiceInstance.class);
-		managers.put(instanceId, manager);
-
-		manager.hardSetRunning(instanceId, service);
+		managers.get(instanceId).hardSetRunning(instanceId, service);
 	}
 }

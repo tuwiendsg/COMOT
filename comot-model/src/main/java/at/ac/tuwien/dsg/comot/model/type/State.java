@@ -4,7 +4,6 @@ public enum State {
 
 	INIT,
 	PASSIVE,
-	STARTING,
 
 	// /**
 	// * an instance is waiting for other condition before deployment. E.g, VM is creating by cloud, software is waiting
@@ -32,7 +31,6 @@ public enum State {
 	RUNNING,
 	ELASTIC_CHANGE,
 	UPDATE,
-	STOPPING,
 	UNDEPLOYING,
 	FINAL,
 

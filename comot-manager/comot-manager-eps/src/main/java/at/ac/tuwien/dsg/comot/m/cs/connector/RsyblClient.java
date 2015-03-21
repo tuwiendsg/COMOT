@@ -8,11 +8,13 @@ import java.util.List;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
+import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
@@ -58,6 +60,8 @@ public class RsyblClient extends CoreServiceClient {
 
 	public void serviceDescription(String serviceId, String cloudServiceXML) throws EpsException {
 
+		log.trace("serviceDescription {}", cloudServiceXML);
+
 		Response response = client.target(getBaseUri())
 				.path(SERV_DESCRIPTION_PATH)
 				.resolveTemplate("id", serviceId)
@@ -73,6 +77,12 @@ public class RsyblClient extends CoreServiceClient {
 
 	public void serviceDeployment(String serviceId, DeploymentDescription deploymentDescription)
 			throws EpsException {
+
+		try {
+			log.trace("serviceDeployment {}", UtilsCs.asString(deploymentDescription));
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
 
 		Response response = client.target(getBaseUri())
 				.path(SERV_DEPLOYMENT_PATH)
@@ -236,4 +246,5 @@ public class RsyblClient extends CoreServiceClient {
 
 		log.info(ln + "updateElasticityRequirements '{}'. Response: '{}'", serviceId, msg);
 	}
+
 }

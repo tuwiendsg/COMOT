@@ -25,12 +25,6 @@ import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescripti
 
 public class RsyblClientTest extends AbstractTest {
 
-	public static final String SERVICE_ID = "HelloElasticity_VM";
-	// public static final String TOPOLOGY_ID = "example_topology";
-	// public static final String NODE_ID = "example_OS_comot";
-	//
-	// private static final String NODE_IP = "10.99.0.26"; // <== check this
-
 	@Autowired
 	private SalsaClient salsa;
 	@Autowired
@@ -48,10 +42,13 @@ public class RsyblClientTest extends AbstractTest {
 
 	}
 
+	public static final String SERVICE_ID = "HelloElasticityNoDB";
+
 	@Test
 	public void helperDeploy() throws EpsException, IOException {
 
-		String xmlTosca = Utils.loadFile("./../resources/test/helloElasticity/HelloElasticity_VM.xml");
+		String xmlTosca = Utils
+				.loadFileFromSystemAsString("./../resources/test/helloElasticity/HelloElasticityNoDB.xml");
 		salsa.deploy(xmlTosca);
 	}
 
@@ -70,11 +67,24 @@ public class RsyblClientTest extends AbstractTest {
 
 		controlClient.sendInitialConfig(service);
 
+		controlClient.startControl(SERVICE_ID);
+	}
+
+	// @Test
+	// public void startControl() throws EpsException, InterruptedException, JAXBException {
+	// controlClient.startControl(SERVICE_ID);
+	//
+	// }
+
+	@Test
+	public void stopControl() throws EpsException, InterruptedException, JAXBException {
+		controlClient.stopControl(SERVICE_ID);
+
 	}
 
 	@Test
 	public void removeService() throws EpsException, InterruptedException, JAXBException {
-		controlClient.stopControl(SERVICE_ID);
+		controlClient.removeService(SERVICE_ID);
 	}
 
 	@Test

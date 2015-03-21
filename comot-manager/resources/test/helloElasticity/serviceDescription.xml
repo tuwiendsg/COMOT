@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<CloudService id="HelloElasticityNoDB">
+	<ServiceTopology id="EventProcessingTopology">
+		<ServiceUnit id="LoadBalancerUnit" />
+		<ServiceUnit id="EventProcessingUnit">
+			<SYBLDirective Constraints="" Monitoring="" Priorities=""
+				Strategies="EP_ST2:STRATEGY CASE responseTime &gt; 50 ms:scaleOut;EP_ST1:STRATEGY CASE responseTime &lt; 10 ms:scaleIn;" />
+		</ServiceUnit>
+	</ServiceTopology>
+</CloudService>

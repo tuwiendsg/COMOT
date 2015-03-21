@@ -26,6 +26,11 @@
 			<groupId>at.ac.tuwien.mela</groupId>
 			<artifactId>MELA-Common</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>at.ac.tuwien.rSYBL.control-service</groupId>
+			<artifactId>rSYBL-cloud-application-dependency-graph</artifactId>
+		</dependency>
+		
 	</dependencies>
 
 

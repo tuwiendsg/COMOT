@@ -117,6 +117,7 @@ public class MonitoringClientMela implements MonitoringClient {
 
 	}
 
+	@Override
 	public boolean isMonitored(String instanceId) throws EpsException {
 
 		for (String id : mela.listAllServices()) {

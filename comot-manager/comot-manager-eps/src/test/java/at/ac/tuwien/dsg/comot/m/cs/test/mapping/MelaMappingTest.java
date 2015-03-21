@@ -90,7 +90,8 @@ public class MelaMappingTest extends AbstractTest {
 			EpsException,
 			ComotException {
 
-		String melaData = Utils.loadFile(UtilsTest.TEST_FILE_BASE + "xml/ViennaChillerSensors_monitoringData.xml");
+		String melaData = Utils.loadFileFromSystemAsString(UtilsTest.TEST_FILE_BASE
+				+ "xml/ViennaChillerSensors_monitoringData.xml");
 
 		StringReader reader = new StringReader(melaData);
 		JAXBContext jaxbContext = JAXBContext.newInstance(MonitoredElementMonitoringSnapshot.class);

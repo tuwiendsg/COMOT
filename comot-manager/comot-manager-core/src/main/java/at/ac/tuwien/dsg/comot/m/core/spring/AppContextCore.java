@@ -49,7 +49,7 @@ public class AppContextCore {
 	public static final String INSERT_INIT_DATA = "INSERT_INIT_DATA";
 
 	/**
-	 * Key pattern: instanceID.changeTRUE/FALSE.stateBefore.stateAfter.lifeCycleEvent.targetLevel
+	 * Key pattern: instanceID.changeTRUE/FALSE.stateBefore.stateAfter.lifeCycleEvent.targetLevel.originId
 	 */
 	public static final String EXCHANGE_LIFE_CYCLE = "EXCHANGE_LIFE_CYCLE";
 
@@ -62,6 +62,11 @@ public class AppContextCore {
 	 * Key pattern: instanceID.EventType.event.targetLevel
 	 */
 	public static final String EXCHANGE_REQUESTS = "EXCHANGE_REQUESTS";
+
+	/**
+	 * Key pattern: instanceID.originId
+	 */
+	public static final String EXCHANGE_EXCEPTIONS = "EXCHANGE_EXCEPTIONS";
 
 	public static final String SERVER = "localhost";
 

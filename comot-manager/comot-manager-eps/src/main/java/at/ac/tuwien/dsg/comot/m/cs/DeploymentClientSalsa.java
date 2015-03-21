@@ -163,13 +163,17 @@ public class DeploymentClientSalsa implements DeploymentClient {
 	@Override
 	public boolean isManaged(String serviceId) throws EpsException {
 
+		if (serviceId == null) {
+			throw new IllegalArgumentException("serviceId can not be null");
+		}
+
 		String msg = salsa.getServices();
 
 		JSONObject services = new JSONObject(msg);
 		JSONArray array = services.getJSONArray("services");
 
 		for (int i = 0; i < array.length(); i++) {
-			if (serviceId.equals(array.getJSONObject(i).getString("serviceId"))) {
+			if (array.getJSONObject(i).getString("serviceId").equals(serviceId)) {
 				return true;
 			}
 		}

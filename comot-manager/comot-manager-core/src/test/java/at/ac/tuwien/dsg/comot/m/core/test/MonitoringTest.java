@@ -1,8 +1,8 @@
 package at.ac.tuwien.dsg.comot.m.core.test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
@@ -11,138 +11,101 @@ import javax.xml.bind.JAXBException;
 import org.junit.Before;
 import org.junit.Test;
 import org.oasis.tosca.Definitions;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.comot.m.common.ComotAction;
+import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
-import at.ac.tuwien.dsg.comot.m.core.Coordinator;
 import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
+import at.ac.tuwien.dsg.comot.m.core.test.utils.TestAgentAdapter;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
+
+import com.rabbitmq.client.ConsumerCancelledException;
+import com.rabbitmq.client.ShutdownSignalException;
 
 public class MonitoringTest extends AbstractTest {
 
-	@Autowired
-	protected LifeCycleManager lcManager;
-	@Autowired
-	protected Coordinator coordinator;
-	@Autowired
-	protected InformationServiceMock infoService;
+	protected final String MONITORING_ID = InformationServiceMock.MELA_SERVICE_PUBLIC_ID;
+	protected final String DEPLOYMENT_ID = InformationServiceMock.SALSA_SERVICE_PUBLIC_ID;
 
-	CloudService service;
-	String serviceId;
-	String instanceId;
-	protected final String monitoringId = InformationServiceMock.MELA_SERVICE_PUBLIC_ID;
-	protected final String deploymentId = InformationServiceMock.SALSA_SERVICE_PUBLIC_ID;
+	protected TestAgentAdapter agent;
+	protected String serviceId;
+	protected String instanceId;
 
 	@Before
-	public void setUp() throws JAXBException, IOException, ClassNotFoundException {
-		// Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/tomcat/tomcat_from_salsa.xml");
+	public void setUp() throws JAXBException, IOException, ClassNotFoundException, EpsException {
+
+		agent = new TestAgentAdapter("prototype", "localhost");
+
 		Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/tosca/ExampleExecutableOnVM.xml");
 
-		service = mapperTosca.createModel(tosca1);
+		CloudService service = mapperTosca.createModel(tosca1);
 		serviceId = coordinator.createCloudService(service);
 		instanceId = coordinator.createServiceInstance(serviceId);
+
+		assertFalse(deployment.isManaged(instanceId));
+
+		coordinator.assignSupportingOsu(serviceId, instanceId, DEPLOYMENT_ID);
+		coordinator.assignSupportingOsu(serviceId, instanceId, MONITORING_ID);
+		coordinator.startServiceInstance(serviceId, instanceId);
 
 	}
 
 	@Test(timeout = 240000)
-	public void testMonitoring() throws IOException, JAXBException, ClassNotFoundException, EpsException {
+	public void testMonitoring() throws EpsException, ComotException, ShutdownSignalException,
+			ConsumerCancelledException, JAXBException, InterruptedException, ClassNotFoundException, IOException {
 
-		boolean isFresh = true;
+		agent.waitForLifeCycleEvent(Action.STARTED);
+
+		assertTrue(infoService.isOsuAssignedToInstance(instanceId, MONITORING_ID));
+		assertFalse(monitoring.isMonitored(instanceId));
+
+		agent.waitForLifeCycleEvent(Action.DEPLOYED);
+		agent.waitForLifeCycleEvent(Action.DEPLOYED);
+		UtilsTest.sleepSeconds(3);
+
+		assertEquals(State.RUNNING, lcManager.getCurrentState(instanceId, serviceId));
+		assertTrue(deployment.isRunning(instanceId));
+
+		// check automatically started
+		assertTrue(infoService.isOsuAssignedToInstance(instanceId, MONITORING_ID));
+		assertTrue(monitoring.isMonitored(instanceId));
+
+		// manually stop
+		coordinator.triggerCustomEvent(
+				serviceId, instanceId, MONITORING_ID, ComotAction.MELA_STOP.toString(), null);
+
+		agent.waitForCustomEvent(ComotAction.MELA_STOP.toString());
+		UtilsTest.sleepSeconds(3);
+
+		assertTrue(infoService.isOsuAssignedToInstance(instanceId, MONITORING_ID));
+		assertFalse(monitoring.isMonitored(instanceId));
+
+		// manually start
+		coordinator.triggerCustomEvent(
+				serviceId, instanceId, MONITORING_ID, ComotAction.MELA_START.toString(), null);
+
+		agent.waitForCustomEvent(ComotAction.MELA_START.toString());
+		UtilsTest.sleepSeconds(3);
+
+		assertTrue(infoService.isOsuAssignedToInstance(instanceId, MONITORING_ID));
+		assertTrue(monitoring.isMonitored(instanceId));
+
+		coordinator.stopServiceInstance(serviceId, instanceId);
+
+		// check automatically stopped
+		agent.waitForLifeCycleEvent(Action.STOPPED);
+		agent.assertLifeCycleEvent(Action.UNDEPLOYMENT_STARTED);
+		agent.assertLifeCycleEvent(Action.UNDEPLOYED);
+		UtilsTest.sleepSeconds(3);
+
+		assertTrue(infoService.isOsuAssignedToInstance(instanceId, MONITORING_ID));
+		assertFalse(monitoring.isMonitored(instanceId));
 		assertFalse(deployment.isManaged(instanceId));
 
-		coordinator.assignSupportingOsu(serviceId, instanceId, deploymentId);
-		coordinator.assignSupportingOsu(serviceId, instanceId, monitoringId);
-		coordinator.startServiceInstance(serviceId, instanceId);
-
-		while (true) {
-			State state = lcManager.getCurrentState(instanceId, serviceId);
-
-			if (state != null) {
-				switch (state) {
-
-				case INIT:
-					break;
-				case PASSIVE:
-					if (isFresh) {
-
-					} else {
-						UtilsTest.sleepSeconds(3);
-						assertTrue(infoService.isOsuAssignedToInstance(instanceId, monitoringId));
-						assertFalse(isMonitored(instanceId));
-						return;
-					}
-					break;
-				case STARTING:
-				case DEPLOYING:
-					assertTrue(infoService.isOsuAssignedToInstance(instanceId, monitoringId));
-					assertFalse(isMonitored(instanceId));
-					break;
-
-				case RUNNING:
-
-					UtilsTest.sleepSeconds(3);
-					assertTrue(infoService.isOsuAssignedToInstance(instanceId, monitoringId));
-					assertTrue(isMonitored(instanceId));
-
-					// manually stop
-					coordinator.triggerCustomEvent(
-							serviceId, instanceId, monitoringId, ComotAction.MELA_STOP.toString(), null);
-
-					UtilsTest.sleepSeconds(3);
-					assertTrue(infoService.isOsuAssignedToInstance(instanceId, monitoringId));
-					assertFalse(isMonitored(instanceId));
-
-					// manually start
-					coordinator.triggerCustomEvent(
-							serviceId, instanceId, monitoringId, ComotAction.MELA_START.toString(), null);
-
-					UtilsTest.sleepSeconds(3);
-					assertTrue(infoService.isOsuAssignedToInstance(instanceId, monitoringId));
-					assertTrue(isMonitored(instanceId));
-
-					coordinator.stopServiceInstance(serviceId, instanceId);
-					isFresh = false;
-					break;
-
-				case STOPPING:
-				case UNDEPLOYING:
-					UtilsTest.sleepSeconds(3);
-					assertTrue(infoService.isOsuAssignedToInstance(instanceId, monitoringId));
-					assertFalse(isMonitored(instanceId));
-					break;
-
-				case FINAL:
-					// UtilsTest.sleepSeconds(3);
-					// assertFalse(infoService.isOsuAssignedToInstance(serviceId, instanceId, monitoringId));
-					// assertFalse(isMonitored(instanceId));
-					break;
-
-				case ERROR:
-					fail("Should not reach ERROR state");
-					break;
-
-				default:
-					break;
-				}
-			}
-			UtilsTest.sleepSeconds(5);
-		}
-
-	}
-
-	protected boolean isMonitored(String instanceId) throws EpsException {
-
-		for (String id : monitoring.listAllServices()) {
-			if (id.equals(instanceId)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 }
