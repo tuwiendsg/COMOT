@@ -83,7 +83,8 @@ public class TestAgentAdapter {
 				}
 
 			} else if (cMsg instanceof ExceptionMessage) {
-				fail("Exception " + cMsg);
+				ExceptionMessage msg = (ExceptionMessage) cMsg;
+				fail("Exception " + msg);
 			}
 		}
 	}
@@ -107,7 +108,8 @@ public class TestAgentAdapter {
 				}
 
 			} else if (cMsg instanceof ExceptionMessage) {
-				fail("Exception " + cMsg);
+				ExceptionMessage msg = (ExceptionMessage) cMsg;
+				fail("Exception " + msg);
 			}
 
 		}
@@ -136,7 +138,8 @@ public class TestAgentAdapter {
 			}
 
 		} else if (cMsg instanceof ExceptionMessage) {
-			fail("Exception " + cMsg);
+			ExceptionMessage msg = (ExceptionMessage) cMsg;
+			fail("Exception " + msg);
 		}
 
 	}
@@ -163,7 +166,8 @@ public class TestAgentAdapter {
 			}
 
 		} else if (cMsg instanceof ExceptionMessage) {
-			fail("Exception " + cMsg);
+			ExceptionMessage msg = (ExceptionMessage) cMsg;
+			fail("Exception " + msg);
 		}
 
 	}

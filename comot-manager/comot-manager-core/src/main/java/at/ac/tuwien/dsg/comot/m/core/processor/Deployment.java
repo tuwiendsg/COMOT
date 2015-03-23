@@ -2,9 +2,12 @@ package at.ac.tuwien.dsg.comot.m.core.processor;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import javax.xml.bind.JAXBException;
 
@@ -45,6 +48,8 @@ public class Deployment extends Processor {
 	protected InformationServiceMock infoService;
 	@Autowired
 	protected DeploymentHelper helper;
+
+	protected Map<String, Future<Object>> tasks = Collections.synchronizedMap(new HashMap<String, Future<Object>>());
 
 	@Override
 	public void start() {
@@ -87,6 +92,10 @@ public class Deployment extends Processor {
 				instanceId + "." + getId() + "." + EpsAction.EPS_ASSIGNMENT_REMOVED + "." + Type.SERVICE + ".#"));
 		bindings.add(bindingCustom(queueName,
 				instanceId + "." + getId() + "." + EpsAction.EPS_ASSIGNED + "." + Type.SERVICE + ".#"));
+		bindings.add(bindingLifeCycle(queueName,
+				instanceId + ".*.*.*." + Action.ELASTIC_CHANGE_STARTED + ".*.#"));
+		bindings.add(bindingLifeCycle(queueName,
+				instanceId + ".*.*.*." + Action.ELASTIC_CHANGE_FINISHED + ".*.#"));
 
 		return bindings;
 	}
@@ -98,11 +107,11 @@ public class Deployment extends Processor {
 
 		if (action == Action.STARTED && !deployment.isManaged(instanceId)) {
 			manager.sendLifeCycle(Type.SERVICE,
-					new LifeCycleEvent(serviceId, instanceId, groupId, Action.DEPLOYMENT_STARTED, getId(), null));
+					new LifeCycleEvent(serviceId, instanceId, groupId, Action.DEPLOYMENT_STARTED, getId()));
 
 		} else if (action == Action.STOPPED) {
 			manager.sendLifeCycle(Type.SERVICE,
-					new LifeCycleEvent(serviceId, instanceId, groupId, Action.UNDEPLOYMENT_STARTED, getId(), null));
+					new LifeCycleEvent(serviceId, instanceId, groupId, Action.UNDEPLOYMENT_STARTED, getId()));
 
 		} else if (action == Action.DEPLOYMENT_STARTED) {
 			deployInstance(serviceId, instanceId);
@@ -110,6 +119,16 @@ public class Deployment extends Processor {
 		} else if (action == Action.UNDEPLOYMENT_STARTED) {
 
 			unDeployInstance(serviceId, instanceId);
+
+		} else if (action == Action.ELASTIC_CHANGE_STARTED) {
+
+			tasks.put(uniqueTaskId(instanceId, groupId),
+					helper.monitoringStatusUntilInterupted(serviceId, instanceId, service));
+
+		} else if (action == Action.ELASTIC_CHANGE_FINISHED) {
+
+			tasks.get(uniqueTaskId(instanceId, groupId)).cancel(true);
+
 		}
 	}
 
@@ -126,7 +145,7 @@ public class Deployment extends Processor {
 			if (deployment.isManaged(instanceId)) {
 
 				manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId,
-						Action.UNDEPLOYMENT_STARTED, getId(), null));
+						Action.UNDEPLOYMENT_STARTED, getId()));
 
 				unDeployInstance(serviceId, instanceId);
 			}
@@ -169,7 +188,11 @@ public class Deployment extends Processor {
 		}
 
 		manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.UNDEPLOYED,
-				getId(), service));
+				getId()));
+	}
+
+	protected String uniqueTaskId(String instanceId, String groupId) {
+		return instanceId + "_" + groupId;
 	}
 
 }

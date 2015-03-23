@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.oasis.tosca.Definitions;
@@ -52,6 +53,14 @@ public class MonitoringTest extends AbstractTest {
 		coordinator.assignSupportingOsu(serviceId, instanceId, MONITORING_ID);
 		coordinator.startServiceInstance(serviceId, instanceId);
 
+	}
+
+	@After
+	public void clean() throws EpsException {
+		if (deployment.isManaged(instanceId)) {
+			UtilsTest.sleepSeconds(10);
+			deployment.undeploy(instanceId);
+		}
 	}
 
 	@Test(timeout = 240000)

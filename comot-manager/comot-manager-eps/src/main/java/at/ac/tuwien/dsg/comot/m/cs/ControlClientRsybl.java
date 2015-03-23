@@ -31,6 +31,8 @@ import at.ac.tuwien.dsg.comot.m.cs.mapper.RsyblMapper;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.rsybl.CloudServiceXML;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
+import at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.ActionEvent;
+import at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.ActionPlanEvent;
 import at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.IEvent;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
@@ -167,7 +169,31 @@ public class ControlClientRsybl implements ControlClient {
 
 						if (obj instanceof IEvent) {
 							IEvent event = (IEvent) obj;
-							log.debug("IEvent serviceId={} stage={} {}", event.getServiceId(), event.getStage(), obj);
+
+							if (event instanceof ActionPlanEvent) {
+								ActionPlanEvent apEvent = (ActionPlanEvent) event;
+
+								log.debug(
+										"ALL onActionPlanEvent(serviceId={}, stage={}, type={}, strategies={}, constraints={}, effects={})",
+										apEvent.getServiceId(), apEvent.getStage(), apEvent.getType(),
+										apEvent.getStrategies(),
+										apEvent.getConstraints(), apEvent.getEffect());
+
+							} else if (event instanceof ActionEvent) {
+								ActionEvent aEvent = (ActionEvent) event;
+
+								log.debug(
+										"ALL onActionEvent(serviceId={}, stage={}, type={}, actionId={}, targetId={})",
+										aEvent.getServiceId(),
+										aEvent.getStage(), aEvent.getType(), aEvent.getActionId(), aEvent.getTargetId());
+
+							} else {
+								log.debug("ALL IEvent serviceId={} stage={} {}", event.getServiceId(),
+										event.getStage(), obj);
+							}
+
+							// log.debug("IEvent serviceId={} stage={} {}", event.getServiceId(), event.getStage(),
+							// obj);
 
 							if (listanersMap.containsKey(event.getServiceId())) {
 								listanersMap.get(event.getServiceId()).onMessage(event);

@@ -5,7 +5,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -16,21 +15,14 @@ public class LifeCycleEvent extends AbstractEvent {
 
 	@XmlAttribute
 	protected Action action;
-	protected CloudService service;
 
 	public LifeCycleEvent() {
 
 	}
 
-	public LifeCycleEvent(String serviceId, String csInstanceId, String groupId, Action action, String origin,
-			CloudService service) {
-		super();
-		this.serviceId = serviceId;
-		this.csInstanceId = csInstanceId;
-		this.groupId = groupId;
+	public LifeCycleEvent(String serviceId, String csInstanceId, String groupId, Action action, String origin) {
+		super(serviceId, csInstanceId, groupId, origin);
 		this.action = action;
-		this.service = service;
-		this.origin = origin;
 	}
 
 	// GENERATED
@@ -47,14 +39,6 @@ public class LifeCycleEvent extends AbstractEvent {
 
 	public void setAction(Action action) {
 		this.action = action;
-	}
-
-	public CloudService getService() {
-		return service;
-	}
-
-	public void setService(CloudService service) {
-		this.service = service;
 	}
 
 }

@@ -1,13 +1,11 @@
 package at.ac.tuwien.dsg.comot.m.core.adapter.general;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PreDestroy;
-import javax.xml.bind.JAXBException;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Binding.DestinationType;
@@ -96,7 +94,7 @@ public class PerInstanceQueueManager extends Manager {
 						new CustomEvent(serviceId, instanceId, groupId, EpsAction.EPS_ASSIGNED.toString(),
 								participantId, participantId, null));
 
-			} catch (UnsupportedEncodingException | JAXBException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

@@ -2,29 +2,38 @@ package at.ac.tuwien.dsg.comot.m.core.processor;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Future;
 
 import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.AmqpException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.events.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
+import at.ac.tuwien.dsg.comot.m.common.events.ModifyingLifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.core.UtilsLc;
+import at.ac.tuwien.dsg.comot.m.core.adapter.general.Manager;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycle;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleFactory;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.DeploymentMapper;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
@@ -36,6 +45,7 @@ public class DeploymentHelper {
 
 	protected DeploymentClient deployment;
 	protected Deployment dAdapt;
+	protected Manager manager;
 
 	@Autowired
 	protected DeploymentMapper mapper;
@@ -48,7 +58,7 @@ public class DeploymentHelper {
 
 	protected static final LifeCycle unitInstanceLc = LifeCycleFactory.getLifeCycle(Type.INSTANCE);
 
-	// @Async
+	@Async
 	public void monitorStatusUntilDeployed(String serviceId, String instanceId, CloudService service)
 			throws EpsException,
 			ComotException, IOException, JAXBException, InterruptedException, ClassNotFoundException {
@@ -61,8 +71,7 @@ public class DeploymentHelper {
 			State lcStateNew, lcStateOld;
 			String stateNew;
 			boolean notAllRunning = false;
-			CloudService serviceReturned = service;
-			Action action;
+			CloudService serviceReturned;
 
 			service = UtilsLc.removeProviderInfo(service);
 
@@ -95,49 +104,18 @@ public class DeploymentHelper {
 							notAllRunning = true;
 						}
 
+						lcStateOld = getChangedSalsaState(uInstId, stateNew, oldStates);
+
 						// check if salsa state have changed
-						if (oldStates.containsKey(uInstId)) {
-							if (oldStates.get(uInstId).equals(stateNew)) {
-								continue; // if not
-							} else {
-								lcStateOld = DeploymentMapper.convert(oldStates.get(uInstId));
-							}
+						if (lcStateOld == null) {
+							continue;
 						} else {
-							lcStateOld = State.INIT;
+							evaluateChangeOfOneUnitInstance(serviceId, instanceId, uInstId, stateNew, lcStateOld,
+									lcStateNew,
+									serviceReturned);
+
 						}
 
-						log.info("old: {}, new: {}", oldStates.get(uInstId), stateNew);
-
-						// check if also the translated Life-cycle state have changed
-						if (lcStateNew == lcStateOld) {
-
-							dAdapt.getManager().sendCustom(Type.INSTANCE,
-									new CustomEvent(serviceId, instanceId, uInstId, stateNew,
-											adapterId, null, null));
-
-						} else {
-
-							if (lcStateNew == State.ERROR) {
-								dAdapt.getManager().sendLifeCycle(Type.INSTANCE,
-										new LifeCycleEvent(serviceId, instanceId, uInstId,
-												Action.ERROR,
-												adapterId, serviceReturned));
-								return;
-
-							} else {
-								action = unitInstanceLc.translateToAction(lcStateOld, lcStateNew);
-
-								if (action == null) {
-									log.error("invalid transitions {} -> {}", lcStateOld, lcStateNew);
-								} else {
-									dAdapt.getManager().sendLifeCycle(Type.INSTANCE,
-											new LifeCycleEvent(serviceId, instanceId,
-													uInstId,
-													action,
-													adapterId, serviceReturned));
-								}
-							}
-						}
 					}
 
 				} catch (ComotException e) {
@@ -154,6 +132,146 @@ public class DeploymentHelper {
 
 	}
 
+	protected State getChangedSalsaState(String uInstId, String stateNew, Map<String, String> oldStates) {
+
+		State lcStateOld;
+
+		if (oldStates.containsKey(uInstId)) {
+			if (oldStates.get(uInstId).equals(stateNew)) {
+				return null; // if not
+			} else {
+				lcStateOld = DeploymentMapper.convert(oldStates.get(uInstId));
+			}
+		} else {
+			lcStateOld = State.INIT;
+		}
+
+		log.info("old: {}, new: {}", oldStates.get(uInstId), stateNew);
+		return lcStateOld;
+	}
+
+	protected void evaluateChangeOfOneUnitInstance(
+			String serviceId, String instanceId, String uInstId,
+			String stateNew, State lcStateOld, State lcStateNew, CloudService serviceReturned)
+			throws AmqpException, JAXBException {
+
+		Action action;
+
+		// check if also the translated Life-cycle state have changed
+		if (lcStateNew == lcStateOld) {
+
+			manager.sendCustom(Type.INSTANCE, new CustomEvent(serviceId, instanceId, uInstId, stateNew, adapterId,
+					null, null));
+
+		} else {
+
+			if (lcStateNew == State.ERROR) {
+				manager.sendLifeCycle(Type.INSTANCE, new LifeCycleEvent(serviceId, instanceId, uInstId, Action.ERROR,
+						adapterId));
+				return;
+
+			} else {
+				action = unitInstanceLc.translateToAction(lcStateOld, lcStateNew);
+
+				Navigator nav = new Navigator(serviceReturned);
+
+				if (action == null) {
+					log.error("invalid transitions {} -> {}", lcStateOld, lcStateNew);
+				} else {
+					manager.sendLifeCycle(Type.INSTANCE, new ModifyingLifeCycleEvent(serviceId, instanceId, uInstId,
+							action, adapterId, nav.getUnitFor(uInstId).getId(), nav.getInstance(uInstId)));
+				}
+			}
+		}
+
+	}
+
+	@Async
+	public Future<Object> monitoringStatusUntilInterupted(String serviceId, String instanceId, CloudService service)
+			throws EpsException,
+			ComotException, IOException, JAXBException, InterruptedException, ClassNotFoundException {
+
+		try {
+
+			Map<String, String> currentStates = new HashMap<>();
+			Map<String, String> oldStates;
+
+			State lcStateNew, lcStateOld;
+			String stateNew;
+			CloudService serviceReturned;
+
+			service = UtilsLc.removeProviderInfo(service);
+
+			Set<UnitInstance> oldInstances = service.getInstancesList().get(0).getUnitInstances();
+
+			for (UnitInstance inst : oldInstances) {
+				currentStates.put(inst.getId(), DeploymentMapper.runningToState());
+			}
+
+			do {
+
+				try {
+
+					oldStates = currentStates;
+					currentStates = new HashMap<>();
+
+					Thread.sleep(1000);
+
+					serviceReturned = deployment.refreshStatus(currentStates, service);
+					serviceReturned.setId(serviceId);
+					serviceReturned.setName(serviceId);
+
+					log.trace("currentStates: {}", currentStates);
+
+					for (String uInstId : currentStates.keySet()) {
+
+						stateNew = currentStates.get(uInstId);
+
+						lcStateNew = DeploymentMapper.convert(currentStates.get(uInstId));
+						lcStateOld = getChangedSalsaState(uInstId, stateNew, oldStates);
+
+						// check if salsa state have changed
+						if (lcStateOld == null) {
+							continue;
+						} else {
+							evaluateChangeOfOneUnitInstance(serviceId, instanceId, uInstId, stateNew, lcStateOld,
+									lcStateNew,
+									serviceReturned);
+
+						}
+					}
+
+					for (Iterator<UnitInstance> iterator = oldInstances.iterator(); iterator.hasNext();) {
+						UnitInstance inst = iterator.next();
+
+						if (!currentStates.containsKey(inst.getId())) {
+
+							manager.sendLifeCycle(Type.INSTANCE, new LifeCycleEvent(serviceId, instanceId,
+									inst.getId(), Action.UNDEPLOYMENT_STARTED, adapterId));
+							manager.sendLifeCycle(Type.INSTANCE, new LifeCycleEvent(serviceId, instanceId,
+									inst.getId(), Action.UNDEPLOYED, adapterId));
+
+							iterator.remove();
+
+						}
+					}
+
+				} catch (ComotException e) {
+					log.warn(e.getMessage());
+				}
+
+			} while (true);
+
+		} catch (InterruptedException e) {
+			log.info("Task interrupted as expected");
+
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
 	public void setAdapterId(String adapterId) {
 		this.adapterId = adapterId;
 	}
@@ -164,6 +282,7 @@ public class DeploymentHelper {
 
 	public void setDeploymentAdapter(Deployment dAdapt) {
 		this.dAdapt = dAdapt;
+		this.manager = dAdapt.getManager();
 	}
 
 }

@@ -7,6 +7,7 @@ package at.ac.tuwien.dsg.comot.m.core;
 
 import java.io.IOException;
 
+import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +25,7 @@ import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.events.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
+import at.ac.tuwien.dsg.comot.m.common.exception.ComotLifecycleException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
@@ -46,6 +48,8 @@ public class Coordinator {
 	@Autowired
 	protected RabbitTemplate amqp;
 
+	boolean first = true;
+	
 	public String createCloudService(CloudService service) throws ClassNotFoundException, IOException {
 
 		String serviceId = infoService.createService(service);
@@ -53,11 +57,16 @@ public class Coordinator {
 	}
 
 	public String createServiceInstance(String serviceId) throws IOException, JAXBException, ClassNotFoundException {
+		
+		if(first){
+			first =false;
+			insertRunningService("HelloElasticityNoDB");
+		}
 
 		String instanceId = infoService.createServiceInstance(serviceId);
 
 		log.info("sending CREATE");
-		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.CREATED, USER_ID, null));
+		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.CREATED, USER_ID));
 
 		return instanceId;
 	}
@@ -65,23 +74,23 @@ public class Coordinator {
 	public void startServiceInstance(String serviceId, String instanceId) throws IOException, JAXBException,
 			ClassNotFoundException {
 
-		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STARTED, USER_ID, null));
+		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STARTED, USER_ID));
 
 	}
 
 	public void stopServiceInstance(String serviceId, String instanceId)
 			throws IOException, JAXBException, ClassNotFoundException {
 
-		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STOPPED, USER_ID, null));
+		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STOPPED, USER_ID));
 
 	}
 
 	public void removeServiceInstance(String serviceId, String instanceId) throws IOException, JAXBException,
 			ClassNotFoundException {
 
-		infoService.removeServiceInstance(serviceId, instanceId);
+		// infoService.removeServiceInstance(serviceId, instanceId);
 
-		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.REMOVED, USER_ID, null));
+		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.REMOVED, USER_ID));
 
 	}
 
@@ -166,8 +175,10 @@ public class Coordinator {
 
 				infoService.createServiceInstance(serviceId, instanceId);
 				sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.CREATED,
-						USER_ID, null));
+						USER_ID));
 
+				Thread.sleep(3000);
+				
 				assignSupportingOsu(serviceId, instanceId, InformationServiceMock.SALSA_SERVICE_PUBLIC_ID);
 
 				service = infoService.getServiceInstance(instanceId);
@@ -180,10 +191,12 @@ public class Coordinator {
 				service.setName(serviceId);
 				service.setId(serviceId);
 				lcManager.hardSetRunning(service, instanceId);
+				
+				log.info(Utils.asJsonString(infoService.getServiceInstance(instanceId)));
 			}
 
 		} catch (EpsException | ComotException | ClassNotFoundException | IOException | JAXBException
-				| InterruptedException e) {
+				| InterruptedException | ComotLifecycleException e) {
 			e.printStackTrace();
 		}
 	}

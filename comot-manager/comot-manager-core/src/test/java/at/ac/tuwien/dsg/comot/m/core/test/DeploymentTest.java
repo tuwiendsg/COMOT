@@ -2,12 +2,15 @@ package at.ac.tuwien.dsg.comot.m.core.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.oasis.tosca.Definitions;
@@ -15,6 +18,7 @@ import org.oasis.tosca.Definitions;
 import at.ac.tuwien.dsg.comot.m.common.EpsAction;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
+import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.core.test.utils.TestAgentAdapter;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
@@ -50,34 +54,40 @@ public class DeploymentTest extends AbstractTest {
 		assertFalse(deployment.isManaged(instanceId));
 
 		agent.assertLifeCycleEvent(Action.CREATED);
+	}
+
+	@After
+	public void clean() throws EpsException {
+		if (deployment.isManaged(instanceId)) {
+			UtilsTest.sleepSeconds(10);
+			deployment.undeploy(instanceId);
+		}
+	}
+
+	@Test
+	public void removeServiceInstance() throws ClassNotFoundException, IOException, JAXBException,
+			ShutdownSignalException, ConsumerCancelledException, InterruptedException {
+
+		assertNotNull(infoService.getServiceInstance(instanceId));
+		assertTrue(lcManager.isInstanceManaged(instanceId));
+
+		coordinator.removeServiceInstance(serviceId, instanceId);
+
+		agent.assertLifeCycleEvent(Action.REMOVED);
+
+		assertNull(infoService.getServiceInstance(instanceId));
+		assertFalse(lcManager.isInstanceManaged(instanceId));
+
+	}
+
+	@Test(timeout = 240000)
+	public void testAssignStartStop() throws IOException, JAXBException, ClassNotFoundException,
+			EpsException, ComotException, ShutdownSignalException, ConsumerCancelledException, InterruptedException {
 
 		coordinator.assignSupportingOsu(serviceId, instanceId, DEPLOYMENT_ID);
 
 		agent.assertCustomEvent(EpsAction.EPS_ASSIGNMENT_REQUESTED.toString());
 		agent.assertCustomEvent(EpsAction.EPS_ASSIGNED.toString());
-
-	}
-
-	@Test
-	public void testCreateRemove() throws ClassNotFoundException, IOException, JAXBException {
-
-		// // TODO does not work yet
-		//
-		// assertNotNull(infoService.getServiceInstance(instanceId));
-		// assertTrue(lcManager.isInstanceManaged(instanceId));
-		//
-		// coordinator.removeServiceInstance(serviceId, instanceId);
-		//
-		// UtilsTest.sleepSeconds(5);
-		//
-		// assertNull(infoService.getServiceInstance(instanceId));
-		// assertFalse(lcManager.isInstanceManaged(instanceId));
-
-	}
-
-	@Test(timeout = 240000)
-	public void testStartStop() throws IOException, JAXBException, ClassNotFoundException,
-			EpsException, ComotException, ShutdownSignalException, ConsumerCancelledException, InterruptedException {
 
 		assertFalse(deployment.isManaged(instanceId));
 		assertTrue(infoService.isOsuAssignedToInstance(instanceId, DEPLOYMENT_ID));
@@ -118,6 +128,11 @@ public class DeploymentTest extends AbstractTest {
 	@Test(timeout = 240000)
 	public void testAssignStartUnassign() throws IOException, JAXBException, ClassNotFoundException,
 			EpsException, ComotException, ShutdownSignalException, ConsumerCancelledException, InterruptedException {
+
+		coordinator.assignSupportingOsu(serviceId, instanceId, DEPLOYMENT_ID);
+
+		agent.assertCustomEvent(EpsAction.EPS_ASSIGNMENT_REQUESTED.toString());
+		agent.assertCustomEvent(EpsAction.EPS_ASSIGNED.toString());
 
 		coordinator.startServiceInstance(serviceId, instanceId);
 

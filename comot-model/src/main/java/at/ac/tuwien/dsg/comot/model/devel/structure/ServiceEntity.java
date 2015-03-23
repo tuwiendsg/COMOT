@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot.model.devel.structure;
 
 import java.io.Serializable;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,14 +11,17 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
+
 
 import at.ac.tuwien.dsg.comot.model.HasUniqueId;
 import at.ac.tuwien.dsg.comot.model.SyblDirective;
 import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 
+@XmlSeeAlso({ CloudService.class, ServiceTopology.class, ServiceUnit.class })
 @XmlAccessorType(XmlAccessType.FIELD)
 @NodeEntity
 public abstract class ServiceEntity implements HasUniqueId, Serializable {

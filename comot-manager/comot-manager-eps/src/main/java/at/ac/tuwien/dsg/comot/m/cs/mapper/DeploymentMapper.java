@@ -31,6 +31,7 @@ public class DeploymentMapper {
 	public DeploymentDescription extractDeployment(CloudService service) {
 
 		DeploymentDescription description = new DeploymentDescription();
+		description.setCloudServiceID(service.getId());
 
 		Navigator navigator = new Navigator(service);
 		DeploymentUnit depl;
@@ -187,6 +188,10 @@ public class DeploymentMapper {
 		default:
 			return null;
 		}
+	}
+
+	public static String runningToState() {
+		return SalsaEntityState.DEPLOYED.toString();
 	}
 
 	public static State convert(String state) {

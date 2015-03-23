@@ -49,17 +49,19 @@ public class AppContextCore {
 	public static final String INSERT_INIT_DATA = "INSERT_INIT_DATA";
 
 	/**
-	 * Key pattern: instanceID.changeTRUE/FALSE.stateBefore.stateAfter.lifeCycleEvent.targetLevel.originId
+	 * Original Key pattern: instanceID.changeTRUE/FALSE.stateBefore.stateAfter.eventName.targetLevel.originId Key
+	 * pattern: instanceID.eventName.targetLevel.changeTRUE/FALSE.stateBefore.stateAfter.originId
 	 */
 	public static final String EXCHANGE_LIFE_CYCLE = "EXCHANGE_LIFE_CYCLE";
 
 	/**
-	 * Key pattern: instanceID.epsId.customEvent.targetLevel
+	 * Original Key pattern: instanceID.epsId.customEvent.targetLevel Key pattern:
+	 * instanceID.eventName.targetLevel.targetId
 	 */
 	public static final String EXCHANGE_CUSTOM_EVENT = "EXCHANGE_CUSTOM_EVENT";
 
 	/**
-	 * Key pattern: instanceID.EventType.event.targetLevel
+	 * Key pattern: instanceID.EventType.eventName.targetLevel
 	 */
 	public static final String EXCHANGE_REQUESTS = "EXCHANGE_REQUESTS";
 

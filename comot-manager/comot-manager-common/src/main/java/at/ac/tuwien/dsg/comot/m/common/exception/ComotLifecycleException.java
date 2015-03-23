@@ -13,4 +13,16 @@ public class ComotLifecycleException extends Exception {
 		this.event = event;
 	}
 
+	public ComotLifecycleException(String message) {
+		super(message);
+	}
+
+	public LifeCycleEvent getEvent() {
+		return event;
+	}
+
+	public void setEvent(LifeCycleEvent event) {
+		this.event = event;
+	}
+
 }

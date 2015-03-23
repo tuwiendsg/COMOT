@@ -64,4 +64,10 @@ public class ExceptionMessage extends ComotMessage {
 		this.serviceId = serviceId;
 	}
 
+	@Override
+	public String toString() {
+		return "ExceptionMessage [serviceId=" + serviceId + ", csInstanceId=" + csInstanceId + ", origin=" + origin
+				+ ", exception=" + exception + "]";
+	}
+
 }

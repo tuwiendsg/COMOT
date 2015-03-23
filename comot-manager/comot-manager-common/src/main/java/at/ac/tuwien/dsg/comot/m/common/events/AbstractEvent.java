@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
-@XmlSeeAlso({ LifeCycleEvent.class, CustomEvent.class })
+@XmlSeeAlso({ LifeCycleEvent.class, CustomEvent.class, ModifyingLifeCycleEvent.class })
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public abstract class AbstractEvent implements Serializable {

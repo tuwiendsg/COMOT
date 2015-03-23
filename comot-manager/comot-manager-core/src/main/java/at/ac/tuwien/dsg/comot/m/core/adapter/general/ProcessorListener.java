@@ -2,8 +2,11 @@ package at.ac.tuwien.dsg.comot.m.core.adapter.general;
 
 import java.util.Map;
 
+import javax.xml.bind.JAXBException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageListener;
 
@@ -46,7 +49,7 @@ public class ProcessorListener implements MessageListener {
 					LifeCycleEvent event = (LifeCycleEvent) msg.getEvent();
 
 					Action action = event.getAction();
-					CloudService service = event.getService();
+					CloudService service = msg.getService();
 					Map<String, Transition> transitions = msg.getTransitions();
 
 					log.info(processor.logId()
@@ -87,6 +90,12 @@ public class ProcessorListener implements MessageListener {
 			}
 
 		} catch (Exception e) {
+
+			try {
+				processor.getManager().sendException(e);
+			} catch (AmqpException | JAXBException e1) {
+				e1.printStackTrace();
+			}
 			e.printStackTrace();
 		}
 

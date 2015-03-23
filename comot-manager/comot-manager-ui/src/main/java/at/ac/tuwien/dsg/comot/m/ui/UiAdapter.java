@@ -95,7 +95,7 @@ public class UiAdapter extends Processor {
 				LifeCycleEvent eventLc = (LifeCycleEvent) msg.getEvent();
 
 				Set<OfferedServiceUnit> osus = infoService.getSupportingServices(eventLc.getCsInstanceId());
-				eventLc.getService().getInstancesList().get(0).setSupport(osus);
+				msg.getService().getInstancesList().get(0).setSupport(osus);
 			}
 
 			String msgForClient = Utils.asJsonString(msg);

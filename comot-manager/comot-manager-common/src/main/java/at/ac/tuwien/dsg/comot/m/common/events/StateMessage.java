@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import at.ac.tuwien.dsg.comot.m.common.Type;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -18,15 +19,17 @@ public class StateMessage extends ComotMessage {
 
 	protected AbstractEvent event;
 	protected Map<String, Transition> transitions = new HashMap<>();
+	protected CloudService service;
 
 	public StateMessage() {
 
 	}
 
-	public StateMessage(AbstractEvent event, Map<String, Transition> transitions) {
+	public StateMessage(AbstractEvent event, Map<String, Transition> transitions, CloudService service) {
 		super();
 		this.event = event;
 		this.transitions = transitions;
+		this.service = service;
 	}
 
 	public boolean isLifeCycleDefined() {
@@ -58,6 +61,14 @@ public class StateMessage extends ComotMessage {
 
 	public void setTransitions(Map<String, Transition> transitions) {
 		this.transitions = transitions;
+	}
+
+	public CloudService getService() {
+		return service;
+	}
+
+	public void setService(CloudService service) {
+		this.service = service;
 	}
 
 }

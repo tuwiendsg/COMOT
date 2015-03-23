@@ -1,14 +1,17 @@
 package at.ac.tuwien.dsg.comot.m.core.test;
 
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CustomListenerTest {
 
-	// @Mock
-	// private DeploymentClient deployment;
-	//
+	@Mock
+	private DeploymentClient deployment;
+
 	// @Test
 	// public void testAkTomuPoslemParameterrEXYZ_TakSaMiZavolaDeploymentClientXYZ() throws ClassNotFoundException,
 	// EpsException, IOException, JAXBException, ComotException, InterruptedException {

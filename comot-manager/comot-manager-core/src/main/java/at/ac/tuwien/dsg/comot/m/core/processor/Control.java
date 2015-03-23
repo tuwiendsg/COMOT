@@ -17,9 +17,11 @@ import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.common.ComotAction;
 import at.ac.tuwien.dsg.comot.m.common.EpsAction;
+import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.ControlClient;
 import at.ac.tuwien.dsg.comot.m.common.coreservices.ControlEventsListener;
 import at.ac.tuwien.dsg.comot.m.common.events.ExceptionMessage;
+import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.events.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.events.Transition;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
@@ -192,21 +194,41 @@ public class Control extends Processor implements ControlEventsListener {
 	@Override
 	public void onMessage(IEvent event) {
 
-		if (event instanceof ActionPlanEvent) {
-			ActionPlanEvent apEvent = (ActionPlanEvent) event;
+		try {
 
-			log.info("onActionPlanEvent(serviceId={}, stage={}, type={}, strategies={}, constraints={}, effects={})",
-					apEvent.getServiceId(), apEvent.getStage(), apEvent.getType(), apEvent.getStrategies(),
-					apEvent.getConstraints(), apEvent.getEffect());
+			String instanceId = event.getServiceId();
 
-		} else if (event instanceof ActionEvent) {
-			ActionEvent aEvent = (ActionEvent) event;
+			if (event instanceof ActionPlanEvent) {
+				ActionPlanEvent apEvent = (ActionPlanEvent) event;
 
-			log.info("onActionEvent(serviceId={}, stage={}, type={}, actionId={}, targetId={})", aEvent.getServiceId(),
-					aEvent.getStage(), aEvent.getType(), aEvent.getActionId(), aEvent.getTargetId());
+				// log.info("onActionPlanEvent(serviceId={}, stage={}, type={}, strategies={}, constraints={}, effects={})",
+				// apEvent.getServiceId(), apEvent.getStage(), apEvent.getType(), apEvent.getStrategies(),
+				// apEvent.getConstraints(), apEvent.getEffect());
+
+			} else if (event instanceof ActionEvent) {
+				ActionEvent aEvent = (ActionEvent) event;
+
+				// log.info("onActionEvent(serviceId={}, stage={}, type={}, actionId={}, targetId={})",
+				// aEvent.getServiceId(),
+				// aEvent.getStage(), aEvent.getType(), aEvent.getActionId(), aEvent.getTargetId());
+
+				CloudService instance = infoService.getServiceInstance(instanceId);
+				String serviceId = instance.getId();
+				String groupId = aEvent.getTargetId();
+
+				if (event.getStage() == IEvent.Stage.START) {
+					manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, groupId,
+							Action.ELASTIC_CHANGE_STARTED, getId()));
+
+				} else if (event.getStage() == IEvent.Stage.FINISHED) {
+					manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, groupId,
+							Action.ELASTIC_CHANGE_FINISHED, getId()));
+				}
+
+			}
+		} catch (Exception e) {
 
 		}
-
 	}
 
 }

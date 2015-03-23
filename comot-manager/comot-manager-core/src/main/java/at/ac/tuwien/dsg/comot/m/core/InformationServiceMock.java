@@ -395,9 +395,8 @@ public class InformationServiceMock {
 		}
 
 		try {
-			log.trace("getServiceInstance(): {}", Utils.asJsonString(copyServ));
+			log.debug("getServiceInstance(): {}", Utils.asJsonString(copyServ));
 		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

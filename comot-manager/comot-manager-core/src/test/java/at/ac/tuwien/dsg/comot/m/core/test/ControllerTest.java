@@ -38,7 +38,6 @@ public class ControllerTest extends AbstractTest {
 
 		serviceId = infoService.getServiceInstance(INSTANCE_ID).getId();
 
-		boolean isFresh = true;
 		assertTrue(deployment.isManaged(INSTANCE_ID));
 
 		coordinator.assignSupportingOsu(serviceId, INSTANCE_ID, MONITORING_ID);
@@ -49,13 +48,14 @@ public class ControllerTest extends AbstractTest {
 	@Test
 	public void testControl() throws IOException, JAXBException, ClassNotFoundException, EpsException {
 
+		assertTrue(deployment.isManaged(INSTANCE_ID));
+
 		coordinator.insertRunningService(INSTANCE_ID);
 
 		log.info("----------------------------------------------------------");
 
 		serviceId = infoService.getServiceInstance(INSTANCE_ID).getId();
 
-		boolean isFresh = true;
 		assertTrue(deployment.isManaged(INSTANCE_ID));
 
 		coordinator.assignSupportingOsu(serviceId, INSTANCE_ID, CONTROL_ID);

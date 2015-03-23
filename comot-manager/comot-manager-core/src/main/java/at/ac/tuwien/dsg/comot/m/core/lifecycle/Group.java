@@ -29,49 +29,53 @@ public class Group implements Serializable {
 	protected List<Group> members = new ArrayList<Group>();
 
 	public Group(CloudService service, State state) {
-		this(service.getId(), Type.SERVICE, state, null);
+		this(service.getId(), Type.SERVICE, state);
 
 		for (ServiceTopology topo : service.getServiceTopologies()) {
-			Group temp = new Group(topo, state, this);
-			members.add(temp);
+			Group temp = new Group(topo, state);
+			addGroup(temp);
 		}
 	}
 
-	public Group(ServiceTopology topology, State state, Group parent) {
-		this(topology.getId(), Type.TOPOLOGY, state, parent);
+	public Group(ServiceTopology topology, State state) {
+		this(topology.getId(), Type.TOPOLOGY, state);
 
 		for (ServiceUnit unit : topology.getServiceUnits()) {
-			Group temp = new Group(unit, state, this);
-			members.add(temp);
+			Group temp = new Group(unit, state);
+			addGroup(temp);
 		}
 
 		for (ServiceTopology topo : topology.getServiceTopologies()) {
-			Group temp = new Group(topo, state, this);
-			members.add(temp);
+			Group temp = new Group(topo, state);
+			addGroup(temp);
 		}
 	}
 
-	public Group(ServiceUnit unit, State state, Group parent) {
-		this(unit.getId(), Type.UNIT, state, parent);
+	public Group(ServiceUnit unit, State state) {
+		this(unit.getId(), Type.UNIT, state);
 
 		for (UnitInstance instance : unit.getInstances()) {
-			Group temp = new Group(instance.getId(), Type.INSTANCE, state, this);
-			members.add(temp);
+			Group temp = new Group(instance.getId(), Type.INSTANCE, state);
+			addGroup(temp);
 		}
 	}
 
-	public Group(String id, Type type, State state, Group parent) {
+	public Group(String id, Type type, State state) {
 		super();
 		this.id = id;
 		this.currentState = state;
 		this.type = type;
-		this.parent = parent;
 	}
 
 	public Group addGroup(String id, Type type, State state) {
-		Group temp = new Group(id, type, state, this);
+		Group temp = new Group(id, type, state);
 		members.add(temp);
 		return temp;
+	}
+
+	public void addGroup(Group group) {
+		group.parent = this;
+		members.add(group);
 	}
 
 	public boolean canExecute(Action action) {
@@ -170,6 +174,21 @@ public class Group implements Serializable {
 	protected void moveToState(State nextState) {
 		previousState = currentState;
 		currentState = nextState;
+	}
+
+	public boolean removeMemberNested(String id) {
+
+		if (this.id.equals(id)) {
+			this.parent.getMembers().remove(this);
+			return true;
+		} else {
+			for (Group member : members) {
+				if (member.removeMemberNested(id)) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 
 	// GENERATED

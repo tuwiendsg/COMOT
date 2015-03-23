@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot.m.core.lifecycle;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +28,8 @@ import org.springframework.stereotype.Component;
 import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.events.Transition;
+import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
+import at.ac.tuwien.dsg.comot.m.common.exception.ComotLifecycleException;
 import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.core.UtilsLc;
 import at.ac.tuwien.dsg.comot.m.core.adapter.general.SingleQueueManager;
@@ -56,7 +59,8 @@ public class LifeCycleManager {
 	@Autowired
 	protected InformationServiceMock infoService;
 
-	protected Map<String, ManagerOfServiceInstance> managers = new HashMap<>();
+	protected Map<String, ManagerOfServiceInstance> managers = Collections
+			.synchronizedMap(new HashMap<String, ManagerOfServiceInstance>());
 
 	public LifeCycleManager() {
 	}
@@ -130,7 +134,11 @@ public class LifeCycleManager {
 	}
 
 	protected void removeInstanceManager(String csInstanceId) {
-		managers.remove(managers.get(csInstanceId));
+
+		ManagerOfServiceInstance mng = managers.get(csInstanceId);
+		mng.clean();
+		managers.remove(csInstanceId);
+
 	}
 
 	public State getCurrentState(String instanceId, String groupId) {
@@ -178,9 +186,11 @@ public class LifeCycleManager {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 * @throws JAXBException
+	 * @throws ComotLifecycleException
+	 * @throws ComotException
 	 */
 	public void hardSetRunning(CloudService service, String instanceId) throws ClassNotFoundException, IOException,
-			JAXBException {
+			JAXBException, ComotLifecycleException, ComotException {
 
 		managers.get(instanceId).hardSetRunning(instanceId, service);
 	}
