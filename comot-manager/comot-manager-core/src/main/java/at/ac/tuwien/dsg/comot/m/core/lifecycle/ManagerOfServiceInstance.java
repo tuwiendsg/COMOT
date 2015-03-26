@@ -23,7 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.m.common.Navigator;
+import at.ac.tuwien.dsg.comot.m.adapter.UtilsLc;
+import at.ac.tuwien.dsg.comot.m.common.Constants;
+import at.ac.tuwien.dsg.comot.m.common.InformationClient;
 import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.events.AbstractEvent;
@@ -36,12 +38,8 @@ import at.ac.tuwien.dsg.comot.m.common.events.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.events.Transition;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotLifecycleException;
-import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
-import at.ac.tuwien.dsg.comot.m.core.UtilsLc;
-import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
@@ -64,7 +62,7 @@ public class ManagerOfServiceInstance {
 	@Autowired
 	protected LifeCycleManager parentManager;
 	@Autowired
-	protected InformationServiceMock infoService;
+	protected InformationClient infoService;
 	@Autowired
 	protected GroupManager groupManager;
 
@@ -76,7 +74,7 @@ public class ManagerOfServiceInstance {
 	}
 
 	public void createInstance(LifeCycleEvent event) throws ClassNotFoundException, AmqpException, IOException,
-			JAXBException {
+			JAXBException, EpsException {
 
 		this.csInstanceId = event.getCsInstanceId();
 		this.serviceId = event.getServiceId();
@@ -92,7 +90,7 @@ public class ManagerOfServiceInstance {
 		container.setPrefetchCount(0);
 		container.setMessageListener(new CustomListener());
 
-		admin.declareBinding(new Binding(queueName(), DestinationType.QUEUE, AppContextCore.EXCHANGE_REQUESTS,
+		admin.declareBinding(new Binding(queueName(), DestinationType.QUEUE, Constants.EXCHANGE_REQUESTS,
 				csInstanceId + ".#", null));
 
 		try {
@@ -136,8 +134,8 @@ public class ManagerOfServiceInstance {
 		}
 	}
 
-	public void executeLifeCycleEvent(LifeCycleEvent event)
-			throws JAXBException, IOException, ClassNotFoundException, ComotLifecycleException, ComotException {
+	public void executeLifeCycleEvent(LifeCycleEvent event) throws EpsException, IOException, ComotException,
+			AmqpException, JAXBException, ComotLifecycleException, ClassNotFoundException {
 
 		String groupId = event.getGroupId();
 		Action action = event.getAction();
@@ -181,7 +179,7 @@ public class ManagerOfServiceInstance {
 
 					groupManager.createGroupInstance(action, modEvent.getParentId(), modEvent.getInstance());
 					infoService
-							.addUnitInstance(serviceId, csInstanceId, modEvent.getParentId(), modEvent.getInstance());
+							.putUnitInstance(serviceId, csInstanceId, modEvent.getParentId(), modEvent.getInstance());
 
 				} else { // ALL OTHER
 					groupManager.checkAndExecute(action, groupId);
@@ -199,7 +197,8 @@ public class ManagerOfServiceInstance {
 					}
 
 					log.info("updating instance: {}", targetGroup.getId());
-					infoService.updateUnitInstance(serviceId, csInstanceId, modEvent.getInstance());
+					infoService
+							.putUnitInstance(serviceId, csInstanceId, modEvent.getParentId(), modEvent.getInstance());
 
 				} else {
 					groupManager.checkAndExecute(action, groupId);
@@ -228,7 +227,7 @@ public class ManagerOfServiceInstance {
 
 				groupManager.checkAndExecute(action, groupId);
 
-			} else if (Action.MOVE == action) {
+			} else if (Action.MOVED == action) {
 
 				// TODO
 
@@ -255,11 +254,12 @@ public class ManagerOfServiceInstance {
 			if (service == null) {
 				service = infoService.getServiceInstance(serviceId, csInstanceId);
 			}
+
 			service = UtilsLc.removeProviderInfo(service);
 
 			StateMessage message = new StateMessage(event, groupManager.extractTransitions(event), service);
 
-			send(AppContextCore.EXCHANGE_LIFE_CYCLE, bindingKey, message);
+			send(Constants.EXCHANGE_LIFE_CYCLE, bindingKey, message);
 
 			// remove groups
 
@@ -267,7 +267,11 @@ public class ManagerOfServiceInstance {
 					.hasNext();) {
 				Group temp = iterator.next();
 				if (temp.getCurrentState() == State.FINAL) {
-					temp.getParent().removeMemberNested(temp.getId());
+					if (temp.getId().equals(serviceId)) {
+						clean();
+					} else {
+						temp.getParent().removeMemberNested(temp.getId());
+					}
 				}
 			}
 
@@ -278,7 +282,7 @@ public class ManagerOfServiceInstance {
 	}
 
 	public void executeCustomEvent(CustomEvent event) throws AmqpException, JAXBException, ClassNotFoundException,
-			IOException, ComotException {
+			IOException, ComotException, EpsException {
 
 		String groupId = event.getGroupId();
 
@@ -293,14 +297,14 @@ public class ManagerOfServiceInstance {
 
 		CloudService service = infoService.getServiceInstance(serviceId, csInstanceId);
 
-		send(AppContextCore.EXCHANGE_CUSTOM_EVENT, bindingKey,
+		send(Constants.EXCHANGE_CUSTOM_EVENT, bindingKey,
 				new StateMessage(event, groupManager.extractTransitions(event), service));
 
 	}
 
 	protected void sendException(Exception e) throws AmqpException, JAXBException {
 
-		send(AppContextCore.EXCHANGE_EXCEPTIONS, csInstanceId + "." + csInstanceId, new ExceptionMessage(serviceId,
+		send(Constants.EXCHANGE_EXCEPTIONS, csInstanceId + "." + csInstanceId, new ExceptionMessage(serviceId,
 				csInstanceId, csInstanceId, e));
 
 	}
@@ -340,30 +344,4 @@ public class ManagerOfServiceInstance {
 		return "[ MANAGER_" + csInstanceId + "] ";
 	}
 
-	/**
-	 * Only for testing!
-	 * 
-	 * @param instanceId
-	 * @throws IOException
-	 * @throws ClassNotFoundException
-	 * @throws JAXBException
-	 * @throws ComotLifecycleException
-	 * @throws ComotException
-	 */
-	public void hardSetRunning(String instanceId, CloudService service) throws ClassNotFoundException, IOException,
-			JAXBException, ComotLifecycleException, ComotException {
-
-		for (ServiceUnit unit : Navigator.getAllUnits(service)) {
-			for (UnitInstance uInst : unit.getInstances()) {
-				groupManager.createGroupInstance(Action.DEPLOYMENT_STARTED, unit.getId(), uInst);
-				infoService.addUnitInstance(serviceId, csInstanceId, unit.getId(), uInst);
-			}
-		}
-		
-		groupManager.checkAndExecute(Action.DEPLOYED, serviceId);
-
-		for (Group group : groupManager.getGroup(serviceId).getAllMembersNested()) {
-			group.currentState = State.RUNNING;
-		}
-	}
 }

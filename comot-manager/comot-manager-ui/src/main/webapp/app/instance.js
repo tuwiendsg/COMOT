@@ -161,8 +161,8 @@ define(function(require) {
 				var message = JSON.parse(e.data);
 				var transitions = message.stateMessage.transitions.entry;
 				var event = message.stateMessage.event;
-				var service = event.service;
-
+				var service = message.stateMessage.service;
+				
 				// events
 				showEvent(events, event);
 
@@ -199,8 +199,7 @@ define(function(require) {
 		// store transitions
 		//model.transitions.removeAll();
 		model.transitions(transitions);
-
-
+		
 		// tree
 		createTree(createElement(service, tMap), "#tree_div");
 		// lifecycle

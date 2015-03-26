@@ -18,6 +18,8 @@
 
 	<modules>
 		<module>comot-manager-core</module>
+		<module>comot-manager-adapter</module>
+		<module>comot-manager-info-service-mock</module>
 		<module>comot-manager-eps</module>
 		<module>comot-manager-common</module>
 		<module>comot-manager-ui</module>
@@ -114,6 +116,16 @@
 			</dependency>
 			<dependency>
 				<groupId>at.ac.tuwien.dsg.comot</groupId>
+				<artifactId>comot-manager-info-service-mock</artifactId>
+				<version>0.2</version>
+			</dependency>
+			<dependency>
+				<groupId>at.ac.tuwien.dsg.comot</groupId>
+				<artifactId>comot-manager-adapter</artifactId>
+				<version>0.2</version>
+			</dependency>
+			<dependency>
+				<groupId>at.ac.tuwien.dsg.comot</groupId>
 				<artifactId>comot-manager-common</artifactId>
 				<version>0.2</version>
 				<type>test-jar</type>
@@ -183,7 +195,7 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 		</dependency>
-			<dependency>
+		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 			<version>1.10.19</version>

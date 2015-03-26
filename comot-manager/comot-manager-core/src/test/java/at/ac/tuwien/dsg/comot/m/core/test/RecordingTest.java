@@ -8,9 +8,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oasis.tosca.Definitions;
 
+import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
-import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.m.recorder.model.Change;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
@@ -25,13 +25,13 @@ public class RecordingTest extends AbstractTest {
 	String deploymentId;
 
 	@Before
-	public void setUp() throws JAXBException, IOException, ClassNotFoundException {
+	public void setUp() throws JAXBException, IOException, ClassNotFoundException, EpsException {
 		Definitions tosca1 = UtilsCs.loadTosca("./../resources/tosca/tomcat/tomcat_from_salsa.xml");
 		service = mapperTosca.createModel(tosca1);
 		serviceId = coordinator.createCloudService(service);
 
-		monitoringId = InformationServiceMock.MELA_SERVICE_PUBLIC_ID;
-		deploymentId = InformationServiceMock.SALSA_SERVICE_PUBLIC_ID;
+		monitoringId = Constants.MELA_SERVICE_PUBLIC_ID;
+		deploymentId = Constants.SALSA_SERVICE_PUBLIC_ID;
 	}
 
 	@Test

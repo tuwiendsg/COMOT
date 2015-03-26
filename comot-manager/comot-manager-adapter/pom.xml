@@ -1,0 +1,57 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>comot-manager-adapter</artifactId>
+	<packaging>jar</packaging>
+	<name>COMOT Manager EPS Adapter</name>
+	<parent>
+		<groupId>at.ac.tuwien.dsg.comot</groupId>
+		<artifactId>comot-manager</artifactId>
+		<relativePath>../pom.xml</relativePath>
+		<version>0.2</version>
+	</parent>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.amqp</groupId>
+			<artifactId>spring-rabbit</artifactId>
+			<version>1.4.3.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>at.ac.tuwien.dsg.comot</groupId>
+			<artifactId>comot-manager-eps</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>at.ac.tuwien.dsg.comot</groupId>
+			<artifactId>comot-manager-common</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>at.ac.tuwien.dsg.comot</groupId>
+			<artifactId>comot-model</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		
+	</build>
+
+</project>

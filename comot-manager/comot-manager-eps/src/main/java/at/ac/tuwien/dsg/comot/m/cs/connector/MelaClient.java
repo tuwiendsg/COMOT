@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.ac.tuwien.dsg.comot.m.common.ServiceClient;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement;
@@ -22,7 +23,7 @@ import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitorin
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitoringSnapshots;
 import at.ac.tuwien.dsg.mela.common.requirements.Requirements;
 
-public class MelaClient extends CoreServiceClient {
+public class MelaClient extends ServiceClient {
 
 	private static final Logger log = LoggerFactory.getLogger(MelaClient.class);
 

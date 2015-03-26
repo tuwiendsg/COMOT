@@ -11,13 +11,13 @@ import javax.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.events.ComotMessage;
 import at.ac.tuwien.dsg.comot.m.common.events.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.events.ExceptionMessage;
 import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.events.StateMessage;
-import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 
 import com.rabbitmq.client.Channel;
@@ -52,9 +52,9 @@ public class TestAgentAdapter {
 		channel.queueDeclare(queueNameLifecycle(), false, false, true, null);
 		// channel.queueDeclare(queueNameCustom(), false, false, true, null);
 
-		channel.queueBind(queueNameLifecycle(), AppContextCore.EXCHANGE_LIFE_CYCLE, "#");
-		channel.queueBind(queueNameLifecycle(), AppContextCore.EXCHANGE_CUSTOM_EVENT, "#");
-		channel.queueBind(queueNameLifecycle(), AppContextCore.EXCHANGE_EXCEPTIONS, "#");
+		channel.queueBind(queueNameLifecycle(), Constants.EXCHANGE_LIFE_CYCLE, "#");
+		channel.queueBind(queueNameLifecycle(), Constants.EXCHANGE_CUSTOM_EVENT, "#");
+		channel.queueBind(queueNameLifecycle(), Constants.EXCHANGE_EXCEPTIONS, "#");
 
 		consumerLifecycle = new QueueingConsumer(channel);
 		// consumerCustom = new QueueingConsumer(channel);

@@ -4,7 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.m.core.adapter.general.PerInstanceQueueManager;
+import at.ac.tuwien.dsg.comot.m.adapter.general.PerInstanceQueueManager;
+import at.ac.tuwien.dsg.comot.m.common.EpsAdapter;
 import at.ac.tuwien.dsg.comot.m.core.processor.Deployment;
 
 @Component
@@ -16,7 +17,7 @@ public class DeploymentAdapter implements EpsAdapter {
 	@Autowired
 	protected PerInstanceQueueManager manager;
 
-	public void start(String participantId) {
+	public void start(String participantId) throws Exception {
 		manager.start(participantId, processor);
 	}
 

@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import at.ac.tuwien.dsg.comot.m.common.coreservices.MonitoringClient;
+import at.ac.tuwien.dsg.comot.m.common.eps.MonitoringClient;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.common.model.monitoring.ElementMonitoring;

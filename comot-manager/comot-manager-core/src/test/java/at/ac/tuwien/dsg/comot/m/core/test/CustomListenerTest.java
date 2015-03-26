@@ -4,7 +4,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
+import at.ac.tuwien.dsg.comot.m.common.eps.DeploymentClient;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CustomListenerTest {

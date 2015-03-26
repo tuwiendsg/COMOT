@@ -42,6 +42,10 @@
 			<groupId>at.ac.tuwien.dsg.cloud.salsa</groupId>
 			<artifactId>salsa-common</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>at.ac.tuwien.dsg.comot</groupId>
+			<artifactId>comot-manager-adapter</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>

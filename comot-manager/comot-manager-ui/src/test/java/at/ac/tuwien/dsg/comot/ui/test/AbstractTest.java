@@ -17,9 +17,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import at.ac.tuwien.dsg.comot.m.common.coreservices.ControlClient;
-import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
-import at.ac.tuwien.dsg.comot.m.common.coreservices.MonitoringClient;
+import at.ac.tuwien.dsg.comot.m.common.eps.ControlClient;
+import at.ac.tuwien.dsg.comot.m.common.eps.DeploymentClient;
+import at.ac.tuwien.dsg.comot.m.common.eps.MonitoringClient;
 import at.ac.tuwien.dsg.comot.m.core.Coordinator;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
 import at.ac.tuwien.dsg.comot.m.ui.service.ServicesResource;

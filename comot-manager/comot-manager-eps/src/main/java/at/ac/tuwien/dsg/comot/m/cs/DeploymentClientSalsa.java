@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityState;
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityType;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
-import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
+import at.ac.tuwien.dsg.comot.m.common.eps.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.cs.connector.SalsaClient;

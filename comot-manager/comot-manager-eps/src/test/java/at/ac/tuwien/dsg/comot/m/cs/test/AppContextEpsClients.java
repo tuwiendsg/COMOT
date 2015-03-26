@@ -12,9 +12,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
-import at.ac.tuwien.dsg.comot.m.common.coreservices.ControlClient;
-import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
-import at.ac.tuwien.dsg.comot.m.common.coreservices.MonitoringClient;
+import at.ac.tuwien.dsg.comot.m.common.eps.ControlClient;
+import at.ac.tuwien.dsg.comot.m.common.eps.DeploymentClient;
+import at.ac.tuwien.dsg.comot.m.common.eps.MonitoringClient;
 import at.ac.tuwien.dsg.comot.m.cs.ControlClientRsybl;
 import at.ac.tuwien.dsg.comot.m.cs.DeploymentClientSalsa;
 import at.ac.tuwien.dsg.comot.m.cs.MonitoringClientMela;

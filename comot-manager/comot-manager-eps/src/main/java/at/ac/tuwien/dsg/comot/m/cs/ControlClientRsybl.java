@@ -22,8 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import at.ac.tuwien.dsg.comot.m.common.coreservices.ControlClient;
-import at.ac.tuwien.dsg.comot.m.common.coreservices.ControlEventsListener;
+import at.ac.tuwien.dsg.comot.m.common.eps.ControlClient;
+import at.ac.tuwien.dsg.comot.m.common.eps.ControlEventsListener;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.cs.connector.RsyblClient;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.DeploymentMapper;

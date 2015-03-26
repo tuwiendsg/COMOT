@@ -1,0 +1,69 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>comot-manager-info-service-mock</artifactId>
+	<packaging>war</packaging>
+	<name>COMOT Manager Information Service Mock</name>
+
+	<parent>
+		<groupId>at.ac.tuwien.dsg.comot</groupId>
+		<artifactId>comot-manager</artifactId>
+		<relativePath>../pom.xml</relativePath>
+		<version>0.2</version>
+	</parent>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-moxy</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.ext</groupId>
+			<artifactId>jersey-spring3</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.containers</groupId>
+			<artifactId>jersey-container-servlet</artifactId>
+			<version>2.16</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>at.ac.tuwien.dsg.comot</groupId>
+			<artifactId>comot-manager-common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.3-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<id>tomcat-create-exec-war</id>
+						<goals>
+							<goal>exec-war</goal>
+						</goals>
+						<phase>package</phase>
+					</execution>
+				</executions>
+				<configuration>
+					<finalName>infoServiceMock.jar</finalName>
+					<port>8480</port> <!-- port does not apply on generated jar, default: 8080 -->
+					<path>/info</path>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

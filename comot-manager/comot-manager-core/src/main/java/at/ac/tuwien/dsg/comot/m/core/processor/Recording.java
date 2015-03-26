@@ -11,12 +11,12 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import at.ac.tuwien.dsg.comot.m.adapter.general.Processor;
 import at.ac.tuwien.dsg.comot.m.common.events.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.events.ExceptionMessage;
 import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.events.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.events.Transition;
-import at.ac.tuwien.dsg.comot.m.core.adapter.general.Processor;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.m.recorder.revisions.RevisionApi;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;

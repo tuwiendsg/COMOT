@@ -7,7 +7,6 @@ package at.ac.tuwien.dsg.comot.m.core;
 
 import java.io.IOException;
 
-import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.StringUtils;
@@ -16,19 +15,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.EpsAction;
+import at.ac.tuwien.dsg.comot.m.common.InformationClient;
 import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
-import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
+import at.ac.tuwien.dsg.comot.m.common.eps.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.events.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
-import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.ComotLifecycleException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
-import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
+import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 
@@ -40,7 +40,7 @@ public class Coordinator {
 	public static final String USER_ID = "Some_User";
 
 	@Autowired
-	protected InformationServiceMock infoService;
+	protected InformationClient infoService;
 	@Autowired
 	protected LifeCycleManager lcManager;
 	@Autowired
@@ -48,20 +48,18 @@ public class Coordinator {
 	@Autowired
 	protected RabbitTemplate amqp;
 
-	boolean first = true;
-	
-	public String createCloudService(CloudService service) throws ClassNotFoundException, IOException {
+	@Autowired
+	protected ToscaMapper mapperTosca;
+	@javax.annotation.Resource
+	public Environment env;
+
+	public String createCloudService(CloudService service) throws EpsException {
 
 		String serviceId = infoService.createService(service);
 		return serviceId;
 	}
 
-	public String createServiceInstance(String serviceId) throws IOException, JAXBException, ClassNotFoundException {
-		
-		if(first){
-			first =false;
-			insertRunningService("HelloElasticityNoDB");
-		}
+	public String createServiceInstance(String serviceId) throws EpsException, AmqpException, JAXBException {
 
 		String instanceId = infoService.createServiceInstance(serviceId);
 
@@ -85,8 +83,7 @@ public class Coordinator {
 
 	}
 
-	public void removeServiceInstance(String serviceId, String instanceId) throws IOException, JAXBException,
-			ClassNotFoundException {
+	public void removeServiceInstance(String serviceId, String instanceId) throws AmqpException, JAXBException {
 
 		// infoService.removeServiceInstance(serviceId, instanceId);
 
@@ -138,7 +135,7 @@ public class Coordinator {
 
 		// log.info(logId() +"SEND key={}", targetLevel);
 
-		amqp.convertAndSend(AppContextCore.EXCHANGE_REQUESTS, bindingKey, Utils.asJsonString(event));
+		amqp.convertAndSend(Constants.EXCHANGE_REQUESTS, bindingKey, Utils.asJsonString(event));
 	}
 
 	protected void sendCustom(Type targetLevel, CustomEvent event) throws AmqpException, JAXBException {
@@ -148,57 +145,6 @@ public class Coordinator {
 
 		// log.info(logId() +"SEND key={}", targetLevel);
 
-		amqp.convertAndSend(AppContextCore.EXCHANGE_REQUESTS, bindingKey, Utils.asJsonString(event));
+		amqp.convertAndSend(Constants.EXCHANGE_REQUESTS, bindingKey, Utils.asJsonString(event));
 	}
-
-	/**
-	 * Only for Testing !
-	 * 
-	 * @param name
-	 */
-	public void insertRunningService(String name) {
-		try {
-
-			log.info("TEST inserting from SALSA '{}'", name);
-
-			String instanceId = name;
-			String serviceId = instanceId + "_FROM_SALSA";
-
-			if (deployment.isManaged(instanceId)) {
-
-				CloudService service = deployment.getService(instanceId);
-
-				service.setName(serviceId);
-				service.setId(serviceId);
-
-				createCloudService(service);
-
-				infoService.createServiceInstance(serviceId, instanceId);
-				sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.CREATED,
-						USER_ID));
-
-				Thread.sleep(3000);
-				
-				assignSupportingOsu(serviceId, instanceId, InformationServiceMock.SALSA_SERVICE_PUBLIC_ID);
-
-				service = infoService.getServiceInstance(instanceId);
-				service.setName(instanceId);
-				service.setId(instanceId);
-				service = deployment.refreshStatus(service);
-
-				Thread.sleep(3000);
-
-				service.setName(serviceId);
-				service.setId(serviceId);
-				lcManager.hardSetRunning(service, instanceId);
-				
-				log.info(Utils.asJsonString(infoService.getServiceInstance(instanceId)));
-			}
-
-		} catch (EpsException | ComotException | ClassNotFoundException | IOException | JAXBException
-				| InterruptedException | ComotLifecycleException e) {
-			e.printStackTrace();
-		}
-	}
-
 }

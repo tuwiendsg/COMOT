@@ -39,7 +39,7 @@ public class GroupManager {
 	protected AggregationStrategy strategy = new AggregationStrategy();
 
 	public Group checkAndExecute(Action action, String groupId) throws ComotLifecycleException,
-			ClassNotFoundException, IOException {
+			IOException, ClassNotFoundException {
 
 		Group group = serviceGroup.getMemberNested(groupId);
 
@@ -47,7 +47,7 @@ public class GroupManager {
 			throw new ComotLifecycleException("The group '" + groupId + "' does not exist");
 		}
 
-		log.info(logId() + "checkAndExecute groupId={} : {}", groupId, serviceGroup);
+		log.info(logId() + "checkAndExecute BEFORE groupId={} : {}", groupId, serviceGroup);
 
 		if (!group.canExecute(action)) {
 			throw new ComotLifecycleException("Action '" + action + "' is not allowed in state '"
@@ -56,6 +56,8 @@ public class GroupManager {
 
 		group.executeAction(action, strategy);
 		serviceGroupReadOnly = (Group) Utils.deepCopy(serviceGroup);
+
+		log.info(logId() + "checkAndExecute AFTER groupId={} : {}", groupId, serviceGroup);
 
 		return group;
 	}
@@ -71,7 +73,7 @@ public class GroupManager {
 	}
 
 	public Group createGroupService(Action action, CloudService service) throws ComotLifecycleException,
-			ClassNotFoundException, IOException {
+			IOException, ClassNotFoundException {
 
 		if (serviceGroup != null) {
 			throw new ComotLifecycleException("Action '" + action

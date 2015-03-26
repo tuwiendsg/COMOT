@@ -14,10 +14,10 @@ import org.junit.Test;
 import org.oasis.tosca.Definitions;
 
 import at.ac.tuwien.dsg.comot.m.common.ComotAction;
+import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
-import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.core.test.utils.TestAgentAdapter;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
@@ -29,8 +29,8 @@ import com.rabbitmq.client.ShutdownSignalException;
 
 public class MonitoringTest extends AbstractTest {
 
-	protected final String MONITORING_ID = InformationServiceMock.MELA_SERVICE_PUBLIC_ID;
-	protected final String DEPLOYMENT_ID = InformationServiceMock.SALSA_SERVICE_PUBLIC_ID;
+	protected final String MONITORING_ID = Constants.MELA_SERVICE_PUBLIC_ID;
+	protected final String DEPLOYMENT_ID = Constants.SALSA_SERVICE_PUBLIC_ID;
 
 	protected TestAgentAdapter agent;
 	protected String serviceId;

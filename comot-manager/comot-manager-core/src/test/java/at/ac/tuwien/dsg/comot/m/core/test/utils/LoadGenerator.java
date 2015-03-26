@@ -23,6 +23,13 @@ public class LoadGenerator {
 
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 
+	public static void main(String[] args) {
+
+		LoadGenerator generator = new LoadGenerator();
+		generator.startLoad("localhost", 9090);
+
+	}
+
 	public void startLoad(String host, int port) {
 
 		int rowsToCreate = 30;

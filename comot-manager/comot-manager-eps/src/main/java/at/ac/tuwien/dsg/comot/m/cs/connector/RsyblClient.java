@@ -13,12 +13,13 @@ import javax.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.ac.tuwien.dsg.comot.m.common.ServiceClient;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
-public class RsyblClient extends CoreServiceClient {
+public class RsyblClient extends ServiceClient {
 
 	private final Logger log = LoggerFactory.getLogger(RsyblClient.class);
 

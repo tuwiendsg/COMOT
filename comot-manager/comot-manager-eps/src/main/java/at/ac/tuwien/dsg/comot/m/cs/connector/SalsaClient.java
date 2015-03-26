@@ -18,11 +18,12 @@ import org.slf4j.LoggerFactory;
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService;
 import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaInstanceDescription_VM;
 import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties;
+import at.ac.tuwien.dsg.comot.m.common.ServiceClient;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 
-public class SalsaClient extends CoreServiceClient {
+public class SalsaClient extends ServiceClient {
 
 	private final Logger log = LoggerFactory.getLogger(SalsaClient.class);
 

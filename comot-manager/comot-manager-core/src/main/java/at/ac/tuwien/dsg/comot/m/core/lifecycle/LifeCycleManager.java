@@ -25,18 +25,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import at.ac.tuwien.dsg.comot.m.adapter.UtilsLc;
+import at.ac.tuwien.dsg.comot.m.adapter.general.SingleQueueManager;
+import at.ac.tuwien.dsg.comot.m.common.Constants;
+import at.ac.tuwien.dsg.comot.m.common.InformationClient;
 import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.events.Transition;
-import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.ComotLifecycleException;
-import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
-import at.ac.tuwien.dsg.comot.m.core.UtilsLc;
-import at.ac.tuwien.dsg.comot.m.core.adapter.general.SingleQueueManager;
-import at.ac.tuwien.dsg.comot.m.core.processor.EpsCoordinator;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
+import at.ac.tuwien.dsg.comot.m.core.processor.EpsBuilder;
 import at.ac.tuwien.dsg.comot.m.core.processor.Recording;
-import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
-import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
@@ -57,7 +55,7 @@ public class LifeCycleManager {
 	protected SimpleMessageListenerContainer container;
 
 	@Autowired
-	protected InformationServiceMock infoService;
+	protected InformationClient infoService;
 
 	protected Map<String, ManagerOfServiceInstance> managers = Collections
 			.synchronizedMap(new HashMap<String, ManagerOfServiceInstance>());
@@ -66,12 +64,12 @@ public class LifeCycleManager {
 	}
 
 	@PostConstruct
-	public void setUp() {
+	public void setUp() throws Exception {
 
-		admin.declareExchange(new TopicExchange(AppContextCore.EXCHANGE_LIFE_CYCLE, false, false));
-		admin.declareExchange(new TopicExchange(AppContextCore.EXCHANGE_CUSTOM_EVENT, false, false));
-		admin.declareExchange(new TopicExchange(AppContextCore.EXCHANGE_REQUESTS, false, false));
-		admin.declareExchange(new TopicExchange(AppContextCore.EXCHANGE_EXCEPTIONS, false, false));
+		admin.declareExchange(new TopicExchange(Constants.EXCHANGE_LIFE_CYCLE, false, false));
+		admin.declareExchange(new TopicExchange(Constants.EXCHANGE_CUSTOM_EVENT, false, false));
+		admin.declareExchange(new TopicExchange(Constants.EXCHANGE_REQUESTS, false, false));
+		admin.declareExchange(new TopicExchange(Constants.EXCHANGE_EXCEPTIONS, false, false));
 
 		admin.declareQueue(new Queue(MANAGER_QUEUE, false, false, true));
 
@@ -80,18 +78,18 @@ public class LifeCycleManager {
 		container.setQueueNames(MANAGER_QUEUE);
 		container.setMessageListener(new CustomListener());
 
-		admin.declareBinding(new Binding(MANAGER_QUEUE, DestinationType.QUEUE, AppContextCore.EXCHANGE_REQUESTS,
+		admin.declareBinding(new Binding(MANAGER_QUEUE, DestinationType.QUEUE, Constants.EXCHANGE_REQUESTS,
 				"*." + LifeCycleEvent.class.getSimpleName() + "." + Action.CREATED + "." + Type.SERVICE, null));
-		admin.declareBinding(new Binding(MANAGER_QUEUE, DestinationType.QUEUE, AppContextCore.EXCHANGE_REQUESTS,
+		admin.declareBinding(new Binding(MANAGER_QUEUE, DestinationType.QUEUE, Constants.EXCHANGE_REQUESTS,
 				"*." + LifeCycleEvent.class.getSimpleName() + "." + Action.REMOVED + "." + Type.SERVICE, null));
 
 		container.start();
 
 		SingleQueueManager manager1 = context.getBean(SingleQueueManager.class);
-		manager1.start("EPS_BUILDER", context.getBean(EpsCoordinator.class));
+		manager1.start("EPS_BUILDER", context.getBean(EpsBuilder.class));
 
 		SingleQueueManager manager2 = context.getBean(SingleQueueManager.class);
-		manager2.start(InformationServiceMock.RECORDER, context.getBean(Recording.class));
+		manager2.start(Constants.RECORDER, context.getBean(Recording.class));
 
 	}
 
@@ -113,14 +111,14 @@ public class LifeCycleManager {
 					removeInstanceManager(csInstanceId);
 				}
 
-			} catch (JAXBException | ClassNotFoundException | AmqpException | IOException e) {
+			} catch (JAXBException | ClassNotFoundException | AmqpException | IOException | EpsException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
 	protected void createInstanceManager(String csInstanceId, LifeCycleEvent event) throws ClassNotFoundException,
-			AmqpException, IOException, JAXBException {
+			AmqpException, IOException, JAXBException, EpsException {
 
 		if (managers.containsKey(csInstanceId)) {
 			return;
@@ -134,9 +132,6 @@ public class LifeCycleManager {
 	}
 
 	protected void removeInstanceManager(String csInstanceId) {
-
-		ManagerOfServiceInstance mng = managers.get(csInstanceId);
-		mng.clean();
 		managers.remove(csInstanceId);
 
 	}
@@ -179,19 +174,4 @@ public class LifeCycleManager {
 
 	}
 
-	/**
-	 * Only for testing!
-	 * 
-	 * @param instanceId
-	 * @throws IOException
-	 * @throws ClassNotFoundException
-	 * @throws JAXBException
-	 * @throws ComotLifecycleException
-	 * @throws ComotException
-	 */
-	public void hardSetRunning(CloudService service, String instanceId) throws ClassNotFoundException, IOException,
-			JAXBException, ComotLifecycleException, ComotException {
-
-		managers.get(instanceId).hardSetRunning(instanceId, service);
-	}
 }

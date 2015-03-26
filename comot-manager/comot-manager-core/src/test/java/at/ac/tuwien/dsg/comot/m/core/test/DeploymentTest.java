@@ -15,11 +15,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oasis.tosca.Definitions;
 
+import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.EpsAction;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
-import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
 import at.ac.tuwien.dsg.comot.m.core.test.utils.TestAgentAdapter;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
@@ -31,8 +31,8 @@ import com.rabbitmq.client.ShutdownSignalException;
 
 public class DeploymentTest extends AbstractTest {
 
-	protected final String MONITORING_ID = InformationServiceMock.MELA_SERVICE_PUBLIC_ID;
-	protected final String DEPLOYMENT_ID = InformationServiceMock.SALSA_SERVICE_PUBLIC_ID;
+	protected final String MONITORING_ID = Constants.MELA_SERVICE_PUBLIC_ID;
+	protected final String DEPLOYMENT_ID = Constants.SALSA_SERVICE_PUBLIC_ID;
 
 	protected TestAgentAdapter agent;
 	protected String serviceId;
@@ -66,16 +66,16 @@ public class DeploymentTest extends AbstractTest {
 
 	@Test
 	public void removeServiceInstance() throws ClassNotFoundException, IOException, JAXBException,
-			ShutdownSignalException, ConsumerCancelledException, InterruptedException {
+			ShutdownSignalException, ConsumerCancelledException, InterruptedException, EpsException {
 
-		assertNotNull(infoService.getServiceInstance(instanceId));
+		assertNotNull(infoService.getServiceInstance(serviceId, instanceId));
 		assertTrue(lcManager.isInstanceManaged(instanceId));
 
 		coordinator.removeServiceInstance(serviceId, instanceId);
 
 		agent.assertLifeCycleEvent(Action.REMOVED);
 
-		assertNull(infoService.getServiceInstance(instanceId));
+		assertNull(infoService.getServiceInstance(serviceId, instanceId));
 		assertFalse(lcManager.isInstanceManaged(instanceId));
 
 	}

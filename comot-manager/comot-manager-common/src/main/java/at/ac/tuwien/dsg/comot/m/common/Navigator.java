@@ -41,6 +41,10 @@ public class Navigator {
 		}
 	}
 
+	public HasUniqueId getManaged(String id) {
+		return map.get(id).entity;
+	}
+
 	// OSU
 
 	public Resource getResource(String id) {

@@ -90,8 +90,8 @@ public class Group implements Serializable {
 			}
 
 		} else {
-			for (Group menber : members) {
-				if (!menber.canExecute(action)) {
+			for (Group member : members) {
+				if (!member.canExecute(action)) {
 					return false;
 				}
 			}

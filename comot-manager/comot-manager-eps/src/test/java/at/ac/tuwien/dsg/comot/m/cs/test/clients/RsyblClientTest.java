@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.comot.m.common.Utils;
-import at.ac.tuwien.dsg.comot.m.common.coreservices.ControlClient;
+import at.ac.tuwien.dsg.comot.m.common.eps.ControlClient;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;

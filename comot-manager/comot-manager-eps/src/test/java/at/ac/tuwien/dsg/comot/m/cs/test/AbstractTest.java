@@ -16,9 +16,9 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import at.ac.tuwien.dsg.comot.m.common.coreservices.ControlClient;
-import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
-import at.ac.tuwien.dsg.comot.m.common.coreservices.MonitoringClient;
+import at.ac.tuwien.dsg.comot.m.common.eps.ControlClient;
+import at.ac.tuwien.dsg.comot.m.common.eps.DeploymentClient;
+import at.ac.tuwien.dsg.comot.m.common.eps.MonitoringClient;
 import at.ac.tuwien.dsg.comot.m.cs.connector.SalsaClient;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.AssociatedVM;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;

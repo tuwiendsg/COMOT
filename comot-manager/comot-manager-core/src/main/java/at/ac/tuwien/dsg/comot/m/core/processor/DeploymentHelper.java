@@ -17,17 +17,17 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import at.ac.tuwien.dsg.comot.m.adapter.UtilsLc;
+import at.ac.tuwien.dsg.comot.m.adapter.general.Manager;
+import at.ac.tuwien.dsg.comot.m.common.InformationClient;
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.Type;
-import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
+import at.ac.tuwien.dsg.comot.m.common.eps.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.events.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.events.ModifyingLifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
-import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
-import at.ac.tuwien.dsg.comot.m.core.UtilsLc;
-import at.ac.tuwien.dsg.comot.m.core.adapter.general.Manager;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycle;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleFactory;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
@@ -50,7 +50,7 @@ public class DeploymentHelper {
 	@Autowired
 	protected DeploymentMapper mapper;
 	@Autowired
-	protected InformationServiceMock infoService;
+	protected InformationClient infoService;
 	@Autowired
 	protected LifeCycleManager lcManager;
 
@@ -201,6 +201,8 @@ public class DeploymentHelper {
 			CloudService serviceReturned;
 
 			service = UtilsLc.removeProviderInfo(service);
+			service.setId(instanceId);
+			service.setName(instanceId);
 
 			Set<UnitInstance> oldInstances = service.getInstancesList().get(0).getUnitInstances();
 

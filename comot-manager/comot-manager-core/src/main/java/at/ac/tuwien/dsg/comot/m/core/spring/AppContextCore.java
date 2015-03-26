@@ -24,9 +24,11 @@ import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import at.ac.tuwien.dsg.comot.m.common.coreservices.ControlClient;
-import at.ac.tuwien.dsg.comot.m.common.coreservices.DeploymentClient;
-import at.ac.tuwien.dsg.comot.m.common.coreservices.MonitoringClient;
+import at.ac.tuwien.dsg.comot.m.common.InformationClient;
+import at.ac.tuwien.dsg.comot.m.common.InformationClientRest;
+import at.ac.tuwien.dsg.comot.m.common.eps.ControlClient;
+import at.ac.tuwien.dsg.comot.m.common.eps.DeploymentClient;
+import at.ac.tuwien.dsg.comot.m.common.eps.MonitoringClient;
 import at.ac.tuwien.dsg.comot.m.cs.AppContextEps;
 import at.ac.tuwien.dsg.comot.m.cs.ControlClientRsybl;
 import at.ac.tuwien.dsg.comot.m.cs.DeploymentClientSalsa;
@@ -39,7 +41,7 @@ import at.ac.tuwien.dsg.comot.m.recorder.AppContextServrec;
 @Configuration
 @EnableTransactionManagement
 @PropertySource({ "classpath:properties/application.properties" })
-@ComponentScan({ "at.ac.tuwien.dsg.comot.m.core" })
+@ComponentScan({ "at.ac.tuwien.dsg.comot.m.core", "at.ac.tuwien.dsg.comot.m.adapter" })
 @Import({ AppContextEps.class, AppContextServrec.class })
 @EnableAsync
 public class AppContextCore {
@@ -47,29 +49,6 @@ public class AppContextCore {
 	public static final Logger log = LoggerFactory.getLogger(AppContextCore.class);
 
 	public static final String INSERT_INIT_DATA = "INSERT_INIT_DATA";
-
-	/**
-	 * Original Key pattern: instanceID.changeTRUE/FALSE.stateBefore.stateAfter.eventName.targetLevel.originId Key
-	 * pattern: instanceID.eventName.targetLevel.changeTRUE/FALSE.stateBefore.stateAfter.originId
-	 */
-	public static final String EXCHANGE_LIFE_CYCLE = "EXCHANGE_LIFE_CYCLE";
-
-	/**
-	 * Original Key pattern: instanceID.epsId.customEvent.targetLevel Key pattern:
-	 * instanceID.eventName.targetLevel.targetId
-	 */
-	public static final String EXCHANGE_CUSTOM_EVENT = "EXCHANGE_CUSTOM_EVENT";
-
-	/**
-	 * Key pattern: instanceID.EventType.eventName.targetLevel
-	 */
-	public static final String EXCHANGE_REQUESTS = "EXCHANGE_REQUESTS";
-
-	/**
-	 * Key pattern: instanceID.originId
-	 */
-	public static final String EXCHANGE_EXCEPTIONS = "EXCHANGE_EXCEPTIONS";
-
 	public static final String SERVER = "localhost";
 
 	@Autowired
@@ -100,6 +79,10 @@ public class AppContextCore {
 	}
 
 	// clients
+	@Bean
+	public InformationClient informationClient() throws URISyntaxException {
+		return new InformationClient(new InformationClientRest(new URI(env.getProperty("uri.information"))));
+	}
 
 	@Bean
 	@Scope("prototype")

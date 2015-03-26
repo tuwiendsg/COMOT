@@ -28,13 +28,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import at.ac.tuwien.dsg.comot.m.adapter.general.Manager;
+import at.ac.tuwien.dsg.comot.m.adapter.general.SingleQueueManager;
+import at.ac.tuwien.dsg.comot.m.common.InformationClient;
 import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.core.Coordinator;
-import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
-import at.ac.tuwien.dsg.comot.m.core.adapter.general.Manager;
-import at.ac.tuwien.dsg.comot.m.core.adapter.general.SingleQueueManager;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycle;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleFactory;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
@@ -70,7 +70,7 @@ public class ServicesResource {
 	@Autowired
 	protected Coordinator coordinator;
 	@Autowired
-	protected InformationServiceMock infoServ;
+	protected InformationClient infoServ;
 
 	@PostConstruct
 	public void startUp() {
@@ -198,7 +198,7 @@ public class ServicesResource {
 	@Produces(SseFeature.SERVER_SENT_EVENTS)
 	public EventOutput getServerSentEvents(
 			@PathParam("serviceId") String serviceId,
-			@PathParam("instanceId") String instanceId) throws InterruptedException, IOException {
+			@PathParam("instanceId") String instanceId) throws Exception {
 
 		final EventOutput eventOutput = new EventOutput();
 
@@ -236,7 +236,7 @@ public class ServicesResource {
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Path("/services/allInstances")
-	public Response getAllInstances() {
+	public Response getAllInstances() throws EpsException {
 
 		Map<String, List<String>> map = infoServ.getAllInstanceIds();
 		ServiceAndInstances[] array = new ServiceAndInstances[map.keySet().size()];
@@ -255,9 +255,9 @@ public class ServicesResource {
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Path("/services/eps")
-	public Response getElasticPlatformServices() {
+	public Response getElasticPlatformServices() throws EpsException {
 
-		List<OfferedServiceUnit> list = new ArrayList<>(infoServ.getOsus().values());
+		List<OfferedServiceUnit> list = new ArrayList<>(infoServ.getOsus());
 
 		return Response.ok(list.toArray(new OfferedServiceUnit[list.size()])).build();
 	}
@@ -265,8 +265,8 @@ public class ServicesResource {
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Path("/services")
-	public Response getServices() throws ClassNotFoundException, IOException {
-		List<CloudService> list = new ArrayList<>(infoServ.getServices().values());
+	public Response getServices() throws ClassNotFoundException, IOException, EpsException {
+		List<CloudService> list = new ArrayList<>(infoServ.getServices());
 		return Response.ok(list.toArray(new CloudService[list.size()])).build();
 	}
 
@@ -275,7 +275,7 @@ public class ServicesResource {
 	@Path("/services/{serviceId}/instances/{instanceId}")
 	public Response getServicesInstance(
 			@PathParam("serviceId") String serviceId,
-			@PathParam("instanceId") String instanceId) throws ClassNotFoundException, IOException {
+			@PathParam("instanceId") String instanceId) throws ClassNotFoundException, IOException, EpsException {
 
 		ServiceInstanceUi instanceUi = new ServiceInstanceUi(
 				instanceId,

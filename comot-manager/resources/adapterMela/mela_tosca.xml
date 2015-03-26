@@ -12,14 +12,14 @@
 					<ns2:DeploymentArtifact name="Deployment script" artifactType="salsa:sh" artifactRef="mela_package" />
 				</ns2:DeploymentArtifacts>
 			</ns2:NodeTemplate>
-			<ns2:NodeTemplate id="OS_for_mela" type="os">
+			<ns2:NodeTemplate id="OS_for_eps_mela" type="os">
 				<ns2:Properties>
 					<MappingProperties>
 						<MappingProperty type="os">
-							<property name="instanceType">000000960</property>
+							<property name="instanceType">000001920</property>
 							<property name="provider">dsg@openstack</property>
-							<property name="baseImage">8f1428ac-f239-42e0-ab35-137f6e234101</property>
-							<property name="packages">gmetad,ganglia-monitor,openjdk-7-jre</property>
+							<property name="baseImage">be6ae07b-7deb-4926-bfd7-b11afe228d6a</property>
+							<property name="packages">openjdk-7-jre</property>
 						</MappingProperty>
 					</MappingProperties>
 				</ns2:Properties>
@@ -27,7 +27,7 @@
 
 			<ns2:RelationshipTemplate id="mela_HOSTON_OS_for_mela" type="HOSTON">
 				<ns2:SourceElement ref="mela" />
-				<ns2:TargetElement ref="OS_for_mela" />
+				<ns2:TargetElement ref="OS_for_eps_mela" />
 			</ns2:RelationshipTemplate>
 
 		</ns2:TopologyTemplate>

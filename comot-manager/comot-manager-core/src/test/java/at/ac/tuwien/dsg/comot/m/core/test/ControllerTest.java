@@ -8,31 +8,22 @@ import javax.xml.bind.JAXBException;
 
 import org.junit.Test;
 
+import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
-import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
-import at.ac.tuwien.dsg.comot.m.core.test.utils.LoadGenerator;
 
 public class ControllerTest extends AbstractTest {
 
 	protected String serviceId;
 
-	protected final String MONITORING_ID = InformationServiceMock.MELA_SERVICE_PUBLIC_ID;
-	protected final String DEPLOYMENT_ID = InformationServiceMock.SALSA_SERVICE_PUBLIC_ID;
-	protected final String CONTROL_ID = InformationServiceMock.RSYBL_SERVICE_PUBLIC_ID;
+	protected final String MONITORING_ID = Constants.MELA_SERVICE_PUBLIC_ID;
+	protected final String DEPLOYMENT_ID = Constants.SALSA_SERVICE_PUBLIC_ID;
+	protected final String CONTROL_ID = Constants.RSYBL_SERVICE_PUBLIC_ID;
 
 	protected final String INSTANCE_ID = "HelloElasticityNoDB";// "HelloElasticityNoDB";
 
 	@Test
-	public void load() {
-		LoadGenerator generator = new LoadGenerator();
-		generator.startLoad("localhost", 9090);
-	}
-
-	@Test
 	public void onlyMonitoring() throws ClassNotFoundException, IOException, JAXBException, EpsException {
-
-		coordinator.insertRunningService(INSTANCE_ID);
 
 		log.info("----------------------------------------------------------");
 
@@ -49,8 +40,6 @@ public class ControllerTest extends AbstractTest {
 	public void testControl() throws IOException, JAXBException, ClassNotFoundException, EpsException {
 
 		assertTrue(deployment.isManaged(INSTANCE_ID));
-
-		coordinator.insertRunningService(INSTANCE_ID);
 
 		log.info("----------------------------------------------------------");
 

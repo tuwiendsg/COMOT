@@ -27,6 +27,6 @@ public enum Action {
 	CONTROLLER_STARTED,
 	CONTROLLER_STOPPED,
 	UPDATE,
-	MOVE;
+	MOVED;
 
 }

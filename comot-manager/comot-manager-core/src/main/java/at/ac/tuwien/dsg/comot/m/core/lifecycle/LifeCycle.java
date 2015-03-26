@@ -8,7 +8,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.ac.tuwien.dsg.comot.m.core.UtilsLc;
+import at.ac.tuwien.dsg.comot.m.adapter.UtilsLc;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 

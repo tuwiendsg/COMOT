@@ -14,13 +14,13 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import at.ac.tuwien.dsg.comot.m.adapter.general.Processor;
+import at.ac.tuwien.dsg.comot.m.common.InformationClient;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.events.ExceptionMessage;
 import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.events.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.events.Transition;
-import at.ac.tuwien.dsg.comot.m.core.InformationServiceMock;
-import at.ac.tuwien.dsg.comot.m.core.adapter.general.Processor;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 import at.ac.tuwien.dsg.comot.model.type.Action;
@@ -30,7 +30,7 @@ import at.ac.tuwien.dsg.comot.model.type.Action;
 public class UiAdapter extends Processor {
 
 	@Autowired
-	protected InformationServiceMock infoService;
+	protected InformationClient infoService;
 
 	protected String csInstanceId;
 	protected EventOutput eventOutput;
