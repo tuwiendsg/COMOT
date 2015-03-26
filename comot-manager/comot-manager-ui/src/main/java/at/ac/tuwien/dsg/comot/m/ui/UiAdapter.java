@@ -22,7 +22,7 @@ import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.events.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.events.Transition;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
+import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 
 @Component
@@ -37,11 +37,6 @@ public class UiAdapter extends Processor {
 
 	public static final String MSG_LIFE_CYCLE = "MSG_LIFE_CYCLE";
 	public static final String MSG_CUSTOM_EVENT = "MSG_CUSTOM_EVENT";
-
-	@Override
-	public void start() {
-
-	}
 
 	@Override
 	public List<Binding> getBindings(String queueName, String instanceId) {
@@ -94,7 +89,7 @@ public class UiAdapter extends Processor {
 			if (msg.isLifeCycleDefined()) {
 				LifeCycleEvent eventLc = (LifeCycleEvent) msg.getEvent();
 
-				Set<OfferedServiceUnit> osus = infoService.getSupportingServices(eventLc.getCsInstanceId());
+				Set<OsuInstance> osus = infoService.getSupportingServices(eventLc.getCsInstanceId());
 				msg.getService().getInstancesList().get(0).setSupport(osus);
 			}
 

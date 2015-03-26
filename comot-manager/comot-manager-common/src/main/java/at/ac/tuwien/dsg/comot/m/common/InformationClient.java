@@ -1,9 +1,9 @@
 package at.ac.tuwien.dsg.comot.m.common;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
+import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
 import at.ac.tuwien.dsg.comot.model.runtime.ServiceInstance;
 import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 
@@ -106,6 +107,33 @@ public class InformationClient {
 		return client.getOsus();
 	}
 
+	public void addOsu(OfferedServiceUnit osu) throws EpsException {
+		client.addOsu(osu);
+	}
+
+	public List<OsuInstance> getOsuInstances() throws EpsException {
+		return client.getOsuInstances();
+	}
+
+	public OsuInstance getOsuInstance(String osuInstanceId) throws EpsException {
+		log.info("getOsuInstance " + osuInstanceId);
+		for (OsuInstance instance : client.getOsuInstances()) {
+			log.info(instance.getId());
+			if (instance.getId().equals(osuInstanceId)) {
+				return instance;
+			}
+		}
+		return null;
+	}
+
+	public String createOsuInstance(String osuId) throws EpsException {
+		return client.createOsuInstance(osuId);
+	}
+
+	public void removeOsuInatance(String osuInstanceId) throws EpsException {
+		client.removeOsuInatance(osuInstanceId);
+	}
+
 	public OfferedServiceUnit getOsu(String osuId) throws EpsException {
 		for (OfferedServiceUnit osu : client.getOsus()) {
 			if (osu.getId().equals(osuId)) {
@@ -116,69 +144,92 @@ public class InformationClient {
 		return null;
 	}
 
-	public void addOsu(OfferedServiceUnit osu) throws EpsException {
-		client.addOsu(osu);
-	}
-
 	public void assignEps(String serviceId, String instanceId, String osuInstanceId) throws EpsException {
 		client.assignEps(instanceId, osuInstanceId);
 	}
 
-	public Map<String, String> getInstancesHavingThisOsuAssigned(String osuInstanceId) throws EpsException {
-		Map<String, String> instances = new HashMap<>();
-
-		for (CloudService service : client.getServices()) {
-			for (ServiceInstance instance : service.getInstances()) {
-				for (OfferedServiceUnit osu : instance.getSupport()) {
-					if (osu.getId().equals(osuInstanceId)) {
-						instances.put(instance.getId(), service.getId());
-					}
-				}
-			}
-		}
-
-		return instances;
-	}
+	// public Map<String, String> getInstancesHavingThisOsuAssigned(String osuInstanceId) throws EpsException {
+	// Map<String, String> instances = new HashMap<>();
+	//
+	// for (CloudService service : client.getServices()) {
+	// for (ServiceInstance instance : service.getInstances()) {
+	// for (OsuInstance osuInstance : instance.getSupport()) {
+	// if (osuInstance.getId().equals(osuInstanceId)) {
+	// instances.put(instance.getId(), service.getId());
+	// }
+	// }
+	// }
+	// }
+	//
+	// return instances;
+	// }
 
 	public void removeEpsAssignment(String instanceId, String osuInstanceId) throws EpsException {
 		client.removeEpsAssignment(instanceId, osuInstanceId);
 	}
 
-	public Set<OfferedServiceUnit> getSupportingServices(String instanceId)
+	public Set<OsuInstance> getSupportingServices(String instanceId)
 			throws ClassNotFoundException, IOException, EpsException {
 
 		ServiceInstance instance = client.getServiceInstance(instanceId).getInstancesList().get(0);
-		Set<OfferedServiceUnit> result;
-		if (instance != null) {
-			result = (Set<OfferedServiceUnit>) Utils.deepCopy(instance.getSupport());
-		} else {
-			result = new HashSet<OfferedServiceUnit>();
-		}
+		Set<OsuInstance> result = instance.getSupport();
 		return result;
 
 	}
 
-	public boolean isOsuAssignedToInstance(String instanceId, String osuId) throws EpsException {
+	public boolean isOsuAssignedToInstance(String instanceId, String osuId) throws EpsException, JAXBException {
+
+		boolean value = false;
 		CloudService serv = client.getServiceInstance(instanceId);
-		for (OfferedServiceUnit osu : client.getServiceInstance(instanceId).getInstancesList().get(0).getSupport()) {
-			try {
-				log.info("serv {}", Utils.asJsonString(serv));
-			} catch (JAXBException e) {
-				e.printStackTrace();
-			}
-			if (osu.getId().equals(osuId)) {
-				log.info("isOsuAssignedToInstance( instanceId={}, osuId={}): true", instanceId,
-						osuId);
-				return true;
+
+		log.info("wwwwwwwwwwwwwwwwwww {}", Utils.asJsonString(serv));
+
+		for (OsuInstance osuInstance : serv.getInstancesList().get(0).getSupport()) {
+			if (osuInstance.getOsu().getId().equals(osuId)) {
+				value = true;
 			}
 		}
 
-		log.info("isOsuAssignedToInstance( instanceId={}, osuId={}): false", instanceId, osuId);
-		return false;
+		log.info("isOsuAssignedToInstance( instanceId={}, osu={}): {}", instanceId, osuId, value);
+		return value;
+	}
+
+	public boolean isOsuInstanceAssignedToInstance(String instanceId, String osuInstanceId) throws EpsException {
+
+		boolean value = false;
+		CloudService serv = client.getServiceInstance(instanceId);
+
+		for (OsuInstance osuInstance : serv.getInstancesList().get(0).getSupport()) {
+			if (osuInstance.getId().equals(osuInstanceId)) {
+				value = true;
+			}
+		}
+
+		log.info("isOsuInstanceAssignedToInstance( instanceId={}, osuInstanceId={}): {}", instanceId, osuInstanceId,
+				value);
+		return value;
+	}
+
+	public String instanceIdOfStaticEps(String epsId) throws EpsException {
+
+		for (OsuInstance osuInst : client.getOsuInstances()) {
+			if (osuInst.getOsu().getId().equals(epsId)) {
+				return osuInst.getId();
+			}
+		}
+		return null;
 	}
 
 	public void deeteAll() throws EpsException {
-		client.deeteAll();
+		client.deleteAll();
+	}
+
+	public void setBaseUri(URI baseUri) {
+		client.setBaseUri(baseUri);
+	}
+
+	public URI getBaseUri() {
+		return client.getBaseUri();
 	}
 
 }

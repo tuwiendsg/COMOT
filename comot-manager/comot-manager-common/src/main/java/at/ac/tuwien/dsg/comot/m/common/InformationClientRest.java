@@ -11,6 +11,7 @@ import javax.ws.rs.core.Response;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
+import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
 import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 
 public class InformationClientRest extends ServiceClient {
@@ -169,12 +170,54 @@ public class InformationClientRest extends ServiceClient {
 		processResponseStatus(response);
 	}
 
+	public List<OsuInstance> getOsuInstances() throws EpsException {
+
+		Response response = client.target(baseUri)
+				.path(Constants.EPS_INSTANCES_ALL)
+				.request(MediaType.APPLICATION_XML)
+				.get();
+
+		processResponseStatus(response);
+		final GenericType<List<OsuInstance>> list = new GenericType<List<OsuInstance>>() {
+		};
+
+		List<OsuInstance> result = response.readEntity(list);
+
+		return result;
+	}
+
+	public String createOsuInstance(String osuId) throws EpsException {
+
+		Response response = client.target(baseUri)
+				.path(Constants.EPS_ONE_INSTANCES)
+				.resolveTemplate("epsId", osuId)
+				.request(MediaType.WILDCARD)
+				.post(Entity.xml(""));
+
+		processResponseStatus(response);
+
+		String result = response.readEntity(String.class);
+
+		return result;
+	}
+
+	public void removeOsuInatance(String osuInstanceId) throws EpsException {
+
+		Response response = client.target(baseUri)
+				.path(Constants.EPS_INSTANCE_ONE)
+				.resolveTemplate("epsInstanceId", osuInstanceId)
+				.request(MediaType.WILDCARD)
+				.delete();
+
+		processResponseStatus(response);
+	}
+
 	public void assignEps(String instanceId, String osuInstanceId) throws EpsException {
 
 		log.info("assignEps({} {})", instanceId, osuInstanceId);
 
 		Response response = client.target(baseUri)
-				.path(Constants.EPS_ASSIGNMENT)
+				.path(Constants.EPS_INSTANCE_ASSIGNMENT)
 				.resolveTemplate("serviceId", "ANY")
 				.resolveTemplate("instanceId", instanceId)
 				.resolveTemplate("epsId", osuInstanceId)
@@ -187,7 +230,7 @@ public class InformationClientRest extends ServiceClient {
 	public void removeEpsAssignment(String instanceId, String osuInstanceId) throws EpsException {
 
 		Response response = client.target(baseUri)
-				.path(Constants.EPS_ASSIGNMENT)
+				.path(Constants.EPS_INSTANCE_ASSIGNMENT)
 				.resolveTemplate("serviceId", "ANY")
 				.resolveTemplate("instanceId", instanceId)
 				.resolveTemplate("epsId", osuInstanceId)
@@ -197,7 +240,7 @@ public class InformationClientRest extends ServiceClient {
 		processResponseStatus(response);
 	}
 
-	public void deeteAll() throws EpsException {
+	public void deleteAll() throws EpsException {
 
 		Response response = client.target(baseUri)
 				.path(Constants.DELETE_ALL)

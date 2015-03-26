@@ -6,21 +6,36 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
+import at.ac.tuwien.dsg.comot.m.core.test.utils.TestAgentAdapter;
 
 public class ControllerTest extends AbstractTest {
 
 	protected String serviceId;
 
-	protected final String MONITORING_ID = Constants.MELA_SERVICE_PUBLIC_ID;
-	protected final String DEPLOYMENT_ID = Constants.SALSA_SERVICE_PUBLIC_ID;
-	protected final String CONTROL_ID = Constants.RSYBL_SERVICE_PUBLIC_ID;
-
 	protected final String INSTANCE_ID = "HelloElasticityNoDB";// "HelloElasticityNoDB";
+
+	protected String staticDeplId;
+	protected String staticMonitoringId;
+	protected String staticControlId;
+
+	protected TestAgentAdapter agent;
+
+	@Before
+	public void setUp() throws JAXBException, IOException, ClassNotFoundException, EpsException {
+
+		agent = new TestAgentAdapter("prototype", env.getProperty("uri.broker.host"));
+
+		staticDeplId = infoService.instanceIdOfStaticEps(Constants.SALSA_SERVICE_STATIC);
+		staticMonitoringId = infoService.instanceIdOfStaticEps(Constants.MELA_SERVICE_STATIC);
+		staticControlId = infoService.instanceIdOfStaticEps(Constants.RSYBL_SERVICE_STATIC);
+
+	}
 
 	@Test
 	public void onlyMonitoring() throws ClassNotFoundException, IOException, JAXBException, EpsException {
@@ -31,7 +46,7 @@ public class ControllerTest extends AbstractTest {
 
 		assertTrue(deployment.isManaged(INSTANCE_ID));
 
-		coordinator.assignSupportingOsu(serviceId, INSTANCE_ID, MONITORING_ID);
+		coordinator.assignSupportingOsu(serviceId, INSTANCE_ID, staticMonitoringId);
 		UtilsTest.sleepSeconds(5);
 
 	}
@@ -47,7 +62,7 @@ public class ControllerTest extends AbstractTest {
 
 		assertTrue(deployment.isManaged(INSTANCE_ID));
 
-		coordinator.assignSupportingOsu(serviceId, INSTANCE_ID, CONTROL_ID);
+		coordinator.assignSupportingOsu(serviceId, INSTANCE_ID, staticControlId);
 		UtilsTest.sleepSeconds(3);
 
 		assertTrue(control.isControlled(INSTANCE_ID));

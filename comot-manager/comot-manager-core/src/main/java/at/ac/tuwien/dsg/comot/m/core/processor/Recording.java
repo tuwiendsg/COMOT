@@ -42,11 +42,6 @@ public class Recording extends Processor {
 	protected RevisionApi revisionApi;
 
 	@Override
-	public void start() {
-
-	}
-
-	@Override
 	public List<Binding> getBindings(String queueName, String instanceId) {
 		List<Binding> bindings = new ArrayList<>();
 

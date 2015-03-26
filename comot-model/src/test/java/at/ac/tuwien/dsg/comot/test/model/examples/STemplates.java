@@ -1,6 +1,5 @@
 package at.ac.tuwien.dsg.comot.test.model.examples;
 
-
 import at.ac.tuwien.dsg.comot.model.SyblDirective;
 import at.ac.tuwien.dsg.comot.model.devel.relationship.ConnectToRel;
 import at.ac.tuwien.dsg.comot.model.devel.relationship.HostOnRel;
@@ -8,6 +7,7 @@ import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceTopology;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
+import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
 import at.ac.tuwien.dsg.comot.model.provider.Resource;
 import at.ac.tuwien.dsg.comot.model.provider.ResourceOrQualityType;
 import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
@@ -44,13 +44,13 @@ public class STemplates {
 
 		// UNITs
 		ServiceUnit unitOs = new ServiceUnit(osNodeId, "Test os", 1, 2);
-		unitOs.setOsu(osuOs);
+		unitOs.setOsuInstance(new OsuInstance(osNodeId + "_1", osuOs));
 
 		ServiceUnit unitSw = new ServiceUnit(swNodeId, "Test node unit", 2, 5);
-		unitSw.setOsu(osuSw);
+		unitSw.setOsuInstance(new OsuInstance(swNodeId + "_1", osuSw));
 
 		ServiceUnit unitSw2 = new ServiceUnit(swNodeId2, "Test node unit 2", 2, 5);
-		unitSw2.setOsu(osuSw2);
+		unitSw2.setOsuInstance(new OsuInstance(swNodeId2 + "_1", osuSw2));
 
 		// HOST ON
 		HostOnRel hostOn1 = new HostOnRel("hostOn1ID", unitSw, unitOs);
@@ -100,10 +100,10 @@ public class STemplates {
 
 		// UNITs
 		ServiceUnit unitOs = new ServiceUnit(osNodeId, "Test os", 1, 2);
-		unitOs.setOsu(osuOs);
+		unitOs.setOsuInstance(new OsuInstance(osNodeId + "_1", osuOs));
 
 		ServiceUnit unitSw = new ServiceUnit(swNodeId, "Test node unit", 2, 5);
-		unitSw.setOsu(osuSw);
+		unitSw.setOsuInstance(new OsuInstance(swNodeId + "_1", osuSw));
 
 		unitSw.addDirective(new SyblDirective("str1", DirectiveType.STRATEGY,
 				"ST1: STRATEGY CASE cpuUsage < 40 % : scalein"));
@@ -111,7 +111,7 @@ public class STemplates {
 				"Co2: CONSTRAINT dataAccuracy > 95 % WHEN total_cost > 400 ;"));
 
 		ServiceUnit unitSw2 = new ServiceUnit(swNodeId2, "Test node unit 2", 2, 5);
-		unitSw2.setOsu(osuSw2);
+		unitSw2.setOsuInstance(new OsuInstance(swNodeId2 + "_1", osuSw2));
 
 		// HOST ON
 		HostOnRel hostOn1 = new HostOnRel("hostOn1ID", unitSw, unitOs);

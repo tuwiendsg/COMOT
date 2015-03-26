@@ -31,18 +31,17 @@ import com.rabbitmq.client.ShutdownSignalException;
 
 public class DeploymentTest extends AbstractTest {
 
-	protected final String MONITORING_ID = Constants.MELA_SERVICE_PUBLIC_ID;
-	protected final String DEPLOYMENT_ID = Constants.SALSA_SERVICE_PUBLIC_ID;
-
-	protected TestAgentAdapter agent;
 	protected String serviceId;
 	protected String instanceId;
+
+	protected TestAgentAdapter agent;
+	protected String staticDeplId;
 
 	@Before
 	public void setUp() throws JAXBException, IOException, ClassNotFoundException, ShutdownSignalException,
 			ConsumerCancelledException, InterruptedException, EpsException {
 
-		agent = new TestAgentAdapter("prototype", "localhost");
+		agent = new TestAgentAdapter("prototype", env.getProperty("uri.broker.host"));
 
 		// Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/tomcat/tomcat_from_salsa.xml");
 		Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/tosca/ExampleExecutableOnVM.xml");
@@ -54,6 +53,9 @@ public class DeploymentTest extends AbstractTest {
 		assertFalse(deployment.isManaged(instanceId));
 
 		agent.assertLifeCycleEvent(Action.CREATED);
+
+		staticDeplId = infoService.instanceIdOfStaticEps(Constants.SALSA_SERVICE_STATIC);
+
 	}
 
 	@After
@@ -84,13 +86,13 @@ public class DeploymentTest extends AbstractTest {
 	public void testAssignStartStop() throws IOException, JAXBException, ClassNotFoundException,
 			EpsException, ComotException, ShutdownSignalException, ConsumerCancelledException, InterruptedException {
 
-		coordinator.assignSupportingOsu(serviceId, instanceId, DEPLOYMENT_ID);
+		coordinator.assignSupportingOsu(serviceId, instanceId, staticDeplId);
 
 		agent.assertCustomEvent(EpsAction.EPS_ASSIGNMENT_REQUESTED.toString());
 		agent.assertCustomEvent(EpsAction.EPS_ASSIGNED.toString());
 
 		assertFalse(deployment.isManaged(instanceId));
-		assertTrue(infoService.isOsuAssignedToInstance(instanceId, DEPLOYMENT_ID));
+		assertTrue(infoService.isOsuAssignedToInstance(instanceId, Constants.SALSA_SERVICE_STATIC));
 
 		// DEPLOY when passive
 		assertEquals(State.PASSIVE, lcManager.getCurrentState(instanceId, serviceId));
@@ -121,7 +123,7 @@ public class DeploymentTest extends AbstractTest {
 		// check that really undeployed when PASSIVE
 		assertEquals(State.PASSIVE, lcManager.getCurrentState(instanceId, serviceId));
 		assertFalse(deployment.isManaged(instanceId));
-		assertTrue(infoService.isOsuAssignedToInstance(instanceId, DEPLOYMENT_ID));
+		assertTrue(infoService.isOsuAssignedToInstance(instanceId, Constants.SALSA_SERVICE_STATIC));
 
 	}
 
@@ -129,7 +131,7 @@ public class DeploymentTest extends AbstractTest {
 	public void testAssignStartUnassign() throws IOException, JAXBException, ClassNotFoundException,
 			EpsException, ComotException, ShutdownSignalException, ConsumerCancelledException, InterruptedException {
 
-		coordinator.assignSupportingOsu(serviceId, instanceId, DEPLOYMENT_ID);
+		coordinator.assignSupportingOsu(serviceId, instanceId, staticDeplId);
 
 		agent.assertCustomEvent(EpsAction.EPS_ASSIGNMENT_REQUESTED.toString());
 		agent.assertCustomEvent(EpsAction.EPS_ASSIGNED.toString());
@@ -146,7 +148,7 @@ public class DeploymentTest extends AbstractTest {
 		assertTrue(deployment.isManaged(instanceId));
 		assertTrue(deployment.isRunning(instanceId));
 
-		coordinator.removeAssignmentOfSupportingOsu(serviceId, instanceId, DEPLOYMENT_ID);
+		coordinator.removeAssignmentOfSupportingOsu(serviceId, instanceId, staticDeplId);
 
 		agent.assertCustomEvent(EpsAction.EPS_ASSIGNMENT_REMOVED.toString());
 		agent.assertLifeCycleEvent(Action.UNDEPLOYMENT_STARTED);
@@ -154,6 +156,6 @@ public class DeploymentTest extends AbstractTest {
 
 		assertEquals(State.PASSIVE, lcManager.getCurrentState(instanceId, serviceId));
 		assertFalse(deployment.isManaged(instanceId));
-		assertFalse(infoService.isOsuAssignedToInstance(instanceId, DEPLOYMENT_ID));
+		assertFalse(infoService.isOsuAssignedToInstance(instanceId, Constants.SALSA_SERVICE_STATIC));
 	}
 }

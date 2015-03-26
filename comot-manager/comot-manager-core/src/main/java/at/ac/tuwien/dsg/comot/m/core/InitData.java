@@ -10,15 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.m.adapter.processor.ControlAdapter;
-import at.ac.tuwien.dsg.comot.m.adapter.processor.MonitoringAdapter;
 import at.ac.tuwien.dsg.comot.m.common.ComotAction;
 import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.InformationClient;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
-import at.ac.tuwien.dsg.comot.m.core.adapter.DeploymentAdapter;
+import at.ac.tuwien.dsg.comot.m.core.adapter.ControlAdapterStatic;
+import at.ac.tuwien.dsg.comot.m.core.adapter.DeploymentAdapterStatic;
+import at.ac.tuwien.dsg.comot.m.core.adapter.MonitoringAdapterStatic;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.PrimitiveOperation;
 import at.ac.tuwien.dsg.comot.model.provider.Resource;
@@ -35,7 +36,7 @@ public class InitData {
 	@javax.annotation.Resource
 	public Environment env;
 
-	public void setUpTestData() throws URISyntaxException, EpsException {
+	public void setUpTestData() throws URISyntaxException, EpsException, JAXBException, IOException {
 
 		URI deploymentUri = new URI(env.getProperty("uri.deployemnt"));
 		URI monitoringUri = new URI(env.getProperty("uri.monitoring"));
@@ -44,9 +45,9 @@ public class InitData {
 		// SALSA
 
 		OfferedServiceUnit deployment = new OfferedServiceUnit();
-		deployment.setId(Constants.SALSA_SERVICE_PUBLIC_ID);
+		deployment.setId(Constants.SALSA_SERVICE_STATIC);
 		deployment.setType(OsuType.EPS.toString());
-		deployment.hasResource(new Resource(DeploymentAdapter.class.getCanonicalName(),
+		deployment.hasResource(new Resource(DeploymentAdapterStatic.class.getCanonicalName(),
 				new ResourceOrQualityType(Constants.ADAPTER_CLASS)));
 		deployment.hasResource(new Resource(deploymentUri.getHost(),
 				new ResourceOrQualityType(Constants.IP)));
@@ -59,9 +60,9 @@ public class InitData {
 		// MELA
 		// TODO use metrics
 		OfferedServiceUnit monitoring = new OfferedServiceUnit();
-		monitoring.setId(Constants.MELA_SERVICE_PUBLIC_ID);
+		monitoring.setId(Constants.MELA_SERVICE_STATIC);
 		monitoring.setType(OsuType.EPS.toString());
-		monitoring.hasResource(new Resource(MonitoringAdapter.class.getCanonicalName(),
+		monitoring.hasResource(new Resource(MonitoringAdapterStatic.class.getCanonicalName(),
 				new ResourceOrQualityType(Constants.ADAPTER_CLASS)));
 		monitoring.hasResource(new Resource(monitoringUri.getHost(), new ResourceOrQualityType(
 				Constants.IP)));
@@ -81,9 +82,9 @@ public class InitData {
 		// RSYBL
 
 		OfferedServiceUnit control = new OfferedServiceUnit();
-		control.setId(Constants.RSYBL_SERVICE_PUBLIC_ID);
+		control.setId(Constants.RSYBL_SERVICE_STATIC);
 		control.setType(OsuType.EPS.toString());
-		control.hasResource(new Resource(ControlAdapter.class.getCanonicalName(), new ResourceOrQualityType(
+		control.hasResource(new Resource(ControlAdapterStatic.class.getCanonicalName(), new ResourceOrQualityType(
 				Constants.ADAPTER_CLASS)));
 		control.hasResource(new Resource(controllerUri.getHost(), new ResourceOrQualityType(Constants.IP)));
 		control.hasResource(new Resource("" + controllerUri.getPort(), new ResourceOrQualityType(
@@ -99,7 +100,27 @@ public class InitData {
 		control.hasPrimitiveOperation(
 				new PrimitiveOperation("Stop controller", ComotAction.RSYBL_STOP.toString()));
 
+		// DYNAMIC EPS
+
+		CloudService melaService = mapperTosca.createModel(UtilsCs
+				.loadTosca("./../resources/adapterMela/mela_tosca.xml"));
+
+		OfferedServiceUnit monitoringDynamic = new OfferedServiceUnit();
+		monitoringDynamic.setId(Constants.MELA_SERVICE_DYNAMIC);
+		monitoringDynamic.setType(OsuType.EPS.toString());
+
+		monitoringDynamic.hasPrimitiveOperation(
+				new PrimitiveOperation("Set Metric Composition Rules", ComotAction.MELA_SET_MCR.toString()));
+		monitoringDynamic.hasPrimitiveOperation(
+				new PrimitiveOperation("Start monitoring", ComotAction.MELA_START.toString()));
+		monitoringDynamic.hasPrimitiveOperation(
+				new PrimitiveOperation("Stop monitoring", ComotAction.MELA_STOP.toString()));
+
+		monitoringDynamic.setService(melaService);
+
 		// // INSERT
+		infoService.createService(melaService);
+		infoService.addOsu(monitoringDynamic);
 
 		infoService.addOsu(deployment);
 		infoService.addOsu(monitoring);

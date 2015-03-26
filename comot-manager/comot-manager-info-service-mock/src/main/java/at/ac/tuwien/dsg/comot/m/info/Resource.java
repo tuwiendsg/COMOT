@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
+import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
 import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 
 @Service
@@ -160,9 +161,46 @@ public class Resource {
 		return Response.ok().build();
 	}
 
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Path(Constants.EPS_INSTANCES_ALL)
+	public Response getOsuInstances() {
+		List<OsuInstance> result;
+		synchronized (sync) {
+			result = infoServ.getOsusInstances();
+		}
+		final GenericEntity<List<OsuInstance>> list = new GenericEntity<List<OsuInstance>>(result) {
+		};
+
+		return Response.ok(list).build();
+	}
+
+	@POST
+	@Consumes(MediaType.WILDCARD)
+	@Path(Constants.EPS_ONE_INSTANCES)
+	public Response createOsuInstance(
+			@PathParam("epsId") String epsId) {
+		String result;
+		synchronized (sync) {
+			result = infoServ.createOsuInstance(epsId);
+		}
+		return Response.ok(result).build();
+	}
+
+	@DELETE
+	@Consumes(MediaType.WILDCARD)
+	@Path(Constants.EPS_INSTANCE_ONE)
+	public Response removeOsuInatance(
+			@PathParam("epsInstanceId") String epsInstanceId) {
+		synchronized (sync) {
+			infoServ.removeOsuInatance(epsInstanceId);
+		}
+		return Response.ok().build();
+	}
+
 	@PUT
 	@Consumes(MediaType.WILDCARD)
-	@Path(Constants.EPS_ASSIGNMENT)
+	@Path(Constants.EPS_INSTANCE_ASSIGNMENT)
 	public Response assignEps(
 			@PathParam("instanceId") String instanceId,
 			@PathParam("epsId") String epsId) {
@@ -174,7 +212,7 @@ public class Resource {
 
 	@DELETE
 	@Consumes(MediaType.WILDCARD)
-	@Path(Constants.EPS_ASSIGNMENT)
+	@Path(Constants.EPS_INSTANCE_ASSIGNMENT)
 	public Response removeEpsAssignment(
 			@PathParam("instanceId") String instanceId,
 			@PathParam("epsId") String epsId) {

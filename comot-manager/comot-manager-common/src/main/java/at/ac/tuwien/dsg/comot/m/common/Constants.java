@@ -26,10 +26,13 @@ public class Constants {
 
 	public static final String TYPE_ACTION = "TYPE_ACTION";
 
-	public static final String SALSA_SERVICE_PUBLIC_ID = "SALSA_SERVICE";
-	public static final String MELA_SERVICE_PUBLIC_ID = "MELA_SERVICE";
-	public static final String RSYBL_SERVICE_PUBLIC_ID = "RSYBL_SERVICE";
+	public static final String SALSA_SERVICE_STATIC = "SALSA_SERVICE";
+	public static final String MELA_SERVICE_STATIC = "MELA_SERVICE";
+	public static final String RSYBL_SERVICE_STATIC = "RSYBL_SERVICE";
 	public static final String RECORDER = "RECORDER";
+
+	public static final String MELA_SERVICE_DYNAMIC = "MELA_SERVICE_DYNAMIC";
+	public static final String RSYBL_SERVICE_DYNAMIC = "RSYBL_SERVICE_DYNAMIC";
 
 	public static final String ADAPTER_CLASS = "ADAPTER_CLASS";
 	public static final String IP = "IP";
@@ -42,7 +45,14 @@ public class Constants {
 	public static final String INSTANCES = SERVICE_ONE + "/instances";
 	public static final String INSTANCE_ONE = SERVICE_ONE + "/instances/{instanceId}";
 	public static final String UNIT_INSTANCE_ONE = INSTANCE_ONE + "/units/{unitId}/unitInstances/{unitInstanceId}";
+
+	public static final String EPS_INSTANCE_ASSIGNMENT = INSTANCE_ONE + "/assignedEpses/{epsId}";
+
 	public static final String EPSES = "epses";
-	public static final String EPS_ASSIGNMENT = INSTANCE_ONE + "/assignedEpses/{epsId}";
+	public static final String EPS_ONE_INSTANCES = "epses/{epsId}/instances";
+
+	public static final String EPS_INSTANCES_ALL = "epsesInstances";
+	public static final String EPS_INSTANCE_ONE = "epsesInstances/{epsInstanceId}";
+
 	public static final String DELETE_ALL = "all";
 }

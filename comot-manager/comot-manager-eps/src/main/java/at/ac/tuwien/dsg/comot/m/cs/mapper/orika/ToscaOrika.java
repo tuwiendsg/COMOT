@@ -85,7 +85,7 @@ public class ToscaOrika {
 		mapperFactory.classMap(ServiceUnit.class, TNodeTemplate.class)
 				.field("id", "id")
 				.field("name", "name")
-				.field("osu.type", "type")
+				.field("osuInstance.osu.type", "type")
 				.field("directives", "policies.policy")
 				.customize(new NodeMapper())
 				.register();
@@ -128,8 +128,8 @@ public class ToscaOrika {
 			// do this manually because of mismatch of JAXB generated getter/setter int/Integer
 			node.setMinInstances(unit.getMinInstances());
 
-			Set<PrimitiveOperation> operations = unit.getOsu().getPrimitiveOperations();
-			Set<Resource> resources = unit.getOsu().getResources();
+			Set<PrimitiveOperation> operations = unit.getOsuInstance().getOsu().getPrimitiveOperations();
+			Set<Resource> resources = unit.getOsuInstance().getOsu().getResources();
 			SalsaMappingProperties salsaProps = new SalsaMappingProperties();
 			TDeploymentArtifacts arts = new TDeploymentArtifacts();
 			Map<String, String> map = new HashMap<>();
@@ -175,7 +175,7 @@ public class ToscaOrika {
 			unit.setMinInstances(node.getMinInstances());
 
 			// osu name
-			unit.getOsu().setName(unit.getId());
+			unit.getOsuInstance().getOsu().setName(unit.getId());
 
 			// properties
 			if (node.getProperties() != null
@@ -192,7 +192,7 @@ public class ToscaOrika {
 						if (property.getType().equals(ResourceType.OS.toString())) {
 
 							for (Property prop : property.getPropertiesList()) {
-								unit.getOsu().hasResource(
+								unit.getOsuInstance().getOsu().hasResource(
 										new Resource(prop.getValue(), new ResourceOrQualityType(prop.getName())));
 							}
 
@@ -200,7 +200,7 @@ public class ToscaOrika {
 						} else if (property.getType().equals(ResourceType.ACTION.toString())) {
 
 							for (Property prop : property.getPropertiesList()) {
-								unit.getOsu().hasPrimitiveOperation(
+								unit.getOsuInstance().getOsu().hasPrimitiveOperation(
 										new PrimitiveOperation(prop.getName(), prop.getValue()));
 							}
 
@@ -212,7 +212,7 @@ public class ToscaOrika {
 			if (node.getDeploymentArtifacts() != null && node.getDeploymentArtifacts().getDeploymentArtifact() != null) {
 
 				for (TDeploymentArtifact art : node.getDeploymentArtifacts().getDeploymentArtifact()) {
-					unit.getOsu().hasResource(
+					unit.getOsuInstance().getOsu().hasResource(
 							new Resource(art.getArtifactRef().getLocalPart(), new ResourceOrQualityType(art
 									.getArtifactType().getLocalPart())));
 				}

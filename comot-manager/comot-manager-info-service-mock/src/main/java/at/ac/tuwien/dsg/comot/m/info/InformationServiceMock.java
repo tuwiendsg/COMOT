@@ -22,6 +22,7 @@ import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
+import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
 import at.ac.tuwien.dsg.comot.model.runtime.ServiceInstance;
 import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 
@@ -36,22 +37,30 @@ public class InformationServiceMock {
 	protected Map<String, CloudService> services = Collections.synchronizedMap(new HashMap<String, CloudService>());
 	protected Map<String, OfferedServiceUnit> osus = Collections
 			.synchronizedMap(new HashMap<String, OfferedServiceUnit>());
+	protected Map<String, OsuInstance> osuInstances = Collections
+			.synchronizedMap(new HashMap<String, OsuInstance>());
 
 	protected int instanceItarator = 0;
+	protected int osuInstanceItarator = 0;
 
 	public void deleteAll() {
 		services = Collections.synchronizedMap(new HashMap<String, CloudService>());
 		osus = Collections.synchronizedMap(new HashMap<String, OfferedServiceUnit>());
+		osuInstances = Collections.synchronizedMap(new HashMap<String, OsuInstance>());
 		instanceItarator = 0;
+		osuInstanceItarator = 0;
 	}
 
 	protected synchronized String getInstanceId(String serviceId) {
 		return serviceId + "_" + ++instanceItarator;
 	}
 
+	protected synchronized String getOsuInstanceId(String osuId) {
+		return osuId + "_" + ++osuInstanceItarator;
+	}
+
 	public String createService(CloudService service) throws ClassNotFoundException, IOException {
 
-		service = (CloudService) Utils.deepCopy(service);
 		service.setDateCreated(new Date());
 		services.put(service.getId(), service);
 
@@ -96,25 +105,6 @@ public class InformationServiceMock {
 
 	public void putUnitInstance(String serviceId, String csInstanceId, String unitId, UnitInstance uInst) {
 
-		// try {
-		// log.info("services {}", services.get(serviceId));
-		// log.info("servicesEEEEE {}", Utils.asJsonString(services.get(serviceId)));
-		// } catch (JAXBException e) {
-		// e.printStackTrace();
-		// }
-		//
-		// log.info("uInst {}",uInst );
-		// try {
-		// log.info("uInstEEEEE {}", Utils.asJsonString(uInst));
-		// } catch (JAXBException e) {
-		// e.printStackTrace();
-		// }
-		//
-		// log.info("uInst.getId() {}", uInst.getId());
-		//
-		//
-		// log.info("nav.getUnitFor(uInst.getId()) {}", nav.getUnitFor(uInst.getId()) );
-
 		removeUnitInstance(serviceId, csInstanceId, uInst.getId());
 		addUnitInstance(serviceId, csInstanceId, unitId, uInst);
 
@@ -140,50 +130,6 @@ public class InformationServiceMock {
 			ServiceInstance instance = _getServiceInstance(csInstanceId);
 			instance.getUnitInstances().remove(uInst);
 		}
-	}
-
-	public void addOsu(OfferedServiceUnit osu) {
-		osus.put(osu.getId(), osu);
-	}
-
-	public void assignSupportingService(String instanceId, String osuInstanceId) {
-
-		if (isOsuAssignedToInstance(instanceId, osuInstanceId)) {
-			return;
-		}
-
-		ServiceInstance instance = _getServiceInstance(instanceId);
-		instance.getSupport().add(osus.get(osuInstanceId));
-	}
-
-	public void removeAssignmentOfSupportingOsu(String instanceId, String osuInstanceId) {
-
-		if (isOsuAssignedToInstance(instanceId, osuInstanceId)) {
-
-			ServiceInstance instance = _getServiceInstance(instanceId);
-
-			for (OfferedServiceUnit osu : instance.getSupport()) {
-				if (osu.getId().equals(osuInstanceId)) {
-					instance.getSupport().remove(osu);
-					return;
-				}
-			}
-
-		}
-	}
-
-	private boolean isOsuAssignedToInstance(String instanceId, String osuId) {
-
-		for (OfferedServiceUnit osu : _getServiceInstance(instanceId).getSupport()) {
-			if (osu.getId().equals(osuId)) {
-				log.info("isOsuAssignedToInstance( instanceId={}, osuId={}): true", instanceId,
-						osuId);
-				return true;
-			}
-		}
-
-		log.info("isOsuAssignedToInstance( instanceId={}, osuId={}): false", instanceId, osuId);
-		return false;
 	}
 
 	private ServiceInstance _getServiceInstance(String instanceId) {
@@ -260,12 +206,77 @@ public class InformationServiceMock {
 		return copyServ;
 	}
 
+	public List<CloudService> getServices() {
+		return new ArrayList<CloudService>(services.values());
+	}
+
+	// OSU
+
+	public void addOsu(OfferedServiceUnit osu) {
+		osus.put(osu.getId(), osu);
+	}
+
+	//
+	public String createOsuInstance(String osuId) {
+
+		OfferedServiceUnit osu = osus.get(osuId);
+		String osuInstanceId = getOsuInstanceId(osuId);
+		OsuInstance osuInstance = new OsuInstance(osuInstanceId, osu);
+		osuInstances.put(osuInstanceId, osuInstance);
+		log.info("createOsuInstance(osuId={}):{}", osuId, osuInstanceId);
+		return osuInstanceId;
+	}
+
+	public void removeOsuInatance(String osuInstanceId) {
+		osuInstances.remove(osuInstanceId);
+	}
+
+	public void assignSupportingService(String instanceId, String osuInstanceId) {
+
+		if (isOsuAssignedToInstance(instanceId, osuInstanceId)) {
+			return;
+		}
+
+		ServiceInstance instance = _getServiceInstance(instanceId);
+		instance.getSupport().add(osuInstances.get(osuInstanceId));
+	}
+
+	public void removeAssignmentOfSupportingOsu(String instanceId, String osuInstanceId) {
+
+		if (isOsuAssignedToInstance(instanceId, osuInstanceId)) {
+
+			ServiceInstance instance = _getServiceInstance(instanceId);
+
+			for (OsuInstance osuInstance : instance.getSupport()) {
+				if (osuInstance.getId().equals(osuInstanceId)) {
+					instance.getSupport().remove(osuInstance);
+					return;
+				}
+			}
+
+		}
+	}
+
+	private boolean isOsuAssignedToInstance(String instanceId, String osuInstanceId) {
+
+		boolean value = false;
+
+		for (OsuInstance osuInstance : _getServiceInstance(instanceId).getSupport()) {
+			if (osuInstance.getId().equals(osuInstanceId)) {
+				value = true;
+			}
+		}
+
+		log.info("isOsuAssignedToInstance( instanceId={}, osuInstanceId={}): {}", instanceId, osuInstanceId, value);
+		return value;
+	}
+
 	public List<OfferedServiceUnit> getOsus() {
 		return new ArrayList<OfferedServiceUnit>(osus.values());
 	}
 
-	public List<CloudService> getServices() {
-		return new ArrayList<CloudService>(services.values());
+	public List<OsuInstance> getOsusInstances() {
+		return new ArrayList<OsuInstance>(osuInstances.values());
 	}
 
 }

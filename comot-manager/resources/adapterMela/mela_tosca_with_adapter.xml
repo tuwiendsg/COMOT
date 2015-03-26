@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:Definitions xmlns:ns2="http://docs.oasis-open.org/tosca/ns/2011/12" xmlns:salsa="http://example.com"
+	id="eps_mela" name="eps_mela" targetNamespace="http://tempuri.org">
+	<ns2:ServiceTemplate id="mela_topology">
+		<ns2:TopologyTemplate>
+
+			<ns2:NodeTemplate name="Adapter" minInstances="1" maxInstances="1" id="adapter" type="salsa:software">
+				<ns2:Properties>
+					<MappingProperties>
+						<MappingProperty type="action">
+							<property name="deploy">java -jar myFutureAdapter.jar mela</property>
+						</MappingProperty>
+					</MappingProperties>
+				</ns2:Properties>
+				<ns2:DeploymentArtifacts>
+					<ns2:DeploymentArtifact name="Adapter jar" artifactType="salsa:misc" artifactRef="adapterJar" />
+				</ns2:DeploymentArtifacts>
+			</ns2:NodeTemplate>
+			<ns2:NodeTemplate name="MELA" minInstances="1" maxInstances="1" id="mela" type="salsa:software">
+				<ns2:Properties>
+					<MappingProperties />
+				</ns2:Properties>
+				<ns2:DeploymentArtifacts>
+					<ns2:DeploymentArtifact name="Deployment script" artifactType="salsa:sh" artifactRef="mela_package" />
+				</ns2:DeploymentArtifacts>
+			</ns2:NodeTemplate>
+			<ns2:NodeTemplate id="OS_for_eps_mela" type="os">
+				<ns2:Properties>
+					<MappingProperties>
+						<MappingProperty type="os">
+							<property name="instanceType">000001920</property>
+							<property name="provider">dsg@openstack</property>
+							<property name="baseImage">be6ae07b-7deb-4926-bfd7-b11afe228d6a</property>
+							<property name="packages">openjdk-7-jre</property>
+						</MappingProperty>
+					</MappingProperties>
+				</ns2:Properties>
+			</ns2:NodeTemplate>
+
+			<ns2:RelationshipTemplate id="mela_HOSTON_OS_for_mela" type="HOSTON">
+				<ns2:SourceElement ref="mela" />
+				<ns2:TargetElement ref="OS_for_eps_mela" />
+			</ns2:RelationshipTemplate>
+			<ns2:RelationshipTemplate id="adapter_HOSTON_OS_for_mela" type="HOSTON">
+				<ns2:SourceElement ref="adapter" />
+				<ns2:TargetElement ref="OS_for_eps_mela" />
+			</ns2:RelationshipTemplate>
+			<ns2:RelationshipTemplate id="adapter_to_mela" type="salsa:CONNECTTO">
+				<ns2:SourceElement ref="adapter" />
+				<ns2:TargetElement ref="mela" />
+			</ns2:RelationshipTemplate>
+
+		</ns2:TopologyTemplate>
+	</ns2:ServiceTemplate>
+	<ns2:ArtifactTemplate id="adapterJar" type="salsa:misc">
+		<ns2:ArtifactReferences>
+			<ns2:ArtifactReference reference="http://128.130.172.215/salsa/upload/files/juraj/myFutureAdapter.jar" />
+		</ns2:ArtifactReferences>
+	</ns2:ArtifactTemplate>
+	<ns2:ArtifactTemplate id="mela_package" type="salsa:sh">
+		<ns2:ArtifactReferences>
+			<ns2:ArtifactReference reference="http://128.130.172.215/salsa/upload/files/juraj/dynamic_eps/deployMela.sh" />
+		</ns2:ArtifactReferences>
+	</ns2:ArtifactTemplate>
+</ns2:Definitions>

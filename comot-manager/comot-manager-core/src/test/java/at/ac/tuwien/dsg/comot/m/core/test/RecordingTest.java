@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oasis.tosca.Definitions;
 
-import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
@@ -21,8 +20,6 @@ public class RecordingTest extends AbstractTest {
 	CloudService service;
 	String serviceId;
 	String instanceId;
-	String monitoringId;
-	String deploymentId;
 
 	@Before
 	public void setUp() throws JAXBException, IOException, ClassNotFoundException, EpsException {
@@ -30,8 +27,6 @@ public class RecordingTest extends AbstractTest {
 		service = mapperTosca.createModel(tosca1);
 		serviceId = coordinator.createCloudService(service);
 
-		monitoringId = Constants.MELA_SERVICE_PUBLIC_ID;
-		deploymentId = Constants.SALSA_SERVICE_PUBLIC_ID;
 	}
 
 	@Test

@@ -16,6 +16,7 @@ import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
+import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
 import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 
 @XmlRootElement
@@ -36,7 +37,7 @@ public class ServiceInstance implements Serializable {
 	@XmlElement(name = "Instance")
 	protected Set<UnitInstance> unitInstances = new HashSet<>();
 
-	protected Set<OfferedServiceUnit> support = new HashSet<>();;
+	protected Set<OsuInstance> support = new HashSet<>();;
 
 	public ServiceInstance() {
 
@@ -77,11 +78,11 @@ public class ServiceInstance implements Serializable {
 		this.nodeId = nodeId;
 	}
 
-	public Set<OfferedServiceUnit> getSupport() {
+	public Set<OsuInstance> getSupport() {
 		return support;
 	}
 
-	public void setSupport(Set<OfferedServiceUnit> support) {
+	public void setSupport(Set<OsuInstance> support) {
 		this.support = support;
 	}
 

@@ -18,7 +18,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.adapter.general.Processor;
-import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.EpsAction;
 import at.ac.tuwien.dsg.comot.m.common.InformationClient;
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
@@ -32,8 +31,6 @@ import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
-import at.ac.tuwien.dsg.comot.model.provider.Resource;
 import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 
@@ -55,25 +52,14 @@ public class Deployment extends Processor {
 	@Override
 	public void start() throws EpsException {
 
-		OfferedServiceUnit osu = infoService.getOsu(getId());
-		String ip = null;
-		String port = null;
-
-		for (Resource res : osu.getResources()) {
-			if (res.getType().getName().equals(Constants.IP)) {
-				ip = res.getName();
-			} else if (res.getType().getName().equals(Constants.PORT)) {
-				port = res.getName();
-			}
-		}
-
-		deployment.setHostAndPort(ip, new Integer(port));
-
-		// helper = context.getBean(DeploymentHelper.class);
 		helper.setDeploymentAdapter(this);
 		helper.setAdapterId(getId());
 		helper.setDeployment(deployment);
 
+	}
+
+	public void setHostAndPort(String host, int port) {
+		deployment.setHostAndPort(host, port);
 	}
 
 	@Override

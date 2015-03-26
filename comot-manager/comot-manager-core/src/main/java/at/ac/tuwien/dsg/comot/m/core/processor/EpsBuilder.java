@@ -1,7 +1,6 @@
 package at.ac.tuwien.dsg.comot.m.core.processor;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -12,7 +11,6 @@ import java.util.Set;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Queue;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -21,12 +19,11 @@ import at.ac.tuwien.dsg.comot.m.adapter.general.PerInstanceQueueManager;
 import at.ac.tuwien.dsg.comot.m.adapter.general.Processor;
 import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.EpsAction;
-import at.ac.tuwien.dsg.comot.m.common.EpsAdapter;
+import at.ac.tuwien.dsg.comot.m.common.EpsAdapterStatic;
 import at.ac.tuwien.dsg.comot.m.common.InformationClient;
 import at.ac.tuwien.dsg.comot.m.common.events.ExceptionMessage;
 import at.ac.tuwien.dsg.comot.m.common.events.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.events.Transition;
-import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.core.InitData;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
@@ -48,19 +45,13 @@ public class EpsBuilder extends Processor {
 	protected Set<String> managedSet = Collections.synchronizedSet(new HashSet<String>());
 
 	@Override
-	public void start() throws EpsException, BeansException, URISyntaxException {
+	public void start() throws Exception {
 
 		infoService.deeteAll();
 
 		context.getBean(InitData.class).setUpTestData();
 
-		for (OfferedServiceUnit osu : infoService.getOsus()) {
-			try {
-				createStaticEps(osu);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+		createStaticEpses();
 
 		// TODO bindings for dynamic eps created
 
@@ -113,23 +104,43 @@ public class EpsBuilder extends Processor {
 
 	}
 
-	protected void createStaticEps(OfferedServiceUnit osu) throws Exception {
+	protected void createStaticEpses() throws Exception {
 
-		for (Resource res : osu.getResources()) {
-			if (res.getType().getName().equals(Constants.ADAPTER_CLASS)) {
+		for (OfferedServiceUnit osu : infoService.getOsus()) {
+			try {
 
-				String epsId = osu.getId();
-				Class<?> clazz = Class.forName(res.getName());
+				if (osu.getService() == null) {
 
-				EpsAdapter adapter = (EpsAdapter) context.getBean(clazz);
+					Class<?> clazz = null;
+					String ip = null;
+					String port = null;
 
-				admin.declareQueue(new Queue(PerInstanceQueueManager.queueNameAssignment(epsId), false, false,
-						true));
+					for (Resource res : osu.getResources()) {
+						if (res.getType().getName().equals(Constants.ADAPTER_CLASS)) {
+							clazz = Class.forName(res.getName());
 
-				adapter.start(epsId);
-				managedSet.add(epsId);
+						} else if (res.getType().getName().equals(Constants.IP)) {
+							ip = res.getName();
 
-				break;
+						} else if (res.getType().getName().equals(Constants.PORT)) {
+							port = res.getName();
+						}
+					}
+
+					String epsId = infoService.createOsuInstance(osu.getId());
+					EpsAdapterStatic adapter = (EpsAdapterStatic) context.getBean(clazz);
+
+					// create queue
+					admin.declareQueue(new Queue(PerInstanceQueueManager.queueNameAssignment(epsId), false,
+							false,
+							true));
+
+					adapter.start(epsId, ip, new Integer(port));
+					managedSet.add(epsId);
+
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 

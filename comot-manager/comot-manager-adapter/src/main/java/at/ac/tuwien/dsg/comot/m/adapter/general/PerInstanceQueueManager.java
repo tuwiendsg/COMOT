@@ -44,9 +44,7 @@ public class PerInstanceQueueManager extends Manager {
 
 	protected void startAssignmentListener() {
 
-		// TODO queue is created by EPS coordinator
-		// admin.declareQueue(new Queue(queueNameAssignment(), false, false, false));
-
+		// queue was declared by the EPS builder
 		admin.declareBinding(new Binding(queueNameAssignment(), DestinationType.QUEUE,
 				Constants.EXCHANGE_CUSTOM_EVENT,
 				"*." + participantId + "." + EpsAction.EPS_ASSIGNMENT_REQUESTED + "." + Type.SERVICE, null));

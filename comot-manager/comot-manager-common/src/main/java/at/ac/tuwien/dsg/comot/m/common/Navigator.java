@@ -50,7 +50,7 @@ public class Navigator {
 	public Resource getResource(String id) {
 
 		for (ServiceUnit temp : getAllUnits()) {
-			for (Resource res : temp.getOsu().getResources()) {
+			for (Resource res : temp.getOsuInstance().getOsu().getResources()) {
 				if (res.getName().equals(id)) {
 					return res;
 				}
@@ -83,9 +83,9 @@ public class Navigator {
 		boolean result = false;
 		// log.info("aaaa "+OsuType.OS.toString());
 
-		if (node.getOsu().getType().equals(OsuType.OS.toString()) ||
-				node.getOsu().getType().equals(OsuType.DOCKER.toString()) ||
-				node.getOsu().getType().equals(OsuType.TOMCAT.toString())) {
+		if (node.getOsuInstance().getOsu().getType().equals(OsuType.OS.toString()) ||
+				node.getOsuInstance().getOsu().getType().equals(OsuType.DOCKER.toString()) ||
+				node.getOsuInstance().getOsu().getType().equals(OsuType.TOMCAT.toString())) {
 		} else {
 
 			Set<ServiceUnit> hostedOnThis = getHostedOn(node, potentialHosted);
@@ -122,7 +122,7 @@ public class Navigator {
 		ServiceUnit host = getHost(id);
 
 		if (host != null) {
-			if (host.getOsu().getType().equals(OsuType.OS.toString())) {
+			if (host.getOsuInstance().getOsu().getType().equals(OsuType.OS.toString())) {
 				return host;
 			} else {
 				return getOsForServiceUnit(host.getId());

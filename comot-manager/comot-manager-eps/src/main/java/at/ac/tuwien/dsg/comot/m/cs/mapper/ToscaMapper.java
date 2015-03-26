@@ -77,7 +77,7 @@ public class ToscaMapper {
 		// inject TArtifactTemplates
 		for (ServiceUnit unit : navigator.getAllUnits()) {
 
-			resources = unit.getOsu().getResources();
+			resources = unit.getOsuInstance().getOsu().getResources();
 
 			if (resources != null && !resources.isEmpty()) {
 				for (Resource resource : resources) {

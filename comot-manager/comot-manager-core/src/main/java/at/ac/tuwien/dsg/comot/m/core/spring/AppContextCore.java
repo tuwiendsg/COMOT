@@ -49,7 +49,6 @@ public class AppContextCore {
 	public static final Logger log = LoggerFactory.getLogger(AppContextCore.class);
 
 	public static final String INSERT_INIT_DATA = "INSERT_INIT_DATA";
-	public static final String SERVER = "localhost";
 
 	@Autowired
 	protected ApplicationContext context;
@@ -62,7 +61,7 @@ public class AppContextCore {
 
 	@Bean
 	public ConnectionFactory connectionFactory() {
-		CachingConnectionFactory connectionFactory = new CachingConnectionFactory(SERVER);
+		CachingConnectionFactory connectionFactory = new CachingConnectionFactory(env.getProperty("uri.broker.host"));
 		return connectionFactory;
 	}
 

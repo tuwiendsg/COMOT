@@ -153,7 +153,7 @@ public abstract class AbstractTest {
 
 	public static void cutOsus(CloudService service) {
 		for (ServiceUnit unit : Navigator.getAllUnits(service)) {
-			unit.setOsu(null);
+			unit.setOsuInstance(null);
 		}
 
 	}

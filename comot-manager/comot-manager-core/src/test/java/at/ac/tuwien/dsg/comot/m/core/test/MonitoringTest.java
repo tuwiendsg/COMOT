@@ -29,17 +29,17 @@ import com.rabbitmq.client.ShutdownSignalException;
 
 public class MonitoringTest extends AbstractTest {
 
-	protected final String MONITORING_ID = Constants.MELA_SERVICE_PUBLIC_ID;
-	protected final String DEPLOYMENT_ID = Constants.SALSA_SERVICE_PUBLIC_ID;
-
 	protected TestAgentAdapter agent;
 	protected String serviceId;
 	protected String instanceId;
 
+	protected String staticDeplId;
+	protected String staticMonitoringId;
+
 	@Before
 	public void setUp() throws JAXBException, IOException, ClassNotFoundException, EpsException {
 
-		agent = new TestAgentAdapter("prototype", "localhost");
+		agent = new TestAgentAdapter("prototype", env.getProperty("uri.broker.host"));
 
 		Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/tosca/ExampleExecutableOnVM.xml");
 
@@ -49,8 +49,11 @@ public class MonitoringTest extends AbstractTest {
 
 		assertFalse(deployment.isManaged(instanceId));
 
-		coordinator.assignSupportingOsu(serviceId, instanceId, DEPLOYMENT_ID);
-		coordinator.assignSupportingOsu(serviceId, instanceId, MONITORING_ID);
+		staticDeplId = infoService.instanceIdOfStaticEps(Constants.SALSA_SERVICE_STATIC);
+		staticMonitoringId = infoService.instanceIdOfStaticEps(Constants.MELA_SERVICE_STATIC);
+
+		coordinator.assignSupportingOsu(serviceId, instanceId, staticDeplId);
+		coordinator.assignSupportingOsu(serviceId, instanceId, staticMonitoringId);
 		coordinator.startServiceInstance(serviceId, instanceId);
 
 	}
@@ -69,7 +72,7 @@ public class MonitoringTest extends AbstractTest {
 
 		agent.waitForLifeCycleEvent(Action.STARTED);
 
-		assertTrue(infoService.isOsuAssignedToInstance(instanceId, MONITORING_ID));
+		assertTrue(infoService.isOsuAssignedToInstance(instanceId, Constants.MELA_SERVICE_STATIC));
 		assertFalse(monitoring.isMonitored(instanceId));
 
 		agent.waitForLifeCycleEvent(Action.DEPLOYED);
@@ -80,27 +83,27 @@ public class MonitoringTest extends AbstractTest {
 		assertTrue(deployment.isRunning(instanceId));
 
 		// check automatically started
-		assertTrue(infoService.isOsuAssignedToInstance(instanceId, MONITORING_ID));
+		assertTrue(infoService.isOsuAssignedToInstance(instanceId, Constants.MELA_SERVICE_STATIC));
 		assertTrue(monitoring.isMonitored(instanceId));
 
 		// manually stop
 		coordinator.triggerCustomEvent(
-				serviceId, instanceId, MONITORING_ID, ComotAction.MELA_STOP.toString(), null);
+				serviceId, instanceId, staticMonitoringId, ComotAction.MELA_STOP.toString(), null);
 
 		agent.waitForCustomEvent(ComotAction.MELA_STOP.toString());
 		UtilsTest.sleepSeconds(3);
 
-		assertTrue(infoService.isOsuAssignedToInstance(instanceId, MONITORING_ID));
+		assertTrue(infoService.isOsuAssignedToInstance(instanceId, Constants.MELA_SERVICE_STATIC));
 		assertFalse(monitoring.isMonitored(instanceId));
 
 		// manually start
 		coordinator.triggerCustomEvent(
-				serviceId, instanceId, MONITORING_ID, ComotAction.MELA_START.toString(), null);
+				serviceId, instanceId, staticMonitoringId, ComotAction.MELA_START.toString(), null);
 
 		agent.waitForCustomEvent(ComotAction.MELA_START.toString());
 		UtilsTest.sleepSeconds(3);
 
-		assertTrue(infoService.isOsuAssignedToInstance(instanceId, MONITORING_ID));
+		assertTrue(infoService.isOsuAssignedToInstance(instanceId, Constants.MELA_SERVICE_STATIC));
 		assertTrue(monitoring.isMonitored(instanceId));
 
 		coordinator.stopServiceInstance(serviceId, instanceId);
@@ -111,7 +114,7 @@ public class MonitoringTest extends AbstractTest {
 		agent.assertLifeCycleEvent(Action.UNDEPLOYED);
 		UtilsTest.sleepSeconds(3);
 
-		assertTrue(infoService.isOsuAssignedToInstance(instanceId, MONITORING_ID));
+		assertTrue(infoService.isOsuAssignedToInstance(instanceId, Constants.MELA_SERVICE_STATIC));
 		assertFalse(monitoring.isMonitored(instanceId));
 		assertFalse(deployment.isManaged(instanceId));
 

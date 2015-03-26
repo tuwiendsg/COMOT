@@ -16,6 +16,7 @@ import at.ac.tuwien.dsg.comot.model.devel.relationship.ConnectToRel;
 import at.ac.tuwien.dsg.comot.model.devel.relationship.HostOnRel;
 import at.ac.tuwien.dsg.comot.model.devel.relationship.LocalRel;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
+import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
 import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 
 @XmlRootElement
@@ -39,8 +40,8 @@ public class ServiceUnit extends ServiceEntity {
 	@XmlElement(name = "Local")
 	protected Set<LocalRel> local = new HashSet<>();
 
-	@XmlElement(name = "OfferedServiceUnit")
-	protected OfferedServiceUnit osu;
+	@XmlElement(name = "OsuInstance")
+	protected OsuInstance osuInstance;
 
 	@XmlElementWrapper(name = "Instances")
 	protected Set<UnitInstance> instances = new HashSet<>();
@@ -139,12 +140,12 @@ public class ServiceUnit extends ServiceEntity {
 		this.instances = instances;
 	}
 
-	public OfferedServiceUnit getOsu() {
-		return osu;
+	public OsuInstance getOsuInstance() {
+		return osuInstance;
 	}
 
-	public void setOsu(OfferedServiceUnit osu) {
-		this.osu = osu;
+	public void setOsuInstance(OsuInstance osuInstance) {
+		this.osuInstance = osuInstance;
 	}
 
 }

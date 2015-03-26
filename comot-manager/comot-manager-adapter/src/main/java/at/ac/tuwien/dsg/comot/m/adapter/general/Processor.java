@@ -46,7 +46,9 @@ public abstract class Processor {
 
 	public abstract List<Binding> getBindings(String queueName, String instanceId);
 
-	public abstract void start() throws Exception;
+	public void start() throws Exception {
+
+	}
 
 	public abstract void onLifecycleEvent(
 			StateMessage msg,

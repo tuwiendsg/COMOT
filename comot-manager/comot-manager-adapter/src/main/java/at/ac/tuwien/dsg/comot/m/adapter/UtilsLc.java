@@ -16,7 +16,7 @@ import at.ac.tuwien.dsg.comot.m.common.events.ComotMessage;
 import at.ac.tuwien.dsg.comot.m.common.events.StateMessage;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
+import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
 import at.ac.tuwien.dsg.comot.model.runtime.ServiceInstance;
 
 public class UtilsLc {
@@ -25,10 +25,10 @@ public class UtilsLc {
 
 	public static CloudService removeProviderInfo(CloudService service) {
 		for (ServiceUnit unit : Navigator.getAllUnits(service)) {
-			unit.setOsu(null);
+			unit.setOsuInstance(null);
 		}
 		for (ServiceInstance instance : service.getInstances()) {
-			instance.setSupport(new HashSet<OfferedServiceUnit>());
+			instance.setSupport(new HashSet<OsuInstance>());
 		}
 
 		return service;

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.adapter.general.Processor;
 import at.ac.tuwien.dsg.comot.m.common.ComotAction;
-import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.EpsAction;
 import at.ac.tuwien.dsg.comot.m.common.InformationClient;
 import at.ac.tuwien.dsg.comot.m.common.eps.MonitoringClient;
@@ -22,8 +21,6 @@ import at.ac.tuwien.dsg.comot.m.common.events.Transition;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
-import at.ac.tuwien.dsg.comot.model.provider.Resource;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
@@ -36,21 +33,8 @@ public class Monitoring extends Processor {
 	@Autowired
 	protected InformationClient infoService;
 
-	@Override
-	public void start() throws EpsException {
-
-		OfferedServiceUnit osu = infoService.getOsu(getId());
-		String ip = null;
-		String port = null;
-
-		for (Resource res : osu.getResources()) {
-			if (res.getType().getName().equals(Constants.IP)) {
-				ip = res.getName();
-			} else if (res.getType().getName().equals(Constants.PORT)) {
-				port = res.getName();
-			}
-		}
-		monitoring.setHostAndPort(ip, new Integer(port));
+	public void setHostAndPort(String host, int port) {
+		monitoring.setHostAndPort(host, port);
 	}
 
 	@Override
