@@ -20,6 +20,7 @@ import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -30,6 +31,7 @@ import at.ac.tuwien.dsg.comot.m.adapter.general.SingleQueueManager;
 import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.InformationClient;
 import at.ac.tuwien.dsg.comot.m.common.Type;
+import at.ac.tuwien.dsg.comot.m.common.events.AbstractEvent;
 import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.events.Transition;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
@@ -51,6 +53,8 @@ public class LifeCycleManager {
 	protected AmqpAdmin admin;
 	@Autowired
 	protected ConnectionFactory connectionFactory;
+	@Autowired
+	protected RabbitTemplate amqp;
 
 	protected SimpleMessageListenerContainer container;
 
@@ -86,7 +90,7 @@ public class LifeCycleManager {
 		container.start();
 
 		SingleQueueManager manager1 = context.getBean(SingleQueueManager.class);
-		manager1.start("EPS_BUILDER", context.getBean(EpsBuilder.class));
+		manager1.start(Constants.EPS_BUILDER, context.getBean(EpsBuilder.class));
 
 		SingleQueueManager manager2 = context.getBean(SingleQueueManager.class);
 		manager2.start(Constants.RECORDER, context.getBean(Recording.class));
@@ -99,7 +103,10 @@ public class LifeCycleManager {
 		public void onMessage(Message message) {
 
 			try {
-				LifeCycleEvent event = (LifeCycleEvent) UtilsLc.abstractEvent(message);
+
+				AbstractEvent abEvent = UtilsLc.abstractEvent(message);
+				LifeCycleEvent event = (LifeCycleEvent) abEvent;
+
 				String csInstanceId = event.getCsInstanceId();
 
 				if (Action.CREATED == event.getAction()) {

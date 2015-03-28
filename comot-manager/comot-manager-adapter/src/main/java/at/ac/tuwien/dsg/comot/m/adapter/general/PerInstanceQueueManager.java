@@ -44,7 +44,8 @@ public class PerInstanceQueueManager extends Manager {
 
 	protected void startAssignmentListener() {
 
-		// queue was declared by the EPS builder
+		admin.declareQueue(new Queue(queueNameAssignment(), false, false, true));
+
 		admin.declareBinding(new Binding(queueNameAssignment(), DestinationType.QUEUE,
 				Constants.EXCHANGE_CUSTOM_EVENT,
 				"*." + participantId + "." + EpsAction.EPS_ASSIGNMENT_REQUESTED + "." + Type.SERVICE, null));

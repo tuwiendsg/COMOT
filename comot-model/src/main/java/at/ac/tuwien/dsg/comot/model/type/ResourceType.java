@@ -7,6 +7,7 @@ public enum ResourceType {
 	CHEF("chef"),
 	CHEF_SOLO("chef-solo"),
 	APT_GET_COMMAND("apt"),
+	MISC("misc"),
 	// tosca properties types
 	OS("os"),
 	ACTION("action"),

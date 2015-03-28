@@ -213,6 +213,11 @@ public class InformationServiceMock {
 	// OSU
 
 	public void addOsu(OfferedServiceUnit osu) {
+
+		if (osu.getService() != null) {
+			osu.setService(services.get(osu.getService().getId()));
+		}
+
 		osus.put(osu.getId(), osu);
 	}
 
@@ -224,6 +229,17 @@ public class InformationServiceMock {
 		OsuInstance osuInstance = new OsuInstance(osuInstanceId, osu);
 		osuInstances.put(osuInstanceId, osuInstance);
 		log.info("createOsuInstance(osuId={}):{}", osuId, osuInstanceId);
+		return osuInstanceId;
+	}
+
+	public String createOsuInstanceDynamic(String osuId, String instanceId, String osuInstanceId) {
+
+		OfferedServiceUnit osu = osus.get(osuId);
+		OsuInstance osuInstance = new OsuInstance(osuInstanceId, osu);
+		osuInstances.put(osuInstanceId, osuInstance);
+		log.info("createOsuInstance(osuId={}):{}", osuId, osuInstanceId);
+
+		osuInstances.get(osuInstanceId).setServiceInstance(_getServiceInstance(instanceId));
 		return osuInstanceId;
 	}
 

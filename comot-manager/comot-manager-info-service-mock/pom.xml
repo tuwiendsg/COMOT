@@ -60,7 +60,7 @@
 				</executions>
 				<configuration>
 					<finalName>infoServiceMock.jar</finalName>
-					<port>8480</port> <!-- port does not apply on generated jar, default: 8080 -->
+					<port>8080</port> <!-- port does not apply on generated jar, default: 8080 -->
 					<path>/info</path>
 				</configuration>
 			</plugin>

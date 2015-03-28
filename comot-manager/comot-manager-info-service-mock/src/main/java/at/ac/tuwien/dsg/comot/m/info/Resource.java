@@ -15,6 +15,7 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -176,13 +177,21 @@ public class Resource {
 	}
 
 	@POST
-	@Consumes(MediaType.WILDCARD)
+	@Consumes(MediaType.TEXT_PLAIN)
 	@Path(Constants.EPS_ONE_INSTANCES)
 	public Response createOsuInstance(
-			@PathParam("epsId") String epsId) {
+			@PathParam("epsId") String epsId, String optionalServiceInstanceId) {
 		String result;
 		synchronized (sync) {
-			result = infoServ.createOsuInstance(epsId);
+
+			if (optionalServiceInstanceId == null || optionalServiceInstanceId.equals("")) {
+				result = infoServ.createOsuInstance(epsId);
+			} else {
+				result = infoServ.createOsuInstanceDynamic(epsId,
+						StringUtils.split(optionalServiceInstanceId)[0],
+						StringUtils.split(optionalServiceInstanceId)[1]);
+			}
+
 		}
 		return Response.ok(result).build();
 	}

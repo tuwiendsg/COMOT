@@ -3,7 +3,6 @@
 	id="eps_mela" name="eps_mela" targetNamespace="http://tempuri.org">
 	<ns2:ServiceTemplate id="mela_topology">
 		<ns2:TopologyTemplate>
-
 			<ns2:NodeTemplate name="Adapter" minInstances="1" maxInstances="1" id="adapter" type="salsa:software">
 				<ns2:Properties>
 					<MappingProperties>
@@ -12,6 +11,9 @@
 						</MappingProperty>
 					</MappingProperties>
 				</ns2:Properties>
+				<ns2:Requirements>
+					<ns2:Requirement name="adapter_req_mela" id="adapter_req_mela" />
+				</ns2:Requirements>
 				<ns2:DeploymentArtifacts>
 					<ns2:DeploymentArtifact name="Adapter jar" artifactType="salsa:misc" artifactRef="adapterJar" />
 				</ns2:DeploymentArtifacts>
@@ -20,6 +22,9 @@
 				<ns2:Properties>
 					<MappingProperties />
 				</ns2:Properties>
+				<ns2:Capabilities>
+					<ns2:Capability name="mela_capa_for_adapter" id="mela_capa_for_adapter" />
+				</ns2:Capabilities>
 				<ns2:DeploymentArtifacts>
 					<ns2:DeploymentArtifact name="Deployment script" artifactType="salsa:sh" artifactRef="mela_package" />
 				</ns2:DeploymentArtifacts>
@@ -36,7 +41,6 @@
 					</MappingProperties>
 				</ns2:Properties>
 			</ns2:NodeTemplate>
-
 			<ns2:RelationshipTemplate id="mela_HOSTON_OS_for_mela" type="HOSTON">
 				<ns2:SourceElement ref="mela" />
 				<ns2:TargetElement ref="OS_for_eps_mela" />
@@ -46,18 +50,17 @@
 				<ns2:TargetElement ref="OS_for_eps_mela" />
 			</ns2:RelationshipTemplate>
 			<ns2:RelationshipTemplate id="adapter_to_mela" type="CONNECTTO">
-				<ns2:SourceElement ref="adapter" />
-				<ns2:TargetElement ref="mela" />
+				<ns2:SourceElement ref="mela_capa_for_adapter" />
+				<ns2:TargetElement ref="adapter_req_mela" />
 			</ns2:RelationshipTemplate>
-
 		</ns2:TopologyTemplate>
 	</ns2:ServiceTemplate>
-	<ns2:ArtifactTemplate id="adapterJar" type="salsa:misc">
+	<ns2:ArtifactTemplate xmlns:salsa="http://example.com" id="adapterJar" type="salsa:misc">
 		<ns2:ArtifactReferences>
 			<ns2:ArtifactReference reference="http://128.130.172.215/salsa/upload/files/juraj/dynamic_eps/epsAdapter.jar" />
 		</ns2:ArtifactReferences>
 	</ns2:ArtifactTemplate>
-	<ns2:ArtifactTemplate id="mela_package" type="salsa:sh">
+	<ns2:ArtifactTemplate xmlns:salsa="http://example.com" id="mela_package" type="salsa:sh">
 		<ns2:ArtifactReferences>
 			<ns2:ArtifactReference reference="http://128.130.172.215/salsa/upload/files/juraj/dynamic_eps/deployMela.sh" />
 		</ns2:ArtifactReferences>

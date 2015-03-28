@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.annotation.Resource;
+import javax.ws.rs.core.UriBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,13 +47,23 @@ public class AppContextAdapter {
 	@Resource
 	public Environment env;
 
+	protected static String brokerHost;
+	protected static String infoHost;
+	protected static Integer infoPort;
+
 	public AppContextAdapter() {
 		super();
 	}
 
 	@Bean
 	public ConnectionFactory connectionFactory() {
-		CachingConnectionFactory connectionFactory = new CachingConnectionFactory(env.getProperty("uri.broker.host"));
+
+		if (brokerHost == null) {
+			brokerHost = env.getProperty("uri.broker.host");
+		}
+		log.info("setting connection to message broker: {}", brokerHost);
+
+		CachingConnectionFactory connectionFactory = new CachingConnectionFactory(brokerHost);
 		return connectionFactory;
 	}
 
@@ -72,7 +83,15 @@ public class AppContextAdapter {
 
 	@Bean
 	public InformationClient informationClient() throws URISyntaxException {
-		return new InformationClient(new InformationClientRest(new URI(env.getProperty("uri.information"))));
+
+		URI uri = new URI(env.getProperty("uri.information"));
+
+		if (infoHost != null && infoPort != null) {
+			uri = UriBuilder.fromUri(uri).host(infoHost).port(infoPort).build();
+		}
+		log.info("setting connection to information service: {}", uri);
+
+		return new InformationClient(new InformationClientRest(uri));
 	}
 
 	@Bean
@@ -83,6 +102,30 @@ public class AppContextAdapter {
 	@Bean
 	public ControlClient controlClient() throws URISyntaxException {
 		return new ControlClientRsybl(new RsyblClient(new URI(env.getProperty("uri.controller"))));
+	}
+
+	public static String getBrokerHost() {
+		return brokerHost;
+	}
+
+	public static void setBrokerHost(String brokerHost) {
+		AppContextAdapter.brokerHost = brokerHost;
+	}
+
+	public static String getInfoHost() {
+		return infoHost;
+	}
+
+	public static void setInfoHost(String infoHost) {
+		AppContextAdapter.infoHost = infoHost;
+	}
+
+	public static Integer getInfoPort() {
+		return infoPort;
+	}
+
+	public static void setInfoPort(Integer infoPort) {
+		AppContextAdapter.infoPort = infoPort;
 	}
 
 }

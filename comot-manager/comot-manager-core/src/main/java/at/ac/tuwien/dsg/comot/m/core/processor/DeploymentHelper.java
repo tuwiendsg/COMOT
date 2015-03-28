@@ -30,7 +30,6 @@ import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycle;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleFactory;
-import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.DeploymentMapper;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
@@ -51,8 +50,6 @@ public class DeploymentHelper {
 	protected DeploymentMapper mapper;
 	@Autowired
 	protected InformationClient infoService;
-	@Autowired
-	protected LifeCycleManager lcManager;
 
 	protected String adapterId;
 

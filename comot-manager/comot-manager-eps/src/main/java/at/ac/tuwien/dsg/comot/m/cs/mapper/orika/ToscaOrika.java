@@ -229,7 +229,8 @@ public class ToscaOrika {
 				|| type.equals(ResourceType.CHEF)
 				|| type.equals(ResourceType.CHEF_SOLO)
 				|| type.equals(ResourceType.SCRIPT)
-				|| type.equals(ResourceType.WAR_FILE)) {
+				|| type.equals(ResourceType.WAR_FILE)
+				|| type.equals(ResourceType.MISC)) {
 			return true;
 		} else {
 			return false;

@@ -15,7 +15,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
-import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
 import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 

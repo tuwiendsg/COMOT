@@ -19,6 +19,8 @@ public class Constants {
 	 */
 	public static final String EXCHANGE_REQUESTS = "EXCHANGE_REQUESTS";
 
+	public static final String EXCHANGE_DYNAMIC_REGISTRATION = "EXCHANGE_DYNAMIC_REGISTRATION";
+
 	/**
 	 * Key pattern: instanceID.originId
 	 */
@@ -29,10 +31,11 @@ public class Constants {
 	public static final String SALSA_SERVICE_STATIC = "SALSA_SERVICE";
 	public static final String MELA_SERVICE_STATIC = "MELA_SERVICE";
 	public static final String RSYBL_SERVICE_STATIC = "RSYBL_SERVICE";
-	public static final String RECORDER = "RECORDER";
-
 	public static final String MELA_SERVICE_DYNAMIC = "MELA_SERVICE_DYNAMIC";
 	public static final String RSYBL_SERVICE_DYNAMIC = "RSYBL_SERVICE_DYNAMIC";
+
+	public static final String RECORDER = "RECORDER";
+	public static final String EPS_BUILDER = "EPS_BUILDER";
 
 	public static final String ADAPTER_CLASS = "ADAPTER_CLASS";
 	public static final String IP = "IP";

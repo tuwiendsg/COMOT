@@ -15,7 +15,6 @@ import org.springframework.data.neo4j.annotation.RelatedToVia;
 import at.ac.tuwien.dsg.comot.model.devel.relationship.ConnectToRel;
 import at.ac.tuwien.dsg.comot.model.devel.relationship.HostOnRel;
 import at.ac.tuwien.dsg.comot.model.devel.relationship.LocalRel;
-import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
 import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 

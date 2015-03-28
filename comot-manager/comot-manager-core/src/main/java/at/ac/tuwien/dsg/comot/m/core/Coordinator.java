@@ -111,6 +111,17 @@ public class Coordinator {
 
 	}
 
+	public void createDynamicService(String epsId) throws AmqpException, JAXBException, EpsException {
+
+		createServiceInstance(infoService.getOsu(epsId).getService().getId());
+
+		// CustomEvent event = new CustomEvent(null, null, null, EpsAction.EPS_DYNAMIC_REQUESTED.toString(),
+		// USER_ID, Constants.EPS_BUILDER, epsId);
+		// StateMessage msg = new StateMessage(event, null, null);
+		// amqp.convertAndSend(Constants.EXCHANGE_DYNAMIC_REGISTRATION, epsId, Utils.asJsonString(msg));
+
+	}
+
 	public void triggerCustomEvent(
 			String serviceId,
 			String csInstanceId,

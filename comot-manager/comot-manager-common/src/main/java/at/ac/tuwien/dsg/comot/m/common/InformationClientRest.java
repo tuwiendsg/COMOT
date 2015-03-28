@@ -186,13 +186,16 @@ public class InformationClientRest extends ServiceClient {
 		return result;
 	}
 
-	public String createOsuInstance(String osuId) throws EpsException {
+	public String createOsuInstance(String osuId, String optionalServiceInstanceId, String osuInstanceId)
+			throws EpsException {
+
+		String body = (optionalServiceInstanceId == null) ? "" : optionalServiceInstanceId + " " + osuInstanceId;
 
 		Response response = client.target(baseUri)
 				.path(Constants.EPS_ONE_INSTANCES)
 				.resolveTemplate("epsId", osuId)
 				.request(MediaType.WILDCARD)
-				.post(Entity.xml(""));
+				.post(Entity.text(body));
 
 		processResponseStatus(response);
 

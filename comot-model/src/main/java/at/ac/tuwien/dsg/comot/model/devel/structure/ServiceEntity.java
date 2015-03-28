@@ -1,7 +1,6 @@
 package at.ac.tuwien.dsg.comot.model.devel.structure;
 
 import java.io.Serializable;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,7 +14,6 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
-
 
 import at.ac.tuwien.dsg.comot.model.HasUniqueId;
 import at.ac.tuwien.dsg.comot.model.SyblDirective;

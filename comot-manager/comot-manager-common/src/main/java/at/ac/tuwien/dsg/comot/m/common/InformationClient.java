@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,6 +21,7 @@ import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
 import at.ac.tuwien.dsg.comot.model.runtime.ServiceInstance;
 import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
+import at.ac.tuwien.dsg.comot.model.type.OsuType;
 
 public class InformationClient {
 
@@ -115,6 +118,36 @@ public class InformationClient {
 		return client.getOsuInstances();
 	}
 
+	public List<OsuInstance> getOsuInstancesForOsu(String osuId) throws EpsException {
+		List<OsuInstance> instances = new ArrayList<>();
+
+		for (OsuInstance instance : client.getOsuInstances()) {
+			if (instance.getOsu().getId().equals(osuId)) {
+				instances.add(instance);
+			}
+		}
+
+		return instances;
+	}
+
+	public List<ServiceInstance> getEpsServiceInstancesWithoutOsuInstance(String osuId) throws EpsException {
+
+		Set<ServiceInstance> allEpsServiceInstances = getOsu(osuId).getService().getInstances();
+		Set<String> allEpsServiceInstanceWithOsuInstancIds = new HashSet<>();
+
+		for (OsuInstance inst : getOsuInstancesForOsu(osuId)) {
+			allEpsServiceInstanceWithOsuInstancIds.add(inst.getServiceInstance().getId());
+		}
+
+		for (Iterator<ServiceInstance> iterator = allEpsServiceInstances.iterator(); iterator.hasNext();) {
+			ServiceInstance sInst = iterator.next();
+			if (allEpsServiceInstanceWithOsuInstancIds.contains(sInst)) {
+				iterator.remove();
+			}
+		}
+		return new ArrayList<>(allEpsServiceInstances);
+	}
+
 	public OsuInstance getOsuInstance(String osuInstanceId) throws EpsException {
 		log.info("getOsuInstance " + osuInstanceId);
 		for (OsuInstance instance : client.getOsuInstances()) {
@@ -127,7 +160,12 @@ public class InformationClient {
 	}
 
 	public String createOsuInstance(String osuId) throws EpsException {
-		return client.createOsuInstance(osuId);
+		return client.createOsuInstance(osuId, null, null);
+	}
+
+	public String createOsuInstanceDynamic(String osuId, String serviceInstanceId, String osuInstanceId)
+			throws EpsException {
+		return client.createOsuInstance(osuId, serviceInstanceId, osuInstanceId);
 	}
 
 	public void removeOsuInatance(String osuInstanceId) throws EpsException {
@@ -137,6 +175,16 @@ public class InformationClient {
 	public OfferedServiceUnit getOsu(String osuId) throws EpsException {
 		for (OfferedServiceUnit osu : client.getOsus()) {
 			if (osu.getId().equals(osuId)) {
+				return osu;
+			}
+		}
+
+		return null;
+	}
+
+	public OfferedServiceUnit getOsuByServiceId(String serviceId) throws EpsException {
+		for (OfferedServiceUnit osu : client.getOsus()) {
+			if (osu.getService().getId().equals(serviceId)) {
 				return osu;
 			}
 		}
@@ -230,6 +278,18 @@ public class InformationClient {
 
 	public URI getBaseUri() {
 		return client.getBaseUri();
+	}
+
+	public boolean isServiceOfDynamicEps(String serviceId) throws EpsException {
+
+		OfferedServiceUnit osu = getOsuByServiceId(serviceId);
+
+		if (osu != null && osu.getType().equals(OsuType.EPS.toString())) {
+			return true;
+		} else {
+			return false;
+		}
+
 	}
 
 }
