@@ -21,16 +21,20 @@ public class CustomEvent extends AbstractEvent {
 
 	}
 
-	public CustomEvent(String serviceId, String csInstanceId, String groupId, String customEvent, String origin,
-			String epsId, String message) {
-		super();
-		this.serviceId = serviceId;
-		this.csInstanceId = csInstanceId;
-		this.groupId = groupId;
+	public CustomEvent(String serviceId, String csInstanceId, String groupId, String customEvent, String epsId,
+			String message) {
+		super(serviceId, csInstanceId, groupId, null, null);
 		this.customEvent = customEvent;
-		this.message = message;
-		this.origin = origin;
 		this.epsId = epsId;
+		this.message = message;
+	}
+
+	public CustomEvent(String serviceId, String csInstanceId, String groupId, String customEvent, String origin,
+			Long time, String epsId, String message) {
+		super(serviceId, csInstanceId, groupId, origin, time);
+		this.customEvent = customEvent;
+		this.epsId = epsId;
+		this.message = message;
 	}
 
 	// GENERATED

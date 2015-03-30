@@ -42,7 +42,7 @@ public class VersionManager {
 	protected Neo4jOperations neo;
 
 	protected void insertToDB(ManagedRegion region, String regionId, String changeType,
-			Map<String, String> changeProperties) {
+			Map<String, Object> changeProperties) {
 
 		Node regionNode, revisionNode;
 
@@ -80,7 +80,7 @@ public class VersionManager {
 
 	}
 
-	protected void storeChange(String regionId, String changeType, Map<String, String> changeProperties, Long time) {
+	protected void storeChange(String regionId, String changeType, Map<String, Object> changeProperties, Long time) {
 
 		Node regionNode, revisionNode, lastRevisionNode;
 		Revision revision;

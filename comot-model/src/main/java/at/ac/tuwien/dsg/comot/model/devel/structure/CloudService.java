@@ -21,7 +21,7 @@ public class CloudService extends ServiceEntity {
 	@XmlAttribute
 	protected String accessIp;
 	@XmlAttribute
-	protected Date dateCreated;
+	protected Long dateCreated;
 	@XmlElement(name = "Topology")
 	protected Set<ServiceTopology> serviceTopologies = new HashSet<>();
 	@XmlElementWrapper(name = "ServiceInstances")
@@ -35,13 +35,13 @@ public class CloudService extends ServiceEntity {
 		super(id);
 	}
 
-	public CloudService(String id, String name, Date dateCreated) {
+	public CloudService(String id, String name, Long dateCreated) {
 		super(id, name);
 		this.dateCreated = dateCreated;
 	}
 
 	public ServiceInstance createServiceInstance(String instanceId) {
-		ServiceInstance instance = new ServiceInstance(instanceId, new Date());
+		ServiceInstance instance = new ServiceInstance(instanceId, System.currentTimeMillis());
 		instances.add(instance);
 		return instance;
 	}
@@ -87,11 +87,11 @@ public class CloudService extends ServiceEntity {
 		this.instances = instances;
 	}
 
-	public Date getDateCreated() {
+	public Long getDateCreated() {
 		return dateCreated;
 	}
 
-	public void setDateCreated(Date dateCreated) {
+	public void setDateCreated(Long dateCreated) {
 		this.dateCreated = dateCreated;
 	}
 

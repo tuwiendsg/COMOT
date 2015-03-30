@@ -184,7 +184,7 @@ public class InformationClient {
 
 	public OfferedServiceUnit getOsuByServiceId(String serviceId) throws EpsException {
 		for (OfferedServiceUnit osu : client.getOsus()) {
-			if (osu.getService().getId().equals(serviceId)) {
+			if (osu.getService() != null && osu.getService().getId().equals(serviceId)) {
 				return osu;
 			}
 		}
@@ -284,7 +284,12 @@ public class InformationClient {
 
 		OfferedServiceUnit osu = getOsuByServiceId(serviceId);
 
-		if (osu != null && osu.getType().equals(OsuType.EPS.toString())) {
+		return isDynamicEps(osu);
+	}
+
+	public static boolean isDynamicEps(OfferedServiceUnit osu) throws EpsException {
+
+		if (osu != null && osu.getType().equals(OsuType.EPS.toString()) && osu.getService() != null) {
 			return true;
 		} else {
 			return false;

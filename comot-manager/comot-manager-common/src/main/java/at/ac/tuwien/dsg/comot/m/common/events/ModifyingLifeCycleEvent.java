@@ -34,9 +34,10 @@ public class ModifyingLifeCycleEvent extends LifeCycleEvent {
 			String groupId,
 			Action action,
 			String origin,
+			Long time,
 			String parentId,
 			ServiceEntity entity) {
-		super(serviceId, csInstanceId, groupId, action, origin);
+		super(serviceId, csInstanceId, groupId, action, origin, time);
 		this.parentId = parentId;
 		this.entity = entity;
 	}
@@ -47,9 +48,10 @@ public class ModifyingLifeCycleEvent extends LifeCycleEvent {
 			String groupId,
 			Action action,
 			String origin,
+			Long time,
 			String parentId,
 			UnitInstance instance) {
-		super(serviceId, csInstanceId, groupId, action, origin);
+		super(serviceId, csInstanceId, groupId, action, origin, time);
 		this.parentId = parentId;
 		this.instance = instance;
 	}

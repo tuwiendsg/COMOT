@@ -26,7 +26,7 @@ public class Revision implements Serializable {
 	protected Long nodeId;
 
 	@XmlID
-	protected UUID id;
+	protected String id;
 	@XmlTransient
 	@RelatedToVia(direction = Direction.INCOMING)
 	protected Change start;
@@ -34,10 +34,10 @@ public class Revision implements Serializable {
 	protected Change end;
 
 	public Revision() {
-		id = UUID.randomUUID();
+		id = UUID.randomUUID().toString();
 	}
 
-	public Revision(Revision oldRev, String changeType, Map<String, String> changeProperties, Long timestamp) {
+	public Revision(Revision oldRev, String changeType, Map<String, Object> changeProperties, Long timestamp) {
 		this();
 		Change change = new Change(timestamp, changeType, changeProperties, oldRev, this);
 		this.setStart(change);
@@ -71,11 +71,11 @@ public class Revision implements Serializable {
 		this.end = end;
 	}
 
-	public UUID getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(UUID id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

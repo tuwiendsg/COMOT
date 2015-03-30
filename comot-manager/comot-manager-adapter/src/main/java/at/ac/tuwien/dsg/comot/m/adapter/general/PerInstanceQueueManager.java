@@ -48,7 +48,7 @@ public class PerInstanceQueueManager extends Manager {
 
 		admin.declareBinding(new Binding(queueNameAssignment(), DestinationType.QUEUE,
 				Constants.EXCHANGE_CUSTOM_EVENT,
-				"*." + participantId + "." + EpsAction.EPS_ASSIGNMENT_REQUESTED + "." + Type.SERVICE, null));
+				"*." + participantId + "." + EpsAction.EPS_SUPPORT_REQUESTED + "." + Type.SERVICE, null));
 
 		container = new SimpleMessageListenerContainer();
 		container.setConnectionFactory(connectionFactory);
@@ -86,13 +86,16 @@ public class PerInstanceQueueManager extends Manager {
 				String serviceId = event.getServiceId();
 				String groupId = event.getGroupId();
 
-				startServiceInstanceListener(instanceId);
+				if (!containers.containsKey(instanceId)) {
 
-				infoService.assignEps(serviceId, instanceId, participantId);
+					startServiceInstanceListener(instanceId);
 
-				sendCustom(Type.SERVICE,
-						new CustomEvent(serviceId, instanceId, groupId, EpsAction.EPS_ASSIGNED.toString(),
-								participantId, participantId, null));
+					infoService.assignEps(serviceId, instanceId, participantId);
+
+					sendCustom(Type.SERVICE,
+							new CustomEvent(serviceId, instanceId, groupId, EpsAction.EPS_SUPPORT_ASSIGNED.toString(),
+									participantId, null));
+				}
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -102,16 +105,19 @@ public class PerInstanceQueueManager extends Manager {
 
 	public void removeInstanceListener(String instanceId) throws EpsException {
 
-		infoService.removeEpsAssignment(instanceId, participantId);
+		if (containers.containsKey(instanceId)) {
 
-		SimpleMessageListenerContainer container = containers.get(instanceId);
-		if (container != null) {
-			container.stop();
-			container.shutdown();
-		}
+			infoService.removeEpsAssignment(instanceId, participantId);
 
-		if (admin != null) {
-			admin.deleteQueue(queueNameInstance(instanceId));
+			SimpleMessageListenerContainer container = containers.get(instanceId);
+			if (container != null) {
+				container.stop();
+				container.shutdown();
+			}
+
+			if (admin != null) {
+				admin.deleteQueue(queueNameInstance(instanceId));
+			}
 		}
 	}
 

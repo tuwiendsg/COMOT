@@ -157,14 +157,13 @@ public class DeploymentHelper {
 		// check if also the translated Life-cycle state have changed
 		if (lcStateNew == lcStateOld) {
 
-			manager.sendCustom(Type.INSTANCE, new CustomEvent(serviceId, instanceId, uInstId, stateNew, adapterId,
-					null, null));
+			manager.sendCustom(Type.INSTANCE,
+					new CustomEvent(serviceId, instanceId, uInstId, stateNew, adapterId, null));
 
 		} else {
 
 			if (lcStateNew == State.ERROR) {
-				manager.sendLifeCycle(Type.INSTANCE, new LifeCycleEvent(serviceId, instanceId, uInstId, Action.ERROR,
-						adapterId));
+				manager.sendLifeCycle(Type.INSTANCE, new LifeCycleEvent(serviceId, instanceId, uInstId, Action.ERROR));
 				return;
 
 			} else {
@@ -175,8 +174,11 @@ public class DeploymentHelper {
 				if (action == null) {
 					log.error("invalid transitions {} -> {}", lcStateOld, lcStateNew);
 				} else {
-					manager.sendLifeCycle(Type.INSTANCE, new ModifyingLifeCycleEvent(serviceId, instanceId, uInstId,
-							action, adapterId, nav.getUnitFor(uInstId).getId(), nav.getInstance(uInstId)));
+					manager.sendLifeCycle(
+							Type.INSTANCE,
+							new ModifyingLifeCycleEvent(serviceId, instanceId, uInstId,
+									action, adapterId, System.currentTimeMillis(), nav.getUnitFor(uInstId).getId(), nav
+											.getInstance(uInstId)));
 				}
 			}
 		}
@@ -246,9 +248,9 @@ public class DeploymentHelper {
 						if (!currentStates.containsKey(inst.getId())) {
 
 							manager.sendLifeCycle(Type.INSTANCE, new LifeCycleEvent(serviceId, instanceId,
-									inst.getId(), Action.UNDEPLOYMENT_STARTED, adapterId));
+									inst.getId(), Action.UNDEPLOYMENT_STARTED));
 							manager.sendLifeCycle(Type.INSTANCE, new LifeCycleEvent(serviceId, instanceId,
-									inst.getId(), Action.UNDEPLOYED, adapterId));
+									inst.getId(), Action.UNDEPLOYED));
 
 							iterator.remove();
 

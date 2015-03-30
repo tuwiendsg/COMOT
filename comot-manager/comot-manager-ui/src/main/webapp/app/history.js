@@ -1,5 +1,5 @@
 define(function(require) {
-	var app = require('durandal/app'), ko = require('knockout'), http = require('plugins/http'), d3 = require('d3'), JsonHuman = require('json_human'), comot = require('comot_client'), $ = require("jquery"), bootstrap = require('bootstrap'), router = require('plugins/router');
+	var app = require('durandal/app'), ko = require('knockout'), http = require('plugins/http'), d3 = require('d3'), JsonHuman = require('json_human'), comot = require('comot_client'), utils = require('comot_utils'), $ = require("jquery"), bootstrap = require('bootstrap'), router = require('plugins/router');
 
 	var repeaterModule = require('repeater');
 	var notify = require('notify');
@@ -131,7 +131,7 @@ define(function(require) {
 		}, function(error) {
 			$("#output_revisions").html("");
 			notify.info("No revision for service '" + instanceId + "', object '" + objectId
-					+ ((timestamp == LONG_MAX_STRING) ? " currently valid" : " ' at time '" + toDateString(timestamp))
+					+ ((timestamp == LONG_MAX_STRING) ? " currently valid" : " ' at time '" + utils.longToDateString(timestamp))
 					+ "'");
 		});
 
@@ -155,7 +155,7 @@ define(function(require) {
 				}
 
 				data[i].props = props;
-				data[i].time = toDateString(data[i].timestamp);
+				data[i].time = utils.longToDateString(data[i].timestamp);
 
 				model.changes.push(data[i]);
 			}
@@ -165,11 +165,6 @@ define(function(require) {
 		})
 	}
 
-	function toDateString(long) {
-		var date = new Date(long);
-		var string = "" + date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear() + " "
-				+ (date.getHours() + 1) + ":" + date.getMinutes() + ":" + date.getSeconds();
-		return string;
-	}
+
 
 });

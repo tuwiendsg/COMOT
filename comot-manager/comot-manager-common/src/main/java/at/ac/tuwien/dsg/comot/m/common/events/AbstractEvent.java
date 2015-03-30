@@ -23,16 +23,19 @@ public abstract class AbstractEvent implements Serializable {
 	protected String groupId;
 	@XmlAttribute
 	protected String origin;
+	@XmlAttribute
+	protected Long time;
 
 	public AbstractEvent() {
 	}
 
-	public AbstractEvent(String serviceId, String csInstanceId, String groupId, String origin) {
+	public AbstractEvent(String serviceId, String csInstanceId, String groupId, String origin, Long time) {
 		super();
 		this.serviceId = serviceId;
 		this.csInstanceId = csInstanceId;
 		this.groupId = groupId;
 		this.origin = origin;
+		this.time = time;
 	}
 
 	// GENERATED
@@ -67,6 +70,14 @@ public abstract class AbstractEvent implements Serializable {
 
 	public void setOrigin(String origin) {
 		this.origin = origin;
+	}
+
+	public Long getTime() {
+		return time;
+	}
+
+	public void setTime(Long time) {
+		this.time = time;
 	}
 
 }

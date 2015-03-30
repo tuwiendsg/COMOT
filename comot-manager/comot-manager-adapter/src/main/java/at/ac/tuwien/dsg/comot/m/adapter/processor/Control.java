@@ -90,12 +90,12 @@ public class Control extends Processor implements ControlEventsListener {
 
 		State stateService = msg.getTransitions().get(serviceId).getCurrentState();
 
-		if (EpsAction.EPS_ASSIGNED.toString().equals(event)) {
+		if (EpsAction.EPS_SUPPORT_ASSIGNED.toString().equals(event)) {
 			if (stateService == State.RUNNING) {
 				control(serviceId, instanceId);
 			}
 
-		} else if (EpsAction.EPS_ASSIGNMENT_REMOVED.toString().equals(event)) {
+		} else if (EpsAction.EPS_SUPPORT_REMOVED.toString().equals(event)) {
 
 			removeManaged(instanceId);
 
@@ -205,11 +205,11 @@ public class Control extends Processor implements ControlEventsListener {
 
 				if (event.getStage() == IEvent.Stage.START) {
 					manager.sendLifeCycle(type, new LifeCycleEvent(serviceId, instanceId, groupId,
-							Action.ELASTIC_CHANGE_STARTED, getId()));
+							Action.ELASTIC_CHANGE_STARTED));
 
 				} else if (event.getStage() == IEvent.Stage.FINISHED) {
 					manager.sendLifeCycle(type, new LifeCycleEvent(serviceId, instanceId, groupId,
-							Action.ELASTIC_CHANGE_FINISHED, getId()));
+							Action.ELASTIC_CHANGE_FINISHED));
 				}
 
 			}

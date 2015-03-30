@@ -14,6 +14,7 @@
 
 	var base = "rest/";
 	var services = base + "manager/services/";
+	var eps = base + "manager/eps/";
 	var recordings = base + "recordings/";
 	var instances = "/instances/";
 
@@ -151,13 +152,32 @@
 		return $.ajax(request);
 	}
 
+	exports.createDynamicEps = function(epsId, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "PUT";
+		request.url = eps + epsId + "/instances";
+		return $.ajax(request);
+	}
+
+	exports.removeDynamicEps = function(epsId, epsInstanceId, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "DELETE";
+		request.url = eps + epsId + "/instances/" + epsInstanceId;
+		return $.ajax(request);
+	}
+
 	// GET
 
-	exports.getServices = function(onSuccess, onError) {
+	exports.getServicesNonEps = function(onSuccess, onError) {
 
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "GET";
-		request.dataType = "json"
+		request.dataType = "json";
+		request.data = {
+			type : "NON_EPS"
+		};
 		request.url = services;
 		return $.ajax(request);
 	}
@@ -166,7 +186,7 @@
 
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "GET";
-		request.dataType = "json"
+		request.dataType = "json";
 		request.url = services + serviceId + instances + instanceId;
 		return $.ajax(request);
 	}
@@ -175,7 +195,7 @@
 
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "GET";
-		request.dataType = "json"
+		request.dataType = "json";
 		request.url = services + "lifecycle/" + level;
 		return $.ajax(request);
 	}
@@ -184,8 +204,41 @@
 
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "GET";
+		request.dataType = "json";
+		request.url = eps;
+		return $.ajax(request);
+	}
+
+	exports.getEpsDynamic = function(onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "GET";
+		request.dataType = "json";
+		request.data = {
+			type : "DYNAMIC"
+		};
+		request.url = eps;
+		return $.ajax(request);
+	}
+
+	exports.getEpsInstancesAll = function(onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "GET";
 		request.dataType = "json"
-		request.url = services + "eps";
+		request.url = eps + "instances";
+		return $.ajax(request);
+	}
+
+	exports.getEpsInstancesDynamic = function(onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "GET";
+		request.dataType = "json";
+		request.data = {
+			type : "DYNAMIC"
+		};
+		request.url = eps + "instances";
 		return $.ajax(request);
 	}
 

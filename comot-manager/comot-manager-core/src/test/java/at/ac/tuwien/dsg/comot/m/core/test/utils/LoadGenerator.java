@@ -17,17 +17,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import scala.util.Random;
-import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
 
 public class LoadGenerator {
 
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 
+	protected ExecutorService scheduler;
+
 	public static void main(String[] args) {
 
 		LoadGenerator generator = new LoadGenerator();
-		generator.startLoad("localhost", 9090);
+		generator.startLoadTunel();
 
+	}
+
+	public void startLoadTunel() {
+		startLoad("localhost", 9090);
 	}
 
 	public void startLoad(String host, int port) {
@@ -37,8 +42,10 @@ public class LoadGenerator {
 		String tablename = "sensor";
 		final String uri = "http://" + host + ":" + port + "/DaaS/api/xml/table/row";
 
-		ExecutorService scheduler = Executors.newFixedThreadPool(100);
+		scheduler = Executors.newFixedThreadPool(100);
 		final String body = createBody(tablename, rowsToCreate, keyspaceName);
+
+		System.out.println(body);
 
 		for (int i = 0; i < 20; i++) {
 
@@ -63,7 +70,8 @@ public class LoadGenerator {
 
 							// log.info("ID {} {}: {}", id, status, result);
 						}
-
+						// } catch (InterruptedException e) {
+						// log.info("Requeste thread id was interrupted");
 					} catch (Throwable t) {
 						t.printStackTrace();
 					}
@@ -72,8 +80,10 @@ public class LoadGenerator {
 			});
 		}
 
-		UtilsTest.sleepInfinit();
+	}
 
+	public void stop() {
+		scheduler.shutdownNow();
 	}
 
 	public String createBody(String table, int rowsToCreate, String keyspaceName) {

@@ -101,10 +101,10 @@ public class Monitoring extends Processor {
 
 		State stateService = msg.getTransitions().get(serviceId).getCurrentState();
 
-		if (EpsAction.EPS_ASSIGNED.toString().equals(event)) {
+		if (EpsAction.EPS_SUPPORT_ASSIGNED.toString().equals(event)) {
 			startIfActive(instanceId, stateService);
 
-		} else if (EpsAction.EPS_ASSIGNMENT_REMOVED.toString().equals(event)) {
+		} else if (EpsAction.EPS_SUPPORT_REMOVED.toString().equals(event)) {
 			if (monitoring.isMonitored(instanceId)) {
 				monitoring.stopMonitoring(instanceId);
 			}

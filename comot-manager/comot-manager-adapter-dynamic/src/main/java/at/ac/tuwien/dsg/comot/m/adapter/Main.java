@@ -1,6 +1,6 @@
 package at.ac.tuwien.dsg.comot.m.adapter;
 
-import java.util.UUID;
+import java.util.Map;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -10,7 +10,6 @@ import org.apache.commons.cli.PosixParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import at.ac.tuwien.dsg.comot.m.adapter.general.Manager;
@@ -20,14 +19,22 @@ import at.ac.tuwien.dsg.comot.m.adapter.processor.Monitoring;
 import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.EpsAction;
 import at.ac.tuwien.dsg.comot.m.common.InformationClient;
+import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.events.CustomEvent;
-import at.ac.tuwien.dsg.comot.m.common.events.StateMessage;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 
 public class Main {
 
 	protected static Logger log = LoggerFactory.getLogger(Main.class);
+
+	public static final String SERVICE_INSTANCE_AS_PROPERTY = "service";
+	private static String serviceId;
+	private static String instanceId;
+	private static String participantId;
+	private static AnnotationConfigApplicationContext context;
+	private static InformationClient info;
 
 	public static void main(String[] args) {
 
@@ -36,8 +43,6 @@ public class Main {
 		try {
 			CommandLineParser parser = new PosixParser();
 			CommandLine cmd = parser.parse(options, args);
-
-			AnnotationConfigApplicationContext context;
 
 			if (cmd.hasOption("mh") && cmd.hasOption("ih") && cmd.hasOption("ip")) {
 
@@ -55,32 +60,27 @@ public class Main {
 				AppContextAdapter.setInfoPort(infoPort);
 
 				context = new AnnotationConfigApplicationContext(AppContextAdapter.class);
+				info = context.getBean(InformationClient.class);
 
 				if (cmd.hasOption("m") || cmd.hasOption("r")) {
 
 					Manager manager = context.getBean(PerInstanceQueueManager.class);
 
-					String osuId = null;
-					String id = null;// = UUID.randomUUID().toString();//cmd.getOptionValue("id");
+					setServiceInstanceId();
+					setParticipantId();
 
 					if (cmd.hasOption("m")) {
 
-						osuId = Constants.MELA_SERVICE_DYNAMIC;
-						id = osuId + "_" + UUID.randomUUID().toString();
-
 						Monitoring processor = context.getBean(Monitoring.class);
-						manager.start(id, processor);
+						manager.start(participantId, processor);
 
 					} else if (cmd.hasOption("r")) {
 
-						osuId = Constants.RSYBL_SERVICE_DYNAMIC;
-						id = osuId + "_" + UUID.randomUUID().toString();
-
 						Control processor = context.getBean(Control.class);
-						manager.start(id, processor);
+						manager.start(participantId, processor);
 					}
 
-					initProcedure(id, osuId, context);
+					confirmCreation();
 
 				} else {
 					log.warn("No adapter type specified");
@@ -116,28 +116,52 @@ public class Main {
 
 	private static void showHelp(Options options) {
 		HelpFormatter h = new HelpFormatter();
-		System.out.println("dead");
 		h.printHelp("java -jar epsAdapter.jar -[m|r] -mh <host> -ih <host> -ip <port> -id <id>", options);
 		System.exit(-1);
 	}
 
-	public static void initProcedure(String id, String osuId, ApplicationContext context) throws Exception {
+	private static void setServiceInstanceId() {
 
-		InformationClient info = context.getBean(InformationClient.class);
-		RabbitTemplate amqp = context.getBean(RabbitTemplate.class);
+		instanceId = System.getProperty(SERVICE_INSTANCE_AS_PROPERTY);
 
-		OfferedServiceUnit osu = info.getOsu(osuId);
-		if (osu == null) {
-			throw new Exception("The information service does not contain OfferedServiceUnit with id=" + osuId);
+		if (instanceId == null) {
+			Map<String, String> env = System.getenv();
+			for (String envName : env.keySet()) {
+				if (SERVICE_INSTANCE_AS_PROPERTY.equals(envName)) {
+					instanceId = env.get(envName);
+					break;
+				}
+			}
+
+		}
+		if (instanceId == null) {
+			log.error("there is no System.getProperty or System.getenv() '{}'", SERVICE_INSTANCE_AS_PROPERTY);
+			System.exit(-1);
 		}
 
-		CustomEvent event = new CustomEvent(null, null, null, EpsAction.EPS_DYNAMIC_CREATED.toString(),
-				id, Constants.EPS_BUILDER, osuId);
-		StateMessage msg = new StateMessage(event, null, null);
+	}
 
-		amqp.convertAndSend(Constants.EXCHANGE_DYNAMIC_REGISTRATION, osuId, Utils.asJsonString(msg));
+	public static void setParticipantId() throws EpsException {
 
-		log.info("Success creating adapter '{}' of type {}", id, osuId);
+		serviceId = info.getServiceInstance(instanceId).getId();
+		OfferedServiceUnit osu = info.getOsuByServiceId(serviceId);
+		participantId = info.createOsuInstance(osu.getId());
+		info.createOsuInstanceDynamic(osu.getId(), instanceId, participantId);
+
+	}
+
+	public static void confirmCreation() throws Exception {
+
+		RabbitTemplate amqp = context.getBean(RabbitTemplate.class);
+
+		CustomEvent event = new CustomEvent(serviceId, instanceId, serviceId, EpsAction.EPS_DYNAMIC_CREATED.toString(),
+				participantId, System.currentTimeMillis(), null, null);
+
+		amqp.convertAndSend(Constants.EXCHANGE_CUSTOM_EVENT,
+				instanceId + "." + null + "." + EpsAction.EPS_DYNAMIC_CREATED + "." + Type.SERVICE,
+				Utils.asJsonString(event));
+
+		log.info("Success creating adapter '{}' of serviceType {}", participantId, serviceId);
 	}
 
 }

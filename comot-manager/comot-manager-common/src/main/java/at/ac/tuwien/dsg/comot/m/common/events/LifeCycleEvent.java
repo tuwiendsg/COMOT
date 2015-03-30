@@ -20,8 +20,13 @@ public class LifeCycleEvent extends AbstractEvent {
 
 	}
 
-	public LifeCycleEvent(String serviceId, String csInstanceId, String groupId, Action action, String origin) {
-		super(serviceId, csInstanceId, groupId, origin);
+	public LifeCycleEvent(String serviceId, String csInstanceId, String groupId, Action action) {
+		super(serviceId, csInstanceId, groupId, null, null);
+		this.action = action;
+	}
+
+	public LifeCycleEvent(String serviceId, String csInstanceId, String groupId, Action action, String origin, Long time) {
+		super(serviceId, csInstanceId, groupId, origin, time);
 		this.action = action;
 	}
 

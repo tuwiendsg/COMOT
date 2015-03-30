@@ -79,7 +79,7 @@ public class LifeCycleFactory {
 
 		unitInstanceLc.addTransition(State.INIT, Action.DEPLOYMENT_STARTED, State.DEPLOYING);
 
-		unitInstanceLc.addTransition(State.DEPLOYING, Action.DEPLOYED, State.RUNNING);
+		unitInstanceLc.addTransition(State.DEPLOYING, Action.DEPLOYED, State.RUNNING, State.DEPLOYING);
 		unitInstanceLc.addTransition(State.DEPLOYING, Action.DEPLOYED, State.ELASTIC_CHANGE, State.ELASTIC_CHANGE);
 		unitInstanceLc.addTransition(State.DEPLOYING, Action.DEPLOYED, State.UPDATE, State.UPDATE);
 

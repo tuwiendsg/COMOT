@@ -41,6 +41,7 @@ public class DeploymentTest extends AbstractTest {
 	public void setUp() throws JAXBException, IOException, ClassNotFoundException, ShutdownSignalException,
 			ConsumerCancelledException, InterruptedException, EpsException {
 
+		staticDeplId = infoService.instanceIdOfStaticEps(Constants.SALSA_SERVICE_STATIC);
 		agent = new TestAgentAdapter("prototype", env.getProperty("uri.broker.host"));
 
 		// Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/tomcat/tomcat_from_salsa.xml");
@@ -53,8 +54,6 @@ public class DeploymentTest extends AbstractTest {
 		assertFalse(deployment.isManaged(instanceId));
 
 		agent.assertLifeCycleEvent(Action.CREATED);
-
-		staticDeplId = infoService.instanceIdOfStaticEps(Constants.SALSA_SERVICE_STATIC);
 
 	}
 
@@ -88,8 +87,8 @@ public class DeploymentTest extends AbstractTest {
 
 		coordinator.assignSupportingOsu(serviceId, instanceId, staticDeplId);
 
-		agent.assertCustomEvent(EpsAction.EPS_ASSIGNMENT_REQUESTED.toString());
-		agent.assertCustomEvent(EpsAction.EPS_ASSIGNED.toString());
+		agent.assertCustomEvent(EpsAction.EPS_SUPPORT_REQUESTED.toString());
+		agent.assertCustomEvent(EpsAction.EPS_SUPPORT_ASSIGNED.toString());
 
 		assertFalse(deployment.isManaged(instanceId));
 		assertTrue(infoService.isOsuAssignedToInstance(instanceId, Constants.SALSA_SERVICE_STATIC));
@@ -133,8 +132,8 @@ public class DeploymentTest extends AbstractTest {
 
 		coordinator.assignSupportingOsu(serviceId, instanceId, staticDeplId);
 
-		agent.assertCustomEvent(EpsAction.EPS_ASSIGNMENT_REQUESTED.toString());
-		agent.assertCustomEvent(EpsAction.EPS_ASSIGNED.toString());
+		agent.assertCustomEvent(EpsAction.EPS_SUPPORT_REQUESTED.toString());
+		agent.assertCustomEvent(EpsAction.EPS_SUPPORT_ASSIGNED.toString());
 
 		coordinator.startServiceInstance(serviceId, instanceId);
 
@@ -150,7 +149,7 @@ public class DeploymentTest extends AbstractTest {
 
 		coordinator.removeAssignmentOfSupportingOsu(serviceId, instanceId, staticDeplId);
 
-		agent.assertCustomEvent(EpsAction.EPS_ASSIGNMENT_REMOVED.toString());
+		agent.assertCustomEvent(EpsAction.EPS_SUPPORT_REMOVED.toString());
 		agent.assertLifeCycleEvent(Action.UNDEPLOYMENT_STARTED);
 		agent.assertLifeCycleEvent(Action.UNDEPLOYED);
 

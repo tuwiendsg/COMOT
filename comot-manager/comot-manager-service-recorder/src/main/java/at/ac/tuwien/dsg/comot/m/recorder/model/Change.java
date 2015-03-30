@@ -53,7 +53,7 @@ public class Change implements Serializable {
 		this.type = type;
 	}
 
-	public Change(Long timestamp, String type, Map<String, String> changeProperties, Revision from, Revision to) {
+	public Change(Long timestamp, String type, Map<String, Object> changeProperties, Revision from, Revision to) {
 		super();
 		this.timestamp = timestamp;
 		this.type = type;
@@ -64,23 +64,23 @@ public class Change implements Serializable {
 		}
 	}
 
-	public void addProperty(String key, String value) {
+	public void addProperty(String key, Object value) {
 		if (properties == null) {
 			properties = new ComotDynamicPropertiesContainer();
 		}
 		properties.setProperty(key, value);
 	}
 
-	protected Map<String, String> convert(DynamicProperties props) {
+	protected Map<String, Object> convert(DynamicProperties props) {
 
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		for (String key : props.asMap().keySet()) {
-			map.put(key, (String) props.asMap().get(key));
+			map.put(key, props.asMap().get(key));
 		}
 		return map;
 	}
 
-	protected DynamicProperties convert(Map<String, String> map) {
+	protected DynamicProperties convert(Map<String, Object> map) {
 
 		DynamicProperties properties = new ComotDynamicPropertiesContainer();
 
@@ -92,12 +92,11 @@ public class Change implements Serializable {
 	}
 
 	@XmlElement
-	public Map<String, String> getPropertiesMap() {
+	public Map<String, Object> getPropertiesMap() {
 		return convert(properties);
 	}
 
-	@XmlElement
-	public void setPropertiesMap(Map<String, String> properties) {
+	public void setPropertiesMap(Map<String, Object> properties) {
 		this.properties = convert(properties);
 	}
 

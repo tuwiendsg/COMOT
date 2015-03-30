@@ -206,13 +206,13 @@ public class ManagerOfServiceInstance {
 
 			} else if (Action.UNDEPLOYED == action) {
 
+				groupManager.checkAndExecute(action, groupId);
+
 				for (Group temp : groupManager.getGroup(serviceId).getAllMembersNested()) {
 					if (temp.getCurrentState() == State.FINAL && temp.getType() == Type.INSTANCE) {
 						infoService.removeUnitInstance(serviceId, csInstanceId, temp.getId());
 					}
 				}
-
-				groupManager.checkAndExecute(action, groupId);
 
 			} else if (Action.REMOVED == action) {
 
@@ -237,8 +237,10 @@ public class ManagerOfServiceInstance {
 				groupManager.checkAndExecute(action, groupId);
 			}
 
-			State currentState = groupManager.getGroup(serviceId).getCurrentState();
-			State previousState = groupManager.getGroup(serviceId).getPreviousState();
+			Map<String, Transition> transitions = groupManager.extractTransitions(event);
+
+			State currentState = transitions.get(serviceId).getCurrentState();
+			State previousState = transitions.get(serviceId).getLastState();
 
 			// create binding
 			if (currentState == previousState) {
@@ -254,10 +256,9 @@ public class ManagerOfServiceInstance {
 			if (service == null) {
 				service = infoService.getServiceInstance(serviceId, csInstanceId);
 			}
-
 			service = UtilsLc.removeProviderInfo(service);
 
-			StateMessage message = new StateMessage(event, groupManager.extractTransitions(event), service);
+			StateMessage message = new StateMessage(event, transitions, service);
 
 			send(Constants.EXCHANGE_LIFE_CYCLE, bindingKey, message);
 
@@ -305,7 +306,7 @@ public class ManagerOfServiceInstance {
 	protected void sendException(Exception e) throws AmqpException, JAXBException {
 
 		send(Constants.EXCHANGE_EXCEPTIONS, csInstanceId + "." + csInstanceId, new ExceptionMessage(serviceId,
-				csInstanceId, csInstanceId, e));
+				csInstanceId, csInstanceId, System.currentTimeMillis(), e));
 
 	}
 

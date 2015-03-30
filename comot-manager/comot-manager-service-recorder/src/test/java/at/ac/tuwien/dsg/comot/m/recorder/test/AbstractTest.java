@@ -31,6 +31,7 @@ import at.ac.tuwien.dsg.comot.m.cs.AppContextEps;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.m.recorder.AppContextServrec;
 import at.ac.tuwien.dsg.comot.m.recorder.model.Change;
+import at.ac.tuwien.dsg.comot.m.recorder.repo.ChangeRepo;
 import at.ac.tuwien.dsg.comot.m.recorder.revisions.RevisionApi;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceTopology;
@@ -63,6 +64,8 @@ public abstract class AbstractTest {
 	protected GraphDatabaseService db;
 	@Autowired
 	protected ExecutionEngine engine;
+	@Autowired
+	protected ChangeRepo changeRepo;
 
 	protected WrappingNeoServerBootstrapper srv;
 

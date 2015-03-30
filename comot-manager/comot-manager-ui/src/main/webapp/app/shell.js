@@ -13,10 +13,15 @@ define(function(require) {
 				route : 'services',
 				title : 'Cloud Services',
 				moduleId : 'services',
-				nav : false
+				nav : true
+			},{
+				route : 'eps',
+				title : 'Dynamic EPS',
+				moduleId : 'eps',
+				nav : true
 			}, {
 				route : 'services/:serviceId/instances/:instanceId',
-				title : 'Service Instances',
+				title : 'Service Instance',
 				moduleId : 'instance',
 				nav : false
 			}, {

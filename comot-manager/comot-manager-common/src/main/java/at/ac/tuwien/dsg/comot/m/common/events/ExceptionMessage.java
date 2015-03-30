@@ -17,6 +17,8 @@ public class ExceptionMessage extends ComotMessage {
 	protected String csInstanceId;
 	@XmlAttribute
 	protected String origin;
+	@XmlAttribute
+	protected Long time;
 	// TODO not being serialized
 	protected Exception exception;
 
@@ -24,12 +26,13 @@ public class ExceptionMessage extends ComotMessage {
 
 	}
 
-	public ExceptionMessage(String serviceId, String csInstanceId, String origin, Exception exception) {
+	public ExceptionMessage(String serviceId, String csInstanceId, String origin, Long time, Exception exception) {
 		super();
 		this.csInstanceId = csInstanceId;
 		this.origin = origin;
 		this.exception = exception;
 		this.serviceId = serviceId;
+		this.time = time;
 	}
 
 	public String getCsInstanceId() {
@@ -62,6 +65,14 @@ public class ExceptionMessage extends ComotMessage {
 
 	public void setServiceId(String serviceId) {
 		this.serviceId = serviceId;
+	}
+
+	public Long getTime() {
+		return time;
+	}
+
+	public void setTime(Long time) {
+		this.time = time;
 	}
 
 	@Override

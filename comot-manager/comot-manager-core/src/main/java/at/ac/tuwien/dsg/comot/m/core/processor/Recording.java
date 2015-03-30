@@ -33,6 +33,7 @@ public class Recording extends Processor {
 	public static final String PROP_MSG = "msg";
 	public static final String PROP_TARGET = "target";
 	public static final String PROP_EVENT_NAME = "eventName";
+	public static final String PROP_EVENT_TIME = "eventTime";
 	public static final String PROP_EXCEPTION = "exception";
 	public static final String PROP_EXCEPTION_MSG = "exceptionMsg";
 
@@ -59,10 +60,11 @@ public class Recording extends Processor {
 
 		LifeCycleEvent event = (LifeCycleEvent) msg.getEvent();
 
-		Map<String, String> changeProperties = new HashMap<>();
+		Map<String, Object> changeProperties = new HashMap<>();
 		changeProperties.put(PROP_ORIGIN, originId);
 		changeProperties.put(PROP_TARGET, groupId);
 		changeProperties.put(PROP_EVENT_NAME, action.toString());
+		changeProperties.put(PROP_EVENT_TIME, event.getTime());
 
 		// log.info(logId() + "onMessage {}", Utils.asJsonString(msg));
 
@@ -76,10 +78,11 @@ public class Recording extends Processor {
 
 		CustomEvent eventMsg = (CustomEvent) msg.getEvent();
 
-		Map<String, String> changeProperties = new HashMap<>();
+		Map<String, Object> changeProperties = new HashMap<>();
 		changeProperties.put(PROP_ORIGIN, originId);
 		changeProperties.put(PROP_TARGET, groupId);
 		changeProperties.put(PROP_EVENT_NAME, event);
+		changeProperties.put(PROP_EVENT_TIME, eventMsg.getTime());
 		if (eventMsg.getMessage() != null) {
 			changeProperties.put(PROP_MSG, eventMsg.getMessage());
 		}

@@ -126,28 +126,26 @@ public class InitData {
 		infoService.addOsu(monitoring);
 		infoService.addOsu(control);
 
-		// try {
-		// infoService.createService(mapperTosca.createModel(UtilsCs
-		// .loadTosca("./../resources/test/helloElasticity/HelloElasticityNoDB.xml")));
-		// } catch (JAXBException | IOException e) {
-		// e.printStackTrace();
-		// }
+		try {
+			infoService.createService(mapperTosca.createModel(UtilsCs
+					.loadTosca("./../resources/test/helloElasticity/HelloElasticityNoDB.xml")));
+		} catch (JAXBException | IOException e) {
+			e.printStackTrace();
+		}
+		try {
 
-		// try {
-		//
-		// infoService.createService(mapperTosca.createModel(UtilsCs
-		// .loadTosca("./../resources/test/elasticWS/elasticWS_tosca_enhanced.xml")));
-		//
-		// } catch (JAXBException | IOException e) {
-		// e.printStackTrace();
-		// }
+			infoService.createService(mapperTosca.createModel(UtilsCs
+					.loadTosca("./../resources/test/elasticWS/elasticWS_tosca_enhanced.xml")));
 
-		// try {
-		// infoService.createService(mapperTosca.createModel(UtilsCs
-		// .loadTosca("./../resources/test/tosca/daas_m2m_fromSalsa.xml")));
-		// } catch (JAXBException | IOException e) {
-		// e.printStackTrace();
-		// }
+		} catch (JAXBException | IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			infoService.createService(mapperTosca.createModel(UtilsCs
+					.loadTosca("./../resources/test/tosca/daas_m2m_fromSalsa.xml")));
+		} catch (JAXBException | IOException e) {
+			e.printStackTrace();
+		}
 
 		try {
 			infoService.createService(mapperTosca.createModel(UtilsCs

@@ -76,9 +76,9 @@ public class Deployment extends Processor {
 		bindings.add(bindingLifeCycle(queueName,
 				instanceId + ".TRUE.*.*." + Action.UNDEPLOYMENT_STARTED + "." + Type.SERVICE + "." + getId() + ".#"));
 		bindings.add(bindingCustom(queueName,
-				instanceId + "." + getId() + "." + EpsAction.EPS_ASSIGNMENT_REMOVED + "." + Type.SERVICE + ".#"));
+				instanceId + "." + getId() + "." + EpsAction.EPS_SUPPORT_REMOVED + "." + Type.SERVICE + ".#"));
 		bindings.add(bindingCustom(queueName,
-				instanceId + "." + getId() + "." + EpsAction.EPS_ASSIGNED + "." + Type.SERVICE + ".#"));
+				instanceId + "." + getId() + "." + EpsAction.EPS_SUPPORT_ASSIGNED + "." + Type.SERVICE + ".#"));
 		bindings.add(bindingLifeCycle(queueName,
 				instanceId + ".*.*.*." + Action.ELASTIC_CHANGE_STARTED + ".*.#"));
 		bindings.add(bindingLifeCycle(queueName,
@@ -94,11 +94,11 @@ public class Deployment extends Processor {
 
 		if (action == Action.STARTED && !deployment.isManaged(instanceId)) {
 			manager.sendLifeCycle(Type.SERVICE,
-					new LifeCycleEvent(serviceId, instanceId, groupId, Action.DEPLOYMENT_STARTED, getId()));
+					new LifeCycleEvent(serviceId, instanceId, groupId, Action.DEPLOYMENT_STARTED));
 
 		} else if (action == Action.STOPPED) {
 			manager.sendLifeCycle(Type.SERVICE,
-					new LifeCycleEvent(serviceId, instanceId, groupId, Action.UNDEPLOYMENT_STARTED, getId()));
+					new LifeCycleEvent(serviceId, instanceId, groupId, Action.UNDEPLOYMENT_STARTED));
 
 		} else if (action == Action.DEPLOYMENT_STARTED) {
 			deployInstance(serviceId, instanceId);
@@ -125,14 +125,14 @@ public class Deployment extends Processor {
 
 		EpsAction action = EpsAction.valueOf(event);
 
-		if (action == EpsAction.EPS_ASSIGNMENT_REMOVED) {
+		if (action == EpsAction.EPS_SUPPORT_REMOVED) {
 
 			manager.removeInstanceListener(instanceId);
 
 			if (deployment.isManaged(instanceId)) {
 
 				manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId,
-						Action.UNDEPLOYMENT_STARTED, getId()));
+						Action.UNDEPLOYMENT_STARTED));
 
 				unDeployInstance(serviceId, instanceId);
 			}
@@ -174,8 +174,7 @@ public class Deployment extends Processor {
 			unit.setInstances(new HashSet<UnitInstance>());
 		}
 
-		manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.UNDEPLOYED,
-				getId()));
+		manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.UNDEPLOYED));
 	}
 
 	protected String uniqueTaskId(String instanceId, String groupId) {

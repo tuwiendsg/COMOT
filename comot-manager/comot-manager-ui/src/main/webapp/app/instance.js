@@ -31,8 +31,8 @@ define(function(require) {
 			}
 		},
 		activate : function(serviceId, instanceId) {
-			
-			if(instanceId != model.instanceId()){
+
+			if (instanceId != model.instanceId()) {
 				model.events.removeAll();
 			}
 			model.selectedEpsServices.removeAll();
@@ -41,8 +41,8 @@ define(function(require) {
 			model.instanceId(instanceId);
 			model.groupId(serviceId);
 
-			comot.getEps(function(epses) {
-				processEpses(epses);
+			comot.getEpsInstancesAll(function(epses) {
+				processEpsesInstances(epses);
 				model.allEpsServices(epses);
 
 				comot.getServiceInstance(model.serviceId(), model.instanceId(), function(data) {
@@ -96,20 +96,23 @@ define(function(require) {
 
 	}
 
-	function processEpses(epses) {
+	function processEpsesInstances(epses) {
 
 		for (var i = 0; i < epses.length; i++) {
 			var eps = epses[i];
 
-			var map = {};
-			for (var j = 0; j < eps.resources.length; j++) {
-				map[eps.resources[j].type.name] = eps.resources[j].name;
-			}
+			if (typeof eps.serviceInstance !== 'undefined') {
 
-			if (typeof map["VIEW"] !== 'undefined') {
-				var path = map["VIEW"];
-				path = path.replace("{PLACE_HOLDER_INSTANCE_ID}", model.instanceId());
-				eps.viewEndpoint = "http://" + map["IP"] + ":" + map["PORT"] + path;
+				var map = {};
+				for (var j = 0; j < eps.osu.resources.length; j++) {
+					map[eps.osu.resources[j].type.name] = eps.osu.resources[j].name;
+				}
+
+				if (typeof map["VIEW"] !== 'undefined') {
+					var path = map["VIEW"];
+					path = path.replace("{PLACE_HOLDER_INSTANCE_ID}", model.instanceId());
+					eps.viewEndpoint = "http://" + map["IP"] + ":" + map["PORT"] + path;
+				}
 			}
 		}
 	}
@@ -162,7 +165,7 @@ define(function(require) {
 				var transitions = message.stateMessage.transitions.entry;
 				var event = message.stateMessage.event;
 				var service = message.stateMessage.service;
-				
+
 				// events
 				showEvent(events, event);
 
@@ -197,9 +200,9 @@ define(function(require) {
 		var tMap = processTransitionsToMap(transitions);
 
 		// store transitions
-		//model.transitions.removeAll();
+		// model.transitions.removeAll();
 		model.transitions(transitions);
-		
+
 		// tree
 		createTree(createElement(service, tMap), "#tree_div");
 		// lifecycle
@@ -254,11 +257,6 @@ function showEvent(events, event) {
 
 function createElement(object, tMap) {
 
-	console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-	console.log(object)
-	console.log(object.id)
-	console.log(tMap)
-	
 	var type = tMap[object.id].groupType;
 	var members;
 
@@ -299,10 +297,6 @@ function createElement(object, tMap) {
 }
 
 function createLifecycle(graph, divId, lastState, currentState) {
-
-	// console.log(graph);
-	// console.log(lastState);
-	// console.log(currentState);
 
 	$(divId).empty();
 

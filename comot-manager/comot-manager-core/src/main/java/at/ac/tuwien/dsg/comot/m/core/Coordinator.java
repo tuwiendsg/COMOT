@@ -30,6 +30,7 @@ import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 
 @Component
@@ -64,7 +65,7 @@ public class Coordinator {
 		String instanceId = infoService.createServiceInstance(serviceId);
 
 		log.info("sending CREATE");
-		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.CREATED, USER_ID));
+		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.CREATED));
 
 		return instanceId;
 	}
@@ -72,14 +73,14 @@ public class Coordinator {
 	public void startServiceInstance(String serviceId, String instanceId) throws IOException, JAXBException,
 			ClassNotFoundException {
 
-		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STARTED, USER_ID));
+		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STARTED));
 
 	}
 
 	public void stopServiceInstance(String serviceId, String instanceId)
 			throws IOException, JAXBException, ClassNotFoundException {
 
-		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STOPPED, USER_ID));
+		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STOPPED));
 
 	}
 
@@ -87,7 +88,7 @@ public class Coordinator {
 
 		// infoService.removeServiceInstance(serviceId, instanceId);
 
-		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.REMOVED, USER_ID));
+		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.REMOVED));
 
 	}
 
@@ -97,8 +98,8 @@ public class Coordinator {
 		// infoService.assignSupportingService(serviceId, instanceId, osuInstanceId);
 
 		sendCustom(Type.SERVICE,
-				new CustomEvent(serviceId, instanceId, serviceId, EpsAction.EPS_ASSIGNMENT_REQUESTED.toString(),
-						USER_ID, osuInstanceId, null));
+				new CustomEvent(serviceId, instanceId, serviceId, EpsAction.EPS_SUPPORT_REQUESTED.toString(),
+						osuInstanceId, null));
 
 	}
 
@@ -106,19 +107,33 @@ public class Coordinator {
 			throws ClassNotFoundException, IOException, JAXBException {
 
 		sendCustom(Type.SERVICE,
-				new CustomEvent(serviceId, instanceId, serviceId, EpsAction.EPS_ASSIGNMENT_REMOVED.toString(), USER_ID,
+				new CustomEvent(serviceId, instanceId, serviceId, EpsAction.EPS_SUPPORT_REMOVED.toString(),
 						osuInstanceId, null));
 
 	}
 
-	public void createDynamicService(String epsId) throws AmqpException, JAXBException, EpsException {
+	public String createDynamicService(String epsId) throws AmqpException, JAXBException, EpsException {
 
-		createServiceInstance(infoService.getOsu(epsId).getService().getId());
+		return createServiceInstance(infoService.getOsu(epsId).getService().getId());
 
 		// CustomEvent event = new CustomEvent(null, null, null, EpsAction.EPS_DYNAMIC_REQUESTED.toString(),
-		// USER_ID, Constants.EPS_BUILDER, epsId);
+		// Constants.EPS_BUILDER, epsId);
 		// StateMessage msg = new StateMessage(event, null, null);
 		// amqp.convertAndSend(Constants.EXCHANGE_DYNAMIC_REGISTRATION, epsId, Utils.asJsonString(msg));
+
+	}
+
+	public void removeDynamicService(String epsId, String epsInstanceId) throws AmqpException, JAXBException,
+			EpsException {
+
+		OsuInstance osuInatance = infoService.getOsuInstance(epsInstanceId);
+
+		String serviceId = osuInatance.getOsu().getService().getId();
+		String instanceId = osuInatance.getServiceInstance().getId();
+
+		sendCustom(Type.SERVICE,
+				new CustomEvent(serviceId, instanceId, serviceId, EpsAction.EPS_DYNAMIC_REMOVED.toString(),
+						Constants.EPS_BUILDER, null));
 
 	}
 
@@ -134,8 +149,7 @@ public class Coordinator {
 			return;
 		}
 
-		sendCustom(Type.SERVICE, new CustomEvent(serviceId, csInstanceId, serviceId, eventId, USER_ID, epsId,
-				optionalInput));
+		sendCustom(Type.SERVICE, new CustomEvent(serviceId, csInstanceId, serviceId, eventId, epsId, optionalInput));
 
 	}
 
@@ -146,6 +160,9 @@ public class Coordinator {
 
 		// log.info(logId() +"SEND key={}", targetLevel);
 
+		event.setOrigin(USER_ID);
+		event.setTime(System.currentTimeMillis());
+
 		amqp.convertAndSend(Constants.EXCHANGE_REQUESTS, bindingKey, Utils.asJsonString(event));
 	}
 
@@ -155,6 +172,8 @@ public class Coordinator {
 				+ event.getCustomEvent() + "." + targetLevel;
 
 		// log.info(logId() +"SEND key={}", targetLevel);
+		event.setOrigin(USER_ID);
+		event.setTime(System.currentTimeMillis());
 
 		amqp.convertAndSend(Constants.EXCHANGE_REQUESTS, bindingKey, Utils.asJsonString(event));
 	}

@@ -15,6 +15,7 @@ import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.events.CustomEvent;
+import at.ac.tuwien.dsg.comot.m.common.events.ExceptionMessage;
 import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 
@@ -57,6 +58,9 @@ public abstract class Manager {
 
 	public void sendLifeCycle(Type targetLevel, LifeCycleEvent event) throws AmqpException, JAXBException {
 
+		event.setOrigin(getId());
+		event.setTime(System.currentTimeMillis());
+
 		String bindingKey = event.getCsInstanceId() + "." + event.getClass().getSimpleName() + "." + event.getAction()
 				+ "." + targetLevel;
 
@@ -67,6 +71,9 @@ public abstract class Manager {
 
 	public void sendCustom(Type targetLevel, CustomEvent event) throws AmqpException, JAXBException {
 
+		event.setOrigin(getId());
+		event.setTime(System.currentTimeMillis());
+
 		String bindingKey = event.getCsInstanceId() + "." + event.getClass().getSimpleName() + "."
 				+ event.getCustomEvent() + "." + targetLevel;
 
@@ -75,9 +82,15 @@ public abstract class Manager {
 		amqp.convertAndSend(Constants.EXCHANGE_REQUESTS, bindingKey, Utils.asJsonString(event));
 	}
 
-	public void sendException(Exception e) throws AmqpException, JAXBException {
+	public void sendException(String serviceId, String instanceId, Exception e) throws AmqpException, JAXBException {
 
 		// log.info(logId() + "EVENT-EX key={}", "TODO");
+
+		ExceptionMessage msg = new ExceptionMessage(serviceId, instanceId, getId(), System.currentTimeMillis(), e);
+
+		String bindingKey = instanceId + "." + getId(); // TODO
+
+		amqp.convertAndSend(Constants.EXCHANGE_EXCEPTIONS, bindingKey, Utils.asJsonString(msg));
 
 	}
 

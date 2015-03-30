@@ -44,7 +44,7 @@ public class RevisionApi {
 
 	@Transactional
 	public void createOrUpdateRegion(Object obj, String regionId, String changeType,
-			Map<String, String> changeProperties) throws IllegalArgumentException, IllegalAccessException {
+			Map<String, Object> changeProperties) throws IllegalArgumentException, IllegalAccessException {
 
 		// log.info("tx {}", TransactionSynchronizationManager.isActualTransactionActive());
 		// log.info("tx name {}", TransactionSynchronizationManager.getCurrentTransactionName());
@@ -57,7 +57,7 @@ public class RevisionApi {
 	}
 
 	@Transactional
-	public void storeEvent(String regionId, String changeType, Map<String, String> changeProperties) {
+	public void storeEvent(String regionId, String changeType, Map<String, Object> changeProperties) {
 		versionManager.storeChange(regionId, changeType, changeProperties, System.currentTimeMillis());
 	}
 

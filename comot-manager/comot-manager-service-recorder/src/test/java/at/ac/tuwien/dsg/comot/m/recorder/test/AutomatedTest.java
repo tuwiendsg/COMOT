@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot.m.recorder.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 import java.io.IOException;
@@ -13,6 +14,7 @@ import javax.xml.bind.JAXBException;
 import org.junit.Test;
 import org.unitils.reflectionassert.ReflectionComparatorMode;
 
+import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.m.recorder.RecorderException;
@@ -221,15 +223,20 @@ public class AutomatedTest extends AbstractTest {
 		cutOsus(service);
 
 		Change change = null;
+		String typeEvent = "event";
+		String prop1 = "PROP_ORIGIN";
+		String prop2 = "PROP_TARGET";
+		String prop3 = "PROP_NON_STRING";
 
 		// VERSION 1
 		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, "init", null);
 
 		// EVENT
-		Map<String, String> changeProperties = new HashMap<>();
-		changeProperties.put("PROP_ORIGIN", "SALSA");
-		changeProperties.put("PROP_TARGET", "tomcat");
-		revisionApi.storeEvent(STemplates.serviceId, "event", changeProperties);
+		Map<String, Object> changeProperties = new HashMap<>();
+		changeProperties.put(prop1, "SALSA");
+		changeProperties.put(prop2, "tomcat");
+		changeProperties.put(prop3, System.currentTimeMillis());
+		revisionApi.storeEvent(STemplates.serviceId, typeEvent, changeProperties);
 
 		// VERSION 2
 		CloudService updatedService = update1(service);
@@ -246,8 +253,26 @@ public class AutomatedTest extends AbstractTest {
 		change = revisionApi.getAllChanges(STemplates.serviceId, 0L, Long.MAX_VALUE);
 		assertEquals(4, countChanges(change));
 
-		// log.info(Utils.asJsonString(change));
-		// UtilsTest.sleepInfinit();
+		boolean found = false;
+
+		while (change != null) {
+
+			if (change.getType().equals(typeEvent)) {
+				found = true;
+
+				log.info(Utils.asXmlString(change));
+				log.info(Utils.asJsonString(change));
+
+				assertEquals(changeProperties.get(prop1), change.getPropertiesMap().get(prop1));
+				assertEquals(changeProperties.get(prop2), change.getPropertiesMap().get(prop2));
+				assertEquals(changeProperties.get(prop3), change.getPropertiesMap().get(prop3));
+			}
+			change = change.getTo().getEnd();
+		}
+
+		if (!found) {
+			fail("event change not found");
+		}
 	}
 
 }

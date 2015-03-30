@@ -31,7 +31,7 @@ public class ServiceInstance implements Serializable {
 	@XmlAttribute
 	protected String id;
 	@XmlAttribute
-	protected Date dateCreated;
+	protected Long dateCreated;
 	@XmlElementWrapper(name = "UnitInstances")
 	@XmlElement(name = "Instance")
 	protected Set<UnitInstance> unitInstances = new HashSet<>();
@@ -47,7 +47,7 @@ public class ServiceInstance implements Serializable {
 		this.id = id;
 	}
 
-	public ServiceInstance(String id, Date dateCreated) {
+	public ServiceInstance(String id, Long dateCreated) {
 		super();
 		this.id = id;
 		this.dateCreated = dateCreated;
@@ -85,11 +85,11 @@ public class ServiceInstance implements Serializable {
 		this.support = support;
 	}
 
-	public Date getDateCreated() {
+	public Long getDateCreated() {
 		return dateCreated;
 	}
 
-	public void setDateCreated(Date dateCreated) {
+	public void setDateCreated(Long dateCreated) {
 		this.dateCreated = dateCreated;
 	}
 

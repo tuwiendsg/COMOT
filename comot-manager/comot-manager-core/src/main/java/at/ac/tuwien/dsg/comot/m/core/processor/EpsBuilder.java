@@ -2,11 +2,8 @@ package at.ac.tuwien.dsg.comot.m.core.processor;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
@@ -34,9 +31,7 @@ import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.core.InitData;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
-import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
 import at.ac.tuwien.dsg.comot.model.provider.Resource;
-import at.ac.tuwien.dsg.comot.model.runtime.ServiceInstance;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 
 @Component
@@ -46,18 +41,14 @@ public class EpsBuilder extends Processor {
 	protected ApplicationContext context;
 	@Autowired
 	protected InformationClient infoService;
-
 	@Autowired
 	protected AmqpAdmin admin;
 
-	// protected Map<String, DynamicEpsState> managedSet = Collections
-	// .synchronizedMap(new HashMap<String, DynamicEpsState>());
-
-	protected Set<String> managedSet = Collections.synchronizedSet(new HashSet<String>());
-
-	enum DynamicEpsState {
-		CREATED_SENT, ASSIGNMENT_REQUESTED
-	}
+	// protected Set<String> managedSet = Collections.synchronizedSet(new HashSet<String>());
+	//
+	// enum DynamicEpsState {
+	// CREATED_SENT, ASSIGNMENT_REQUESTED
+	// }
 
 	@Override
 	public void start() throws Exception {
@@ -107,9 +98,9 @@ public class EpsBuilder extends Processor {
 
 		bindings.add(bindingCustom(queueName, "*.*." + EpsAction.EPS_DYNAMIC_REQUESTED + ".SERVICE"));
 		bindings.add(bindingCustom(queueName, "*.*." + EpsAction.EPS_DYNAMIC_REMOVED + ".SERVICE"));
-		bindings.add(bindingCustom(queueName, "*.*." + EpsAction.EPS_ASSIGNED + ".SERVICE"));
+		bindings.add(bindingCustom(queueName, "*.*." + EpsAction.EPS_SUPPORT_ASSIGNED + ".SERVICE"));
 		bindings.add(bindingLifeCycle(queueName, "*.*.*.*." + Action.CREATED + ".SERVICE.#"));
-		bindings.add(bindingLifeCycle(queueName, "*.*.*.*." + Action.REMOVED + ".SERVICE.#"));
+		// bindings.add(bindingLifeCycle(queueName, "*.*.*.*." + Action.REMOVED + ".SERVICE.#"));
 		bindings.add(new Binding(queueName, DestinationType.QUEUE, Constants.EXCHANGE_DYNAMIC_REGISTRATION,
 				"#", null));
 
@@ -124,26 +115,25 @@ public class EpsBuilder extends Processor {
 		if (infoService.isServiceOfDynamicEps(serviceId)) {
 
 			if (action == Action.CREATED) {
-
 				String staticDeplId = infoService.instanceIdOfStaticEps(Constants.SALSA_SERVICE_STATIC);
 
 				manager.sendCustom(Type.SERVICE, new CustomEvent(serviceId, instanceId, serviceId,
-						EpsAction.EPS_ASSIGNMENT_REQUESTED.toString(), getId(), staticDeplId, null));
+						EpsAction.EPS_SUPPORT_REQUESTED.toString(), staticDeplId, null));
 
-			} else if (action == Action.REMOVED) {
-
-				String osuId = infoService.getOsuByServiceId(serviceId).getId();
-
-				for (OsuInstance osuIns : infoService.getOsuInstancesForOsu(osuId)) {
-					if (osuIns.getServiceInstance() == null) {
-						infoService.removeOsuInatance(osuIns.getId());
-						break;
-					}
-				}
 			}
 
+			// if (action == Action.REMOVED) {
+			//
+			// String osuId = infoService.getOsuByServiceId(serviceId).getId();
+			//
+			// for (OsuInstance osuIns : infoService.getOsuInstancesForOsu(osuId)) {
+			// if (osuIns.getServiceInstance() == null) {
+			// infoService.removeOsuInatance(osuIns.getId());
+			// break;
+			// }
+			// }
+			// }
 		}
-
 	}
 
 	@Override
@@ -153,41 +143,28 @@ public class EpsBuilder extends Processor {
 
 		EpsAction action = EpsAction.valueOf(event);
 
-		// if (action == EpsAction.EPS_DYNAMIC_REQUESTED) {
-		//
-		// createDynamicEps(optionalMessage);
-		//
-		// } else
-		if (action == EpsAction.EPS_DYNAMIC_CREATED) {
+		if (action == EpsAction.EPS_DYNAMIC_REQUESTED) {
 
-			String osuId = optionalMessage;
-			String osuInstanceId = origin;
-
-			List<ServiceInstance> freeInstances = infoService.getEpsServiceInstancesWithoutOsuInstance(osuId);
-
-			if (freeInstances.isEmpty()) {
-				log.error("No free EpsServiceInstane to assign the created dynamic EPS to.");
-			} else {
-
-				serviceId = infoService.getOsu(osuId).getService().getId();
-				instanceId = freeInstances.get(0).getId();
-				infoService.createOsuInstanceDynamic(osuId, instanceId, osuInstanceId);
-
-				manager.sendCustom(Type.SERVICE,
-						new CustomEvent(serviceId, instanceId, serviceId,
-								EpsAction.EPS_DYNAMIC_CREATED.toString(),
-								getId(), osuInstanceId, null));
-
-			}
+			// // create
+			// serviceId = infoService.getOsu(epsId).getService().getId();
+			// instanceId = infoService.createServiceInstance(serviceId);
 			//
-			// } else if (action == EpsAction.) {
-			//
-			//
+			// manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId,
+			// Action.CREATED));
 
-		} else if (action == EpsAction.EPS_ASSIGNED && infoService.isServiceOfDynamicEps(serviceId)) {
+			// // assign
+			// String staticDeplId = infoService.instanceIdOfStaticEps(Constants.SALSA_SERVICE_STATIC);
+			//
+			// manager.sendCustom(Type.SERVICE, new CustomEvent(serviceId, instanceId, serviceId,
+			// EpsAction.EPS_SUPPORT_REQUESTED.toString(), staticDeplId, null));
 
-			manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STARTED,
-					getId()));
+		} else if (action == EpsAction.EPS_SUPPORT_ASSIGNED && infoService.isServiceOfDynamicEps(serviceId)) {
+
+			manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STARTED));
+
+		} else if (action == EpsAction.EPS_DYNAMIC_REMOVED) {
+
+			manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.REMOVED));
 
 		}
 
@@ -199,25 +176,5 @@ public class EpsBuilder extends Processor {
 		// TODO Auto-generated method stub
 
 	}
-
-	// protected void createDynamicEps(String epsId) throws EpsException, AmqpException, JAXBException {
-	//
-	// OfferedServiceUnit osu = infoService.getOsu(epsId);
-	//
-	// if (osu != null && osu.getService() != null) {
-	//
-	// String serviceId = osu.getService().getId();
-	//
-	// // create service instance
-	// String instanceId = infoService.createServiceInstance(serviceId);
-	//
-	// manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.CREATED,
-	// getId()));
-	//
-	// managedSet.add(instanceId);
-	//
-	// }
-	//
-	// }
 
 }

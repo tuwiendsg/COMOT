@@ -33,6 +33,9 @@ public class ProcessorListener implements MessageListener {
 	@Override
 	public void onMessage(Message message) {
 
+		String instanceId = null;
+		String serviceId = null;
+
 		try {
 
 			ComotMessage comotMsg = UtilsLc.comotMessage(message);
@@ -40,8 +43,8 @@ public class ProcessorListener implements MessageListener {
 			if (comotMsg instanceof StateMessage) {
 
 				StateMessage msg = (StateMessage) comotMsg;
-				String instanceId = msg.getEvent().getCsInstanceId();
-				String serviceId = msg.getEvent().getServiceId();
+				instanceId = msg.getEvent().getCsInstanceId();
+				serviceId = msg.getEvent().getServiceId();
 				String groupId = msg.getEvent().getGroupId();
 				String origin = msg.getEvent().getOrigin();
 
@@ -78,8 +81,8 @@ public class ProcessorListener implements MessageListener {
 			} else if (comotMsg instanceof ExceptionMessage) {
 				ExceptionMessage msg = (ExceptionMessage) comotMsg;
 
-				String instanceId = msg.getCsInstanceId();
-				String serviceId = msg.getServiceId();
+				instanceId = msg.getCsInstanceId();
+				serviceId = msg.getServiceId();
 				String originId = msg.getOrigin();
 				Exception e = msg.getException();
 
@@ -92,7 +95,7 @@ public class ProcessorListener implements MessageListener {
 		} catch (Exception e) {
 
 			try {
-				processor.getManager().sendException(e);
+				processor.getManager().sendException(serviceId, instanceId, e);
 			} catch (AmqpException | JAXBException e1) {
 				e1.printStackTrace();
 			}

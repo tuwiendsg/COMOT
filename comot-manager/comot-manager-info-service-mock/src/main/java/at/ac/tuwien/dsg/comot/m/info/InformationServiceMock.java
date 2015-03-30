@@ -3,7 +3,6 @@ package at.ac.tuwien.dsg.comot.m.info;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -61,7 +60,7 @@ public class InformationServiceMock {
 
 	public String createService(CloudService service) throws ClassNotFoundException, IOException {
 
-		service.setDateCreated(new Date());
+		service.setDateCreated(System.currentTimeMillis());
 		services.put(service.getId(), service);
 
 		return service.getId();
