@@ -1,0 +1,72 @@
+<div class="container">
+
+	<h2>Analysis - Deployment time of Unit Instances</h2>
+
+	<h4>
+		<b>ID:</b> <span data-bind="text: instanceId"></span>
+	</h4>
+	<div>&nbsp;</div>
+
+	<div class="panel panel-default">
+		<h5>Possible stages of deployment:</h5>
+		<ul>
+			<li>ALLOCATING -</li>
+			<li>CONFIGURING -</li>
+			<li>STAGING -</li>
+			<li>INSTALLING -</li>
+		</ul>
+
+	</div>
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<b>Average per Service Unit</b>
+		</div>
+		<div class="panel-body">
+			<div id="output2" class="col-md-12"></div>
+		</div>
+	</div>
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<b>Aggregated per group</b>
+		</div>
+		<div class="panel-body">
+			<h5>Select one or multiple types:</h5>
+			<!-- ko foreach: types -->
+			<button type="button" class="btn btn-default btn-sm"
+				data-bind="click: $parent.switchType, text: name, css: { active: selected }"></button>
+			<!-- /ko -->
+			<h5>Select one or multiple Service Units:</h5>
+			<!-- ko foreach: units -->
+			<button type="button" class="btn btn-default btn-sm"
+				data-bind="click: $parent.switchUnit, text: name, css: { active: selected }"></button>
+			<!-- /ko -->
+
+			<div>&nbsp;</div>
+			<div class="col-md-6">
+				<h4>Statistics</h4>
+				<div></div>
+			</div>
+			<div class="col-md-6">
+				<h4>Average length</h4>
+				<div id="output"></div>
+			</div>
+			
+
+			<div>&nbsp;</div>
+			<div class="col-md-12">
+				<h4>Individual instances through time</h4>
+				<div id="output3"></div>
+			</div>
+
+		</div>
+	</div>
+
+
+
+
+
+
+
+</div>

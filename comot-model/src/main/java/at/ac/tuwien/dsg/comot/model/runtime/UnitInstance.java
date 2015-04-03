@@ -127,4 +127,12 @@ public class UnitInstance implements Serializable, HasUniqueId {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "UnitInstance [nodeId=" + nodeId + ", id=" + id + ", envId=" + envId + ", ip=" + ip + ", state=" + state
+				+ ", hostInstance=" + ((hostInstance == null)? null : hostInstance.getId()) + "]";
+	}
+	
+	
+
 }

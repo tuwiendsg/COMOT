@@ -14,6 +14,7 @@ import javax.xml.bind.JAXBException;
 import org.junit.Test;
 import org.unitils.reflectionassert.ReflectionComparatorMode;
 
+import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
@@ -22,6 +23,7 @@ import at.ac.tuwien.dsg.comot.m.recorder.model.Change;
 import at.ac.tuwien.dsg.comot.m.recorder.out.ManagedObject;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
+import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
 
 public class AutomatedTest extends AbstractTest {
@@ -50,7 +52,7 @@ public class AutomatedTest extends AbstractTest {
 
 		cutOsus(service);
 
-		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, "init", null);
+		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, STemplates.serviceId, "init", null);
 
 		CloudService sResult = (CloudService) revisionApi.getRevision(STemplates.serviceId,
 				STemplates.serviceId, System.currentTimeMillis());
@@ -62,18 +64,18 @@ public class AutomatedTest extends AbstractTest {
 	@Test
 	public void testSimpleServiceMultipleVersions() throws IllegalArgumentException, IllegalAccessException,
 			InstantiationException, ClassNotFoundException, ComotException, InterruptedException, IOException,
-			RecorderException {
+			RecorderException, JAXBException {
 
 		service = STemplates.simplifiedService();
 		multipleVersions();
 
-		// UtilsTest.sleepInfinit();
+		UtilsTest.sleepInfinit();
 	}
 
 	@Test
 	public void testFullServiceMultipleVersions() throws IllegalArgumentException, IllegalAccessException,
 			InstantiationException, ClassNotFoundException, ComotException, InterruptedException, IOException,
-			RecorderException {
+			RecorderException, JAXBException {
 
 		service = STemplates.fullService();
 		multipleVersions();
@@ -82,33 +84,45 @@ public class AutomatedTest extends AbstractTest {
 	}
 
 	public void multipleVersions() throws IllegalArgumentException, IllegalAccessException, ClassNotFoundException,
-			IOException, InstantiationException, ComotException, RecorderException {
+			IOException, InstantiationException, ComotException, RecorderException, JAXBException {
 
 		cutOsus(service);
 
 		ServiceUnit unitV1 = UtilsTest.getServiceUnit(service, STemplates.swNodeId);
 
 		// VERSION 1
-		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, "init", null);
+		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, STemplates.serviceId, "init", null);
 
 		Long version1Time = System.currentTimeMillis();
 
 		// VERSION 2
 		CloudService updatedService = update1(service);
 		ServiceUnit unitV2 = UtilsTest.getServiceUnit(updatedService, STemplates.swNodeId);
-		revisionApi.createOrUpdateRegion(updatedService, STemplates.serviceId, "config_change", null);
+		revisionApi.createOrUpdateRegion(updatedService, STemplates.serviceId, STemplates.serviceId, "config_change",
+				null);
 
 		Long version2Time = System.currentTimeMillis();
 
 		// VERSION 3
 		CloudService finalService = update2(updatedService);
 		ServiceUnit unitV3 = UtilsTest.getServiceUnit(finalService, STemplates.swNodeId);
-		revisionApi.createOrUpdateRegion(finalService, STemplates.serviceId, "config_change", null);
+		revisionApi.createOrUpdateRegion(finalService, STemplates.serviceId, STemplates.serviceId, "config_change",
+				null);
 
 		// ///////////////////////////
 		// READ VERSION 1
 		CloudService sResult = (CloudService) revisionApi.getRevision(STemplates.serviceId,
 				STemplates.serviceId, version1Time);
+
+		log.info("expected :{}", Utils.asJsonString(service));
+		log.info("actual :{}", Utils.asJsonString(sResult));
+
+		log.info("expected {} actual {}",
+				service.getServiceTopologiesList().get(0).getServiceUnitsList().size(),
+				sResult.getServiceTopologiesList().get(0).getServiceUnitsList().size());
+
+		// UtilsTest.sleepInfinit();
+
 		assertReflectionEquals(service, sResult, ReflectionComparatorMode.LENIENT_ORDER);
 
 		// READ VERSION 2
@@ -151,17 +165,19 @@ public class AutomatedTest extends AbstractTest {
 		Change change;
 
 		// VERSION 1
-		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, "init", null);
+		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, STemplates.serviceId, "init", null);
 
 		// VERSION 2
 		CloudService updatedService = update1(service);
-		revisionApi.createOrUpdateRegion(updatedService, STemplates.serviceId, "config_change", null);
+		revisionApi.createOrUpdateRegion(updatedService, STemplates.serviceId, STemplates.serviceId, "config_change",
+				null);
 
 		// VERSION 3
 		CloudService finalService = update2(updatedService);
-		revisionApi.createOrUpdateRegion(finalService, STemplates.serviceId, "config_change", null);
+		revisionApi.createOrUpdateRegion(finalService, STemplates.serviceId, STemplates.serviceId, "config_change",
+				null);
 
-		// UtilsTest.sleepInfinit();
+		UtilsTest.sleepInfinit();
 
 		// READ CHANGES - WHOLE TIME
 		change = revisionApi.getAllChangesThatModifiedThisObject(STemplates.serviceId, STemplates.serviceId, 0L,
@@ -229,22 +245,24 @@ public class AutomatedTest extends AbstractTest {
 		String prop3 = "PROP_NON_STRING";
 
 		// VERSION 1
-		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, "init", null);
+		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, STemplates.serviceId, "init", null);
 
 		// EVENT
 		Map<String, Object> changeProperties = new HashMap<>();
 		changeProperties.put(prop1, "SALSA");
 		changeProperties.put(prop2, "tomcat");
 		changeProperties.put(prop3, System.currentTimeMillis());
-		revisionApi.storeEvent(STemplates.serviceId, typeEvent, changeProperties);
+		revisionApi.storeEvent(STemplates.serviceId, STemplates.serviceId, typeEvent, changeProperties);
 
 		// VERSION 2
 		CloudService updatedService = update1(service);
-		revisionApi.createOrUpdateRegion(updatedService, STemplates.serviceId, "config_change", null);
+		revisionApi.createOrUpdateRegion(updatedService, STemplates.serviceId, STemplates.serviceId, "config_change",
+				null);
 
 		// VERSION 3
 		CloudService finalService = update2(updatedService);
-		revisionApi.createOrUpdateRegion(finalService, STemplates.serviceId, "config_change", null);
+		revisionApi.createOrUpdateRegion(finalService, STemplates.serviceId, STemplates.serviceId, "config_change",
+				null);
 
 		change = revisionApi.getAllChangesThatModifiedThisObject(STemplates.serviceId, STemplates.serviceId,
 				0L, Long.MAX_VALUE);
@@ -273,6 +291,31 @@ public class AutomatedTest extends AbstractTest {
 		if (!found) {
 			fail("event change not found");
 		}
+	}
+
+	@Test
+	public void testNewRevisionOnlyForSubObject() throws IllegalArgumentException, IllegalAccessException,
+			ClassNotFoundException, IOException, InstantiationException, RecorderException {
+
+		service = STemplates.fullService();
+		cutOsus(service);
+
+		String targetInstanceId = STemplates.instanceId(STemplates.swNodeId);
+
+		// VERSION 1
+		revisionApi.createOrUpdateRegion(service, STemplates.serviceId, STemplates.serviceId, "init", null);
+
+		CloudService updatedService = (CloudService) Utils.deepCopy(service);
+		Navigator nav = new Navigator(updatedService);
+		UnitInstance uInst = nav.getInstance(targetInstanceId);
+		uInst.setEnvId("Some new value");
+
+		revisionApi.createOrUpdateRegion(uInst, STemplates.serviceId, targetInstanceId, "change", null);
+
+		CloudService resultService = (CloudService) revisionApi.getRevision(STemplates.serviceId,
+				STemplates.serviceId, Long.MAX_VALUE);
+		assertReflectionEquals(updatedService, resultService, ReflectionComparatorMode.LENIENT_ORDER);
+
 	}
 
 }

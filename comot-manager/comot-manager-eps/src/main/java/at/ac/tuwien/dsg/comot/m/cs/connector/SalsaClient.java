@@ -48,7 +48,7 @@ public class SalsaClient extends ServiceClient {
 
 	public String deploy(String toscaDescriptionXml) throws EpsException {
 
-		log.trace(ln + "Deploying cloud application: {}", toscaDescriptionXml);
+		log.debug(ln + "Deploying cloud application: {}", toscaDescriptionXml);
 
 		Response response = client.target(getBaseUri())
 				.path(DEPLOY_PATH)

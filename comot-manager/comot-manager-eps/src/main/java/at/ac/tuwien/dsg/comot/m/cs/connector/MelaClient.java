@@ -9,6 +9,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBException;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.comot.m.common.ServiceClient;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
+import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement;
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitoringSnapshot;
@@ -53,6 +55,12 @@ public class MelaClient extends ServiceClient {
 
 	// create service
 	public void sendServiceDescription(MonitoredElement element) throws EpsException {
+
+		try {
+			log.debug("MonitoredElement: {}", UtilsCs.asString(element));
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
 
 		Response response = client.target(getBaseUri())
 				.path(SERVICE_CREATE_PATH)

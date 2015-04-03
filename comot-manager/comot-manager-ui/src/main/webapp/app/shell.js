@@ -29,6 +29,11 @@ define(function(require) {
 				title : 'History',
 				moduleId : 'history',
 				nav : false
+			},{
+				route : 'services/:serviceId/instances/:instanceId/analysis',
+				title : 'Analysis',
+				moduleId : 'analysis',
+				nav : false
 			}
 			// , {
 			// route : 'new',

@@ -25,14 +25,12 @@
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-		</dependency>
+
 
 		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-manager-eps</artifactId>
+			<!-- <scope>test</scope> -->
 		</dependency>
 		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
@@ -46,7 +44,25 @@
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-manager-adapter</artifactId>
 		</dependency>
-
+<!-- 
+		<dependency>
+			<groupId>org.neo4j.app</groupId>
+			<artifactId>neo4j-server</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.neo4j.app</groupId>
+			<artifactId>neo4j-server</artifactId>
+			<classifier>static-web</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.neo4j</groupId>
+			<artifactId>neo4j-kernel</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		-->
 		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-manager-common</artifactId>

@@ -169,6 +169,8 @@ public class Resource {
 		List<OsuInstance> result;
 		synchronized (sync) {
 			result = infoServ.getOsusInstances();
+
+			log.info("getOsuInstances() {}", result);
 		}
 		final GenericEntity<List<OsuInstance>> list = new GenericEntity<List<OsuInstance>>(result) {
 		};

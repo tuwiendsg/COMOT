@@ -49,7 +49,7 @@
 								<th>#</th>
 								<th>ID</th>
 								<th>Date created</th>
-								<th colspan="2">Details</th>
+								<th colspan="3">Details</th>
 								<th>Remove</th>
 							</tr>
 						</thead>
@@ -58,13 +58,17 @@
 								<td data-bind="text: ($index() + 1)"></td>
 								<td data-bind="text: id"></td>
 								<td data-bind="text: dateCreatedFormated"></td>
-								<td><a data-bind="attr: { href: '#services/'+$parent.id+'/instances/'+id }"><button
+								<td><a data-bind="attr: { href: '#services/'+$parent.id+'/instances/'+id }"><button type="button"
+											class="btn btn-default">
+											<span class="glyphicon glyphicon-search" aria-hidden="true"></span> Manage
+										</button></a></td>
+								<td><a data-bind="attr: { href: '#services/'+$parent.id+'/instances/'+id+'/analysis' }"><button
 											type="button" class="btn btn-default">
-											<span class="glyphicon glyphicon-search" aria-hidden="true"></span> View
+											<span class="glyphicon glyphicon-search" aria-hidden="true"></span> Analysis
 										</button></a></td>
 								<td><a data-bind="attr: { href: '#services/'+$parent.id+'/instances/'+id+'/history' }"><button
 											type="button" class="btn btn-default">
-											<span class="glyphicon glyphicon-search" aria-hidden="true"></span> History
+											<span class="glyphicon glyphicon-search" aria-hidden="true"></span> Event Log
 										</button></a></td>
 								<td>
 									<button type="button" class="btn btn-default"

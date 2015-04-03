@@ -1,6 +1,9 @@
 package at.ac.tuwien.dsg.comot.m.adapter;
 
-import java.util.Map;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -30,6 +33,8 @@ public class Main {
 	protected static Logger log = LoggerFactory.getLogger(Main.class);
 
 	public static final String SERVICE_INSTANCE_AS_PROPERTY = "service";
+	public static final String PROPERTIES_FILE = "./salsa.environment";
+
 	private static String serviceId;
 	private static String instanceId;
 	private static String participantId;
@@ -62,6 +67,14 @@ public class Main {
 				context = new AnnotationConfigApplicationContext(AppContextAdapter.class);
 				info = context.getBean(InformationClient.class);
 
+				Runtime.getRuntime().addShutdownHook(new Thread() {
+					public void run() {
+						if (context != null) {
+							context.close();
+						}
+					}
+				});
+
 				if (cmd.hasOption("m") || cmd.hasOption("r")) {
 
 					Manager manager = context.getBean(PerInstanceQueueManager.class);
@@ -86,20 +99,15 @@ public class Main {
 					log.warn("No adapter type specified");
 					showHelp(options);
 				}
-
 			} else {
 				log.warn("Required parameters were not specified.");
 				showHelp(options);
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("ERROR: " + e.getClass() + ", msg: " + e.getLocalizedMessage());
 			showHelp(options);
-
 		}
-
-		// ((ConfigurableApplicationContext) context).close();
 	}
 
 	private static Options createOptions() {
@@ -107,7 +115,7 @@ public class Main {
 		options.addOption("h", "help", false, "print help");
 		options.addOption("m", "mela", false, "Start MELA adapter");
 		options.addOption("r", "rsybl", false, "Start rSYBL adapter");
-		// options.addOption("id", "participantId", true, "Unique identifier in the management system");
+		// options.addOption("id", "serviceInstanceId", true, "The id under which this service indtance is deployed");
 		options.addOption("mh", "routerHost", true, "Host of the message router");
 		options.addOption("ih", "infoHost", true, "Host of the information service");
 		options.addOption("ip", "infoPort", true, "Port of the information service");
@@ -116,26 +124,36 @@ public class Main {
 
 	private static void showHelp(Options options) {
 		HelpFormatter h = new HelpFormatter();
-		h.printHelp("java -jar epsAdapter.jar -[m|r] -mh <host> -ih <host> -ip <port> -id <id>", options);
+		h.printHelp("java -jar epsAdapter.jar -[m|r] -mh <host> -ih <host> -ip <port>", options);
 		System.exit(-1);
 	}
 
 	private static void setServiceInstanceId() {
 
-		instanceId = System.getProperty(SERVICE_INSTANCE_AS_PROPERTY);
+		InputStream input = null;
+		try {
+			input = new FileInputStream(PROPERTIES_FILE);
 
-		if (instanceId == null) {
-			Map<String, String> env = System.getenv();
-			for (String envName : env.keySet()) {
-				if (SERVICE_INSTANCE_AS_PROPERTY.equals(envName)) {
-					instanceId = env.get(envName);
-					break;
+			Properties prop = new Properties();
+			prop.load(input);
+
+			instanceId = prop.getProperty(SERVICE_INSTANCE_AS_PROPERTY);
+			log.info("service={}", instanceId);
+
+		} catch (IOException e) {
+			log.error(" {}", e);
+		} finally {
+			if (input != null) {
+				try {
+					input.close();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
-
 		}
+
 		if (instanceId == null) {
-			log.error("there is no System.getProperty or System.getenv() '{}'", SERVICE_INSTANCE_AS_PROPERTY);
+			log.error("there is no property '{}'", SERVICE_INSTANCE_AS_PROPERTY);
 			System.exit(-1);
 		}
 
@@ -157,8 +175,9 @@ public class Main {
 		CustomEvent event = new CustomEvent(serviceId, instanceId, serviceId, EpsAction.EPS_DYNAMIC_CREATED.toString(),
 				participantId, System.currentTimeMillis(), null, null);
 
-		amqp.convertAndSend(Constants.EXCHANGE_CUSTOM_EVENT,
-				instanceId + "." + null + "." + EpsAction.EPS_DYNAMIC_CREATED + "." + Type.SERVICE,
+		amqp.convertAndSend(Constants.EXCHANGE_REQUESTS,
+				instanceId + "." + event.getClass().getSimpleName() + "." + EpsAction.EPS_DYNAMIC_CREATED + "."
+						+ Type.SERVICE,
 				Utils.asJsonString(event));
 
 		log.info("Success creating adapter '{}' of serviceType {}", participantId, serviceId);

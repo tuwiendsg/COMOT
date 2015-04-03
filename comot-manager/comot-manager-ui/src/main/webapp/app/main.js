@@ -10,6 +10,7 @@ requirejs.config({
 		crel : '../lib/json-human/crel',
 		json_human : '../lib/json-human/json.human',
 		d3 : '../lib/d3/d3.min',
+		dimple : '../lib/dimple/dimple.v2.1.2.min',
 		pnotify : '../lib/pnotify/pnotify.custom.min',
 		bootstrap : '../lib/bootstrap/js/bootstrap.min',
 

@@ -61,7 +61,8 @@ public abstract class Manager {
 		event.setOrigin(getId());
 		event.setTime(System.currentTimeMillis());
 
-		String bindingKey = event.getCsInstanceId() + "." + event.getClass().getSimpleName() + "." + event.getAction()
+		String bindingKey = event.getCsInstanceId() + "." + LifeCycleEvent.class.getSimpleName() + "."
+				+ event.getAction()
 				+ "." + targetLevel;
 
 		log.info(logId() + "EVENT-LC key={}", bindingKey);

@@ -27,7 +27,7 @@
 					<td
 						data-bind="text: props.eventName, style: { fontWeight: (type == 'CHANGE_TYPE_LIFECYCLE') ? 'bold' : '' }, click: function() { $parent.revisionsForChange(timestamp)} "></td>
 					<td data-bind="text: props.origin"></td>
-					<td data-bind="text: props.target"></td>
+					<td data-bind="text: targetObjectId"></td>
 				</tr>
 			</tbody>
 		</table>

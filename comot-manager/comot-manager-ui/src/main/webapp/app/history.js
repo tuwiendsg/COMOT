@@ -151,11 +151,11 @@ define(function(require) {
 				var propsArr = data[i].propertiesMap.entry;
 				var props = {};
 				for (var j = 0; j < propsArr.length; j++) {
-					props[propsArr[j].key] = propsArr[j].value;
+					props[propsArr[j].key] = propsArr[j].value.value;
 				}
 
 				data[i].props = props;
-				data[i].time = utils.longToDateString(data[i].timestamp);
+				data[i].time = utils.longToDateString(props.eventTime);
 
 				model.changes.push(data[i]);
 			}

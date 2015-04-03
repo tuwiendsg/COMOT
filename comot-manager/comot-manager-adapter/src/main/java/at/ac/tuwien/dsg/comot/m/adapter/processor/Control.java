@@ -29,6 +29,7 @@ import at.ac.tuwien.dsg.comot.m.common.events.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.events.Transition;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 import at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.ActionEvent;
@@ -198,24 +199,40 @@ public class Control extends Processor implements ControlEventsListener {
 
 				CloudService instance = infoService.getServiceInstance(instanceId);
 				String serviceId = instance.getId();
-				String groupId = aEvent.getTargetId();
+				String targetGroupId = aEvent.getTargetId();
+				Set<String> allTargetIds = new HashSet<>();
+				allTargetIds.add(targetGroupId);
 
 				Navigator nav = new Navigator(instance);
-				Type type = Type.decide(nav.getManaged(groupId));
+				Type type = Type.decide(nav.getManaged(targetGroupId));
 
-				if (event.getStage() == IEvent.Stage.START) {
-					manager.sendLifeCycle(type, new LifeCycleEvent(serviceId, instanceId, groupId,
-							Action.ELASTIC_CHANGE_STARTED));
-
-				} else if (event.getStage() == IEvent.Stage.FINISHED) {
-					manager.sendLifeCycle(type, new LifeCycleEvent(serviceId, instanceId, groupId,
-							Action.ELASTIC_CHANGE_FINISHED));
+				// solve mismatch between rSYBL units and information model units
+				if (type == Type.UNIT) {
+					for (ServiceUnit unit : nav.getHostsRecursive(nav.getUnit(targetGroupId))) {
+						allTargetIds.add(unit.getId());
+					}
 				}
+
+				for (String tempGroupId : allTargetIds) {
+					if (event.getStage() == IEvent.Stage.START) {
+						manager.sendLifeCycle(type, new LifeCycleEvent(serviceId, instanceId, tempGroupId,
+								Action.ELASTIC_CHANGE_STARTED));
+
+					} else if (event.getStage() == IEvent.Stage.FINISHED) {
+						manager.sendLifeCycle(type, new LifeCycleEvent(serviceId, instanceId, tempGroupId,
+								Action.ELASTIC_CHANGE_FINISHED));
+					}
+
+				}
+			} else if (event instanceof at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.CustomEvent) {
+				at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.CustomEvent aEvent = (at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.CustomEvent) event;
+
+				// onCustomEvent(serviceId=HelloElasticityNoDB_co_1, stage=null, type=NOTIFICATION, targetId=Co1 ,
+				// message=Requirements Co1 are violated, and rSYBL can not solve the problem.)
 
 			}
 		} catch (Exception e) {
 
 		}
 	}
-
 }

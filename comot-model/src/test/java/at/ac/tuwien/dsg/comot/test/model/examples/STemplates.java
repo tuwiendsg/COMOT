@@ -35,12 +35,12 @@ public class STemplates {
 		osuOs.hasResource(new Resource("openjdk-7-jre", new ResourceOrQualityType("packages")));
 
 		OfferedServiceUnit osuSw = new OfferedServiceUnit();
-		osuOs.setName(swNodeId);
-		osuOs.setTypeByEnum(OsuType.SOFTWARE);
+		osuSw.setName(swNodeId);
+		osuSw.setTypeByEnum(OsuType.SOFTWARE);
 
 		OfferedServiceUnit osuSw2 = new OfferedServiceUnit();
-		osuOs.setName(swNodeId2);
-		osuOs.setTypeByEnum(OsuType.SOFTWARE);
+		osuSw2.setName(swNodeId2);
+		osuSw2.setTypeByEnum(OsuType.SOFTWARE);
 
 		// UNITs
 		ServiceUnit unitOs = new ServiceUnit(osNodeId, "Test os", 1, 2);
@@ -77,6 +77,7 @@ public class STemplates {
 
 		// OSUs
 		OfferedServiceUnit osuOs = new OfferedServiceUnit();
+		osuOs.setId(osuId(osNodeId));
 		osuOs.setName(osNodeId);
 		osuOs.setTypeByEnum(OsuType.OS);
 		osuOs.hasResource(new Resource("000000512", new ResourceOrQualityType("instanceType")));
@@ -90,20 +91,22 @@ public class STemplates {
 		war.hasResource(url);
 
 		OfferedServiceUnit osuSw = new OfferedServiceUnit();
+		osuSw.setId(osuId(swNodeId));
 		osuSw.setName(swNodeId);
 		osuSw.setTypeByEnum(OsuType.SOFTWARE);
 		osuSw.hasResource(war);
 
 		OfferedServiceUnit osuSw2 = new OfferedServiceUnit();
+		osuSw2.setId(osuId(swNodeId2));
 		osuSw2.setName(swNodeId2);
 		osuSw2.setTypeByEnum(OsuType.SOFTWARE);
 
 		// UNITs
 		ServiceUnit unitOs = new ServiceUnit(osNodeId, "Test os", 1, 2);
-		unitOs.setOsuInstance(new OsuInstance(osNodeId + "_1", osuOs));
+		unitOs.setOsuInstance(new OsuInstance(osuInstanceId(osNodeId), osuOs));
 
 		ServiceUnit unitSw = new ServiceUnit(swNodeId, "Test node unit", 2, 5);
-		unitSw.setOsuInstance(new OsuInstance(swNodeId + "_1", osuSw));
+		unitSw.setOsuInstance(new OsuInstance(osuInstanceId(swNodeId), osuSw));
 
 		unitSw.addDirective(new SyblDirective("str1", DirectiveType.STRATEGY,
 				"ST1: STRATEGY CASE cpuUsage < 40 % : scalein"));
@@ -111,7 +114,7 @@ public class STemplates {
 				"Co2: CONSTRAINT dataAccuracy > 95 % WHEN total_cost > 400 ;"));
 
 		ServiceUnit unitSw2 = new ServiceUnit(swNodeId2, "Test node unit 2", 2, 5);
-		unitSw2.setOsuInstance(new OsuInstance(swNodeId2 + "_1", osuSw2));
+		unitSw2.setOsuInstance(new OsuInstance(osuInstanceId(swNodeId2), osuSw2));
 
 		// HOST ON
 		HostOnRel hostOn1 = new HostOnRel("hostOn1ID", unitSw, unitOs);
@@ -144,21 +147,32 @@ public class STemplates {
 		// INSTANCES
 		for (ServiceUnit unit : service.getServiceTopologiesList().get(0).getServiceUnits()) {
 			if (unit.getId().equals(osNodeId)) {
-				instanceOs = new UnitInstance(osNodeId + "_instance", "10.99.0.1", State.DEPLOYING, null);
+				instanceOs = new UnitInstance(instanceId(osNodeId), "10.99.0.1", State.DEPLOYING, null);
 				unit.addUnitInstance(instanceOs);
 			}
 		}
 
 		for (ServiceUnit unit : service.getServiceTopologiesList().get(0).getServiceUnits()) {
 			if (unit.getId().equals(swNodeId)) {
-				unit.addUnitInstance(new UnitInstance(swNodeId + "_instance", swNodeId + "_processId",
-						State.RUNNING, instanceOs));
+				unit.addUnitInstance(new UnitInstance(instanceId(swNodeId), swNodeId + "_processId",
+						State.DEPLOYING, instanceOs));
 			} else if (unit.getId().equals(swNodeId2)) {
-				unit.addUnitInstance(new UnitInstance(swNodeId2 + "_instance", swNodeId2 + "_processId",
-						State.RUNNING, instanceOs));
+				unit.addUnitInstance(new UnitInstance(instanceId(swNodeId2), swNodeId2 + "_processId",
+						State.DEPLOYING, instanceOs));
 			}
 		}
 		return service;
+	}
+	
+	public static String osuInstanceId(String unitId) {
+		return unitId + "_osuInstance";
+	}
+	
+	public static String osuId(String unitId) {
+		return unitId + "_osu";
+	}
 
+	public static String instanceId(String unitId) {
+		return unitId + "_instance";
 	}
 }

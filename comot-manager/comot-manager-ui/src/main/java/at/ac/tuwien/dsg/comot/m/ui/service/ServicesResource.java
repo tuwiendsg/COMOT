@@ -87,6 +87,7 @@ public class ServicesResource {
 	@PostConstruct
 	public void startUp() {
 		log.info("REST resource created");
+
 	}
 
 	@POST

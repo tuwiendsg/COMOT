@@ -181,7 +181,7 @@ public class MelaClientTest extends AbstractTest {
 
 	@Test
 	public void removeService() throws EpsException, InterruptedException, JAXBException, URISyntaxException {
-		mela.setBaseUri(new URI("http://localhost:8180/MELA/REST_WS"));
+		mela.setBaseUri(new URI("http://128.130.172.215:8180/MELA/REST_WS"));
 		// mela.removeServiceDescription("HelloElasticityNoDB"); ExampleExecutableOnVM
 		mela.removeServiceDescription("HelloElasticityNoDB_1");
 

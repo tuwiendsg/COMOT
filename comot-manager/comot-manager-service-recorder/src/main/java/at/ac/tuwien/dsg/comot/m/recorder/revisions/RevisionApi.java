@@ -43,22 +43,20 @@ public class RevisionApi {
 	protected VersionManager versionManager;
 
 	@Transactional
-	public void createOrUpdateRegion(Object obj, String regionId, String changeType,
+	public void createOrUpdateRegion(Object obj, String regionId, String targetObjectId, String changeType,
 			Map<String, Object> changeProperties) throws IllegalArgumentException, IllegalAccessException {
-
-		// log.info("tx {}", TransactionSynchronizationManager.isActualTransactionActive());
-		// log.info("tx name {}", TransactionSynchronizationManager.getCurrentTransactionName());
 
 		ManagedRegion region = context.getBean(ConverterToInternal.class).convertToGraph(obj);
 		log.debug("region '{}'count nodes: {}, rels: {}", regionId, region.getNodes().size(), region.getRelationships()
 				.size());
 
-		versionManager.insertToDB(region, regionId, changeType, changeProperties);
+		versionManager.insertToDB(region, regionId, targetObjectId, changeType, changeProperties);
 	}
 
 	@Transactional
-	public void storeEvent(String regionId, String changeType, Map<String, Object> changeProperties) {
-		versionManager.storeChange(regionId, changeType, changeProperties, System.currentTimeMillis());
+	public void storeEvent(String regionId, String targetObjectId, String changeType,
+			Map<String, Object> changeProperties) {
+		versionManager.storeChange(regionId, targetObjectId, changeType, changeProperties, System.currentTimeMillis());
 	}
 
 	@Transactional

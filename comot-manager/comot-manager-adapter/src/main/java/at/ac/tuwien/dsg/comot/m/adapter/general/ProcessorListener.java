@@ -1,5 +1,6 @@
 package at.ac.tuwien.dsg.comot.m.adapter.general;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
@@ -94,6 +95,15 @@ public class ProcessorListener implements MessageListener {
 
 		} catch (Exception e) {
 
+			if (e instanceof ClassCastException) {
+				try {
+					String body = new String(message.getBody(), "UTF-8");
+					log.error("Unexpected message type: {}", body);
+				} catch (UnsupportedEncodingException e1) {
+					e1.printStackTrace();
+				}
+			}
+
 			try {
 				processor.getManager().sendException(serviceId, instanceId, e);
 			} catch (AmqpException | JAXBException e1) {
@@ -103,5 +113,4 @@ public class ProcessorListener implements MessageListener {
 		}
 
 	}
-
 }

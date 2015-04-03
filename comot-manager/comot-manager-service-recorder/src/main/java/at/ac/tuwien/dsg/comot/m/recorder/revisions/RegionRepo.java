@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.neo4j.cypher.javacompat.ExecutionEngine;
+import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.DynamicRelationshipType;
@@ -124,11 +125,22 @@ public class RegionRepo {
 		return !extractProps(currentState).equals(newState.getProperties());
 	}
 
+	@Transactional
+	public Node getStateAfterChange(String id, Long timestamp) {
+		return getState(id, timestamp + 1);
+	}
+
+	@Transactional
+	public Node getStateBeforeChange(String id, Long timestamp) {
+		return getState(id, timestamp);
+	}
+
 	/**
 	 * 
 	 * @param id
 	 * @param timestamp
 	 *            Time when the state was valid. Use Long.MAX_VALUE for the current state.
+	 * 
 	 * @return
 	 */
 	@Transactional
@@ -147,6 +159,7 @@ public class RegionRepo {
 				return rel.getEndNode();
 			}
 		}
+
 		return null;
 	}
 
@@ -207,6 +220,24 @@ public class RegionRepo {
 
 		return IteratorUtil.asIterable(iter);
 	}
+
+	@Transactional
+	public Iterable<Relationship> getAllCurrentStructuralRelsRecursiveFromObject(String id) {
+
+		ExecutionResult result = engine
+				.execute("match (r:_REGION {_id: '"
+						+ regionId
+						+ "'})-[]->(n:_IDENTITY {_id: '"
+						+ id
+						+ "'})-[rel_col * {to: 9223372036854775807}]->(m:_IDENTITY) UNWIND rel_col as rel return DISTINCT rel as dist_rel");
+
+		Iterator<Relationship> iter = result.columnAs("dist_rel");
+
+		return IteratorUtil.asIterable(iter);
+	}
+
+	// match (r:_REGION {_id: 'serviceId'})-[]->(n:_IDENTITY {_id: 'newTopo_UPDATED'})-[rel * {to:
+	// 9223372036854775807}]->(m:_IDENTITY) unwind rel as rrr return distinct(rrr)
 
 	@Transactional
 	public Iterable<Relationship> getAllStructuralRelsFromObject(String id, Long timestamp) {

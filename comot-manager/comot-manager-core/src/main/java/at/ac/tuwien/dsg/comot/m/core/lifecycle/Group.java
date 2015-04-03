@@ -82,8 +82,9 @@ public class Group implements Serializable {
 
 		if (members.isEmpty()) {
 			if (LifeCycleFactory.getLifeCycle(type).executeAction(parent.getCurrentState(), currentState, action) == null) {
-				log.warn("Action '{}' is not allowed in state '{}'. GroupId={} , type={}  <- the root of problem",
-						action, getCurrentState(), id, type);
+				log.warn(
+						"Action '{}' is not allowed in state '{}' patentState '{}'. GroupId={} , type={} <- the root of problem",
+						action, currentState, parent.getCurrentState(), id, type);
 				return false;
 			} else {
 				return true;

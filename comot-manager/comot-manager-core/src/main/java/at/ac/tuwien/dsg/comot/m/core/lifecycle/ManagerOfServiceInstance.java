@@ -241,13 +241,14 @@ public class ManagerOfServiceInstance {
 
 			State currentState = transitions.get(serviceId).getCurrentState();
 			State previousState = transitions.get(serviceId).getLastState();
-
-			// create binding
-			if (currentState == previousState) {
-				change = "FALSE";
-			} else {
-				change = "TRUE";
-			}
+			//
+			// // create binding
+			// if (currentState == previousState) {
+			// change = "FALSE";
+			// } else {
+			// change = "TRUE";
+			// }
+			change = Boolean.toString(transitions.get(serviceId).isFresh()).toUpperCase();
 
 			String bindingKey = csInstanceId + "." + change + "." + previousState + "." + currentState + "." + action
 					+ "." + groupManager.getGroup(groupId).getType() + "." + event.getOrigin();
@@ -256,7 +257,7 @@ public class ManagerOfServiceInstance {
 			if (service == null) {
 				service = infoService.getServiceInstance(serviceId, csInstanceId);
 			}
-			service = UtilsLc.removeProviderInfo(service);
+			// UtilsLc.removeProviderInfo(service);
 
 			StateMessage message = new StateMessage(event, transitions, service);
 

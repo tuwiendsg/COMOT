@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import javax.xml.bind.JAXBException;
 
@@ -14,6 +15,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.oasis.tosca.Definitions;
+import org.springframework.beans.BeansException;
 
 import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.EpsAction;
@@ -39,7 +41,7 @@ public class DeploymentTest extends AbstractTest {
 
 	@Before
 	public void setUp() throws JAXBException, IOException, ClassNotFoundException, ShutdownSignalException,
-			ConsumerCancelledException, InterruptedException, EpsException {
+			ConsumerCancelledException, InterruptedException, EpsException, BeansException, URISyntaxException {
 
 		staticDeplId = infoService.instanceIdOfStaticEps(Constants.SALSA_SERVICE_STATIC);
 		agent = new TestAgentAdapter("prototype", env.getProperty("uri.broker.host"));

@@ -37,9 +37,10 @@ public class Revision implements Serializable {
 		id = UUID.randomUUID().toString();
 	}
 
-	public Revision(Revision oldRev, String changeType, Map<String, Object> changeProperties, Long timestamp) {
+	public Revision(Revision oldRev, String changeType, String targetObjectId, Map<String, Object> changeProperties,
+			Long timestamp) {
 		this();
-		Change change = new Change(timestamp, changeType, changeProperties, oldRev, this);
+		Change change = new Change(timestamp, changeType, targetObjectId, changeProperties, oldRev, this);
 		this.setStart(change);
 		oldRev.setEnd(change);
 

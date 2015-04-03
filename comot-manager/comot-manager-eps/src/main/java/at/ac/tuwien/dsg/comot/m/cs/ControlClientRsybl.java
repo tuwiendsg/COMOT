@@ -173,22 +173,28 @@ public class ControlClientRsybl implements ControlClient {
 							if (event instanceof ActionPlanEvent) {
 								ActionPlanEvent apEvent = (ActionPlanEvent) event;
 
-								log.debug(
+								log.info(
 										"ALL onActionPlanEvent(serviceId={}, stage={}, type={}, strategies={}, constraints={}, effects={})",
 										apEvent.getServiceId(), apEvent.getStage(), apEvent.getType(),
-										apEvent.getStrategies(),
-										apEvent.getConstraints(), apEvent.getEffect());
+										apEvent.getStrategies(), apEvent.getConstraints(), apEvent.getEffect());
 
 							} else if (event instanceof ActionEvent) {
 								ActionEvent aEvent = (ActionEvent) event;
 
-								log.debug(
+								log.info(
 										"ALL onActionEvent(serviceId={}, stage={}, type={}, actionId={}, targetId={})",
-										aEvent.getServiceId(),
-										aEvent.getStage(), aEvent.getType(), aEvent.getActionId(), aEvent.getTargetId());
+										aEvent.getServiceId(), aEvent.getStage(), aEvent.getType(),
+										aEvent.getActionId(), aEvent.getTargetId());
 
+							} else if (event instanceof at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.CustomEvent) {
+								at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.CustomEvent aEvent = (at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.CustomEvent) event;
+
+								log.info(
+										"ALL onCustomEvent(serviceId={}, stage={}, type={}, targetId={}, message={})",
+										aEvent.getServiceId(), aEvent.getStage(), aEvent.getType(), aEvent.getTarget(),
+										aEvent.getMessage());
 							} else {
-								log.debug("ALL IEvent serviceId={} stage={} {}", event.getServiceId(),
+								log.warn("ALL unexpected IEvent serviceId={} stage={} {}", event.getServiceId(),
 										event.getStage(), obj);
 							}
 

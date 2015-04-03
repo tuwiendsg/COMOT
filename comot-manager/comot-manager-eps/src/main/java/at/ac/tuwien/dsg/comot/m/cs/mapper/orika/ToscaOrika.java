@@ -30,6 +30,7 @@ import org.springframework.stereotype.Component;
 import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties;
 import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties.SalsaMappingProperty;
 import at.ac.tuwien.dsg.cloud.salsa.tosca.extension.SalsaMappingProperties.SalsaMappingProperty.Property;
+import at.ac.tuwien.dsg.comot.m.cs.mapper.IdResolver;
 import at.ac.tuwien.dsg.comot.model.SyblDirective;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceTopology;
@@ -176,6 +177,8 @@ public class ToscaOrika {
 
 			// osu name
 			unit.getOsuInstance().getOsu().setName(unit.getId());
+			unit.getOsuInstance().setId(IdResolver.osuInstanceFromUnit(unit.getId()));
+			unit.getOsuInstance().getOsu().setId(IdResolver.osuFromUnit(unit.getId()));
 
 			// properties
 			if (node.getProperties() != null

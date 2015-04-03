@@ -13,16 +13,15 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
-import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
+import at.ac.tuwien.dsg.comot.m.core.analytics.AnalyticEngine;
+import at.ac.tuwien.dsg.comot.m.core.analytics.ResultLine;
 import at.ac.tuwien.dsg.comot.m.recorder.RecorderException;
 import at.ac.tuwien.dsg.comot.m.recorder.model.Change;
 import at.ac.tuwien.dsg.comot.m.recorder.out.ManagedObject;
@@ -39,15 +38,31 @@ public class RevisionResource {
 
 	@Autowired
 	protected RevisionApi revisionApi;
+	@Autowired
+	protected AnalyticEngine analyticEngine;
+
+	@GET
+	@Path("/{serviceId}/analytics/unitInstanceDeploymentEvents")
+	@Consumes(MediaType.WILDCARD)
+	public Response getUnitInstanceDeploymentEvents(
+			@PathParam("instanceId") String instanceId,
+			@PathParam("serviceId") String serviceId
+			) throws InstantiationException, IllegalAccessException, IllegalArgumentException, ClassNotFoundException,
+					RecorderException {
+
+		List<ResultLine> results = analyticEngine.deploymentEvents(serviceId, instanceId);
+
+		final GenericEntity<List<ResultLine>> list = new GenericEntity<List<ResultLine>>(results) {
+		};
+		return Response.ok(list).build();
+	}
 
 	@GET
 	@Path("/objects")
 	@Consumes(MediaType.WILDCARD)
 	public Response getManagedObjects(
 			@PathParam("instanceId") String instanceId
-			) throws EpsException,
-					ComotException, InstantiationException, IllegalAccessException, IllegalArgumentException,
-					ClassNotFoundException, RecorderException {
+			) {
 
 		List<ManagedObject> objects = revisionApi.getManagedObjects(instanceId);
 		final GenericEntity<List<ManagedObject>> list = new GenericEntity<List<ManagedObject>>(objects) {
@@ -62,9 +77,8 @@ public class RevisionResource {
 	public Response getRecording(
 			@PathParam("instanceId") String instanceId,
 			@PathParam("objectId") String objectId,
-			@PathParam("timestamp") Long timestamp) throws EpsException,
-			ComotException, InstantiationException, IllegalAccessException, IllegalArgumentException,
-			ClassNotFoundException, RecorderException {
+			@PathParam("timestamp") Long timestamp) throws InstantiationException, IllegalAccessException,
+			IllegalArgumentException, ClassNotFoundException, RecorderException {
 
 		log.info("getRevision(serviceId={}, objectId={}, timestamp={})", instanceId, objectId, timestamp);
 
@@ -90,8 +104,7 @@ public class RevisionResource {
 			@PathParam("instanceId") String instanceId,
 			@DefaultValue("0") @QueryParam("from") Long from,
 			@DefaultValue("9223372036854775807") @QueryParam("to") Long to) // def Long.MAX_VALUE
-			throws EpsException, ComotException, InstantiationException, IllegalAccessException,
-			IllegalArgumentException, ClassNotFoundException, RecorderException, JAXBException {
+	{
 
 		Change change = revisionApi.getAllChanges(instanceId, from, to);
 
@@ -114,8 +127,7 @@ public class RevisionResource {
 			@PathParam("objectId") String objectId,
 			@DefaultValue("0") @QueryParam("from") Long from,
 			@DefaultValue("9223372036854775807") @QueryParam("to") Long to) // def Long.MAX_VALUE
-			throws EpsException, ComotException, InstantiationException, IllegalAccessException,
-			IllegalArgumentException, ClassNotFoundException, RecorderException, JAXBException {
+	{
 
 		if (!revisionApi.verifyObject(instanceId, objectId)) {
 			throw new ComotIllegalArgumentException("For service " + instanceId + " there is no managed object "

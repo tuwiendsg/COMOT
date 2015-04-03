@@ -1,31 +1,63 @@
 {
-	"id" : "comot_tomcat_666cc9ba-6707-4716-842d-05bb129ab990",
-	"entity" : "at.ac.tuwien.dsg.comot.model.devel.structure.CloudService@5a4918d1",
+	"id" : "HelloElasticityNoDB",
+	"entity" : "at.ac.tuwien.dsg.comot.model.devel.structure.CloudService@685e8c9",
 	"children" : [{
-			"id" : "SampleService_test",
-			"entity" : "at.ac.tuwien.dsg.comot.model.devel.structure.ServiceTopology@294776e5",
+			"id" : "EventProcessingTopology",
+			"entity" : "at.ac.tuwien.dsg.comot.model.devel.structure.ServiceTopology@cba0e6db",
 			"children" : [{
-					"id" : "policeApp",
-					"entity" : "at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit@f282e042",
+					"id" : "EventProcessingUnitVM",
+					"entity" : "at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit@fa6466e7",
 					"children" : [{
-							"id" : "policeApp_instance_0",
-							"entity" : "at.ac.tuwien.dsg.comot.model.runtime.UnitInstance@14970fd4",
+							"id" : "HelloElasticityNoDB_1_EventProcessingUnitVM_1",
+							"entity" : "UnitInstance [nodeId=null, id=HelloElasticityNoDB_1_EventProcessingUnitVM_1, envId=a0cfd41e-dcb3-449e-8ac2-ed05edcdc0e3, ip=10.99.0.67, state=DEPLOYING, hostInstance=null]",
+							"children" : []
+						},{
+							"id" : "HelloElasticityNoDB_1_EventProcessingUnitVM_0",
+							"entity" : "UnitInstance [nodeId=null, id=HelloElasticityNoDB_1_EventProcessingUnitVM_0, envId=123c847c-5a8e-4566-b4ba-78ad027a914a, ip=10.99.0.48, state=RUNNING, hostInstance=null]",
+							"children" : []
+						},{
+							"id" : "HelloElasticityNoDB_1_EventProcessingUnitVM_2",
+							"entity" : "UnitInstance [nodeId=null, id=HelloElasticityNoDB_1_EventProcessingUnitVM_2, envId=510570c9-291e-4ec0-a197-7b0887f3c311, ip=10.99.0.72, state=RUNNING, hostInstance=null]",
 							"children" : []
 						}]
 				},{
-					"id" : "os_OF_tomcat_OF_policeApp",
-					"entity" : "at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit@8fc52d48",
+					"id" : "LoadBalancerUnit",
+					"entity" : "at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit@1b9973ff",
 					"children" : [{
-							"id" : "os_OF_tomcat_OF_policeApp_instance_0",
-							"entity" : "at.ac.tuwien.dsg.comot.model.runtime.UnitInstance@22115a9d",
+							"id" : "HelloElasticityNoDB_1_LoadBalancerUnit_0",
+							"entity" : "UnitInstance [nodeId=null, id=HelloElasticityNoDB_1_LoadBalancerUnit_0, envId=null, ip=null, state=RUNNING, hostInstance=HelloElasticityNoDB_1_LoadBalancerUnitVM_0]",
+							"children" : []
+						},{
+							"id" : "LoadBalancer_IP_information",
+							"entity" : "at.ac.tuwien.dsg.comot.m.common.Navigator$HelperNode@efab2e9",
 							"children" : []
 						}]
 				},{
-					"id" : "tomcat_OF_policeApp",
-					"entity" : "at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit@979276f5",
+					"id" : "LoadBalancerUnitVM",
+					"entity" : "at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit@9b0c06b6",
 					"children" : [{
-							"id" : "tomcat_OF_policeApp_instance_0",
-							"entity" : "at.ac.tuwien.dsg.comot.model.runtime.UnitInstance@21540ae4",
+							"id" : "HelloElasticityNoDB_1_LoadBalancerUnitVM_0",
+							"entity" : "UnitInstance [nodeId=null, id=HelloElasticityNoDB_1_LoadBalancerUnitVM_0, envId=d89ae085-61a3-470f-8179-576437e6ca7a, ip=10.99.0.46, state=RUNNING, hostInstance=null]",
+							"children" : []
+						}]
+				},{
+					"id" : "EventProcessingUnit",
+					"entity" : "at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit@513e2c70",
+					"children" : [{
+							"id" : "EventProcessingUnit_LoadBalancer_IP_Req",
+							"entity" : "at.ac.tuwien.dsg.comot.m.common.Navigator$HelperNode@6cf7e6ad",
+							"children" : []
+						},{
+							"id" : "HelloElasticityNoDB_1_EventProcessingUnit_1",
+							"entity" : "UnitInstance [nodeId=null, id=HelloElasticityNoDB_1_EventProcessingUnit_1, envId=null, ip=null, state=DEPLOYING, hostInstance=HelloElasticityNoDB_1_EventProcessingUnitVM_1]",
+							"children" : []
+						},{
+							"id" : "HelloElasticityNoDB_1_EventProcessingUnit_2",
+							"entity" : "UnitInstance [nodeId=null, id=HelloElasticityNoDB_1_EventProcessingUnit_2, envId=null, ip=null, state=DEPLOYING, hostInstance=HelloElasticityNoDB_1_EventProcessingUnitVM_2]",
+							"children" : []
+						},{
+							"id" : "HelloElasticityNoDB_1_EventProcessingUnit_0",
+							"entity" : "UnitInstance [nodeId=null, id=HelloElasticityNoDB_1_EventProcessingUnit_0, envId=null, ip=null, state=RUNNING, hostInstance=HelloElasticityNoDB_1_EventProcessingUnitVM_0]",
 							"children" : []
 						}]
 				}]

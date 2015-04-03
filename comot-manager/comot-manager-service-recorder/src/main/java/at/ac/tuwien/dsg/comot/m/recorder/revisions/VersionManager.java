@@ -41,7 +41,7 @@ public class VersionManager {
 	@Autowired
 	protected Neo4jOperations neo;
 
-	protected void insertToDB(ManagedRegion region, String regionId, String changeType,
+	protected void insertToDB(ManagedRegion region, String regionId, String targetObjectId, String changeType,
 			Map<String, Object> changeProperties) {
 
 		Node regionNode, revisionNode;
@@ -71,7 +71,7 @@ public class VersionManager {
 
 		// mark new version
 		// if (modified) {
-		storeChange(regionId, changeType, changeProperties, time);
+		storeChange(regionId, targetObjectId, changeType, changeProperties, time);
 		// }
 
 		for (String label : region.getClasses().keySet()) {
@@ -80,7 +80,8 @@ public class VersionManager {
 
 	}
 
-	protected void storeChange(String regionId, String changeType, Map<String, Object> changeProperties, Long time) {
+	protected void storeChange(String regionId, String targetObjectId, String changeType,
+			Map<String, Object> changeProperties, Long time) {
 
 		Node regionNode, revisionNode, lastRevisionNode;
 		Revision revision;
@@ -93,7 +94,7 @@ public class VersionManager {
 
 		Revision lastRevision = revisionRepo.findOne(lastRevisionNode.getId());
 
-		revision = revisionRepo.save(new Revision(lastRevision, changeType, changeProperties, time));
+		revision = revisionRepo.save(new Revision(lastRevision, changeType, targetObjectId, changeProperties, time));
 		revisionNode = db.getNodeById(revision.getNodeId());
 
 		// delete old _LAST_REV
@@ -176,8 +177,11 @@ public class VersionManager {
 			}
 		}
 
+		log.info("region.getStartNode().getBusinessId() " + region.getStartNode().getBusinessId());
+
 		// set outdated rels
-		for (Relationship rel : repo.getAllCurrentStructuralRels()) {
+		for (Relationship rel : repo.getAllCurrentStructuralRelsRecursiveFromObject(region.getStartNode()
+				.getBusinessId())) {
 			if (!currentRels.contains(rel.getId())) {
 				modified = true;
 				rel.setProperty(InternalRel.PROPERTY_TO, time);
@@ -210,8 +214,13 @@ public class VersionManager {
 
 			businessId = connectedNode.getProperty(InternalNode.ID).toString();
 
+			Node state = repo.getState(businessId, timestamp);
+			if (state == null) {
+				continue;
+			}
+
 			internalNode = new InternalNode();
-			internalNode.setProperties(repo.extractProps(repo.getState(businessId, timestamp)));
+			internalNode.setProperties(repo.extractProps(state));
 			internalNode.setBusinessId(businessId);
 
 			// set label

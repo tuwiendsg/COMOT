@@ -70,15 +70,14 @@ public class Coordinator {
 		return instanceId;
 	}
 
-	public void startServiceInstance(String serviceId, String instanceId) throws IOException, JAXBException,
-			ClassNotFoundException {
+	public void startServiceInstance(String serviceId, String instanceId) throws IOException, JAXBException {
 
 		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STARTED));
 
 	}
 
 	public void stopServiceInstance(String serviceId, String instanceId)
-			throws IOException, JAXBException, ClassNotFoundException {
+			throws IOException, JAXBException {
 
 		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STOPPED));
 
@@ -93,7 +92,7 @@ public class Coordinator {
 	}
 
 	public void assignSupportingOsu(String serviceId, String instanceId, String osuInstanceId)
-			throws ClassNotFoundException, IOException, JAXBException {
+			throws IOException, JAXBException {
 
 		// infoService.assignSupportingService(serviceId, instanceId, osuInstanceId);
 
@@ -142,8 +141,7 @@ public class Coordinator {
 			String csInstanceId,
 			String epsId,
 			String eventId,
-			String optionalInput)
-			throws ClassNotFoundException, IOException, JAXBException {
+			String optionalInput) throws AmqpException, JAXBException {
 
 		if (StringUtils.isBlank(eventId)) {
 			return;

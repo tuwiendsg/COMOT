@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import javax.xml.bind.JAXBException;
 
@@ -12,6 +13,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.oasis.tosca.Definitions;
+import org.springframework.beans.BeansException;
 
 import at.ac.tuwien.dsg.comot.m.common.ComotAction;
 import at.ac.tuwien.dsg.comot.m.common.Constants;
@@ -37,7 +39,8 @@ public class MonitoringTest extends AbstractTest {
 	protected String staticMonitoringId;
 
 	@Before
-	public void setUp() throws JAXBException, IOException, ClassNotFoundException, EpsException {
+	public void setUp() throws JAXBException, IOException, ClassNotFoundException, EpsException, BeansException,
+			URISyntaxException {
 
 		agent = new TestAgentAdapter("prototype", env.getProperty("uri.broker.host"));
 

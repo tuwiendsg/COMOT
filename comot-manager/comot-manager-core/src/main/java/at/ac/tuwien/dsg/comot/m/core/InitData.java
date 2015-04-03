@@ -135,7 +135,7 @@ public class InitData {
 		try {
 
 			infoService.createService(mapperTosca.createModel(UtilsCs
-					.loadTosca("./../resources/test/elasticWS/elasticWS_tosca_enhanced.xml")));
+					.loadTosca("./../resources/test/helloElasticity/HelloElasticityNoDB_Constraint.xml")));
 
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();

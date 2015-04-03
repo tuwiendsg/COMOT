@@ -230,8 +230,6 @@ public class InformationClient {
 		boolean value = false;
 		CloudService serv = client.getServiceInstance(instanceId);
 
-		log.info("wwwwwwwwwwwwwwwwwww {}", Utils.asJsonString(serv));
-
 		for (OsuInstance osuInstance : serv.getInstancesList().get(0).getSupport()) {
 			if (osuInstance.getOsu().getId().equals(osuId)) {
 				value = true;
@@ -261,6 +259,7 @@ public class InformationClient {
 	public String instanceIdOfStaticEps(String epsId) throws EpsException {
 
 		for (OsuInstance osuInst : client.getOsuInstances()) {
+
 			if (osuInst.getOsu().getId().equals(epsId)) {
 				return osuInst.getId();
 			}

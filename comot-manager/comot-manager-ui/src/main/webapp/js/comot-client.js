@@ -288,4 +288,13 @@
 		request.url = recordings + csInstanceId + "/objects";
 		return $.ajax(request);
 	}
+	
+	exports.getUnitInstanceDeploymentEvents = function(serviceId, csInstanceId, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "GET";
+		request.dataType = "json"
+		request.url = recordings + csInstanceId + "/"+serviceId+"/analytics/unitInstanceDeploymentEvents";
+		return $.ajax(request);
+	}
 }));

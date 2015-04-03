@@ -28,6 +28,8 @@ public class Change implements Serializable {
 	private static final long serialVersionUID = -4184717754543656669L;
 	public static final String REL = "CHANGE";
 
+	public static final String DYNAMIC_PROPERTIES = "properties-";
+
 	@XmlTransient
 	@GraphId
 	protected Long graphId;
@@ -35,6 +37,8 @@ public class Change implements Serializable {
 	protected Long timestamp;
 	@XmlAttribute
 	protected String type;
+	@XmlAttribute
+	protected String targetObjectId;
 	@XmlTransient
 	protected DynamicProperties properties; // instead of Map<String, String>
 
@@ -53,12 +57,14 @@ public class Change implements Serializable {
 		this.type = type;
 	}
 
-	public Change(Long timestamp, String type, Map<String, Object> changeProperties, Revision from, Revision to) {
+	public Change(Long timestamp, String type, String targetObjectId, Map<String, Object> changeProperties,
+			Revision from, Revision to) {
 		super();
 		this.timestamp = timestamp;
 		this.type = type;
 		this.from = from;
 		this.to = to;
+		this.targetObjectId = targetObjectId;
 		if (changeProperties != null) {
 			setPropertiesMap(changeProperties);
 		}
@@ -69,6 +75,10 @@ public class Change implements Serializable {
 			properties = new ComotDynamicPropertiesContainer();
 		}
 		properties.setProperty(key, value);
+	}
+
+	public Object getProperty(String key) {
+		return properties.getProperty(key);
 	}
 
 	protected Map<String, Object> convert(DynamicProperties props) {
@@ -98,6 +108,10 @@ public class Change implements Serializable {
 
 	public void setPropertiesMap(Map<String, Object> properties) {
 		this.properties = convert(properties);
+	}
+
+	public static String propertyKey(String name) {
+		return DYNAMIC_PROPERTIES + name;
 	}
 
 	// GENERATED METHODS
@@ -150,9 +164,18 @@ public class Change implements Serializable {
 		this.properties = properties;
 	}
 
+	public String getTargetObjectId() {
+		return targetObjectId;
+	}
+
+	public void setTargetObjectId(String targetObjectId) {
+		this.targetObjectId = targetObjectId;
+	}
+
 	@Override
 	public String toString() {
-		return "Change [graphId=" + graphId + ", timestamp=" + timestamp + ", type=" + type + ", from="
+		return "Change [graphId=" + graphId + ", targetObjectId=" + targetObjectId + ", timestamp=" + timestamp
+				+ ", type=" + type + ", from="
 				+ ((from == null) ? null : from.getNodeId())
 				+ ", to=" + ((to == null) ? null : to.getNodeId()) + "]";
 	}

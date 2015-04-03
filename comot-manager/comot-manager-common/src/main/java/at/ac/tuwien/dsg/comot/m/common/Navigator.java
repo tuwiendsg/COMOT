@@ -99,6 +99,30 @@ public class Navigator {
 		return result;
 	}
 
+	public Set<UnitInstance> getHostsRecursive(UnitInstance instance) {
+		Set<UnitInstance> hosts = new HashSet<>();
+
+		if (instance.getHostInstance() != null) {
+			UnitInstance host = instance.getHostInstance();
+			hosts.add(host);
+			hosts.addAll(getHostsRecursive(host));
+		}
+
+		return hosts;
+	}
+
+	public Set<ServiceUnit> getHostsRecursive(ServiceUnit unit) {
+		Set<ServiceUnit> hosts = new HashSet<>();
+
+		if (unit.getHost() != null) {
+			ServiceUnit host = unit.getHost().getTo();
+			hosts.add(host);
+			hosts.addAll(getHostsRecursive(host));
+		}
+
+		return hosts;
+	}
+
 	public Set<ServiceUnit> getHostedOn(ServiceUnit node) {
 		return getHostedOn(node, getParentTopologyFor(node.getId()).getServiceUnits());
 	}

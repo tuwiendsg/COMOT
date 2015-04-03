@@ -82,7 +82,7 @@ public abstract class AbstractTest {
 		srv.stop();
 	}
 
-	public CloudService update1(CloudService service) throws ClassNotFoundException, IOException {
+	public static CloudService update1(CloudService service) throws ClassNotFoundException, IOException {
 		CloudService updatedService = (CloudService) Utils.deepCopy(service);// createService();
 
 		// add parameter -> create new state & update relation to the old one
@@ -112,7 +112,7 @@ public abstract class AbstractTest {
 		return updatedService;
 	}
 
-	public CloudService update2(CloudService service) throws ClassNotFoundException, IOException {
+	public static CloudService update2(CloudService service) throws ClassNotFoundException, IOException {
 
 		CloudService finalService = (CloudService) Utils.deepCopy(service);
 

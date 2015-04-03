@@ -17,4 +17,11 @@ public interface ChangeRepo extends GraphRepository<Change> {
 			+ "match ()-[ch:CHANGE]->(m) where (ch.timestamp >= {1} AND ch.timestamp <= {2}) return ch ORDER BY ch.timestamp")
 	Iterable<Change> getAllChangesInRange(String regionId, Long from, Long to);
 
+	@Query("match (r:_REGION {_id: {0}} )-[:_FIRST_REV]-> ()-[*]->(m:_Revision) "
+			+ "match ()-[ch:CHANGE]->(m) where ( ch.targetObjectId = {1} AND ch.timestamp >= {2} AND ch.timestamp <= {3} ) return ch ORDER BY ch.timestamp")
+	Iterable<Change> getAllChangesInRangeForObject(String regionId, String targetObjectId, Long from, Long to);
+
+	@Query("match (r:_REGION {_id: {0}} )-[:_FIRST_REV]-> ()-[*]->(m:_Revision) "
+			+ "match ()-[ch:CHANGE]->(m) where ch.timestamp = {1} return ch")
+	Change getByTimestamp(String regionId, Long timestamp);
 }

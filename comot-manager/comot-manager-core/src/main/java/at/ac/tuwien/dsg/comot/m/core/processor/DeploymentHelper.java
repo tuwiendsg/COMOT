@@ -70,7 +70,7 @@ public class DeploymentHelper {
 			boolean notAllRunning = false;
 			CloudService serviceReturned;
 
-			service = UtilsLc.removeProviderInfo(service);
+			UtilsLc.removeProviderInfo(service);
 
 			do {
 
@@ -80,7 +80,7 @@ public class DeploymentHelper {
 					currentStates = new HashMap<>();
 					notAllRunning = false;
 
-					Thread.sleep(1000);
+					Thread.sleep(2000);
 
 					serviceReturned = deployment.refreshStatus(currentStates, service);
 					serviceReturned.setId(serviceId);
@@ -174,6 +174,8 @@ public class DeploymentHelper {
 				if (action == null) {
 					log.error("invalid transitions {} -> {}", lcStateOld, lcStateNew);
 				} else {
+					log.info("creating ModifyingLifeCycleEvent for: {}, navigator: {}", uInstId, nav);
+
 					manager.sendLifeCycle(
 							Type.INSTANCE,
 							new ModifyingLifeCycleEvent(serviceId, instanceId, uInstId,
@@ -182,7 +184,6 @@ public class DeploymentHelper {
 				}
 			}
 		}
-
 	}
 
 	@Async
@@ -199,7 +200,7 @@ public class DeploymentHelper {
 			String stateNew;
 			CloudService serviceReturned;
 
-			service = UtilsLc.removeProviderInfo(service);
+			UtilsLc.removeProviderInfo(service);
 			service.setId(instanceId);
 			service.setName(instanceId);
 
@@ -238,7 +239,6 @@ public class DeploymentHelper {
 							evaluateChangeOfOneUnitInstance(serviceId, instanceId, uInstId, stateNew, lcStateOld,
 									lcStateNew,
 									serviceReturned);
-
 						}
 					}
 
@@ -253,7 +253,6 @@ public class DeploymentHelper {
 									inst.getId(), Action.UNDEPLOYED));
 
 							iterator.remove();
-
 						}
 					}
 

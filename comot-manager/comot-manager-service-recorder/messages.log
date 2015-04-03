@@ -153,3 +153,266 @@
 2015-03-28 13:34:02.737+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
 2015-03-28 13:35:26.682+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
 2015-03-28 13:36:24.616+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-03-31 07:02:34.869+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-03-31 07:02:37.208+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-03-31 07:02:39.208+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-03-31 07:02:41.700+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-03-31 07:02:44.123+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-03-31 07:02:46.305+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-03-31 08:30:50.785+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-03-31 08:42:20.372+0000 ERROR [org.neo4j]: Failed to start Neo Server on port [7474] Starting Neo4j Server failed: com/sun/jersey/server/impl/inject/AbstractHttpContextInjectable
+org.neo4j.server.ServerStartupException: Starting Neo4j Server failed: com/sun/jersey/server/impl/inject/AbstractHttpContextInjectable
+	at org.neo4j.server.AbstractNeoServer.start(AbstractNeoServer.java:245)
+	at org.neo4j.server.Bootstrapper.start(Bootstrapper.java:108)
+	at org.neo4j.server.Bootstrapper.start(Bootstrapper.java:89)
+	at at.ac.tuwien.dsg.comot.m.recorder.test.AbstractTest.setUp(AbstractTest.java:77)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:47)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:44)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:24)
+	at org.springframework.test.context.junit4.statements.RunBeforeTestMethodCallbacks.evaluate(RunBeforeTestMethodCallbacks.java:72)
+	at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27)
+	at org.springframework.test.context.junit4.statements.RunAfterTestMethodCallbacks.evaluate(RunAfterTestMethodCallbacks.java:81)
+	at org.springframework.test.context.junit4.statements.SpringRepeat.evaluate(SpringRepeat.java:72)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:271)
+	at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.runChild(SpringJUnit4ClassRunner.java:216)
+	at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.runChild(SpringJUnit4ClassRunner.java:82)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:238)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:63)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:236)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:53)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:229)
+	at org.springframework.test.context.junit4.statements.RunBeforeTestClassCallbacks.evaluate(RunBeforeTestClassCallbacks.java:60)
+	at org.springframework.test.context.junit4.statements.RunAfterTestClassCallbacks.evaluate(RunAfterTestClassCallbacks.java:67)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:309)
+	at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.run(SpringJUnit4ClassRunner.java:162)
+	at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:50)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:459)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:675)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:382)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:192)
+Caused by: java.lang.NoClassDefFoundError: com/sun/jersey/server/impl/inject/AbstractHttpContextInjectable
+	at java.lang.ClassLoader.defineClass1(Native Method)
+	at java.lang.ClassLoader.defineClass(ClassLoader.java:800)
+	at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142)
+	at java.net.URLClassLoader.defineClass(URLClassLoader.java:449)
+	at java.net.URLClassLoader.access$100(URLClassLoader.java:71)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:361)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:355)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:354)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:425)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:358)
+	at java.lang.ClassLoader.defineClass1(Native Method)
+	at java.lang.ClassLoader.defineClass(ClassLoader.java:800)
+	at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142)
+	at java.net.URLClassLoader.defineClass(URLClassLoader.java:449)
+	at java.net.URLClassLoader.access$100(URLClassLoader.java:71)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:361)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:355)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:354)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:425)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:358)
+	at org.neo4j.server.AbstractNeoServer.createDefaultInjectables(AbstractNeoServer.java:705)
+	at org.neo4j.server.AbstractNeoServer.configureWebServer(AbstractNeoServer.java:421)
+	at org.neo4j.server.AbstractNeoServer.start(AbstractNeoServer.java:204)
+	... 33 more
+Caused by: java.lang.ClassNotFoundException: com.sun.jersey.server.impl.inject.AbstractHttpContextInjectable
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:366)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:355)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:354)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:425)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:358)
+	... 60 more
+2015-03-31 08:45:09.260+0000 ERROR [org.neo4j]: Failed to start Neo Server on port [7474] Starting Neo4j Server failed: com/sun/jersey/server/impl/inject/AbstractHttpContextInjectable
+org.neo4j.server.ServerStartupException: Starting Neo4j Server failed: com/sun/jersey/server/impl/inject/AbstractHttpContextInjectable
+	at org.neo4j.server.AbstractNeoServer.start(AbstractNeoServer.java:245)
+	at org.neo4j.server.Bootstrapper.start(Bootstrapper.java:108)
+	at org.neo4j.server.Bootstrapper.start(Bootstrapper.java:89)
+	at at.ac.tuwien.dsg.comot.m.recorder.test.AbstractTest.setUp(AbstractTest.java:77)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:47)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:44)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:24)
+	at org.springframework.test.context.junit4.statements.RunBeforeTestMethodCallbacks.evaluate(RunBeforeTestMethodCallbacks.java:72)
+	at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27)
+	at org.springframework.test.context.junit4.statements.RunAfterTestMethodCallbacks.evaluate(RunAfterTestMethodCallbacks.java:81)
+	at org.springframework.test.context.junit4.statements.SpringRepeat.evaluate(SpringRepeat.java:72)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:271)
+	at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.runChild(SpringJUnit4ClassRunner.java:216)
+	at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.runChild(SpringJUnit4ClassRunner.java:82)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:238)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:63)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:236)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:53)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:229)
+	at org.springframework.test.context.junit4.statements.RunBeforeTestClassCallbacks.evaluate(RunBeforeTestClassCallbacks.java:60)
+	at org.springframework.test.context.junit4.statements.RunAfterTestClassCallbacks.evaluate(RunAfterTestClassCallbacks.java:67)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:309)
+	at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.run(SpringJUnit4ClassRunner.java:162)
+	at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:50)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:459)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:675)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:382)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:192)
+Caused by: java.lang.NoClassDefFoundError: com/sun/jersey/server/impl/inject/AbstractHttpContextInjectable
+	at java.lang.ClassLoader.defineClass1(Native Method)
+	at java.lang.ClassLoader.defineClass(ClassLoader.java:800)
+	at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142)
+	at java.net.URLClassLoader.defineClass(URLClassLoader.java:449)
+	at java.net.URLClassLoader.access$100(URLClassLoader.java:71)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:361)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:355)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:354)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:425)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:358)
+	at java.lang.ClassLoader.defineClass1(Native Method)
+	at java.lang.ClassLoader.defineClass(ClassLoader.java:800)
+	at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142)
+	at java.net.URLClassLoader.defineClass(URLClassLoader.java:449)
+	at java.net.URLClassLoader.access$100(URLClassLoader.java:71)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:361)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:355)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:354)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:425)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:358)
+	at org.neo4j.server.AbstractNeoServer.createDefaultInjectables(AbstractNeoServer.java:705)
+	at org.neo4j.server.AbstractNeoServer.configureWebServer(AbstractNeoServer.java:421)
+	at org.neo4j.server.AbstractNeoServer.start(AbstractNeoServer.java:204)
+	... 33 more
+Caused by: java.lang.ClassNotFoundException: com.sun.jersey.server.impl.inject.AbstractHttpContextInjectable
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:366)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:355)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:354)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:425)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:358)
+	... 60 more
+2015-03-31 08:54:06.617+0000 ERROR [org.neo4j]: Failed to start Neo Server on port [7474] Starting Neo4j Server failed: com/sun/jersey/spi/inject/InjectableProvider
+org.neo4j.server.ServerStartupException: Starting Neo4j Server failed: com/sun/jersey/spi/inject/InjectableProvider
+	at org.neo4j.server.AbstractNeoServer.start(AbstractNeoServer.java:245)
+	at org.neo4j.server.Bootstrapper.start(Bootstrapper.java:108)
+	at org.neo4j.server.Bootstrapper.start(Bootstrapper.java:89)
+	at at.ac.tuwien.dsg.comot.m.recorder.test.AbstractTest.setUp(AbstractTest.java:77)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:47)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:44)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:24)
+	at org.springframework.test.context.junit4.statements.RunBeforeTestMethodCallbacks.evaluate(RunBeforeTestMethodCallbacks.java:72)
+	at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27)
+	at org.springframework.test.context.junit4.statements.RunAfterTestMethodCallbacks.evaluate(RunAfterTestMethodCallbacks.java:81)
+	at org.springframework.test.context.junit4.statements.SpringRepeat.evaluate(SpringRepeat.java:72)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:271)
+	at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.runChild(SpringJUnit4ClassRunner.java:216)
+	at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.runChild(SpringJUnit4ClassRunner.java:82)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:238)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:63)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:236)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:53)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:229)
+	at org.springframework.test.context.junit4.statements.RunBeforeTestClassCallbacks.evaluate(RunBeforeTestClassCallbacks.java:60)
+	at org.springframework.test.context.junit4.statements.RunAfterTestClassCallbacks.evaluate(RunAfterTestClassCallbacks.java:67)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:309)
+	at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.run(SpringJUnit4ClassRunner.java:162)
+	at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:50)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:459)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:675)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:382)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:192)
+Caused by: java.lang.NoClassDefFoundError: com/sun/jersey/spi/inject/InjectableProvider
+	at java.lang.ClassLoader.defineClass1(Native Method)
+	at java.lang.ClassLoader.defineClass(ClassLoader.java:800)
+	at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142)
+	at java.net.URLClassLoader.defineClass(URLClassLoader.java:449)
+	at java.net.URLClassLoader.access$100(URLClassLoader.java:71)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:361)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:355)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:354)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:425)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:358)
+	at java.lang.ClassLoader.defineClass1(Native Method)
+	at java.lang.ClassLoader.defineClass(ClassLoader.java:800)
+	at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142)
+	at java.net.URLClassLoader.defineClass(URLClassLoader.java:449)
+	at java.net.URLClassLoader.access$100(URLClassLoader.java:71)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:361)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:355)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:354)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:425)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:358)
+	at org.neo4j.server.AbstractNeoServer.createDefaultInjectables(AbstractNeoServer.java:705)
+	at org.neo4j.server.AbstractNeoServer.configureWebServer(AbstractNeoServer.java:421)
+	at org.neo4j.server.AbstractNeoServer.start(AbstractNeoServer.java:204)
+	... 33 more
+Caused by: java.lang.ClassNotFoundException: com.sun.jersey.spi.inject.InjectableProvider
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:366)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:355)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:354)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:425)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:358)
+	... 60 more
+2015-03-31 15:59:19.631+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-02 14:06:01.072+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-02 14:06:04.069+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-02 14:06:07.934+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-02 14:06:11.767+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-02 14:06:14.412+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-02 14:27:34.525+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-02 14:27:37.100+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-02 14:27:39.241+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-02 14:27:41.962+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-02 14:27:44.628+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-02 14:27:46.961+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-02 14:40:56.423+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-02 14:43:39.138+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-02 14:44:21.015+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-02 14:44:57.205+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-03 19:28:52.571+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-03 19:30:20.308+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-03 19:30:53.460+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-03 19:31:19.916+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-03 19:35:41.269+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-03 19:39:20.362+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-03 19:42:34.048+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-03 19:42:37.665+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-03 19:42:39.917+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-03 19:42:42.803+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-03 19:42:45.664+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-03 19:42:49.274+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-03 19:42:51.799+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-03 19:45:19.952+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-03 19:46:43.299+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-03 19:48:39.611+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-03 19:49:29.681+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]
+2015-04-03 19:50:05.782+0000 INFO  [org.neo4j]: Successfully shutdown Neo Server on port [7474], database [unknown location]

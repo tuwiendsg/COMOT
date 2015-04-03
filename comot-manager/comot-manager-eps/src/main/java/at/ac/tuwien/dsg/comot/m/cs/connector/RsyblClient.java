@@ -61,7 +61,7 @@ public class RsyblClient extends ServiceClient {
 
 	public void serviceDescription(String serviceId, String cloudServiceXML) throws EpsException {
 
-		log.trace("serviceDescription {}", cloudServiceXML);
+		log.debug("serviceDescription {}", cloudServiceXML);
 
 		Response response = client.target(getBaseUri())
 				.path(SERV_DESCRIPTION_PATH)
@@ -80,7 +80,7 @@ public class RsyblClient extends ServiceClient {
 			throws EpsException {
 
 		try {
-			log.trace("serviceDeployment {}", UtilsCs.asString(deploymentDescription));
+			log.debug("serviceDeployment {}", UtilsCs.asString(deploymentDescription));
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}

@@ -56,7 +56,6 @@ public class EpsBuilder extends Processor {
 		admin.declareExchange(new TopicExchange(Constants.EXCHANGE_DYNAMIC_REGISTRATION, false, false));
 
 		infoService.deeteAll();
-
 		context.getBean(InitData.class).setUpTestData();
 
 		// create static EPSes

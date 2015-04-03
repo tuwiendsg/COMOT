@@ -11,6 +11,7 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import at.ac.tuwien.dsg.comot.m.adapter.UtilsLc;
 import at.ac.tuwien.dsg.comot.m.adapter.general.Processor;
 import at.ac.tuwien.dsg.comot.m.common.events.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.events.ExceptionMessage;
@@ -31,7 +32,6 @@ public class Recording extends Processor {
 
 	public static final String PROP_ORIGIN = "origin";
 	public static final String PROP_MSG = "msg";
-	public static final String PROP_TARGET = "target";
 	public static final String PROP_EVENT_NAME = "eventName";
 	public static final String PROP_EVENT_TIME = "eventTime";
 	public static final String PROP_EXCEPTION = "exception";
@@ -62,13 +62,15 @@ public class Recording extends Processor {
 
 		Map<String, Object> changeProperties = new HashMap<>();
 		changeProperties.put(PROP_ORIGIN, originId);
-		changeProperties.put(PROP_TARGET, groupId);
+		// changeProperties.put(PROP_TARGET, groupId);
 		changeProperties.put(PROP_EVENT_NAME, action.toString());
 		changeProperties.put(PROP_EVENT_TIME, event.getTime());
 
+		UtilsLc.removeProviderInfoExceptType(service);
+
 		// log.info(logId() + "onMessage {}", Utils.asJsonString(msg));
 
-		revisionApi.createOrUpdateRegion(service, instanceId, CHANGE_TYPE_LIFECYCLE, changeProperties);
+		revisionApi.createOrUpdateRegion(service, instanceId, groupId, CHANGE_TYPE_LIFECYCLE, changeProperties);
 
 	}
 
@@ -80,7 +82,7 @@ public class Recording extends Processor {
 
 		Map<String, Object> changeProperties = new HashMap<>();
 		changeProperties.put(PROP_ORIGIN, originId);
-		changeProperties.put(PROP_TARGET, groupId);
+		// changeProperties.put(PROP_TARGET, groupId);
 		changeProperties.put(PROP_EVENT_NAME, event);
 		changeProperties.put(PROP_EVENT_TIME, eventMsg.getTime());
 		if (eventMsg.getMessage() != null) {
@@ -88,7 +90,7 @@ public class Recording extends Processor {
 		}
 
 		if (revisionApi.verifyObject(instanceId, serviceId)) {
-			revisionApi.storeEvent(instanceId, CHANGE_TYPE_CUSTOM, changeProperties);
+			revisionApi.storeEvent(instanceId, groupId, CHANGE_TYPE_CUSTOM, changeProperties);
 		} else {
 			log.error("Custom event happened, but no managed region. {}", msg.getEvent());
 		}

@@ -26,6 +26,11 @@ public class Constants {
 	 */
 	public static final String EXCHANGE_EXCEPTIONS = "EXCHANGE_EXCEPTIONS";
 
+	// public static String bindingLifeCycle(String instanceId, boolean change, State before, State after, Action event,
+	// Type target, String originId){
+	//
+	// }
+
 	public static final String TYPE_ACTION = "TYPE_ACTION";
 
 	public static final String SALSA_SERVICE_STATIC = "SALSA_SERVICE";
@@ -58,4 +63,5 @@ public class Constants {
 	public static final String EPS_INSTANCE_ONE = "epsesInstances/{epsInstanceId}";
 
 	public static final String DELETE_ALL = "all";
+
 }

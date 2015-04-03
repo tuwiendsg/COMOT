@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Future;
 
 import javax.xml.bind.JAXBException;
@@ -47,7 +48,7 @@ public class Deployment extends Processor {
 	@Autowired
 	protected DeploymentHelper helper;
 
-	protected Map<String, Future<Object>> tasks = Collections.synchronizedMap(new HashMap<String, Future<Object>>());
+	protected Map<String, StatusTask> tasks = Collections.synchronizedMap(new HashMap<String, StatusTask>());
 
 	@Override
 	public void start() throws EpsException {
@@ -68,9 +69,9 @@ public class Deployment extends Processor {
 		List<Binding> bindings = new ArrayList<>();
 
 		bindings.add(bindingLifeCycle(queueName,
-				instanceId + ".TRUE.*.*." + Action.STARTED + "." + Type.SERVICE + ".#"));
+				instanceId + ".*.*.*." + Action.STARTED + "." + Type.SERVICE + ".#"));
 		bindings.add(bindingLifeCycle(queueName,
-				instanceId + ".TRUE.*.*." + Action.STOPPED + "." + Type.SERVICE + ".#"));
+				instanceId + ".*.*.*." + Action.STOPPED + "." + Type.SERVICE + ".#"));
 		bindings.add(bindingLifeCycle(queueName,
 				instanceId + ".TRUE.*.*." + Action.DEPLOYMENT_STARTED + "." + Type.SERVICE + "." + getId() + ".#"));
 		bindings.add(bindingLifeCycle(queueName,
@@ -109,13 +110,20 @@ public class Deployment extends Processor {
 
 		} else if (action == Action.ELASTIC_CHANGE_STARTED) {
 
-			tasks.put(uniqueTaskId(instanceId, groupId),
-					helper.monitoringStatusUntilInterupted(serviceId, instanceId, service));
+			if (!tasks.containsKey(instanceId)) {
+				StatusTask task = new StatusTask(instanceId, groupId, helper.monitoringStatusUntilInterupted(serviceId,
+						instanceId, service));
+				tasks.put(instanceId, task);
+			}
 
 		} else if (action == Action.ELASTIC_CHANGE_FINISHED) {
 
-			tasks.get(uniqueTaskId(instanceId, groupId)).cancel(true);
-
+			if (tasks.containsKey(instanceId)) {
+				tasks.get(instanceId).removeGroup(groupId);
+				if (tasks.get(instanceId).stopIfNoGroup()) {
+					tasks.remove(instanceId);
+				}
+			}
 		}
 	}
 
@@ -177,8 +185,35 @@ public class Deployment extends Processor {
 		manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.UNDEPLOYED));
 	}
 
-	protected String uniqueTaskId(String instanceId, String groupId) {
-		return instanceId + "_" + groupId;
+	public class StatusTask {
+
+		String instanceId;
+		Set<String> groupIds = new HashSet<>();
+		Future thread;
+
+		public StatusTask(String instanceId, String groupId, Future thread) {
+			super();
+			this.instanceId = instanceId;
+			this.thread = thread;
+		}
+
+		public void addGroup(String groupId) {
+			groupIds.add(groupId);
+		}
+
+		public void removeGroup(String groupId) {
+			groupIds.remove(groupId);
+		}
+
+		public boolean stopIfNoGroup() {
+			if (groupIds.isEmpty()) {
+				thread.cancel(true);
+				return true;
+			} else {
+				return false;
+			}
+		}
+
 	}
 
 }
