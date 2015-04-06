@@ -19,10 +19,10 @@ import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.adapter.UtilsLc;
 import at.ac.tuwien.dsg.comot.m.common.Constants;
-import at.ac.tuwien.dsg.comot.m.common.EpsAction;
 import at.ac.tuwien.dsg.comot.m.common.InformationClient;
-import at.ac.tuwien.dsg.comot.m.common.Type;
-import at.ac.tuwien.dsg.comot.m.common.events.CustomEvent;
+import at.ac.tuwien.dsg.comot.m.common.enums.EpsEvent;
+import at.ac.tuwien.dsg.comot.m.common.enums.Type;
+import at.ac.tuwien.dsg.comot.m.common.event.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 
 @Component
@@ -48,7 +48,7 @@ public class PerInstanceQueueManager extends Manager {
 
 		admin.declareBinding(new Binding(queueNameAssignment(), DestinationType.QUEUE,
 				Constants.EXCHANGE_CUSTOM_EVENT,
-				"*." + participantId + "." + EpsAction.EPS_SUPPORT_REQUESTED + "." + Type.SERVICE, null));
+				"*." + participantId + "." + EpsEvent.EPS_SUPPORT_REQUESTED + "." + Type.SERVICE, null));
 
 		container = new SimpleMessageListenerContainer();
 		container.setConnectionFactory(connectionFactory);
@@ -93,7 +93,7 @@ public class PerInstanceQueueManager extends Manager {
 					infoService.assignEps(serviceId, instanceId, participantId);
 
 					sendCustom(Type.SERVICE,
-							new CustomEvent(serviceId, instanceId, groupId, EpsAction.EPS_SUPPORT_ASSIGNED.toString(),
+							new CustomEvent(serviceId, instanceId, groupId, EpsEvent.EPS_SUPPORT_ASSIGNED.toString(),
 									participantId, null));
 				}
 

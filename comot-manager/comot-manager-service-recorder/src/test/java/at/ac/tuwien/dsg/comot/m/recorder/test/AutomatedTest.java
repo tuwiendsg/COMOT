@@ -37,6 +37,7 @@ public class AutomatedTest extends AbstractTest {
 		service = STemplates.simplifiedService();
 		oneVersion();
 
+		UtilsTest.sleepInfinit();
 	}
 
 	@Test
@@ -69,7 +70,6 @@ public class AutomatedTest extends AbstractTest {
 		service = STemplates.simplifiedService();
 		multipleVersions();
 
-		UtilsTest.sleepInfinit();
 	}
 
 	@Test

@@ -30,14 +30,14 @@ import at.ac.tuwien.dsg.comot.m.adapter.UtilsLc;
 import at.ac.tuwien.dsg.comot.m.adapter.general.SingleQueueManager;
 import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.InformationClient;
-import at.ac.tuwien.dsg.comot.m.common.Type;
-import at.ac.tuwien.dsg.comot.m.common.events.AbstractEvent;
-import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
-import at.ac.tuwien.dsg.comot.m.common.events.Transition;
+import at.ac.tuwien.dsg.comot.m.common.enums.Action;
+import at.ac.tuwien.dsg.comot.m.common.enums.Type;
+import at.ac.tuwien.dsg.comot.m.common.event.AbstractEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.state.Transition;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
-import at.ac.tuwien.dsg.comot.m.core.processor.EpsBuilder;
-import at.ac.tuwien.dsg.comot.m.core.processor.Recording;
-import at.ac.tuwien.dsg.comot.model.type.Action;
+import at.ac.tuwien.dsg.comot.m.core.EpsBuilder;
+import at.ac.tuwien.dsg.comot.m.core.Recording;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 @Component

@@ -19,19 +19,19 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.common.Constants;
-import at.ac.tuwien.dsg.comot.m.common.EpsAction;
 import at.ac.tuwien.dsg.comot.m.common.InformationClient;
-import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
+import at.ac.tuwien.dsg.comot.m.common.enums.Action;
+import at.ac.tuwien.dsg.comot.m.common.enums.EpsEvent;
+import at.ac.tuwien.dsg.comot.m.common.enums.Type;
 import at.ac.tuwien.dsg.comot.m.common.eps.DeploymentClient;
-import at.ac.tuwien.dsg.comot.m.common.events.CustomEvent;
-import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.CustomEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
-import at.ac.tuwien.dsg.comot.model.type.Action;
 
 @Component
 public class Coordinator {
@@ -72,14 +72,14 @@ public class Coordinator {
 
 	public void startServiceInstance(String serviceId, String instanceId) throws IOException, JAXBException {
 
-		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STARTED));
+		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.START));
 
 	}
 
 	public void stopServiceInstance(String serviceId, String instanceId)
 			throws IOException, JAXBException {
 
-		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STOPPED));
+		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STOP));
 
 	}
 
@@ -97,7 +97,7 @@ public class Coordinator {
 		// infoService.assignSupportingService(serviceId, instanceId, osuInstanceId);
 
 		sendCustom(Type.SERVICE,
-				new CustomEvent(serviceId, instanceId, serviceId, EpsAction.EPS_SUPPORT_REQUESTED.toString(),
+				new CustomEvent(serviceId, instanceId, serviceId, EpsEvent.EPS_SUPPORT_REQUESTED.toString(),
 						osuInstanceId, null));
 
 	}
@@ -106,7 +106,7 @@ public class Coordinator {
 			throws ClassNotFoundException, IOException, JAXBException {
 
 		sendCustom(Type.SERVICE,
-				new CustomEvent(serviceId, instanceId, serviceId, EpsAction.EPS_SUPPORT_REMOVED.toString(),
+				new CustomEvent(serviceId, instanceId, serviceId, EpsEvent.EPS_SUPPORT_REMOVED.toString(),
 						osuInstanceId, null));
 
 	}
@@ -131,7 +131,7 @@ public class Coordinator {
 		String instanceId = osuInatance.getServiceInstance().getId();
 
 		sendCustom(Type.SERVICE,
-				new CustomEvent(serviceId, instanceId, serviceId, EpsAction.EPS_DYNAMIC_REMOVED.toString(),
+				new CustomEvent(serviceId, instanceId, serviceId, EpsEvent.EPS_DYNAMIC_REMOVED.toString(),
 						Constants.EPS_BUILDER, null));
 
 	}

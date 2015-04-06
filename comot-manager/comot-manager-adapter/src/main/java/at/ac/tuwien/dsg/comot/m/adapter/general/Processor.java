@@ -9,11 +9,11 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Binding.DestinationType;
 
 import at.ac.tuwien.dsg.comot.m.common.Constants;
-import at.ac.tuwien.dsg.comot.m.common.events.ExceptionMessage;
-import at.ac.tuwien.dsg.comot.m.common.events.StateMessage;
-import at.ac.tuwien.dsg.comot.m.common.events.Transition;
+import at.ac.tuwien.dsg.comot.m.common.enums.Action;
+import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.state.StateMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.state.Transition;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.type.Action;
 
 public abstract class Processor {
 
@@ -74,8 +74,7 @@ public abstract class Processor {
 			ExceptionMessage msg,
 			String serviceId,
 			String instanceId,
-			String originId,
-			Exception e) throws Exception;
+			String originId) throws Exception;
 
 	public String logId() {
 		return manager.logId();

@@ -13,12 +13,12 @@ import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
-import at.ac.tuwien.dsg.comot.m.common.events.ComotMessage;
-import at.ac.tuwien.dsg.comot.m.common.events.CustomEvent;
-import at.ac.tuwien.dsg.comot.m.common.events.ExceptionMessage;
-import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
-import at.ac.tuwien.dsg.comot.m.common.events.StateMessage;
-import at.ac.tuwien.dsg.comot.model.type.Action;
+import at.ac.tuwien.dsg.comot.m.common.enums.Action;
+import at.ac.tuwien.dsg.comot.m.common.event.CustomEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.state.ComotMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.state.StateMessage;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;

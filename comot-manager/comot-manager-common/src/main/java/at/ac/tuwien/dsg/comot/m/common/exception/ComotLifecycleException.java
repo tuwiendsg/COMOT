@@ -1,6 +1,6 @@
 package at.ac.tuwien.dsg.comot.m.common.exception;
 
-import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
 
 public class ComotLifecycleException extends Exception {
 

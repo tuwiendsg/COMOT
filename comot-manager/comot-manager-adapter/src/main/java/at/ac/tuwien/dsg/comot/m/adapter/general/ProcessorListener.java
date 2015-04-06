@@ -1,25 +1,21 @@
 package at.ac.tuwien.dsg.comot.m.adapter.general;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
-
-import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageListener;
 
 import at.ac.tuwien.dsg.comot.m.adapter.UtilsLc;
-import at.ac.tuwien.dsg.comot.m.common.events.ComotMessage;
-import at.ac.tuwien.dsg.comot.m.common.events.CustomEvent;
-import at.ac.tuwien.dsg.comot.m.common.events.ExceptionMessage;
-import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
-import at.ac.tuwien.dsg.comot.m.common.events.StateMessage;
-import at.ac.tuwien.dsg.comot.m.common.events.Transition;
+import at.ac.tuwien.dsg.comot.m.common.enums.Action;
+import at.ac.tuwien.dsg.comot.m.common.event.CustomEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.state.ComotMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.state.StateMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.state.Transition;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.type.Action;
 
 public class ProcessorListener implements MessageListener {
 
@@ -36,10 +32,18 @@ public class ProcessorListener implements MessageListener {
 
 		String instanceId = null;
 		String serviceId = null;
-
+		ComotMessage comotMsg;
 		try {
 
-			ComotMessage comotMsg = UtilsLc.comotMessage(message);
+			try {
+				comotMsg = UtilsLc.comotMessage(message);
+			} catch (Exception e) {
+
+				String body = new String(message.getBody(), "UTF-8");
+				log.error("Unexpected message type: {}", body);
+				log.error("{}", e);
+				return;
+			}
 
 			if (comotMsg instanceof StateMessage) {
 
@@ -85,31 +89,19 @@ public class ProcessorListener implements MessageListener {
 				instanceId = msg.getCsInstanceId();
 				serviceId = msg.getServiceId();
 				String originId = msg.getOrigin();
-				Exception e = msg.getException();
 
-				log.info(processor.logId() + "onExceptionEvent: service={}, instance={}, origin={} exception={}",
-						serviceId, instanceId, originId, e);
+				log.info(processor.logId() + "onExceptionEvent: {}", msg);
 
-				processor.onExceptionEvent(msg, serviceId, instanceId, originId, e);
+				processor.onExceptionEvent(msg, serviceId, instanceId, originId);
 			}
 
 		} catch (Exception e) {
-
-			if (e instanceof ClassCastException) {
-				try {
-					String body = new String(message.getBody(), "UTF-8");
-					log.error("Unexpected message type: {}", body);
-				} catch (UnsupportedEncodingException e1) {
-					e1.printStackTrace();
-				}
-			}
-
 			try {
 				processor.getManager().sendException(serviceId, instanceId, e);
-			} catch (AmqpException | JAXBException e1) {
-				e1.printStackTrace();
+			} catch (Throwable e1) {
+				log.error("{}", e1);
 			}
-			e.printStackTrace();
+			log.error("{}", e);
 		}
 
 	}

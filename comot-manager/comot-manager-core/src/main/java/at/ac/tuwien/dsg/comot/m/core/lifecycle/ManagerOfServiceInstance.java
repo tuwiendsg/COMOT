@@ -26,21 +26,21 @@ import org.springframework.stereotype.Component;
 import at.ac.tuwien.dsg.comot.m.adapter.UtilsLc;
 import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.InformationClient;
-import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
-import at.ac.tuwien.dsg.comot.m.common.events.AbstractEvent;
-import at.ac.tuwien.dsg.comot.m.common.events.ComotMessage;
-import at.ac.tuwien.dsg.comot.m.common.events.CustomEvent;
-import at.ac.tuwien.dsg.comot.m.common.events.ExceptionMessage;
-import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
-import at.ac.tuwien.dsg.comot.m.common.events.ModifyingLifeCycleEvent;
-import at.ac.tuwien.dsg.comot.m.common.events.StateMessage;
-import at.ac.tuwien.dsg.comot.m.common.events.Transition;
+import at.ac.tuwien.dsg.comot.m.common.enums.Action;
+import at.ac.tuwien.dsg.comot.m.common.enums.Type;
+import at.ac.tuwien.dsg.comot.m.common.event.AbstractEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.CustomEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEventModifying;
+import at.ac.tuwien.dsg.comot.m.common.event.state.ComotMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.state.StateMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.state.Transition;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotLifecycleException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 @Component
@@ -142,10 +142,10 @@ public class ManagerOfServiceInstance {
 		String change;
 		Group targetGroup;
 		CloudService service = null;
-		ModifyingLifeCycleEvent modEvent = null;
+		LifeCycleEventModifying modEvent = null;
 
-		if (event instanceof ModifyingLifeCycleEvent) {
-			modEvent = (ModifyingLifeCycleEvent) event;
+		if (event instanceof LifeCycleEventModifying) {
+			modEvent = (LifeCycleEventModifying) event;
 		}
 
 		try {
@@ -161,7 +161,7 @@ public class ManagerOfServiceInstance {
 
 					if (modEvent == null) {
 						throw new ComotException("The event '" + event + "' should be of type: "
-								+ ModifyingLifeCycleEvent.class);
+								+ LifeCycleEventModifying.class);
 					}
 
 					groupManager.createGroupUnitTopo(action, modEvent.getParentId(), modEvent.getEntity());
@@ -174,7 +174,7 @@ public class ManagerOfServiceInstance {
 
 					if (modEvent == null) {
 						throw new ComotException("The event '" + event + "' should be of type: "
-								+ ModifyingLifeCycleEvent.class);
+								+ LifeCycleEventModifying.class);
 					}
 
 					groupManager.createGroupInstance(action, modEvent.getParentId(), modEvent.getInstance());
@@ -193,7 +193,7 @@ public class ManagerOfServiceInstance {
 
 					if (modEvent == null) {
 						throw new ComotException("The event '" + event + "' should be of type: "
-								+ ModifyingLifeCycleEvent.class);
+								+ LifeCycleEventModifying.class);
 					}
 
 					log.info("updating instance: {}", targetGroup.getId());

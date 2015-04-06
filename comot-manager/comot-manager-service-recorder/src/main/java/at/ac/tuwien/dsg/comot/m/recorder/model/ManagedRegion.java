@@ -13,6 +13,7 @@ public class ManagedRegion {
 
 	protected Set<InternalNode> nodes;
 	protected Set<InternalRel> relationships;
+
 	protected Map<String, String> classes = new HashMap<>();
 	protected InternalNode startNode;
 
@@ -20,6 +21,11 @@ public class ManagedRegion {
 
 	}
 
+	/**
+	 * 
+	 * @param key
+	 * @param value
+	 */
 	public void addClass(String key, String value) {
 		if (classes == null) {
 			classes = new HashMap<>();

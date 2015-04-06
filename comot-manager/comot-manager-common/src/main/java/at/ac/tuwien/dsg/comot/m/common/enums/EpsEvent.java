@@ -1,6 +1,6 @@
-package at.ac.tuwien.dsg.comot.m.common;
+package at.ac.tuwien.dsg.comot.m.common.enums;
 
-public enum EpsAction {
+public enum EpsEvent {
 
 	EPS_DYNAMIC_REQUESTED,
 	EPS_DYNAMIC_CREATED,

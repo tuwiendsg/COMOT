@@ -20,11 +20,11 @@ import at.ac.tuwien.dsg.comot.m.adapter.general.PerInstanceQueueManager;
 import at.ac.tuwien.dsg.comot.m.adapter.processor.Control;
 import at.ac.tuwien.dsg.comot.m.adapter.processor.Monitoring;
 import at.ac.tuwien.dsg.comot.m.common.Constants;
-import at.ac.tuwien.dsg.comot.m.common.EpsAction;
 import at.ac.tuwien.dsg.comot.m.common.InformationClient;
-import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
-import at.ac.tuwien.dsg.comot.m.common.events.CustomEvent;
+import at.ac.tuwien.dsg.comot.m.common.enums.EpsEvent;
+import at.ac.tuwien.dsg.comot.m.common.enums.Type;
+import at.ac.tuwien.dsg.comot.m.common.event.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 
@@ -172,11 +172,11 @@ public class Main {
 
 		RabbitTemplate amqp = context.getBean(RabbitTemplate.class);
 
-		CustomEvent event = new CustomEvent(serviceId, instanceId, serviceId, EpsAction.EPS_DYNAMIC_CREATED.toString(),
+		CustomEvent event = new CustomEvent(serviceId, instanceId, serviceId, EpsEvent.EPS_DYNAMIC_CREATED.toString(),
 				participantId, System.currentTimeMillis(), null, null);
 
 		amqp.convertAndSend(Constants.EXCHANGE_REQUESTS,
-				instanceId + "." + event.getClass().getSimpleName() + "." + EpsAction.EPS_DYNAMIC_CREATED + "."
+				instanceId + "." + event.getClass().getSimpleName() + "." + EpsEvent.EPS_DYNAMIC_CREATED + "."
 						+ Type.SERVICE,
 				Utils.asJsonString(event));
 

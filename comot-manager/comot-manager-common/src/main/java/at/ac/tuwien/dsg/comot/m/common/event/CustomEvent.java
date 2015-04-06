@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.m.common.events;
+package at.ac.tuwien.dsg.comot.m.common.event;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

@@ -1,11 +1,11 @@
-package at.ac.tuwien.dsg.comot.m.common.events;
+package at.ac.tuwien.dsg.comot.m.common.event.state;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import at.ac.tuwien.dsg.comot.m.common.Type;
+import at.ac.tuwien.dsg.comot.m.common.enums.Type;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -74,6 +74,12 @@ public class Transition {
 
 	public void setFresh(boolean fresh) {
 		this.fresh = fresh;
+	}
+
+	@Override
+	public String toString() {
+		return "Transition [groupId=" + groupId + ", groupType=" + groupType + ", currentState=" + currentState
+				+ ", lastState=" + lastState + ", fresh=" + fresh + "]";
 	}
 
 }

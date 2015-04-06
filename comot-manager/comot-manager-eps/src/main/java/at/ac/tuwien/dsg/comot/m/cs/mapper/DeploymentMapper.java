@@ -170,7 +170,7 @@ public class DeploymentMapper {
 	public static State convert(SalsaEntityState state) {
 		switch (state) {
 		case UNDEPLOYED:
-			return State.INIT;
+			return State.UNDEPLOYING;
 		case ALLOCATING:
 			return State.DEPLOYING;
 		case STAGING:
@@ -184,7 +184,7 @@ public class DeploymentMapper {
 		case ERROR:
 			return State.ERROR;
 		case STAGING_ACTION:
-			return State.STAGING_ACTION;
+			return null;
 		default:
 			return null;
 		}

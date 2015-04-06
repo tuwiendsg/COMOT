@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.m.core.processor;
+package at.ac.tuwien.dsg.comot.m.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,15 +13,18 @@ import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.adapter.UtilsLc;
 import at.ac.tuwien.dsg.comot.m.adapter.general.Processor;
-import at.ac.tuwien.dsg.comot.m.common.events.CustomEvent;
-import at.ac.tuwien.dsg.comot.m.common.events.ExceptionMessage;
-import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
-import at.ac.tuwien.dsg.comot.m.common.events.StateMessage;
-import at.ac.tuwien.dsg.comot.m.common.events.Transition;
+import at.ac.tuwien.dsg.comot.m.common.enums.Action;
+import at.ac.tuwien.dsg.comot.m.common.event.CustomEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessageLifeCycle;
+import at.ac.tuwien.dsg.comot.m.common.event.state.StateMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.state.Transition;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
+import at.ac.tuwien.dsg.comot.m.recorder.revisions.ConverterToInternal;
+import at.ac.tuwien.dsg.comot.m.recorder.revisions.CustomReflectionUtils;
 import at.ac.tuwien.dsg.comot.m.recorder.revisions.RevisionApi;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.type.Action;
 
 @Component
 public class Recording extends Processor {
@@ -29,13 +32,17 @@ public class Recording extends Processor {
 	public static final String CHANGE_TYPE_LIFECYCLE = "CHANGE_TYPE_LIFECYCLE";
 	public static final String CHANGE_TYPE_CUSTOM = "CHANGE_TYPE_CUSTOM";
 	public static final String CHANGE_TYPE_EXCEPTION = "CHANGE_TYPE_EXCEPTION";
+	public static final String CHANGE_TYPE_EXCEPTION_LIFECYCLE = "CHANGE_TYPE_EXCEPTION";
 
 	public static final String PROP_ORIGIN = "origin";
 	public static final String PROP_MSG = "msg";
+	public static final String PROP_EPS_ID = "epsId";
 	public static final String PROP_EVENT_NAME = "eventName";
 	public static final String PROP_EVENT_TIME = "eventTime";
-	public static final String PROP_EXCEPTION = "exception";
+	public static final String PROP_EXCEPTION_TYPE = "exceptionType";
 	public static final String PROP_EXCEPTION_MSG = "exceptionMsg";
+	public static final String PROP_EXCEPTION_DETAIL = "exceptionDetail";
+	public static final String PROP_EVENT = "eventProperty-";
 
 	@Autowired
 	protected ToscaMapper mapperTosca;
@@ -62,7 +69,6 @@ public class Recording extends Processor {
 
 		Map<String, Object> changeProperties = new HashMap<>();
 		changeProperties.put(PROP_ORIGIN, originId);
-		// changeProperties.put(PROP_TARGET, groupId);
 		changeProperties.put(PROP_EVENT_NAME, action.toString());
 		changeProperties.put(PROP_EVENT_TIME, event.getTime());
 
@@ -82,11 +88,14 @@ public class Recording extends Processor {
 
 		Map<String, Object> changeProperties = new HashMap<>();
 		changeProperties.put(PROP_ORIGIN, originId);
-		// changeProperties.put(PROP_TARGET, groupId);
 		changeProperties.put(PROP_EVENT_NAME, event);
 		changeProperties.put(PROP_EVENT_TIME, eventMsg.getTime());
-		if (eventMsg.getMessage() != null) {
-			changeProperties.put(PROP_MSG, eventMsg.getMessage());
+
+		if (epsId != null) {
+			changeProperties.put(PROP_EPS_ID, epsId);
+		}
+		if (optionalMessage != null) {
+			changeProperties.put(PROP_MSG, optionalMessage);
 		}
 
 		if (revisionApi.verifyObject(instanceId, serviceId)) {
@@ -97,17 +106,37 @@ public class Recording extends Processor {
 	}
 
 	@Override
-	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String instanceId, String originId,
-			Exception e) throws Exception {
-		/*
-		 * Map<String, String> changeProperties = new HashMap<>(); changeProperties.put(PROP_ORIGIN, originId);
-		 * changeProperties.put(PROP_EXCEPTION, e.getClass().getName()); changeProperties.put(PROP_EXCEPTION_MSG,
-		 * e.getMessage());
-		 * 
-		 * if (revisionApi.verifyObject(instanceId, serviceId)) { revisionApi.storeEvent(instanceId,
-		 * CHANGE_TYPE_EXCEPTION, changeProperties); } else {
-		 * log.error("Exception event happened, but no managed region. {}", msg); }
-		 */
+	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String instanceId, String originId)
+			throws Exception {
+
+		String type;
+		Map<String, Object> changeProperties = new HashMap<>();
+		changeProperties.put(PROP_ORIGIN, originId);
+		changeProperties.put(PROP_EVENT_TIME, msg.getTime());
+		changeProperties.put(PROP_EXCEPTION_TYPE, msg.getType());
+		changeProperties.put(PROP_EXCEPTION_MSG, msg.getMessage());
+		changeProperties.put(PROP_EXCEPTION_DETAIL, msg.getDetails());
+
+		if (msg instanceof ExceptionMessageLifeCycle) {
+			ExceptionMessageLifeCycle lcMsg = (ExceptionMessageLifeCycle) msg;
+			Map<String, Object> eventProps = ConverterToInternal.extractProperties(lcMsg.getEvent(),
+					CustomReflectionUtils.getInheritedNonStaticNonTransientNonNullFields(lcMsg.getEvent()));
+
+			for (String key : eventProps.keySet()) {
+				changeProperties.put(PROP_EVENT + key, eventProps.get(key));
+			}
+
+			type = CHANGE_TYPE_EXCEPTION_LIFECYCLE;
+		} else {
+			type = CHANGE_TYPE_EXCEPTION;
+		}
+
+		if (revisionApi.verifyObject(instanceId, serviceId)) {
+			revisionApi.storeEvent(instanceId, serviceId, type, changeProperties);
+		} else {
+			log.error("Exception event happened, but no managed region. {}", msg);
+		}
+
 	}
 
 }

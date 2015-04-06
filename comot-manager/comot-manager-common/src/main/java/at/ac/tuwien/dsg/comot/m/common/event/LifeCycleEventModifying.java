@@ -1,21 +1,21 @@
-package at.ac.tuwien.dsg.comot.m.common.events;
+package at.ac.tuwien.dsg.comot.m.common.event;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import at.ac.tuwien.dsg.comot.m.common.Type;
+import at.ac.tuwien.dsg.comot.m.common.enums.Action;
+import at.ac.tuwien.dsg.comot.m.common.enums.Type;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceEntity;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceTopology;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
-import at.ac.tuwien.dsg.comot.model.type.Action;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
-public class ModifyingLifeCycleEvent extends LifeCycleEvent {
+public class LifeCycleEventModifying extends LifeCycleEvent {
 
 	private static final long serialVersionUID = 5026486925881972861L;
 
@@ -24,11 +24,11 @@ public class ModifyingLifeCycleEvent extends LifeCycleEvent {
 	protected ServiceEntity entity;
 	protected UnitInstance instance;
 
-	public ModifyingLifeCycleEvent() {
+	public LifeCycleEventModifying() {
 
 	}
 
-	public ModifyingLifeCycleEvent(
+	public LifeCycleEventModifying(
 			String serviceId,
 			String csInstanceId,
 			String groupId,
@@ -42,7 +42,7 @@ public class ModifyingLifeCycleEvent extends LifeCycleEvent {
 		this.entity = entity;
 	}
 
-	public ModifyingLifeCycleEvent(
+	public LifeCycleEventModifying(
 			String serviceId,
 			String csInstanceId,
 			String groupId,

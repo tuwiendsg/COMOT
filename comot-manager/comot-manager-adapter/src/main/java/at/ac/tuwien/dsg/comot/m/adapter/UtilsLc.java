@@ -11,9 +11,9 @@ import org.springframework.amqp.core.Message;
 
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
-import at.ac.tuwien.dsg.comot.m.common.events.AbstractEvent;
-import at.ac.tuwien.dsg.comot.m.common.events.ComotMessage;
-import at.ac.tuwien.dsg.comot.m.common.events.StateMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.AbstractEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.state.ComotMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.state.StateMessage;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;

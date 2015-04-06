@@ -29,7 +29,7 @@ import at.ac.tuwien.dsg.comot.m.recorder.repo.RevisionRepo;
 @Component
 public class VersionManager {
 
-	protected static final Logger log = LoggerFactory.getLogger(RegionRepo.class);
+	protected static final Logger log = LoggerFactory.getLogger(VersionManager.class);
 
 	@Autowired
 	private ApplicationContext context;
@@ -176,8 +176,6 @@ public class VersionManager {
 				currentRels.add(oldRel.getId());
 			}
 		}
-
-		log.info("region.getStartNode().getBusinessId() " + region.getStartNode().getBusinessId());
 
 		// set outdated rels
 		for (Relationship rel : repo.getAllCurrentStructuralRelsRecursiveFromObject(region.getStartNode()

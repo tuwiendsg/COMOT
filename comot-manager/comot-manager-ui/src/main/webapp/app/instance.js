@@ -384,12 +384,12 @@ function createTree(root, divId) {
 		top : 5,
 		right : 10,
 		bottom : 5,
-		left : 100
+		left : 130
 	};
-	var boxWidth = 170;
+	var boxWidth = 200;
 	var boxHeight = 60;
 
-	var width = 1050;
+	var width = 1000;
 
 	var firstLineDY = -14;
 	var lineSpaceDY = 18;
@@ -400,13 +400,13 @@ function createTree(root, divId) {
 	transformElement(root);
 
 	var widthCore = 750;
-	var heightCore = countLeafs * (boxHeight + 20);
+	var heightCore = countLeafs * (boxHeight + 50);
 	if (heightCore < 200) {
 		heightCore = 200;
 	}
 	var height = heightCore + margin.top + margin.bottom;
 
-	var cluster = d3.layout.cluster().size([ heightCore, widthCore ]);
+	var cluster = d3.layout.tree().size([ heightCore, widthCore ]);
 	var diagonal = d3.svg.diagonal().projection(function(d) {
 		return [ d.y, d.x ];
 	});
@@ -460,6 +460,7 @@ function createTree(root, divId) {
 
 		if (element.children.length === 0) {
 			countLeafs = countLeafs + 1;
+			console.log(element.name);
 		}
 
 		for (var i = 0; i < element.children.length; i++) {

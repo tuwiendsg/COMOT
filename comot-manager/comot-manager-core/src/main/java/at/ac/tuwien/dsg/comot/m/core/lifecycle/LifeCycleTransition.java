@@ -1,6 +1,6 @@
 package at.ac.tuwien.dsg.comot.m.core.lifecycle;
 
-import at.ac.tuwien.dsg.comot.model.type.Action;
+import at.ac.tuwien.dsg.comot.m.common.enums.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 public class LifeCycleTransition {

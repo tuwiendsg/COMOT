@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.m.core.processor;
+package at.ac.tuwien.dsg.comot.m.adapter.processor;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,21 +19,22 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.adapter.general.Processor;
-import at.ac.tuwien.dsg.comot.m.common.EpsAction;
 import at.ac.tuwien.dsg.comot.m.common.InformationClient;
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
-import at.ac.tuwien.dsg.comot.m.common.Type;
+import at.ac.tuwien.dsg.comot.m.common.enums.Action;
+import at.ac.tuwien.dsg.comot.m.common.enums.EpsEvent;
+import at.ac.tuwien.dsg.comot.m.common.enums.Type;
 import at.ac.tuwien.dsg.comot.m.common.eps.DeploymentClient;
-import at.ac.tuwien.dsg.comot.m.common.events.ExceptionMessage;
-import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
-import at.ac.tuwien.dsg.comot.m.common.events.StateMessage;
-import at.ac.tuwien.dsg.comot.m.common.events.Transition;
+import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.state.StateMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.state.Transition;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
-import at.ac.tuwien.dsg.comot.model.type.Action;
+import at.ac.tuwien.dsg.comot.model.type.State;
 
 @Component
 @Scope("prototype")
@@ -69,17 +70,17 @@ public class Deployment extends Processor {
 		List<Binding> bindings = new ArrayList<>();
 
 		bindings.add(bindingLifeCycle(queueName,
-				instanceId + ".*.*.*." + Action.STARTED + "." + Type.SERVICE + ".#"));
+				instanceId + ".*.*.*." + Action.START + "." + Type.SERVICE + ".#"));
 		bindings.add(bindingLifeCycle(queueName,
-				instanceId + ".*.*.*." + Action.STOPPED + "." + Type.SERVICE + ".#"));
+				instanceId + ".*.*.*." + Action.STOP + "." + Type.SERVICE + ".#"));
 		bindings.add(bindingLifeCycle(queueName,
 				instanceId + ".TRUE.*.*." + Action.DEPLOYMENT_STARTED + "." + Type.SERVICE + "." + getId() + ".#"));
 		bindings.add(bindingLifeCycle(queueName,
 				instanceId + ".TRUE.*.*." + Action.UNDEPLOYMENT_STARTED + "." + Type.SERVICE + "." + getId() + ".#"));
 		bindings.add(bindingCustom(queueName,
-				instanceId + "." + getId() + "." + EpsAction.EPS_SUPPORT_REMOVED + "." + Type.SERVICE + ".#"));
+				instanceId + "." + getId() + "." + EpsEvent.EPS_SUPPORT_REMOVED + "." + Type.SERVICE + ".#"));
 		bindings.add(bindingCustom(queueName,
-				instanceId + "." + getId() + "." + EpsAction.EPS_SUPPORT_ASSIGNED + "." + Type.SERVICE + ".#"));
+				instanceId + "." + getId() + "." + EpsEvent.EPS_SUPPORT_ASSIGNED + "." + Type.SERVICE + ".#"));
 		bindings.add(bindingLifeCycle(queueName,
 				instanceId + ".*.*.*." + Action.ELASTIC_CHANGE_STARTED + ".*.#"));
 		bindings.add(bindingLifeCycle(queueName,
@@ -93,11 +94,11 @@ public class Deployment extends Processor {
 			Action action, String optionalMessage, CloudService service, Map<String, Transition> transitions)
 			throws Exception {
 
-		if (action == Action.STARTED && !deployment.isManaged(instanceId)) {
+		if (action == Action.START && !deployment.isManaged(instanceId)) {
 			manager.sendLifeCycle(Type.SERVICE,
 					new LifeCycleEvent(serviceId, instanceId, groupId, Action.DEPLOYMENT_STARTED));
 
-		} else if (action == Action.STOPPED) {
+		} else if (action == Action.STOP && deployment.isManaged(instanceId)) {
 			manager.sendLifeCycle(Type.SERVICE,
 					new LifeCycleEvent(serviceId, instanceId, groupId, Action.UNDEPLOYMENT_STARTED));
 
@@ -118,12 +119,28 @@ public class Deployment extends Processor {
 
 		} else if (action == Action.ELASTIC_CHANGE_FINISHED) {
 
-			if (tasks.containsKey(instanceId)) {
-				tasks.get(instanceId).removeGroup(groupId);
-				if (tasks.get(instanceId).stopIfNoGroup()) {
-					tasks.remove(instanceId);
+			boolean stop = true;
+
+			for (Transition transition : transitions.values()) {
+				if (transition.getCurrentState() == State.ELASTIC_CHANGE) {
+					stop = false;
+					log.info("still el change {}", transition);
 				}
 			}
+
+			log.info("stop {}", stop);
+
+			if (stop) {
+				tasks.get(instanceId).getThread().cancel(true);
+				tasks.remove(instanceId);
+			}
+
+			// if (tasks.containsKey(instanceId)) {
+			// tasks.get(instanceId).removeGroup(groupId);
+			// if (tasks.get(instanceId).stopIfNoGroup()) {
+			// tasks.remove(instanceId);
+			// }
+			// }
 		}
 	}
 
@@ -131,9 +148,9 @@ public class Deployment extends Processor {
 	public void onCustomEvent(StateMessage msg, String serviceId, String instanceId, String groupId, String event,
 			String epsId, String originId, String optionalMessage) throws Exception {
 
-		EpsAction action = EpsAction.valueOf(event);
+		EpsEvent action = EpsEvent.valueOf(event);
 
-		if (action == EpsAction.EPS_SUPPORT_REMOVED) {
+		if (action == EpsEvent.EPS_SUPPORT_REMOVED) {
 
 			manager.removeInstanceListener(instanceId);
 
@@ -148,7 +165,7 @@ public class Deployment extends Processor {
 	}
 
 	@Override
-	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String instanceId, String originId, Exception e)
+	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String instanceId, String originId)
 			throws Exception {
 		// TODO Auto-generated method stub
 
@@ -212,6 +229,14 @@ public class Deployment extends Processor {
 			} else {
 				return false;
 			}
+		}
+
+		public Future getThread() {
+			return thread;
+		}
+
+		public void setThread(Future thread) {
+			this.thread = thread;
 		}
 
 	}

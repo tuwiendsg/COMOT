@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.m.common.events;
+package at.ac.tuwien.dsg.comot.m.common.event.state;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,7 +7,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import at.ac.tuwien.dsg.comot.m.common.Type;
+import at.ac.tuwien.dsg.comot.m.common.enums.Type;
+import at.ac.tuwien.dsg.comot.m.common.event.AbstractEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.type.State;
 

@@ -18,12 +18,13 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.comot.m.common.Constants;
-import at.ac.tuwien.dsg.comot.m.common.EpsAction;
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
-import at.ac.tuwien.dsg.comot.m.common.Type;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
-import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
-import at.ac.tuwien.dsg.comot.m.common.events.ModifyingLifeCycleEvent;
+import at.ac.tuwien.dsg.comot.m.common.enums.Action;
+import at.ac.tuwien.dsg.comot.m.common.enums.EpsEvent;
+import at.ac.tuwien.dsg.comot.m.common.enums.Type;
+import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEventModifying;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
@@ -33,7 +34,6 @@ import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
-import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 import com.rabbitmq.client.ConsumerCancelledException;
@@ -84,7 +84,7 @@ public class ControllerTest extends AbstractTest {
 		log.info("staticDeplId " + staticDeplId);
 
 		coordinator.assignSupportingOsu(serviceId, instanceId, staticDeplId);
-		agent.waitForCustomEvent(EpsAction.EPS_SUPPORT_ASSIGNED.toString());
+		agent.waitForCustomEvent(EpsEvent.EPS_SUPPORT_ASSIGNED.toString());
 
 		coordinator.startServiceInstance(serviceId, instanceId);
 
@@ -100,7 +100,7 @@ public class ControllerTest extends AbstractTest {
 
 		coordinator.assignSupportingOsu(serviceId, instanceId, staticControlId);
 
-		agent.waitForCustomEvent(EpsAction.EPS_SUPPORT_ASSIGNED.toString());
+		agent.waitForCustomEvent(EpsEvent.EPS_SUPPORT_ASSIGNED.toString());
 		log.info("Controller assigned");
 
 		// UtilsTest.sleepSeconds(10);
@@ -123,7 +123,7 @@ public class ControllerTest extends AbstractTest {
 			ConsumerCancelledException,
 			EpsException, JAXBException, ComotException, IOException, InterruptedException {
 
-		insertExistingRunningInstanceToSystem("HelloElasticityNoDB");
+		insertExistingRunningInstanceOfThisServiceToSystem("HelloElasticityNoDB");
 
 		UtilsTest.sleepInfinit();
 	}
@@ -131,7 +131,8 @@ public class ControllerTest extends AbstractTest {
 	@Autowired
 	protected RabbitTemplate amqp;
 
-	public void insertExistingRunningInstanceToSystem(String serviceId) throws AmqpException, EpsException,
+	public void insertExistingRunningInstanceOfThisServiceToSystem(String serviceId) throws AmqpException,
+			EpsException,
 			JAXBException, ComotException, IOException, ShutdownSignalException, ConsumerCancelledException,
 			InterruptedException {
 
@@ -141,8 +142,8 @@ public class ControllerTest extends AbstractTest {
 		coordinator.assignSupportingOsu(serviceId, instanceId, staticDeplId);
 		coordinator.assignSupportingOsu(serviceId, instanceId, staticControlId);
 
-		agent.waitForCustomEvent(EpsAction.EPS_SUPPORT_ASSIGNED.toString());
-		agent.waitForCustomEvent(EpsAction.EPS_SUPPORT_ASSIGNED.toString());
+		agent.waitForCustomEvent(EpsEvent.EPS_SUPPORT_ASSIGNED.toString());
+		agent.waitForCustomEvent(EpsEvent.EPS_SUPPORT_ASSIGNED.toString());
 
 		CloudService instance = infoService.getServiceInstance(instanceId);
 		instance.setId(instanceId);
@@ -165,7 +166,7 @@ public class ControllerTest extends AbstractTest {
 			for (UnitInstance uInst : unit.getInstances()) {
 
 				// start deployment instances
-				event = new ModifyingLifeCycleEvent(serviceId, instanceId, uInst.getId(),
+				event = new LifeCycleEventModifying(serviceId, instanceId, uInst.getId(),
 						Action.DEPLOYMENT_STARTED, "test", System.currentTimeMillis(), unit.getId(), uInst);
 
 				bindingKey = instanceId + "." + LifeCycleEvent.class.getSimpleName() + "."
@@ -174,7 +175,7 @@ public class ControllerTest extends AbstractTest {
 				amqp.convertAndSend(Constants.EXCHANGE_REQUESTS, bindingKey, Utils.asJsonString(event));
 
 				// finish deployment instances
-				event = new ModifyingLifeCycleEvent(serviceId, instanceId, uInst.getId(), Action.DEPLOYED, "test",
+				event = new LifeCycleEventModifying(serviceId, instanceId, uInst.getId(), Action.DEPLOYED, "test",
 						System.currentTimeMillis(), unit.getId(), uInst);
 
 				bindingKey = instanceId + "." + LifeCycleEvent.class.getSimpleName() + "."

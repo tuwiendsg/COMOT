@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.m.common.events;
+package at.ac.tuwien.dsg.comot.m.common.event;
 
 import java.io.Serializable;
 
@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
-@XmlSeeAlso({ LifeCycleEvent.class, CustomEvent.class, ModifyingLifeCycleEvent.class })
+@XmlSeeAlso({ LifeCycleEvent.class, CustomEvent.class, LifeCycleEventModifying.class })
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public abstract class AbstractEvent implements Serializable {

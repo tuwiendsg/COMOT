@@ -19,7 +19,8 @@ import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import at.ac.tuwien.dsg.comot.m.core.processor.Recording;
+import at.ac.tuwien.dsg.comot.m.common.enums.Action;
+import at.ac.tuwien.dsg.comot.m.core.Recording;
 import at.ac.tuwien.dsg.comot.m.recorder.RecorderException;
 import at.ac.tuwien.dsg.comot.m.recorder.model.Change;
 import at.ac.tuwien.dsg.comot.m.recorder.model.InternalNode;
@@ -29,7 +30,6 @@ import at.ac.tuwien.dsg.comot.m.recorder.repo.ChangeRepo;
 import at.ac.tuwien.dsg.comot.m.recorder.repo.RevisionRepo;
 import at.ac.tuwien.dsg.comot.m.recorder.revisions.RegionRepo;
 import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
-import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 @Component

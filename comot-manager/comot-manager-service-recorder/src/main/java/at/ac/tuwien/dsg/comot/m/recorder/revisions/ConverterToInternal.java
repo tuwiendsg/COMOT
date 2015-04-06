@@ -61,6 +61,7 @@ public class ConverterToInternal {
 		node.setBusinessId(extractBusinessId(obj, fields));
 		node.setLabel(clazz.getSimpleName());
 		node.setProperties(extractProperties(obj, fields));
+		detectDynamicPropertiesClass(obj, fields);
 
 		nodes.put(node.getBusinessId(), node);
 		region.addNode(node);
@@ -122,6 +123,7 @@ public class ConverterToInternal {
 				}
 			}
 
+			detectDynamicPropertiesClass(obj, fields);
 			properties = extractProperties(obj, fields);
 			region.addClass(relName, obj.getClass().getCanonicalName());
 		}
@@ -146,7 +148,7 @@ public class ConverterToInternal {
 		return rel;
 	}
 
-	protected String extractBusinessId(Object obj, List<Field> fields) throws IllegalArgumentException,
+	protected static String extractBusinessId(Object obj, List<Field> fields) throws IllegalArgumentException,
 			IllegalAccessException {
 		for (Field field : fields) {
 			if (field.isAnnotationPresent(BusinessId.class)) {
@@ -156,7 +158,7 @@ public class ConverterToInternal {
 		throw new RuntimeException("There is no field annotated with @BusinessId in " + obj);
 	}
 
-	protected Map<String, Object> extractProperties(Object obj, List<Field> fields)
+	public static Map<String, Object> extractProperties(Object obj, List<Field> fields)
 			throws IllegalArgumentException,
 			IllegalAccessException {
 
@@ -177,7 +179,6 @@ public class ConverterToInternal {
 				// DynamicProperties
 			} else if (clazz.equals(DynamicProperties.class)) {
 				DynamicProperties props = (DynamicProperties) fieldObj;
-				region.addClass(DynamicProperties.class.getSimpleName(), fieldObj.getClass().getCanonicalName());
 
 				for (String name : props.getPropertyKeys()) {
 					properties.put(field.getName() + "-" + name, props.getProperty(name));
@@ -203,6 +204,18 @@ public class ConverterToInternal {
 		}
 
 		return properties;
+	}
+
+	protected void detectDynamicPropertiesClass(Object obj, List<Field> fields) throws IllegalArgumentException,
+			IllegalAccessException {
+
+		for (Field field : fields) {
+			Class<?> clazz = field.getType();
+			if (clazz.equals(DynamicProperties.class)) {
+				region.addClass(DynamicProperties.class.getSimpleName(), field.get(obj).getClass().getCanonicalName());
+
+			}
+		}
 	}
 
 }

@@ -7,14 +7,14 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
+import at.ac.tuwien.dsg.comot.m.common.enums.Action;
+import at.ac.tuwien.dsg.comot.m.core.Recording;
 import at.ac.tuwien.dsg.comot.m.core.analytics.AnalyticEngine;
-import at.ac.tuwien.dsg.comot.m.core.processor.Recording;
 import at.ac.tuwien.dsg.comot.m.recorder.RecorderException;
 import at.ac.tuwien.dsg.comot.m.recorder.revisions.RevisionApi;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
-import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
 

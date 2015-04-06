@@ -16,21 +16,21 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.adapter.general.Processor;
-import at.ac.tuwien.dsg.comot.m.common.ComotAction;
-import at.ac.tuwien.dsg.comot.m.common.EpsAction;
 import at.ac.tuwien.dsg.comot.m.common.InformationClient;
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
-import at.ac.tuwien.dsg.comot.m.common.Type;
+import at.ac.tuwien.dsg.comot.m.common.enums.Action;
+import at.ac.tuwien.dsg.comot.m.common.enums.ComotEvent;
+import at.ac.tuwien.dsg.comot.m.common.enums.EpsEvent;
+import at.ac.tuwien.dsg.comot.m.common.enums.Type;
 import at.ac.tuwien.dsg.comot.m.common.eps.ControlClient;
 import at.ac.tuwien.dsg.comot.m.common.eps.ControlEventsListener;
-import at.ac.tuwien.dsg.comot.m.common.events.ExceptionMessage;
-import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
-import at.ac.tuwien.dsg.comot.m.common.events.StateMessage;
-import at.ac.tuwien.dsg.comot.m.common.events.Transition;
+import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.state.StateMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.state.Transition;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
-import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 import at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.ActionEvent;
 import at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.ActionPlanEvent;
@@ -60,7 +60,7 @@ public class Control extends Processor implements ControlEventsListener {
 		bindings.add(bindingLifeCycle(queueName,
 				instanceId + ".TRUE." + State.DEPLOYING + "." + State.RUNNING + ".#"));
 		bindings.add(bindingLifeCycle(queueName,
-				instanceId + ".*.*.*." + Action.UPDATE_STARTED + ".#"));
+				instanceId + ".*.*.*." + Action.MAINTENANCE_STARTED + ".#"));
 		bindings.add(bindingLifeCycle(queueName,
 				instanceId + ".TRUE.*." + State.PASSIVE + ".#"));
 
@@ -79,7 +79,7 @@ public class Control extends Processor implements ControlEventsListener {
 			control(serviceId, instanceId);
 		} else if (action == Action.UNDEPLOYED) {
 			removeManaged(instanceId);
-		} else if (action == Action.UPDATE_STARTED) {
+		} else if (action == Action.MAINTENANCE_STARTED) {
 			stopControl(instanceId);
 		}
 
@@ -91,33 +91,33 @@ public class Control extends Processor implements ControlEventsListener {
 
 		State stateService = msg.getTransitions().get(serviceId).getCurrentState();
 
-		if (EpsAction.EPS_SUPPORT_ASSIGNED.toString().equals(event)) {
+		if (EpsEvent.EPS_SUPPORT_ASSIGNED.toString().equals(event)) {
 			if (stateService == State.RUNNING) {
 				control(serviceId, instanceId);
 			}
 
-		} else if (EpsAction.EPS_SUPPORT_REMOVED.toString().equals(event)) {
+		} else if (EpsEvent.EPS_SUPPORT_REMOVED.toString().equals(event)) {
 
 			removeManaged(instanceId);
 
-		} else if (event.equals(ComotAction.RSYBL_START.toString())) {
+		} else if (event.equals(ComotEvent.RSYBL_START.toString())) {
 
 			control(serviceId, instanceId);
 
-		} else if (event.equals(ComotAction.RSYBL_STOP.toString())) {
+		} else if (event.equals(ComotEvent.RSYBL_STOP.toString())) {
 
 			stopControl(instanceId);
 
-		} else if (event.equals(ComotAction.RSYBL_SET_MCR.toString())) {
+		} else if (event.equals(ComotEvent.RSYBL_SET_MCR.toString())) {
 
-		} else if (event.equals(ComotAction.RSYBL_SET_EFFECTS.toString())) {
+		} else if (event.equals(ComotEvent.RSYBL_SET_EFFECTS.toString())) {
 
 		}
 
 	}
 
 	@Override
-	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String instanceId, String originId, Exception e)
+	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String instanceId, String originId)
 			throws Exception {
 		// TODO Auto-generated method stub
 

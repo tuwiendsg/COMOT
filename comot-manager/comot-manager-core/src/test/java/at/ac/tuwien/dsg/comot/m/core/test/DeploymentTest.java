@@ -18,14 +18,14 @@ import org.oasis.tosca.Definitions;
 import org.springframework.beans.BeansException;
 
 import at.ac.tuwien.dsg.comot.m.common.Constants;
-import at.ac.tuwien.dsg.comot.m.common.EpsAction;
+import at.ac.tuwien.dsg.comot.m.common.enums.Action;
+import at.ac.tuwien.dsg.comot.m.common.enums.EpsEvent;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.m.core.test.utils.TestAgentAdapter;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 import com.rabbitmq.client.ConsumerCancelledException;
@@ -83,14 +83,14 @@ public class DeploymentTest extends AbstractTest {
 
 	}
 
-	@Test(timeout = 240000)
+	@Test(timeout = 300000)
 	public void testAssignStartStop() throws IOException, JAXBException, ClassNotFoundException,
 			EpsException, ComotException, ShutdownSignalException, ConsumerCancelledException, InterruptedException {
 
 		coordinator.assignSupportingOsu(serviceId, instanceId, staticDeplId);
 
-		agent.assertCustomEvent(EpsAction.EPS_SUPPORT_REQUESTED.toString());
-		agent.assertCustomEvent(EpsAction.EPS_SUPPORT_ASSIGNED.toString());
+		agent.assertCustomEvent(EpsEvent.EPS_SUPPORT_REQUESTED.toString());
+		agent.assertCustomEvent(EpsEvent.EPS_SUPPORT_ASSIGNED.toString());
 
 		assertFalse(deployment.isManaged(instanceId));
 		assertTrue(infoService.isOsuAssignedToInstance(instanceId, Constants.SALSA_SERVICE_STATIC));
@@ -100,7 +100,7 @@ public class DeploymentTest extends AbstractTest {
 
 		coordinator.startServiceInstance(serviceId, instanceId);
 
-		agent.assertLifeCycleEvent(Action.STARTED);
+		agent.assertLifeCycleEvent(Action.START);
 
 		agent.assertLifeCycleEvent(Action.DEPLOYMENT_STARTED);
 
@@ -117,7 +117,7 @@ public class DeploymentTest extends AbstractTest {
 
 		coordinator.stopServiceInstance(serviceId, instanceId);
 
-		agent.assertLifeCycleEvent(Action.STOPPED);
+		agent.assertLifeCycleEvent(Action.STOP);
 		agent.assertLifeCycleEvent(Action.UNDEPLOYMENT_STARTED);
 		agent.assertLifeCycleEvent(Action.UNDEPLOYED);
 
@@ -128,18 +128,18 @@ public class DeploymentTest extends AbstractTest {
 
 	}
 
-	@Test(timeout = 240000)
+	@Test(timeout = 300000)
 	public void testAssignStartUnassign() throws IOException, JAXBException, ClassNotFoundException,
 			EpsException, ComotException, ShutdownSignalException, ConsumerCancelledException, InterruptedException {
 
 		coordinator.assignSupportingOsu(serviceId, instanceId, staticDeplId);
 
-		agent.assertCustomEvent(EpsAction.EPS_SUPPORT_REQUESTED.toString());
-		agent.assertCustomEvent(EpsAction.EPS_SUPPORT_ASSIGNED.toString());
+		agent.assertCustomEvent(EpsEvent.EPS_SUPPORT_REQUESTED.toString());
+		agent.assertCustomEvent(EpsEvent.EPS_SUPPORT_ASSIGNED.toString());
 
 		coordinator.startServiceInstance(serviceId, instanceId);
 
-		agent.assertLifeCycleEvent(Action.STARTED);
+		agent.assertLifeCycleEvent(Action.START);
 
 		agent.waitForLifeCycleEvent(Action.DEPLOYED);
 		agent.waitForLifeCycleEvent(Action.DEPLOYED);
@@ -151,7 +151,7 @@ public class DeploymentTest extends AbstractTest {
 
 		coordinator.removeAssignmentOfSupportingOsu(serviceId, instanceId, staticDeplId);
 
-		agent.assertCustomEvent(EpsAction.EPS_SUPPORT_REMOVED.toString());
+		agent.assertCustomEvent(EpsEvent.EPS_SUPPORT_REMOVED.toString());
 		agent.assertLifeCycleEvent(Action.UNDEPLOYMENT_STARTED);
 		agent.assertLifeCycleEvent(Action.UNDEPLOYED);
 

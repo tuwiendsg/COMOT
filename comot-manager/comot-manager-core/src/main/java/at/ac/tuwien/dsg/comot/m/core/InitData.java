@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.m.common.ComotAction;
 import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.InformationClient;
+import at.ac.tuwien.dsg.comot.m.common.enums.ComotEvent;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.core.adapter.ControlAdapterStatic;
 import at.ac.tuwien.dsg.comot.m.core.adapter.DeploymentAdapterStatic;
@@ -73,11 +73,11 @@ public class InitData {
 				new ResourceOrQualityType(Constants.VIEW)));
 
 		monitoring.hasPrimitiveOperation(
-				new PrimitiveOperation("Set Metric Composition Rules", ComotAction.MELA_SET_MCR.toString()));
+				new PrimitiveOperation("Set Metric Composition Rules", ComotEvent.MELA_SET_MCR.toString()));
 		monitoring.hasPrimitiveOperation(
-				new PrimitiveOperation("Start monitoring", ComotAction.MELA_START.toString()));
+				new PrimitiveOperation("Start monitoring", ComotEvent.MELA_START.toString()));
 		monitoring.hasPrimitiveOperation(
-				new PrimitiveOperation("Stop monitoring", ComotAction.MELA_STOP.toString()));
+				new PrimitiveOperation("Stop monitoring", ComotEvent.MELA_STOP.toString()));
 
 		// RSYBL
 
@@ -94,11 +94,11 @@ public class InitData {
 				new ResourceOrQualityType(Constants.VIEW)));
 
 		control.hasPrimitiveOperation(
-				new PrimitiveOperation("Set Metric Composition Rules", ComotAction.RSYBL_SET_MCR.toString()));
+				new PrimitiveOperation("Set Metric Composition Rules", ComotEvent.RSYBL_SET_MCR.toString()));
 		control.hasPrimitiveOperation(
-				new PrimitiveOperation("Start controller", ComotAction.RSYBL_START.toString()));
+				new PrimitiveOperation("Start controller", ComotEvent.RSYBL_START.toString()));
 		control.hasPrimitiveOperation(
-				new PrimitiveOperation("Stop controller", ComotAction.RSYBL_STOP.toString()));
+				new PrimitiveOperation("Stop controller", ComotEvent.RSYBL_STOP.toString()));
 
 		// DYNAMIC EPS
 
@@ -110,11 +110,11 @@ public class InitData {
 		monitoringDynamic.setType(OsuType.EPS.toString());
 
 		monitoringDynamic.hasPrimitiveOperation(
-				new PrimitiveOperation("Set Metric Composition Rules", ComotAction.MELA_SET_MCR.toString()));
+				new PrimitiveOperation("Set Metric Composition Rules", ComotEvent.MELA_SET_MCR.toString()));
 		monitoringDynamic.hasPrimitiveOperation(
-				new PrimitiveOperation("Start monitoring", ComotAction.MELA_START.toString()));
+				new PrimitiveOperation("Start monitoring", ComotEvent.MELA_START.toString()));
 		monitoringDynamic.hasPrimitiveOperation(
-				new PrimitiveOperation("Stop monitoring", ComotAction.MELA_STOP.toString()));
+				new PrimitiveOperation("Stop monitoring", ComotEvent.MELA_STOP.toString()));
 
 		monitoringDynamic.setService(melaService);
 
@@ -126,6 +126,12 @@ public class InitData {
 		infoService.addOsu(monitoring);
 		infoService.addOsu(control);
 
+		try {
+			infoService.createService(mapperTosca.createModel(UtilsCs
+					.loadTosca("./../resources/test/helloElasticity/HelloElasticity_ShortNames.xml")));
+		} catch (JAXBException | IOException e) {
+			e.printStackTrace();
+		}
 		try {
 			infoService.createService(mapperTosca.createModel(UtilsCs
 					.loadTosca("./../resources/test/helloElasticity/HelloElasticityNoDB.xml")));

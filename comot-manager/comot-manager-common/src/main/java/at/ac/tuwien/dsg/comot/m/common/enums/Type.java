@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.m.common;
+package at.ac.tuwien.dsg.comot.m.common.enums;
 
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceTopology;

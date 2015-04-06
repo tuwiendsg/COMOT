@@ -1,4 +1,4 @@
-package at.ac.tuwien.dsg.comot.m.core.processor;
+package at.ac.tuwien.dsg.comot.m.core;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,21 +18,20 @@ import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.adapter.general.Processor;
 import at.ac.tuwien.dsg.comot.m.common.Constants;
-import at.ac.tuwien.dsg.comot.m.common.EpsAction;
 import at.ac.tuwien.dsg.comot.m.common.EpsAdapterStatic;
 import at.ac.tuwien.dsg.comot.m.common.InformationClient;
-import at.ac.tuwien.dsg.comot.m.common.Type;
-import at.ac.tuwien.dsg.comot.m.common.events.CustomEvent;
-import at.ac.tuwien.dsg.comot.m.common.events.ExceptionMessage;
-import at.ac.tuwien.dsg.comot.m.common.events.LifeCycleEvent;
-import at.ac.tuwien.dsg.comot.m.common.events.StateMessage;
-import at.ac.tuwien.dsg.comot.m.common.events.Transition;
+import at.ac.tuwien.dsg.comot.m.common.enums.Action;
+import at.ac.tuwien.dsg.comot.m.common.enums.EpsEvent;
+import at.ac.tuwien.dsg.comot.m.common.enums.Type;
+import at.ac.tuwien.dsg.comot.m.common.event.CustomEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.state.StateMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.state.Transition;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
-import at.ac.tuwien.dsg.comot.m.core.InitData;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.Resource;
-import at.ac.tuwien.dsg.comot.model.type.Action;
 
 @Component
 public class EpsBuilder extends Processor {
@@ -95,9 +94,9 @@ public class EpsBuilder extends Processor {
 	public List<Binding> getBindings(String queueName, String instanceId) {
 		List<Binding> bindings = new ArrayList<>();
 
-		bindings.add(bindingCustom(queueName, "*.*." + EpsAction.EPS_DYNAMIC_REQUESTED + ".SERVICE"));
-		bindings.add(bindingCustom(queueName, "*.*." + EpsAction.EPS_DYNAMIC_REMOVED + ".SERVICE"));
-		bindings.add(bindingCustom(queueName, "*.*." + EpsAction.EPS_SUPPORT_ASSIGNED + ".SERVICE"));
+		bindings.add(bindingCustom(queueName, "*.*." + EpsEvent.EPS_DYNAMIC_REQUESTED + ".SERVICE"));
+		bindings.add(bindingCustom(queueName, "*.*." + EpsEvent.EPS_DYNAMIC_REMOVED + ".SERVICE"));
+		bindings.add(bindingCustom(queueName, "*.*." + EpsEvent.EPS_SUPPORT_ASSIGNED + ".SERVICE"));
 		bindings.add(bindingLifeCycle(queueName, "*.*.*.*." + Action.CREATED + ".SERVICE.#"));
 		// bindings.add(bindingLifeCycle(queueName, "*.*.*.*." + Action.REMOVED + ".SERVICE.#"));
 		bindings.add(new Binding(queueName, DestinationType.QUEUE, Constants.EXCHANGE_DYNAMIC_REGISTRATION,
@@ -117,7 +116,7 @@ public class EpsBuilder extends Processor {
 				String staticDeplId = infoService.instanceIdOfStaticEps(Constants.SALSA_SERVICE_STATIC);
 
 				manager.sendCustom(Type.SERVICE, new CustomEvent(serviceId, instanceId, serviceId,
-						EpsAction.EPS_SUPPORT_REQUESTED.toString(), staticDeplId, null));
+						EpsEvent.EPS_SUPPORT_REQUESTED.toString(), staticDeplId, null));
 
 			}
 
@@ -140,9 +139,9 @@ public class EpsBuilder extends Processor {
 			String event, String epsId, String origin, String optionalMessage) throws ClassNotFoundException,
 			AmqpException, JAXBException, EpsException {
 
-		EpsAction action = EpsAction.valueOf(event);
+		EpsEvent action = EpsEvent.valueOf(event);
 
-		if (action == EpsAction.EPS_DYNAMIC_REQUESTED) {
+		if (action == EpsEvent.EPS_DYNAMIC_REQUESTED) {
 
 			// // create
 			// serviceId = infoService.getOsu(epsId).getService().getId();
@@ -157,11 +156,11 @@ public class EpsBuilder extends Processor {
 			// manager.sendCustom(Type.SERVICE, new CustomEvent(serviceId, instanceId, serviceId,
 			// EpsAction.EPS_SUPPORT_REQUESTED.toString(), staticDeplId, null));
 
-		} else if (action == EpsAction.EPS_SUPPORT_ASSIGNED && infoService.isServiceOfDynamicEps(serviceId)) {
+		} else if (action == EpsEvent.EPS_SUPPORT_ASSIGNED && infoService.isServiceOfDynamicEps(serviceId)) {
 
-			manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STARTED));
+			manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.START));
 
-		} else if (action == EpsAction.EPS_DYNAMIC_REMOVED) {
+		} else if (action == EpsEvent.EPS_DYNAMIC_REMOVED) {
 
 			manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.REMOVED));
 
@@ -170,8 +169,8 @@ public class EpsBuilder extends Processor {
 	}
 
 	@Override
-	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String instanceId, String originId,
-			Exception e) throws Exception {
+	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String instanceId, String originId)
+			throws Exception {
 		// TODO Auto-generated method stub
 
 	}

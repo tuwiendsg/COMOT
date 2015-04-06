@@ -41,41 +41,43 @@
 			</div>
 			<div>&nbsp;</div>
 
-			<h4>
-				Supporting Elastic Platform Services:
-			</h4>
+			<h4>Supporting Elastic Platform Services:</h4>
 			<div data-bind="foreach: selectedEpsServices">
-				<div class="panel panel-default col-md-4">
+				<div class="panel panel-default">
 					<div class="panel-body">
-						<h5>
-							<b>Name:</b>
-							<!-- ko if: (typeof viewEndpoint !== 'undefined') -->
-							<a data-bind="text: id, attr: {href: viewEndpoint}" target="_new">view</a>
+						<div class="col-md-3">
+							<h5>
+								<b>Name:</b>
+								<!-- ko if: (typeof viewEndpoint !== 'undefined') -->
+								<a data-bind="text: id, attr: {href: viewEndpoint}" target="_new">view</a>
+								<!-- /ko -->
+								<!-- ko if: (typeof viewEndpoint === 'undefined') -->
+								<span data-bind="text: id"></span>
+								<!-- /ko -->
+							</h5>
+							<h5>
+								<b>Type:</b> <span data-bind="text: osu.id"></span>
+
+							</h5>
+						</div>
+						<div class="col-md-8">
+							<!-- ko if: osu.PrimitiveOperations.Operation.length > 0 -->
+							<h5>
+								<b>Actions:</b>
+							</h5>
 							<!-- /ko -->
-							<!-- ko if: (typeof viewEndpoint === 'undefined') -->
-							<span data-bind="text: id"></span>
+							<!-- ko foreach: osu.PrimitiveOperations.Operation -->
+							<button type="button" class="btn btn-default"
+								data-bind="click: function() { $root.triggerCustomEvent( $parent, executeMethod) }">
+								<span data-bind="text: name"></span>
+							</button>
 							<!-- /ko -->
-						</h5>
-						<h5>
-							<b>Type:</b>
-							<span data-bind="text: osu.id"></span>
-					
-						</h5>
-						<!-- ko if: osu.PrimitiveOperations.Operation.length > 0 -->
-						<h5>
-							<b>Actions:</b>
-						</h5>
-						<!-- /ko -->
-						<!-- ko foreach: osu.PrimitiveOperations.Operation -->
-						<button type="button" class="btn btn-default"
-							data-bind="click: function() { $root.triggerCustomEvent( $parent, executeMethod) }">
-							<span data-bind="text: name"></span>
-						</button>
-						<!-- /ko -->
-							<div>&nbsp;</div>
-						<button type="button" class="btn btn-default pull-right" data-bind="click: $root.removeEps">
-							<span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Unassign
-						</button>
+						</div>
+						<div class="col-md-1">
+							<button type="button" class="btn btn-default pull-right" data-bind="click: $root.removeEps">
+								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Unassign
+							</button>
+						</div>
 					</div>
 				</div>
 			</div>

@@ -15,15 +15,15 @@ import org.junit.Test;
 import org.oasis.tosca.Definitions;
 import org.springframework.beans.BeansException;
 
-import at.ac.tuwien.dsg.comot.m.common.ComotAction;
 import at.ac.tuwien.dsg.comot.m.common.Constants;
+import at.ac.tuwien.dsg.comot.m.common.enums.Action;
+import at.ac.tuwien.dsg.comot.m.common.enums.ComotEvent;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.m.core.test.utils.TestAgentAdapter;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 import com.rabbitmq.client.ConsumerCancelledException;
@@ -73,7 +73,7 @@ public class MonitoringTest extends AbstractTest {
 	public void testMonitoring() throws EpsException, ComotException, ShutdownSignalException,
 			ConsumerCancelledException, JAXBException, InterruptedException, ClassNotFoundException, IOException {
 
-		agent.waitForLifeCycleEvent(Action.STARTED);
+		agent.waitForLifeCycleEvent(Action.START);
 
 		assertTrue(infoService.isOsuAssignedToInstance(instanceId, Constants.MELA_SERVICE_STATIC));
 		assertFalse(monitoring.isMonitored(instanceId));
@@ -91,9 +91,9 @@ public class MonitoringTest extends AbstractTest {
 
 		// manually stop
 		coordinator.triggerCustomEvent(
-				serviceId, instanceId, staticMonitoringId, ComotAction.MELA_STOP.toString(), null);
+				serviceId, instanceId, staticMonitoringId, ComotEvent.MELA_STOP.toString(), null);
 
-		agent.waitForCustomEvent(ComotAction.MELA_STOP.toString());
+		agent.waitForCustomEvent(ComotEvent.MELA_STOP.toString());
 		UtilsTest.sleepSeconds(3);
 
 		assertTrue(infoService.isOsuAssignedToInstance(instanceId, Constants.MELA_SERVICE_STATIC));
@@ -101,9 +101,9 @@ public class MonitoringTest extends AbstractTest {
 
 		// manually start
 		coordinator.triggerCustomEvent(
-				serviceId, instanceId, staticMonitoringId, ComotAction.MELA_START.toString(), null);
+				serviceId, instanceId, staticMonitoringId, ComotEvent.MELA_START.toString(), null);
 
-		agent.waitForCustomEvent(ComotAction.MELA_START.toString());
+		agent.waitForCustomEvent(ComotEvent.MELA_START.toString());
 		UtilsTest.sleepSeconds(3);
 
 		assertTrue(infoService.isOsuAssignedToInstance(instanceId, Constants.MELA_SERVICE_STATIC));
@@ -112,7 +112,7 @@ public class MonitoringTest extends AbstractTest {
 		coordinator.stopServiceInstance(serviceId, instanceId);
 
 		// check automatically stopped
-		agent.waitForLifeCycleEvent(Action.STOPPED);
+		agent.waitForLifeCycleEvent(Action.STOP);
 		agent.assertLifeCycleEvent(Action.UNDEPLOYMENT_STARTED);
 		agent.assertLifeCycleEvent(Action.UNDEPLOYED);
 		UtilsTest.sleepSeconds(3);

@@ -1,7 +1,6 @@
 package at.ac.tuwien.dsg.comot.m.recorder.model;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -83,21 +82,23 @@ public class Change implements Serializable {
 
 	protected Map<String, Object> convert(DynamicProperties props) {
 
-		Map<String, Object> map = new HashMap<>();
-		for (String key : props.asMap().keySet()) {
-			map.put(key, props.asMap().get(key));
-		}
-		return map;
+		// Map<String, Object> map = new HashMap<>();
+		// for (String key : props.asMap().keySet()) {
+		// map.put(key, props.asMap().get(key));
+		// }
+		return props.asMap();
 	}
 
 	protected DynamicProperties convert(Map<String, Object> map) {
 
 		DynamicProperties properties = new ComotDynamicPropertiesContainer();
 
-		for (String key : map.keySet()) {
-			properties.setProperty(key, map.get(key));
-
-		}
+		// for (String key : map.keySet()) {
+		// if (map.get(key) != null) {
+		// properties.setProperty(key, map.get(key));
+		// }
+		// }
+		properties.setPropertiesFrom(map);
 		return properties;
 	}
 

@@ -11,17 +11,17 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.adapter.general.Processor;
-import at.ac.tuwien.dsg.comot.m.common.ComotAction;
-import at.ac.tuwien.dsg.comot.m.common.EpsAction;
 import at.ac.tuwien.dsg.comot.m.common.InformationClient;
+import at.ac.tuwien.dsg.comot.m.common.enums.Action;
+import at.ac.tuwien.dsg.comot.m.common.enums.ComotEvent;
+import at.ac.tuwien.dsg.comot.m.common.enums.EpsEvent;
 import at.ac.tuwien.dsg.comot.m.common.eps.MonitoringClient;
-import at.ac.tuwien.dsg.comot.m.common.events.ExceptionMessage;
-import at.ac.tuwien.dsg.comot.m.common.events.StateMessage;
-import at.ac.tuwien.dsg.comot.m.common.events.Transition;
+import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.state.StateMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.state.Transition;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.type.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 @Component
@@ -45,7 +45,7 @@ public class Monitoring extends Processor {
 		bindings.add(bindingLifeCycle(queueName,
 				instanceId + ".TRUE." + State.DEPLOYING + "." + State.RUNNING + ".#"));
 		bindings.add(bindingLifeCycle(queueName,
-				instanceId + ".*.*.*." + Action.UPDATE_FINISHED + ".#"));
+				instanceId + ".*.*.*." + Action.MAINTENANCE_FINISHED + ".#"));
 		bindings.add(bindingLifeCycle(queueName,
 				instanceId + ".*.*.*." + Action.ELASTIC_CHANGE_FINISHED + ".#"));
 		bindings.add(bindingLifeCycle(queueName,
@@ -78,7 +78,7 @@ public class Monitoring extends Processor {
 			}
 
 			// when action UPDATE_FINISHED or EL_CHANGE_FINISHED -> update
-		} else if (action == Action.ELASTIC_CHANGE_FINISHED || action == Action.UPDATE_FINISHED) {
+		} else if (action == Action.ELASTIC_CHANGE_FINISHED || action == Action.MAINTENANCE_FINISHED) {
 
 			CloudService servicefromInfo = infoService.getServiceInstance(serviceId, instanceId);
 			servicefromInfo.setId(instanceId);
@@ -101,36 +101,29 @@ public class Monitoring extends Processor {
 
 		State stateService = msg.getTransitions().get(serviceId).getCurrentState();
 
-		if (EpsAction.EPS_SUPPORT_ASSIGNED.toString().equals(event)) {
+		if (EpsEvent.EPS_SUPPORT_ASSIGNED.toString().equals(event)) {
 			startIfActive(instanceId, stateService);
 
-		} else if (EpsAction.EPS_SUPPORT_REMOVED.toString().equals(event)) {
+		} else if (EpsEvent.EPS_SUPPORT_REMOVED.toString().equals(event)) {
 			if (monitoring.isMonitored(instanceId)) {
 				monitoring.stopMonitoring(instanceId);
 			}
 
-		} else if (event.equals(ComotAction.MELA_START.toString())) {
+		} else if (event.equals(ComotEvent.MELA_START.toString())) {
 			startIfActive(instanceId, stateService);
 
-		} else if (event.equals(ComotAction.MELA_STOP.toString())) {
+		} else if (event.equals(ComotEvent.MELA_STOP.toString())) {
 			if (monitoring.isMonitored(instanceId)) {
 				monitoring.stopMonitoring(instanceId);
 			}
 
-		} else if (event.equals(ComotAction.MELA_SET_MCR.toString())) {
+		} else if (event.equals(ComotEvent.MELA_SET_MCR.toString())) {
 
-		} else if (event.equals(ComotAction.MELA_GET_MCR.toString())) {
+		} else if (event.equals(ComotEvent.MELA_GET_MCR.toString())) {
 
-		} else if (event.equals(ComotAction.MELA_GET_STRUCTURE.toString())) {
+		} else if (event.equals(ComotEvent.MELA_GET_STRUCTURE.toString())) {
 
 		}
-
-	}
-
-	@Override
-	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String instanceId, String originId, Exception e)
-			throws Exception {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -145,6 +138,13 @@ public class Monitoring extends Processor {
 		if (state == State.RUNNING || state == State.ELASTIC_CHANGE || state == State.UPDATE) {
 			monitoring.startMonitoring(servicefromInfo);
 		}
+	}
+
+	@Override
+	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String instanceId, String originId)
+			throws Exception {
+		// TODO Auto-generated method stub
+
 	}
 
 }
