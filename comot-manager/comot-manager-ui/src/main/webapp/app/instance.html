@@ -39,13 +39,21 @@
 					<li><a href="#" data-bind="click: $parent.assignEps, text: id"></a></li>
 				</ul>
 			</div>
+			<a data-bind="attr: { href: '#services/'+serviceId()+'/instances/'+instanceId()+'/analysis' }"><button type="button"
+					class="btn btn-default">
+					<span class="glyphicon glyphicon-search" aria-hidden="true"></span> Analysis
+				</button></a> <a data-bind="attr: { href: '#services/'+serviceId()+'/instances/'+instanceId()+'/history' }"><button type="button"
+					class="btn btn-default">
+					<span class="glyphicon glyphicon-search" aria-hidden="true"></span> Event Log
+				</button></a>
+
 			<div>&nbsp;</div>
 
 			<h4>Supporting Elastic Platform Services:</h4>
 			<div data-bind="foreach: selectedEpsServices">
 				<div class="panel panel-default">
 					<div class="panel-body">
-						<div class="col-md-3">
+						<div class="col-md-3 nopadding">
 							<h5>
 								<b>Name:</b>
 								<!-- ko if: (typeof viewEndpoint !== 'undefined') -->
@@ -60,7 +68,7 @@
 
 							</h5>
 						</div>
-						<div class="col-md-8">
+						<div class="col-md-8 nopadding">
 							<!-- ko if: osu.PrimitiveOperations.Operation.length > 0 -->
 							<h5>
 								<b>Actions:</b>
@@ -73,7 +81,7 @@
 							</button>
 							<!-- /ko -->
 						</div>
-						<div class="col-md-1">
+						<div class="col-md-1 nopadding">
 							<button type="button" class="btn btn-default pull-right" data-bind="click: $root.removeEps">
 								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Unassign
 							</button>

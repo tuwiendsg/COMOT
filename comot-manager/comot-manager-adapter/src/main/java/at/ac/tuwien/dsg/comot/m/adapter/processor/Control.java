@@ -101,9 +101,9 @@ public class Control extends Processor implements ControlEventsListener {
 			removeManaged(instanceId);
 
 		} else if (event.equals(ComotEvent.RSYBL_START.toString())) {
-
-			control(serviceId, instanceId);
-
+			if (stateService == State.RUNNING) {
+				control(serviceId, instanceId);
+			}
 		} else if (event.equals(ComotEvent.RSYBL_STOP.toString())) {
 
 			stopControl(instanceId);

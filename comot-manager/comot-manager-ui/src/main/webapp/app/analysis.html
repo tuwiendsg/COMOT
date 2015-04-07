@@ -8,28 +8,41 @@
 	<div>&nbsp;</div>
 
 	<div class="panel panel-default">
-		<h5>Possible stages of deployment:</h5>
-		<ul>
-			<li>ALLOCATING -</li>
-			<li>CONFIGURING -</li>
-			<li>STAGING -</li>
-			<li>INSTALLING -</li>
-		</ul>
-
-	</div>
-
-	<div class="panel panel-default">
 		<div class="panel-heading">
-			<b>Average per Service Unit</b>
+			<b>Average deployment time per Service Unit</b>
 		</div>
+
+		<div class="col-md-4">
+			<h4>Units:</h4>
+			<table class="table table-condensed">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Instances</th>
+						<th>Avg. Time (s)</th>
+					</tr>
+				</thead>
+
+				<tbody data-bind="foreach: allUnits">
+					<!-- ko if: name !== 'ALL' -->
+					<tr>
+						<td data-bind="text: name"></td>
+						<td class="vert-align" data-bind="text: instancesCount"></td>
+						<td data-bind="text: avgTime"></td>
+					</tr>
+					<!-- /ko -->
+				</tbody>
+			</table>
+		</div>
+
 		<div class="panel-body">
-			<div id="output2" class="col-md-12"></div>
+			<div id="output2" class="col-md-8"></div>
 		</div>
 	</div>
 
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<b>Aggregated per group</b>
+			<b>Aggregated deployment time</b>
 		</div>
 		<div class="panel-body">
 			<h5>Select one or multiple types:</h5>
@@ -45,8 +58,30 @@
 
 			<div>&nbsp;</div>
 			<div class="col-md-6">
-				<h4>Statistics</h4>
-				<div></div>
+				<h4>Unit Statistics</h4>
+				<table class="table table-condensed">
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Instances</th>
+							<th>Avg. Time (s)</th>
+						</tr>
+					</thead>
+					<tbody data-bind="foreach: aggregatedUnits">
+						<tr>
+							<!-- ko if: name !== 'ALL' -->
+							<td><span data-bind="text: name"></span></td>
+							<td class="vert-align"><span data-bind="text: instancesCount"></span></td>
+							<td><span data-bind="text: avgTime"></span></td>
+							<!-- /ko -->
+							<!-- ko if: name === 'ALL' -->
+							<td><b data-bind="text: name"></b></td>
+							<td class="vert-align"><b data-bind="text: instancesCount"></b></td>
+							<td><b data-bind="text: avgTime"></b></td>
+							<!-- /ko -->
+						</tr>
+					</tbody>
+				</table>
 			</div>
 			<div class="col-md-6">
 				<h4>Average length</h4>
@@ -59,11 +94,5 @@
 
 		</div>
 	</div>
-
-
-
-
-
-
 
 </div>

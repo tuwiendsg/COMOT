@@ -9,6 +9,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ResultLine {
 
+	@XmlAttribute(name = "ServiceID")
+	String serviceId;
 	@XmlAttribute(name = "InstanceID")
 	String instanceId;
 	@XmlAttribute(name = "UnitID")
@@ -26,8 +28,9 @@ public class ResultLine {
 
 	}
 
-	public ResultLine(String instanceId, String unitId, String type, Long timestamp, Double length, String stage) {
+	public ResultLine(String serviceId, String instanceId, String unitId, String type, Long timestamp, Double length, String stage) {
 		super();
+		this.serviceId=serviceId;
 		this.instanceId = instanceId;
 		this.unitId = unitId;
 		this.type = type;
@@ -82,6 +85,14 @@ public class ResultLine {
 
 	public void setStage(String stage) {
 		this.stage = stage;
+	}
+
+	public String getServiceId() {
+		return serviceId;
+	}
+
+	public void setServiceId(String serviceId) {
+		this.serviceId = serviceId;
 	}
 
 	@Override

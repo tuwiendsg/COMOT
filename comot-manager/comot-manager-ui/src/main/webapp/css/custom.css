@@ -60,3 +60,8 @@ circle.lc.init {
 .link.lastAction {
 	stroke: #ffbb78;
 }
+
+.nopadding {
+   padding: 0 !important;
+   margin: 0 !important;
+}

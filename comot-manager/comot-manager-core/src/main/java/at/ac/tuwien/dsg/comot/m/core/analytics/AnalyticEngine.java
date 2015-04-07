@@ -142,7 +142,7 @@ public class AnalyticEngine {
 				name = changes.get(i).getProperty(Recording.PROP_EVENT_NAME).toString();
 
 				line = new ResultLine(
-						unitInstanceId, unitId, osuType,
+						serviceId, unitInstanceId, unitId, osuType,
 						startTime, // (Long) changes.get(i).getProperty(Recording.PROP_EVENT_TIME),
 						length,
 						(name.equals(Action.DEPLOYMENT_STARTED.toString()) ? "ALLOCATING" : name));
@@ -154,7 +154,7 @@ public class AnalyticEngine {
 			}
 
 			line = new ResultLine(
-					unitInstanceId, unitId, osuType,
+					serviceId, unitInstanceId, unitId, osuType,
 					startTime, // (Long) changes.get(i).getProperty(Recording.PROP_EVENT_TIME),
 					sum,
 					"SUM");

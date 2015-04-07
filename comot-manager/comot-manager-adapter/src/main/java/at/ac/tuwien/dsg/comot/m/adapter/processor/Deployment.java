@@ -124,7 +124,6 @@ public class Deployment extends Processor {
 			for (Transition transition : transitions.values()) {
 				if (transition.getCurrentState() == State.ELASTIC_CHANGE) {
 					stop = false;
-					log.info("still el change {}", transition);
 				}
 			}
 
@@ -135,12 +134,6 @@ public class Deployment extends Processor {
 				tasks.remove(instanceId);
 			}
 
-			// if (tasks.containsKey(instanceId)) {
-			// tasks.get(instanceId).removeGroup(groupId);
-			// if (tasks.get(instanceId).stopIfNoGroup()) {
-			// tasks.remove(instanceId);
-			// }
-			// }
 		}
 	}
 

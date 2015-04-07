@@ -33,7 +33,8 @@ define(function(require) {
 		instanceIds : ko.observableArray(),
 		types : ko.observableArray(),
 		stages : ko.observableArray(),
-		// filter : ko.observable(UNIT),
+		allUnits : ko.observableArray(),
+		aggregatedUnits : ko.observableArray(),
 
 		// functions
 		switchUnit : function(unit) {
@@ -72,7 +73,7 @@ define(function(require) {
 
 			comot.getUnitInstanceDeploymentEvents(model.serviceId(), model.instanceId(), function(data) {
 
-				console.log(data);
+				// console.log(data);
 				allData = data;
 				allDataWithoutSum = dimple.filterData(data, STAGE, orderStages);
 
@@ -103,7 +104,7 @@ define(function(require) {
 					});
 				}
 
-				barChart(allDataWithoutSum);
+				barChart();
 				refreshGraphs(TYPE);
 
 			});
@@ -133,23 +134,78 @@ define(function(require) {
 		} else if (filterType === TYPE) {
 			filteredData = dimple.filterData(allDataWithoutSum, TYPE, extractSelected(model.types()));
 		}
-		console.log("filteredData");
-		console.log(filteredData);
 
 		avgPieChart(filteredData);
 		timeChart(filteredData);
+
+		if (filterType === UNIT) {
+			filteredData = dimple.filterData(allData, UNIT, extractSelected(model.units()));
+		} else if (filterType === TYPE) {
+			filteredData = dimple.filterData(allData, TYPE, extractSelected(model.types()));
+		}
+
+		model.aggregatedUnits.removeAll();
+		model.aggregatedUnits(avgsForUnit(filteredData));
+
 	}
 
-	function barChart(data) {
+	function avgsForUnit(data) {
+
+		var unitIds = dimple.getUniqueValues(data, UNIT);
+
+		var resultArray = [];
+		var allInstancesCount = 0;
+		var allTotalTime = 0;
+
+		for (var i = 0; i < unitIds.length; i++) {
+			var instancesCount = 0;
+			var totalTime = 0;
+
+			for (var j = 0; j < data.length; j++) {
+				if (data[j].UnitID === unitIds[i] && data[j].Stage === "SUM") {
+					instancesCount = instancesCount + 1;
+					totalTime = totalTime + data[j].Length;
+					allInstancesCount = allInstancesCount + 1;
+					allTotalTime = allTotalTime + data[j].Length;
+				}
+			}
+			var avgTime = totalTime / instancesCount;
+
+			resultArray.push({
+				'name' : unitIds[i],
+				'instancesCount' : instancesCount,
+				'avgTime' : Math.round(avgTime)
+			});
+		}
+
+		resultArray.push({
+			'name' : "ALL",
+			'instancesCount' : allInstancesCount,
+			'avgTime' : Math.round(allTotalTime / allInstancesCount)
+		});
+
+		return resultArray;
+	}
+
+	function barChart() {
+
+		model.allUnits.removeAll();
+		model.allUnits(avgsForUnit(allData));
+		model.allUnits.sort(function(left, right) {
+			return left.avgTime == right.avgTime ? 0 : (left.avgTime < right.avgTime ? 1 : -1)
+		})
+
 		$(graph2Div).empty();
-		var svg = dimple.newSvg(graph2Div, "100%", 400);
-		var chart = new dimple.chart(svg, data);
-		chart.setBounds("17%", "5%", "78%", "60%");
-		chart.addLegend(20, 20, 50, "100%", "left");
-		//chart.defaultColors = colors;
+		var svg = dimple.newSvg(graph2Div, "100%", 300);
+		// POSTER var svg = dimple.newSvg(graph2Div, "100%", 400);
+		var chart = new dimple.chart(svg, allDataWithoutSum);
+		// POSTER chart.setBounds("20%", "5%", "78%", "60%");
+		chart.setBounds("22%", "5%", "73%", "80%");
+		chart.addLegend(10, 20, 50, "100%", "left");
+		// chart.defaultColors = colors;
 
 		var x = chart.addCategoryAxis("x", UNIT);
-		// x.addOrderRule("timestamp");
+		x.addOrderRule(LENGTH);
 
 		var y = chart.addMeasureAxis("y", LENGTH);
 		y.title = "Length in seconds";
@@ -164,12 +220,12 @@ define(function(require) {
 	function avgPieChart(data) {
 
 		$(graph1Div).empty();
-		var svg = dimple.newSvg(graph1Div, "100%", 300);
+		var svg = dimple.newSvg(graph1Div, "100%", 200);
 
 		var chart = new dimple.chart(svg, data);
-		chart.setBounds("15%", "15%", "80%", "70%");
+		chart.setBounds("15%", "15%", "80%", "80%");
 		chart.addLegend(20, 20, 50, "100%", "left");
-		//chart.defaultColors = colors;
+		// chart.defaultColors = colors;
 
 		chart.addMeasureAxis("p", LENGTH);
 
@@ -187,7 +243,7 @@ define(function(require) {
 		var chart = new dimple.chart(svg, data);
 		chart.setBounds("17%", "5%", "78%", "50%");
 		chart.addLegend(20, 20, 50, "100%", "left");
-		//chart.defaultColors = colors;
+		// chart.defaultColors = colors;
 
 		var x = chart.addCategoryAxis("x", [ INSTANCE, TIMESTAMP ]);
 		x.addOrderRule(TIMESTAMP);
