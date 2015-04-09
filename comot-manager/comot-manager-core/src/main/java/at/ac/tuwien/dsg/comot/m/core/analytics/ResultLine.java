@@ -28,9 +28,10 @@ public class ResultLine {
 
 	}
 
-	public ResultLine(String serviceId, String instanceId, String unitId, String type, Long timestamp, Double length, String stage) {
+	public ResultLine(String serviceId, String instanceId, String unitId, String type, Long timestamp, Double length,
+			String stage) {
 		super();
-		this.serviceId=serviceId;
+		this.serviceId = serviceId;
 		this.instanceId = instanceId;
 		this.unitId = unitId;
 		this.type = type;

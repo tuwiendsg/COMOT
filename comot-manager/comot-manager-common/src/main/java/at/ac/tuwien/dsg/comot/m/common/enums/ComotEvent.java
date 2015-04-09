@@ -1,5 +1,7 @@
 package at.ac.tuwien.dsg.comot.m.common.enums;
 
+import at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.IEvent;
+
 public enum ComotEvent {
 
 	// /**
@@ -36,4 +38,22 @@ public enum ComotEvent {
 	RSYBL_SET_MCR,
 	RSYBL_SET_EFFECTS;
 
+	public static final String RSYBL_PREFIX = "RSYBL";
+	public static final String SEPARATOR = "-";
+
+	public static String rsyblEventName(IEvent event) {
+
+		IEvent.Type type = event.getType();
+		IEvent.Stage stage = event.getStage();
+		String eventName = RSYBL_PREFIX + SEPARATOR + event.getClass().getSimpleName().toUpperCase();
+
+		if (type != null) {
+			eventName += SEPARATOR + type;
+		}
+
+		if (stage != null) {
+			eventName += SEPARATOR + stage;
+		}
+		return eventName;
+	}
 }

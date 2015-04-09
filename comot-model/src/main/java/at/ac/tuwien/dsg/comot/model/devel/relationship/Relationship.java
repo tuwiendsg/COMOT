@@ -30,11 +30,11 @@ public abstract class Relationship implements Serializable {
 
 	@StartNode
 	@XmlIDREF
-	@XmlAttribute
+	//@XmlAttribute
 	protected ServiceUnit from;
 	@EndNode
 	@XmlIDREF
-	@XmlAttribute
+	//@XmlAttribute
 	protected ServiceUnit to;
 
 	public Relationship() {

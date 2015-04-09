@@ -14,11 +14,11 @@
 		<java.version>1.7</java.version>
 		<spring.version>4.1.0.RELEASE</spring.version>
 		<spring.neo4j.version>3.2.1.RELEASE</spring.neo4j.version>
-		<jersey.version>2.15</jersey.version>
 		<neo4j.version>2.1.6</neo4j.version>
 		<slf4j.version>1.7.7</slf4j.version>
 		<junit.version>4.11</junit.version>
 		<groovy.version>2.2.1</groovy.version>
+		<jackson.version>2.4.3</jackson.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -128,17 +128,17 @@
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
-				<version>2.4.3</version>
+				<version>${jackson.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-annotations</artifactId>
-				<version>2.4.3</version>
+				<version>${jackson.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.jaxrs</groupId>
 				<artifactId>jackson-jaxrs-json-provider</artifactId>
-				<version>2.4.3</version>
+				<version>${jackson.version}</version>
 			</dependency>
 
 			<dependency>

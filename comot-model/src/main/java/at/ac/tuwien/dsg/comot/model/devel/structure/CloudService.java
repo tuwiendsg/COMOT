@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -14,6 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import at.ac.tuwien.dsg.comot.model.runtime.ServiceInstance;
 
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class CloudService extends ServiceEntity {
 
 	private static final long serialVersionUID = 4336434946064439267L;

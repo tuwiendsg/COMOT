@@ -30,6 +30,8 @@ import at.ac.tuwien.dsg.comot.m.cs.mapper.DeploymentMapper;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.RsyblMapper;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.rsybl.CloudServiceXML;
+import at.ac.tuwien.dsg.csdg.elasticityInformation.elasticityRequirements.Constraint;
+import at.ac.tuwien.dsg.csdg.elasticityInformation.elasticityRequirements.Strategy;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 import at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.ActionEvent;
 import at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.ActionPlanEvent;
@@ -38,7 +40,7 @@ import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionR
 
 public class ControlClientRsybl implements ControlClient {
 
-	private final Logger log = LoggerFactory.getLogger(ControlClientRsybl.class);
+	private static final Logger log = LoggerFactory.getLogger(ControlClientRsybl.class);
 
 	protected RsyblClient rsybl;
 	@Autowired
@@ -176,7 +178,8 @@ public class ControlClientRsybl implements ControlClient {
 								log.info(
 										"ALL onActionPlanEvent(serviceId={}, stage={}, type={}, strategies={}, constraints={}, effects={})",
 										apEvent.getServiceId(), apEvent.getStage(), apEvent.getType(),
-										apEvent.getStrategies(), apEvent.getConstraints(), apEvent.getEffect());
+										extractStrategies(apEvent.getStrategies()),
+										extractConstraints(apEvent.getConstraints()), apEvent.getEffect());
 
 							} else if (event instanceof ActionEvent) {
 								ActionEvent aEvent = (ActionEvent) event;
@@ -220,6 +223,38 @@ public class ControlClientRsybl implements ControlClient {
 		}
 
 		listanersMap.put(serviceId, listener);
+	}
+
+	public static String extractStrategies(List<Strategy> list) {
+
+		StringBuilder builder = new StringBuilder("[");
+
+		for (Strategy one : list) {
+			if (builder.length() > 1) {
+				builder.append(", ");
+			}
+			builder.append(one.getId() + " " + one.getCondition() + " " + one.getToEnforce());
+		}
+		builder.append("]");
+		return builder.toString();
+	}
+
+	public static String extractConstraints(List<Constraint> list) {
+
+		StringBuilder builder = new StringBuilder("[");
+
+		for (Constraint one : list) {
+			if (builder.length() > 1) {
+				builder.append(", ");
+			}
+			if (one == null) {
+				builder.append("null");
+			} else {
+				builder.append(one.getId() + " " + one.getCondition() + " " + one.getToEnforce());
+			}
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 
 	@Override

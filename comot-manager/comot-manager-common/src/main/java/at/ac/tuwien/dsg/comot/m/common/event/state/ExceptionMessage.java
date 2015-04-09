@@ -3,6 +3,7 @@ package at.ac.tuwien.dsg.comot.m.common.event.state;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -21,9 +22,12 @@ public class ExceptionMessage extends ComotMessage {
 	protected String origin;
 	@XmlAttribute
 	protected Long time;
-
+	@XmlElement(name = "exceptionType")
+	// !!! in JSON name 'type' together with inheritance would cause problems
 	protected String type;
+	@XmlElement
 	protected String message;
+	@XmlElement
 	protected String details;
 
 	public ExceptionMessage() {
@@ -78,6 +82,14 @@ public class ExceptionMessage extends ComotMessage {
 		this.time = System.currentTimeMillis();
 	}
 
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	public String getCsInstanceId() {
 		return csInstanceId;
 	}
@@ -118,14 +130,6 @@ public class ExceptionMessage extends ComotMessage {
 		this.message = message;
 	}
 
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
 	public String getDetails() {
 		return details;
 	}
@@ -137,7 +141,7 @@ public class ExceptionMessage extends ComotMessage {
 	@Override
 	public String toString() {
 		return "ExceptionMessage [serviceId=" + serviceId + ", csInstanceId=" + csInstanceId + ", origin=" + origin
-				+ ", time=" + time + ", message=" + message + ", details=" + details + "]";
+				+ ", time=" + time + ", type=" + type + ", message=" + message + ", details=" + details + "]";
 	}
 
 }

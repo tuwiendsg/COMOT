@@ -17,20 +17,20 @@ import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.adapter.general.Processor;
 import at.ac.tuwien.dsg.comot.m.common.InformationClient;
-import at.ac.tuwien.dsg.comot.m.common.Navigator;
+import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.enums.Action;
 import at.ac.tuwien.dsg.comot.m.common.enums.ComotEvent;
 import at.ac.tuwien.dsg.comot.m.common.enums.EpsEvent;
 import at.ac.tuwien.dsg.comot.m.common.enums.Type;
 import at.ac.tuwien.dsg.comot.m.common.eps.ControlClient;
 import at.ac.tuwien.dsg.comot.m.common.eps.ControlEventsListener;
+import at.ac.tuwien.dsg.comot.m.common.event.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessage;
 import at.ac.tuwien.dsg.comot.m.common.event.state.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.event.state.Transition;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.model.type.State;
 import at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.ActionEvent;
 import at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.ActionPlanEvent;
@@ -179,60 +179,100 @@ public class Control extends Processor implements ControlEventsListener {
 	@Override
 	public void onMessage(IEvent event) {
 
+		String instanceId = null;
+		String serviceId = null;
 		try {
+			String optionalMsg = null;
+			instanceId = event.getServiceId();
+			CloudService instance = infoService.getServiceInstance(instanceId);
+			serviceId = instance.getId();
+			String customEventName = ComotEvent.rsyblEventName(event);
 
-			String instanceId = event.getServiceId();
+			try {
+				optionalMsg = Utils.asJsonString(event);
+			} catch (Exception e) {
+				log.error("Failed to marshall message: {}", event.getClass());
+				log.error("{}", e);
+				throw e;
+			}
 
 			if (event instanceof ActionPlanEvent) {
 				ActionPlanEvent apEvent = (ActionPlanEvent) event;
 
-				// log.info("onActionPlanEvent(serviceId={}, stage={}, type={}, strategies={}, constraints={}, effects={})",
-				// apEvent.getServiceId(), apEvent.getStage(), apEvent.getType(), apEvent.getStrategies(),
-				// apEvent.getConstraints(), apEvent.getEffect());
+				Type type = Type.SERVICE;
 
-			} else if (event instanceof ActionEvent) {
-				ActionEvent aEvent = (ActionEvent) event;
+				if (apEvent.getStage() == IEvent.Stage.START) {
+					manager.sendLifeCycle(type, new LifeCycleEvent(serviceId, instanceId, serviceId,
+							Action.ELASTIC_CHANGE_STARTED));
 
-				// log.info("onActionEvent(serviceId={}, stage={}, type={}, actionId={}, targetId={})",
-				// aEvent.getServiceId(),
-				// aEvent.getStage(), aEvent.getType(), aEvent.getActionId(), aEvent.getTargetId());
+					manager.sendCustom(Type.SERVICE, new CustomEvent(serviceId, instanceId, serviceId,
+							customEventName, null, optionalMsg));
 
-				CloudService instance = infoService.getServiceInstance(instanceId);
-				String serviceId = instance.getId();
-				String targetGroupId = aEvent.getTargetId();
-				Set<String> allTargetIds = new HashSet<>();
-				allTargetIds.add(targetGroupId);
+				} else if (apEvent.getStage() == IEvent.Stage.FINISHED || apEvent.getStage() == IEvent.Stage.FINISHED) {
 
-				Navigator nav = new Navigator(instance);
-				Type type = Type.decide(nav.getManaged(targetGroupId));
+					manager.sendCustom(Type.SERVICE, new CustomEvent(serviceId, instanceId, serviceId,
+							customEventName, null, optionalMsg));
 
-				// solve mismatch between rSYBL units and information model units
-				if (type == Type.UNIT) {
-					for (ServiceUnit unit : nav.getHostsRecursive(nav.getUnit(targetGroupId))) {
-						allTargetIds.add(unit.getId());
-					}
+					manager.sendLifeCycle(type, new LifeCycleEvent(serviceId, instanceId, serviceId,
+							Action.ELASTIC_CHANGE_FINISHED));
 				}
 
-				for (String tempGroupId : allTargetIds) {
-					if (event.getStage() == IEvent.Stage.START) {
-						manager.sendLifeCycle(type, new LifeCycleEvent(serviceId, instanceId, tempGroupId,
-								Action.ELASTIC_CHANGE_STARTED));
+			} else {
+				String targetId;
+				if (event instanceof ActionEvent) {
+					ActionEvent aEvent = (ActionEvent) event;
 
-					} else if (event.getStage() == IEvent.Stage.FINISHED) {
-						manager.sendLifeCycle(type, new LifeCycleEvent(serviceId, instanceId, tempGroupId,
-								Action.ELASTIC_CHANGE_FINISHED));
-					}
+					targetId = aEvent.getTargetId();
 
+				} else if (event instanceof at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.CustomEvent) {
+					at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.CustomEvent cEvent = (at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.CustomEvent) event;
+					targetId = serviceId;
+				} else {
+					targetId = serviceId;
 				}
-			} else if (event instanceof at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.CustomEvent) {
-				at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.CustomEvent aEvent = (at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.CustomEvent) event;
 
-				// onCustomEvent(serviceId=HelloElasticityNoDB_co_1, stage=null, type=NOTIFICATION, targetId=Co1 ,
-				// message=Requirements Co1 are violated, and rSYBL can not solve the problem.)
-
+				manager.sendCustom(Type.SERVICE, new CustomEvent(serviceId, instanceId, targetId,
+						customEventName, null, optionalMsg));
 			}
-		} catch (Exception e) {
 
+			log.info("sending custom event with optional message: {}", optionalMsg);
+
+		} catch (Exception e) {
+			try {
+				manager.sendException(serviceId, instanceId, e);
+			} catch (Throwable e1) {
+				log.error("{}", e1);
+			}
+			log.error("{}", e);
 		}
 	}
 }
+
+// CloudService instance = infoService.getServiceInstance(instanceId);
+// String serviceId = instance.getId();
+// String targetGroupId = aEvent.getTargetId();
+// Set<String> allTargetIds = new HashSet<>();
+// allTargetIds.add(targetGroupId);
+//
+// Navigator nav = new Navigator(instance);
+// Type type = Type.decide(nav.getManaged(targetGroupId));
+//
+// // solve mismatch between rSYBL units and information model units
+// if (type == Type.UNIT) {
+// for (ServiceUnit unit : nav.getHostsRecursive(nav.getUnit(targetGroupId))) {
+// allTargetIds.add(unit.getId());
+// }
+// }
+//
+// for (String tempGroupId : allTargetIds) {
+// if (event.getStage() == IEvent.Stage.START) {
+// manager.sendLifeCycle(type, new LifeCycleEvent(serviceId, instanceId, tempGroupId,
+// Action.ELASTIC_CHANGE_STARTED));
+//
+// } else if (event.getStage() == IEvent.Stage.FINISHED) {
+// manager.sendLifeCycle(type, new LifeCycleEvent(serviceId, instanceId, tempGroupId,
+// Action.ELASTIC_CHANGE_FINISHED));
+// }
+//
+// }
+

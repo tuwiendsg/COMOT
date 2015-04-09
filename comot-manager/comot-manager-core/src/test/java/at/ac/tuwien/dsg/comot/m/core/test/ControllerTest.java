@@ -64,7 +64,8 @@ public class ControllerTest extends AbstractTest {
 		agent = new TestAgentAdapter("prototype", env.getProperty("uri.broker.host"));
 		generator = new LoadGenerator();
 
-		Definitions tosca1 = UtilsCs.loadTosca(UtilsTest.TEST_FILE_BASE + "helloElasticity/HelloElasticityNoDB.xml");
+		Definitions tosca1 = UtilsCs.loadTosca(UtilsTest.TEST_FILE_BASE
+				+ "helloElasticity/HelloElasticity_ShortNames.xml");
 
 		CloudService service = mapperTosca.createModel(tosca1);
 		serviceId = coordinator.createCloudService(service);
@@ -123,7 +124,8 @@ public class ControllerTest extends AbstractTest {
 			ConsumerCancelledException,
 			EpsException, JAXBException, ComotException, IOException, InterruptedException {
 
-		insertExistingRunningInstanceOfThisServiceToSystem("HelloElasticityNoDB");
+		// insertExistingRunningInstanceOfThisServiceToSystem("HelloElasticityNoDB");
+		insertExistingRunningInstanceOfThisServiceToSystem(serviceId);
 
 		UtilsTest.sleepInfinit();
 	}
@@ -135,6 +137,8 @@ public class ControllerTest extends AbstractTest {
 			EpsException,
 			JAXBException, ComotException, IOException, ShutdownSignalException, ConsumerCancelledException,
 			InterruptedException {
+
+		log.info("instanceId {}", instanceId);
 
 		assertTrue(deployment.isManaged(instanceId));
 		assertTrue(deployment.isRunning(instanceId));
@@ -182,8 +186,6 @@ public class ControllerTest extends AbstractTest {
 						+ event.getAction() + "." + Type.INSTANCE;
 
 				amqp.convertAndSend(Constants.EXCHANGE_REQUESTS, bindingKey, Utils.asJsonString(event));
-
-				log.info("aaaaaaaa " + uInst);
 			}
 		}
 

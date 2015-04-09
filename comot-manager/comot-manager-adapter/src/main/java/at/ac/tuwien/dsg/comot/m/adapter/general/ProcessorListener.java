@@ -40,9 +40,9 @@ public class ProcessorListener implements MessageListener {
 			} catch (Exception e) {
 
 				String body = new String(message.getBody(), "UTF-8");
-				log.error("Unexpected message type: {}", body);
+				log.error("Failed to unmarshall message: {}", body);
 				log.error("{}", e);
-				return;
+				throw e;
 			}
 
 			if (comotMsg instanceof StateMessage) {

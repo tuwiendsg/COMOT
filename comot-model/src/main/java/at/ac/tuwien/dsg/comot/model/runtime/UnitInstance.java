@@ -36,7 +36,7 @@ public class UnitInstance implements Serializable, HasUniqueId {
 	@XmlAttribute
 	protected State state;
 	@XmlIDREF
-	@XmlAttribute
+	//@XmlAttribute
 	protected UnitInstance hostInstance;
 
 	public UnitInstance() {
