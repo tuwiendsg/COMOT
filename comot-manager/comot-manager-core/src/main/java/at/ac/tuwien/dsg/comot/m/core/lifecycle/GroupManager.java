@@ -50,8 +50,9 @@ public class GroupManager {
 		log.info(logId() + "checkAndExecute BEFORE groupId={} : {}", groupId, serviceGroup);
 
 		if (!group.canExecute(action)) {
+
 			throw new ComotLifecycleException("Action '" + action + "' is not allowed in state '"
-					+ group.getCurrentState() + "'. Group " + groupId);
+					+ group.getCurrentState() + "'. Group " + groupId + "\n" + group.notAllowedExecutionReason(action));
 		}
 
 		group.executeAction(action, strategy);
@@ -68,7 +69,7 @@ public class GroupManager {
 
 		if (!group.canExecute(action)) {
 			throw new ComotLifecycleException("Action '" + action + "' is not allowed in state '"
-					+ group.getCurrentState() + "'. Group " + groupId);
+					+ group.getCurrentState() + "'. Group " + groupId + "\n" + group.notAllowedExecutionReason(action));
 		}
 	}
 

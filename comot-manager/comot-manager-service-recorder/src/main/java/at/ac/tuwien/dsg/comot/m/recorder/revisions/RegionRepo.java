@@ -224,20 +224,22 @@ public class RegionRepo {
 	@Transactional
 	public Iterable<Relationship> getAllCurrentStructuralRelsRecursiveFromObject(String id) {
 
-		ExecutionResult result = engine
-				.execute("match (r:_REGION {_id: '"
-						+ regionId
-						+ "'})-[]->(n:_IDENTITY {_id: '"
-						+ id
-						+ "'})-[rel_col * {to: 9223372036854775807}]->(m:_IDENTITY) UNWIND rel_col as rel return DISTINCT rel as dist_rel");
+		String query = "match (r:_REGION {_id: '"
+				+ regionId
+				+ "'})-[]->(n:_IDENTITY {_id: '"
+				+ id
+				+ "'})-[rel_col * {to: 9223372036854775807}]->(m:_IDENTITY) UNWIND rel_col as rel return DISTINCT rel as dist_rel";
 
+		// log.info(query);
+
+		ExecutionResult result = engine.execute(query);
 		Iterator<Relationship> iter = result.columnAs("dist_rel");
 
 		return IteratorUtil.asIterable(iter);
 	}
 
-	// match (r:_REGION {_id: 'serviceId'})-[]->(n:_IDENTITY {_id: 'newTopo_UPDATED'})-[rel * {to:
-	// 9223372036854775807}]->(m:_IDENTITY) unwind rel as rrr return distinct(rrr)
+	// match (r:_REGION {_id: 'serviceId'})-[]->(n:_IDENTITY {_id: 'serviceId'})-[rel_col * {to:
+	// 9223372036854775807}]->(m:_IDENTITY) unwind rel_col as rel return DISTINCT rel as dist_rel
 
 	@Transactional
 	public Iterable<Relationship> getAllStructuralRelsFromObject(String id, Long timestamp) {

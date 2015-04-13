@@ -33,9 +33,9 @@ import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 @Component
-public class AnalyticEngine {
+public class TimeAnalyzis {
 
-	private static final Logger log = LoggerFactory.getLogger(AnalyticEngine.class);
+	private static final Logger log = LoggerFactory.getLogger(TimeAnalyzis.class);
 
 	@Autowired
 	private ApplicationContext context;
@@ -112,22 +112,8 @@ public class AnalyticEngine {
 			Node osuState = regionRepo.getStateAfterChange(osuIdentity.getProperty(InternalNode.ID).toString(),
 					startTime);
 
-			// log.info("osuInstance {}", osuInstanceIdentity.getProperty(InternalNode.ID));
-			// log.info("osu {}", osuIdentity.getProperty(InternalNode.ID));
-			// log.info("extractProps {}", regionRepo.extractProps(osuState));
-
 			String unitId = unitIdentity.getProperty(InternalNode.ID).toString();
 			String osuType = osuState.getProperty("type").toString();
-
-			// log.info("unitIdentity {} {}", unitId, osuType);
-
-			// CloudService service = (CloudService) revisionApi.getRevision(instanceId, serviceId,
-			// (deplFinTime == Long.MAX_VALUE) ? deplFinTime : deplFinTime + 1);
-			//
-			// Navigator nav = new Navigator(service);
-			//
-			// UnitInstance uInstFin = nav.getInstance(unitInstanceId);
-			// ServiceUnit unit = nav.getUnitFor(unitInstanceId);
 
 			Double sum = 0.0;
 			Double length;

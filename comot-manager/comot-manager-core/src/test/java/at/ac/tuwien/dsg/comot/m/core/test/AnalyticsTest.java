@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.enums.Action;
 import at.ac.tuwien.dsg.comot.m.core.Recording;
-import at.ac.tuwien.dsg.comot.m.core.analytics.AnalyticEngine;
+import at.ac.tuwien.dsg.comot.m.core.analytics.TimeAnalyzis;
 import at.ac.tuwien.dsg.comot.m.recorder.RecorderException;
 import at.ac.tuwien.dsg.comot.m.recorder.revisions.RevisionApi;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
@@ -23,7 +23,7 @@ public class AnalyticsTest extends AbstractTest {
 	// protected WrappingNeoServerBootstrapper srv;
 
 	@Autowired
-	private AnalyticEngine engine;
+	private TimeAnalyzis engine;
 	@Autowired
 	protected RevisionApi revisionApi;
 

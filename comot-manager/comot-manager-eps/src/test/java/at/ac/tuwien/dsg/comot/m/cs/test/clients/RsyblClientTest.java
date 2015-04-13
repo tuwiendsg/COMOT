@@ -42,7 +42,7 @@ public class RsyblClientTest extends AbstractTest {
 
 	}
 
-	public static final String SERVICE_ID = "HelloElasticityNoDB";
+	public static final String SERVICE_ID = "HelloElasticity_1";
 
 	@Test
 	public void helperDeploy() throws EpsException, IOException {
@@ -64,6 +64,9 @@ public class RsyblClientTest extends AbstractTest {
 
 		log.info("{}", UtilsCs.asString(cloudServiceXML));
 		log.info("{}", UtilsCs.asString(deploymentDescription));
+
+		// controlClient.setHostAndPort("128.130.172.191", 8280);
+		controlClient.setHostAndPort("localhost", 8280);
 
 		controlClient.sendInitialConfig(service);
 

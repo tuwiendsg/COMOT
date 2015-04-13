@@ -12,9 +12,9 @@ public interface IProcessor {
 	public void setDispatcher(IDispatcher dispatcher);
 
 	public List<Binding> getBindings(
-			String queueName, String instanceId);
+			String queueName, String serviceId);
 
-	public void start() throws Exception;
+	public void start(String participantId) throws Exception;
 
 	public void onLifecycleEvent(
 			StateMessage msg) throws Exception;

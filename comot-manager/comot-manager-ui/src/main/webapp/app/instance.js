@@ -400,7 +400,7 @@ function createTree(root, divId) {
 	transformElement(root);
 
 	var widthCore = 750;
-	var heightCore = countLeafs * (boxHeight + 50);
+	var heightCore = countLeafs * (boxHeight + 47);
 	if (heightCore < 200) {
 		heightCore = 200;
 	}

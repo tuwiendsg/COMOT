@@ -100,6 +100,29 @@ public class Group implements Serializable {
 		}
 	}
 
+	public String notAllowedExecutionReason(Action action) {
+
+		String reason = null;
+
+		if (members.isEmpty()) {
+			if (LifeCycleFactory.getLifeCycle(type).executeAction(parent.getCurrentState(), currentState, action) == null) {
+				return "ROOT: Action '" + action + "' is not allowed in state '" + currentState + "' patentState '"
+						+ parent.getCurrentState() + "'. GroupId=" + id + " , type=" + type;
+			} else {
+				return null;
+			}
+
+		} else {
+			for (Group member : members) {
+				if (null != (reason = member.notAllowedExecutionReason(action))) {
+					return reason;
+				}
+			}
+			return null;
+		}
+
+	}
+
 	public void executeAction(Action action, AggregationStrategy strategy) {
 
 		State nextState = null;

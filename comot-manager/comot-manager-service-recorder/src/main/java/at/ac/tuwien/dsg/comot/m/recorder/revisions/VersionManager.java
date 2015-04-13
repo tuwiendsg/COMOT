@@ -180,6 +180,7 @@ public class VersionManager {
 		// set outdated rels
 		for (Relationship rel : repo.getAllCurrentStructuralRelsRecursiveFromObject(region.getStartNode()
 				.getBusinessId())) {
+
 			if (!currentRels.contains(rel.getId())) {
 				modified = true;
 				rel.setProperty(InternalRel.PROPERTY_TO, time);

@@ -8,10 +8,7 @@ import java.util.Map;
 import javax.xml.bind.JAXBException;
 
 import org.springframework.amqp.AmqpException;
-import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.Binding.DestinationType;
-import org.springframework.amqp.core.TopicExchange;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -40,19 +37,9 @@ public class EpsBuilder extends Processor {
 	protected ApplicationContext context;
 	@Autowired
 	protected InformationClient infoService;
-	@Autowired
-	protected AmqpAdmin admin;
-
-	// protected Set<String> managedSet = Collections.synchronizedSet(new HashSet<String>());
-	//
-	// enum DynamicEpsState {
-	// CREATED_SENT, ASSIGNMENT_REQUESTED
-	// }
 
 	@Override
 	public void start() throws Exception {
-
-		admin.declareExchange(new TopicExchange(Constants.EXCHANGE_DYNAMIC_REGISTRATION, false, false));
 
 		infoService.deeteAll();
 		context.getBean(InitData.class).setUpTestData();
@@ -99,8 +86,6 @@ public class EpsBuilder extends Processor {
 		bindings.add(bindingCustom(queueName, "*.*." + EpsEvent.EPS_SUPPORT_ASSIGNED + ".SERVICE"));
 		bindings.add(bindingLifeCycle(queueName, "*.*.*.*." + Action.CREATED + ".SERVICE.#"));
 		// bindings.add(bindingLifeCycle(queueName, "*.*.*.*." + Action.REMOVED + ".SERVICE.#"));
-		bindings.add(new Binding(queueName, DestinationType.QUEUE, Constants.EXCHANGE_DYNAMIC_REGISTRATION,
-				"#", null));
 
 		return bindings;
 	}
@@ -119,18 +104,6 @@ public class EpsBuilder extends Processor {
 						EpsEvent.EPS_SUPPORT_REQUESTED.toString(), staticDeplId, null));
 
 			}
-
-			// if (action == Action.REMOVED) {
-			//
-			// String osuId = infoService.getOsuByServiceId(serviceId).getId();
-			//
-			// for (OsuInstance osuIns : infoService.getOsuInstancesForOsu(osuId)) {
-			// if (osuIns.getServiceInstance() == null) {
-			// infoService.removeOsuInatance(osuIns.getId());
-			// break;
-			// }
-			// }
-			// }
 		}
 	}
 
@@ -142,19 +115,6 @@ public class EpsBuilder extends Processor {
 		EpsEvent action = EpsEvent.valueOf(event);
 
 		if (action == EpsEvent.EPS_DYNAMIC_REQUESTED) {
-
-			// // create
-			// serviceId = infoService.getOsu(epsId).getService().getId();
-			// instanceId = infoService.createServiceInstance(serviceId);
-			//
-			// manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId,
-			// Action.CREATED));
-
-			// // assign
-			// String staticDeplId = infoService.instanceIdOfStaticEps(Constants.SALSA_SERVICE_STATIC);
-			//
-			// manager.sendCustom(Type.SERVICE, new CustomEvent(serviceId, instanceId, serviceId,
-			// EpsAction.EPS_SUPPORT_REQUESTED.toString(), staticDeplId, null));
 
 		} else if (action == EpsEvent.EPS_SUPPORT_ASSIGNED && infoService.isServiceOfDynamicEps(serviceId)) {
 

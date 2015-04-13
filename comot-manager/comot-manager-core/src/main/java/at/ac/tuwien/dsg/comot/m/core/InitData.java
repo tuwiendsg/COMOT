@@ -100,7 +100,7 @@ public class InitData {
 		control.hasPrimitiveOperation(
 				new PrimitiveOperation("Stop controller", ComotEvent.RSYBL_STOP.toString()));
 
-		// DYNAMIC EPS
+		// DYNAMIC EPS MELA
 
 		CloudService melaService = mapperTosca.createModel(UtilsCs
 				.loadTosca("./../resources/adapterMela/mela_tosca_with_adapter_from_salsa.xml"));
@@ -118,9 +118,29 @@ public class InitData {
 
 		monitoringDynamic.setService(melaService);
 
+		// DYNAMIC EPS RSYBL
+
+		CloudService rsyblService = mapperTosca.createModel(UtilsCs
+				.loadTosca("./../resources/adapterRsybl/rsybl_mela_with_adapter_tosca.xml"));
+
+		OfferedServiceUnit rsyblDynamic = new OfferedServiceUnit();
+		rsyblDynamic.setId(Constants.RSYBL_SERVICE_DYNAMIC);
+		rsyblDynamic.setType(OsuType.EPS.toString());
+
+		rsyblDynamic.hasPrimitiveOperation(
+				new PrimitiveOperation("Set Metric Composition Rules", ComotEvent.RSYBL_SET_MCR.toString()));
+		rsyblDynamic.hasPrimitiveOperation(
+				new PrimitiveOperation("Start control", ComotEvent.RSYBL_START.toString()));
+		rsyblDynamic.hasPrimitiveOperation(
+				new PrimitiveOperation("Stop control", ComotEvent.RSYBL_STOP.toString()));
+
+		rsyblDynamic.setService(rsyblService);
+
 		// // INSERT
 		infoService.createService(melaService);
 		infoService.addOsu(monitoringDynamic);
+		infoService.createService(rsyblService);
+		infoService.addOsu(rsyblDynamic);
 
 		infoService.addOsu(deployment);
 		infoService.addOsu(monitoring);

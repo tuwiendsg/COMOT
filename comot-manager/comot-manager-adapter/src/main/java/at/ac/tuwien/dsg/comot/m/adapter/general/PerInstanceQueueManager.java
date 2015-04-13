@@ -50,6 +50,10 @@ public class PerInstanceQueueManager extends Manager {
 				Constants.EXCHANGE_CUSTOM_EVENT,
 				"*." + participantId + "." + EpsEvent.EPS_SUPPORT_REQUESTED + "." + Type.SERVICE, null));
 
+		admin.declareBinding(new Binding(queueNameAssignment(), DestinationType.QUEUE,
+				Constants.EXCHANGE_CUSTOM_EVENT,
+				"*.*." + EpsEvent.EPS_SUPPORT_REMOVED + "." + Type.SERVICE, null));
+
 		container = new SimpleMessageListenerContainer();
 		container.setConnectionFactory(connectionFactory);
 		container.setQueueNames(queueNameAssignment());
@@ -85,16 +89,25 @@ public class PerInstanceQueueManager extends Manager {
 				String instanceId = event.getCsInstanceId();
 				String serviceId = event.getServiceId();
 				String groupId = event.getGroupId();
+				String action = event.getCustomEvent();
 
-				if (!containers.containsKey(instanceId)) {
+				if (action.equals(EpsEvent.EPS_SUPPORT_REQUESTED.toString())) {
 
-					startServiceInstanceListener(instanceId);
+					if (!containers.containsKey(instanceId)) {
 
-					infoService.assignEps(serviceId, instanceId, participantId);
+						startServiceInstanceListener(instanceId);
 
-					sendCustom(Type.SERVICE,
-							new CustomEvent(serviceId, instanceId, groupId, EpsEvent.EPS_SUPPORT_ASSIGNED.toString(),
-									participantId, null));
+						infoService.assignEps(serviceId, instanceId, participantId);
+
+						sendCustom(
+								Type.SERVICE,
+								new CustomEvent(serviceId, instanceId, groupId, EpsEvent.EPS_SUPPORT_ASSIGNED
+										.toString(),
+										participantId, null));
+					}
+
+				} else if (action.equals(EpsEvent.EPS_SUPPORT_REMOVED.toString())) {
+					removeInstanceListener(instanceId);
 				}
 
 			} catch (Exception e) {

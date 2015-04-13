@@ -105,6 +105,7 @@ public class Monitoring extends Processor {
 			startIfActive(instanceId, stateService);
 
 		} else if (EpsEvent.EPS_SUPPORT_REMOVED.toString().equals(event)) {
+
 			if (monitoring.isMonitored(instanceId)) {
 				monitoring.stopMonitoring(instanceId);
 			}
@@ -130,13 +131,15 @@ public class Monitoring extends Processor {
 	protected void startIfActive(String instanceId, State state) throws EpsException, ComotException,
 			ClassNotFoundException, IOException {
 
-		CloudService servicefromInfo = infoService.getServiceInstance(instanceId);
+		if (state == State.RUNNING || state == State.ELASTIC_CHANGE || state == State.MAINTENANCE) {
+			if (!monitoring.isMonitored(instanceId)) {
 
-		servicefromInfo.setId(instanceId);
-		servicefromInfo.setName(instanceId);
+				CloudService servicefromInfo = infoService.getServiceInstance(instanceId);
+				servicefromInfo.setId(instanceId);
+				servicefromInfo.setName(instanceId);
 
-		if (state == State.RUNNING || state == State.ELASTIC_CHANGE || state == State.UPDATE) {
-			monitoring.startMonitoring(servicefromInfo);
+				monitoring.startMonitoring(servicefromInfo);
+			}
 		}
 	}
 

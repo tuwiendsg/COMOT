@@ -145,8 +145,6 @@ public class Deployment extends Processor {
 
 		if (action == EpsEvent.EPS_SUPPORT_REMOVED) {
 
-			manager.removeInstanceListener(instanceId);
-
 			if (deployment.isManaged(instanceId)) {
 
 				manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId,

@@ -9,7 +9,6 @@ import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
 
-import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.junit.After;
 import org.junit.Test;
@@ -32,10 +31,10 @@ public class RsyblEventsTest {
 	@Test
 	public void testProducer() throws JMSException {
 
-		log.info(ActiveMQConnection.DEFAULT_BROKER_URL);
+		// log.info(ActiveMQConnection.DEFAULT_BROKER_URL);
 
-		// factory = new ActiveMQConnectionFactory("failover://tcp://128.130.172.191:61616");
-		factory = new ActiveMQConnectionFactory("tcp://localhost:61616");
+		factory = new ActiveMQConnectionFactory("tcp://128.130.172.191:61616");
+		// factory = new ActiveMQConnectionFactory("tcp://localhost:61616");
 
 		connection = factory.createConnection();
 
@@ -70,7 +69,6 @@ public class RsyblEventsTest {
 
 		log.info("sleeping");
 		UtilsTest.sleepSeconds(10);
-		;
 
 	}
 

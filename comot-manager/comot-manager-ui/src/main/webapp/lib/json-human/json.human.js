@@ -48,8 +48,8 @@
     }
 
     /**
-     * Modified to ignore empty arrays, empty strings and string containing only whitespace
-     */
+	 * Modified to ignore empty arrays, empty strings and string containing only whitespace
+	 */
     function _format(data, prefixer) {
         var result, container, key, keyNode, valNode,
             isEmpty = true,
@@ -90,8 +90,9 @@
             break;
         case OBJECT:
             result = crel("table", {"class": p("type-object")});
+                        
             for (key in data) {
-                isEmpty = false;
+                
                 keyNode = crel("th",
                          {"class": p("key") + " " + p("object-key")},
                          "" + key);
@@ -101,7 +102,8 @@
                 if(value == null){
                 	continue;
                 }
-                
+                isEmpty = false;
+ 
                 valNode = crel("td",
                          {"class": p("value") + " " + p("object-value")},
                          value);
@@ -154,8 +156,10 @@
             prefixer = makePrefixer(options.prefix || "jh");
 
         result = _format(data, prefixer);
-        result.className = result.className + " " + prefixer("root");
-
+        
+        if(result !== null){
+        	result.className = result.className + " " + prefixer("root");
+        }
         return result;
     }
 

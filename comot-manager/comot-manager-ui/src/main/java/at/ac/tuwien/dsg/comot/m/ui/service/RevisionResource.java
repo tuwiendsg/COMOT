@@ -20,8 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
-import at.ac.tuwien.dsg.comot.m.core.analytics.AnalyticEngine;
 import at.ac.tuwien.dsg.comot.m.core.analytics.ResultLine;
+import at.ac.tuwien.dsg.comot.m.core.analytics.TimeAnalyzis;
 import at.ac.tuwien.dsg.comot.m.recorder.RecorderException;
 import at.ac.tuwien.dsg.comot.m.recorder.model.Change;
 import at.ac.tuwien.dsg.comot.m.recorder.out.ManagedObject;
@@ -39,7 +39,7 @@ public class RevisionResource {
 	@Autowired
 	protected RevisionApi revisionApi;
 	@Autowired
-	protected AnalyticEngine analyticEngine;
+	protected TimeAnalyzis analyticEngine;
 
 	@GET
 	@Path("/{serviceId}/analytics/unitInstanceDeploymentEvents")

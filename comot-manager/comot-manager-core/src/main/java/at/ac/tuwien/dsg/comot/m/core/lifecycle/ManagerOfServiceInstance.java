@@ -306,8 +306,18 @@ public class ManagerOfServiceInstance {
 
 	protected void sendException(Exception e) throws AmqpException, JAXBException {
 
-		send(Constants.EXCHANGE_EXCEPTIONS, csInstanceId + "." + csInstanceId, new ExceptionMessage(serviceId,
-				csInstanceId, csInstanceId, System.currentTimeMillis(), e));
+		ExceptionMessage msg;
+
+		if (e instanceof ComotLifecycleException) {
+			ComotLifecycleException lcs = (ComotLifecycleException) e;
+
+			msg = new ExceptionMessage(serviceId, csInstanceId, csInstanceId, System.currentTimeMillis(),
+					ComotLifecycleException.class.getSimpleName(), lcs.getMessage(), Utils.asJsonString(lcs.getEvent()));
+		} else {
+			msg = new ExceptionMessage(serviceId, csInstanceId, csInstanceId, System.currentTimeMillis(), e);
+		}
+
+		send(Constants.EXCHANGE_EXCEPTIONS, csInstanceId + "." + csInstanceId, msg);
 
 	}
 

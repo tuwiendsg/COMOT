@@ -42,7 +42,7 @@
 				<ns2:Capabilities />
 				<ns2:Policies>
 					<ns2:Policy id="EventProcessingUnit_EP_Co1" policyType="SYBLConstraint"
-						name="Co1:CONSTRAINT responseTime &gt; 10 ms" />
+						name="Co1:CONSTRAINT cpuUsage &gt; 30 %" />
 					<ns2:Policy id="EventProcessingUnit_EP_Co2" policyType="SYBLConstraint"
 						name="Co2:CONSTRAINT responseTime &lt; 100 ms" />
 					<ns2:Policy id="EventProcessingUnit_EP_Co3" policyType="SYBLConstraint"

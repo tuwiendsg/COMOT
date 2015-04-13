@@ -19,14 +19,14 @@ import org.springframework.data.neo4j.annotation.RelatedToVia;
 public class Revision implements Serializable {
 
 	private static final long serialVersionUID = -6465792722114872213L;
-	public static final String PROP_ID = "id";
+	public static final String PROP_ID = "revisionId";
 
 	@XmlTransient
 	@GraphId
 	protected Long nodeId;
 
 	@XmlID
-	protected String id;
+	protected String revisionId;
 	@XmlTransient
 	@RelatedToVia(direction = Direction.INCOMING)
 	protected Change start;
@@ -34,7 +34,7 @@ public class Revision implements Serializable {
 	protected Change end;
 
 	public Revision() {
-		id = UUID.randomUUID().toString();
+		revisionId = UUID.randomUUID().toString();
 	}
 
 	public Revision(Revision oldRev, String changeType, String targetObjectId, Map<String, Object> changeProperties,
@@ -72,12 +72,12 @@ public class Revision implements Serializable {
 		this.end = end;
 	}
 
-	public String getId() {
-		return id;
+	public String getRevisionId() {
+		return revisionId;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setRevisionId(String id) {
+		this.revisionId = id;
 	}
 
 	@Override

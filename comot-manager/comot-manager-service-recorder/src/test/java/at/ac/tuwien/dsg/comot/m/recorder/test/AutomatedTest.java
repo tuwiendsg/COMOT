@@ -37,7 +37,7 @@ public class AutomatedTest extends AbstractTest {
 		service = STemplates.simplifiedService();
 		oneVersion();
 
-		UtilsTest.sleepInfinit();
+		// UtilsTest.sleepInfinit();
 	}
 
 	@Test
@@ -101,6 +101,8 @@ public class AutomatedTest extends AbstractTest {
 		revisionApi.createOrUpdateRegion(updatedService, STemplates.serviceId, STemplates.serviceId, "config_change",
 				null);
 
+		UtilsTest.sleepInfinit();
+
 		Long version2Time = System.currentTimeMillis();
 
 		// VERSION 3
@@ -113,15 +115,6 @@ public class AutomatedTest extends AbstractTest {
 		// READ VERSION 1
 		CloudService sResult = (CloudService) revisionApi.getRevision(STemplates.serviceId,
 				STemplates.serviceId, version1Time);
-
-		log.info("expected :{}", Utils.asJsonString(service));
-		log.info("actual :{}", Utils.asJsonString(sResult));
-
-		log.info("expected {} actual {}",
-				service.getServiceTopologiesList().get(0).getServiceUnitsList().size(),
-				sResult.getServiceTopologiesList().get(0).getServiceUnitsList().size());
-
-		// UtilsTest.sleepInfinit();
 
 		assertReflectionEquals(service, sResult, ReflectionComparatorMode.LENIENT_ORDER);
 
@@ -176,8 +169,6 @@ public class AutomatedTest extends AbstractTest {
 		CloudService finalService = update2(updatedService);
 		revisionApi.createOrUpdateRegion(finalService, STemplates.serviceId, STemplates.serviceId, "config_change",
 				null);
-
-		UtilsTest.sleepInfinit();
 
 		// READ CHANGES - WHOLE TIME
 		change = revisionApi.getAllChangesThatModifiedThisObject(STemplates.serviceId, STemplates.serviceId, 0L,

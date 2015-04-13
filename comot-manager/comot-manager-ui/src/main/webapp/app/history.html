@@ -1,6 +1,6 @@
 <div class="container">
 
-	<h2>History of service instance</h2>
+	<h2>Event log</h2>
 
 	<h4>
 		<b>ID:</b> <span data-bind="text: instanceId"></span>
@@ -16,52 +16,54 @@
 					<th>Type</th>
 					<th>Origin</th>
 					<th>Target</th>
+					<th>CS state</th>
 				</tr>
 			</thead>
 			<tbody data-bind="foreach: changes">
-				<tr
-					data-bind="css: {active : $parent.selectedTime() == timestamp}, click: function() { $parent.revisionsForChange(timestamp)}">
+				<tr data-toggle="tooltip" title="Click for event details"
+					data-bind="css: {warning : type == 'CHANGE_TYPE_EXCEPTION_LIFECYCLE', danger : type == 'CHANGE_TYPE_EXCEPTION', active : $parent.selectedEvent() == $data}, click: $parent.eventDetails">
 					<td data-bind="text: time"></td>
+					<!-- ko if: type == 'CHANGE_TYPE_LIFECYCLE' || type == 'CHANGE_TYPE_CUSTOM'-->
 					<td
-						data-bind="text: props.eventName, style: { fontWeight: (type == 'CHANGE_TYPE_LIFECYCLE') ? 'bold' : '' }, click: function() { $parent.revisionsForChange(timestamp)} "></td>
-					<td data-bind="text: props.origin"></td>
+						data-bind="text: eventName, style: { fontWeight: (type == 'CHANGE_TYPE_LIFECYCLE') ? 'bold' : '' }, click: $parent.eventDetails"></td>
+					<!-- /ko -->
+					<!-- ko if: type == 'CHANGE_TYPE_EXCEPTION'   -->
+					<td data-bind="text: 'EXCEPTION', click: $parent.eventDetails"></td>
+					<!-- /ko -->
+					<!-- ko if: type == 'CHANGE_TYPE_EXCEPTION_LIFECYCLE'  -->
+					<td data-bind="text: 'LIFECYCLE EXCEPTION', click: $parent.eventDetails"></td>
+					<!-- /ko -->
+					<td data-bind="text: origin"></td>
 					<td data-bind="text: targetObjectId"></td>
+					<td>
+						<button type="button" class="btn btn-default btn-xs" data-bind="click: $parent.serviceData">
+							<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+						</button>
+					</td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
-	<div class="col-md-4">
-		<h4>Cloud service components</h4>
 
-		<h5>Service</h5>
+	<h4>Event details</h4>
 
-		<div data-bind="foreach: serviceObj">
-			<button type="button" class="btn btn-default"
-				data-bind="text: $data, click: function() { $parent.revisionsForObject($data)}, css: { active: $parent.selectedObjectId() == $data}"></button>
+
+	<div id="eventDetails" class="col-md-12"></div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 1200px"> <!--  style="width: 1000px" -->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">Elastic Cloud Service details</h4>
+				</div>
+				<div class="modal-body" id="output_revisions"></div>
+			</div>
 		</div>
-
-		<h5>Topologies</h5>
-		<div data-bind="foreach: topologiesObj">
-			<button type="button" class="btn btn-default"
-				data-bind="text: $data, click: function() { $parent.revisionsForObject($data)}, css: { active: $parent.selectedObjectId() == $data}"></button>
-		</div>
-
-		<h5>Units</h5>
-		<div data-bind="foreach: unitsObj">
-			<button type="button" class="btn btn-default"
-				data-bind="text: $data, click: function() { $parent.revisionsForObject($data)}, css: { active: $parent.selectedObjectId() == $data}"></button>
-		</div>
-
-		<h5>Other</h5>
-		<div data-bind="foreach: otherObj">
-			<button type="button" class="btn btn-default"
-				data-bind="text: $data, click: function() { $parent.revisionsForObject($data)}, css: { active: $parent.selectedObjectId() == $data}"></button>
-		</div>
-
 	</div>
-
-
-	<div id="output_revisions" class="col-md-12"></div>
 
 
 </div>

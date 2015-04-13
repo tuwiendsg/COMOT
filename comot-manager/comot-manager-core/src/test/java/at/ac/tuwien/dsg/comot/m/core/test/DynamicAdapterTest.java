@@ -46,7 +46,7 @@ public class DynamicAdapterTest extends AbstractTest {
 	@Test
 	public void testDynamic() throws EpsException, AmqpException, JAXBException {
 
-		OfferedServiceUnit melaOsu = infoService.getOsu(Constants.MELA_SERVICE_DYNAMIC);
+		OfferedServiceUnit melaOsu = infoService.getOsu(Constants.RSYBL_SERVICE_DYNAMIC);
 
 		coordinator.createDynamicService(melaOsu.getId());
 

@@ -32,10 +32,10 @@ public class Recording extends Processor {
 	public static final String CHANGE_TYPE_LIFECYCLE = "CHANGE_TYPE_LIFECYCLE";
 	public static final String CHANGE_TYPE_CUSTOM = "CHANGE_TYPE_CUSTOM";
 	public static final String CHANGE_TYPE_EXCEPTION = "CHANGE_TYPE_EXCEPTION";
-	public static final String CHANGE_TYPE_EXCEPTION_LIFECYCLE = "CHANGE_TYPE_EXCEPTION";
+	public static final String CHANGE_TYPE_EXCEPTION_LIFECYCLE = "CHANGE_TYPE_EXCEPTION_LIFECYCLE";
 
 	public static final String PROP_ORIGIN = "origin";
-	public static final String PROP_MSG = "msg";
+	public static final String PROP_MSG = "optionalMessage";
 	public static final String PROP_EPS_ID = "epsId";
 	public static final String PROP_EVENT_NAME = "eventName";
 	public static final String PROP_EVENT_TIME = "eventTime";

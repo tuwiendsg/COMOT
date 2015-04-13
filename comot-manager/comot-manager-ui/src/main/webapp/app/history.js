@@ -12,54 +12,63 @@ define(function(require) {
 		// properties
 		serviceId : ko.observable(""),
 		instanceId : ko.observable(""),
-		selectedObjectId : ko.observable(""),
-		selectedTime : ko.observable(LONG_MAX),
-		serviceObj : ko.observableArray(),
-		topologiesObj : ko.observableArray(),
-		unitsObj : ko.observableArray(),
-		otherObj : ko.observableArray(),
+		selectedEvent : ko.observable(),
 		changes : ko.observableArray(),
 		// functions
-		revisionsForChange : function(timestamp) {
-			model.selectedTime(timestamp);
-			getRevision();
+		eventDetails : function(event) {
+
+			model.selectedEvent(event);
+
+			var viewEvent = $.extend(true, {}, event);
+			delete viewEvent.propertiesMap;
+			delete viewEvent.eventTime;
+			delete viewEvent.timestamp;
+			delete viewEvent.from;
+			delete viewEvent.to;
+			delete viewEvent.type;
+			delete viewEvent.targetObjectId;
+			delete viewEvent.origin;
+			delete viewEvent.eventName;
+			delete viewEvent.time;
+
+			if (typeof viewEvent.exceptionDetail !== 'undefined') {
+				try {
+					viewEvent.exceptionDetail = jQuery.parseJSON(viewEvent.exceptionDetail);
+				} catch (e) {
+				}
+			}
+			if (typeof viewEvent.optionalMessage !== 'undefined') {
+				try {
+					viewEvent.optionalMessage = jQuery.parseJSON(viewEvent.optionalMessage);
+				} catch (e) {
+				}
+			}
+
+			$("#eventDetails").empty();
+			var details = JsonHuman.format(viewEvent);
+			console.log(details);
+			if (details == null) {
+				details = "<p>No details</p>";
+			}
+			$("#eventDetails").append(details);
+
 		},
-		revisionsForObject : function(id) {
-			model.selectedObjectId(id);
-			getRevision();
+		serviceData : function(event) {
+
+			getRevision(model.instanceId(), model.serviceId(), event.timestamp);
+			$('#myModal').modal()
 		},
 		// life-cycle
 		activate : function(serviceId, instanceId) {
 
 			model.serviceId(serviceId);
 			model.instanceId(instanceId);
-
 		},
 		attached : function() {
 
-			showThisInstance(model.serviceId(), model.instanceId());
-
-			$(document).ready(
-					function() {
-
-						$('.tree li:has(ul)').addClass('parent_li').find(' > span').attr('title',
-								'Collapse this branch');
-						$('.tree li.parent_li > span').on(
-								'click',
-								function(e) {
-									var children = $(this).parent('li.parent_li').find(' > ul > li');
-									if (children.is(":visible")) {
-										children.hide('fast');
-										$(this).attr('title', 'Expand this branch').find(' > i').addClass(
-												'icon-plus-sign').removeClass('icon-minus-sign');
-									} else {
-										children.show('fast');
-										$(this).attr('title', 'Collapse this branch').find(' > i').addClass(
-												'icon-minus-sign').removeClass('icon-plus-sign');
-									}
-									e.stopPropagation();
-								});
-					});
+			repeater.runWith(model.instanceId(), function() {
+				refreshChanges(model.instanceId());
+			})
 		},
 		detached : function() {
 			repeater.stop();
@@ -68,103 +77,53 @@ define(function(require) {
 
 	return model;
 
-	function showThisInstance(serviceId, instanceId) {
+	function getRevision(instanceId, objectId, timestamp) {
+		var timeToUse;
 
-		repeater.runWith(instanceId, function() {
-
-			if (model.selectedObjectId() == "" || model.instanceId() != instanceId) {
-				model.selectedObjectId(model.serviceId());
-				model.selectedTime(LONG_MAX);
-			}
-
-			model.serviceId(serviceId);
-			model.instanceId(instanceId);
-
-			// refresh objects
-			comot.getObjects(instanceId, function(data) {
-				model.serviceObj.removeAll();
-				model.topologiesObj.removeAll();
-				model.unitsObj.removeAll();
-				model.otherObj.removeAll();
-
-				for (var i = 0; i < data.length; i++) {
-
-					if (data[i].label == "CloudService") {
-						model.serviceObj.push(data[i].id);
-					} else if (data[i].label == "ServiceTopology") {
-						model.topologiesObj.push(data[i].id);
-					} else if (data[i].label == "ServiceUnit") {
-						model.unitsObj.push(data[i].id);
-					} else {
-						model.otherObj.push(data[i].id);
-					}
-				}
-
-				refreshChanges();
-
-			}, function(error) {
-				model.serviceObj.removeAll();
-				model.topologiesObj.removeAll();
-				model.unitsObj.removeAll();
-				model.otherObj.removeAll();
-				$("#output_revisions").html("");
-				model.changes.removeAll();
-				notify.info("No managed objects for service '" + instanceId + "'");
-			});
-
-		})
-	}
-
-	function getRevision() {
-		var timestamp;
-		var instanceId = model.instanceId();
-		var objectId = model.selectedObjectId();
-
-		if (model.selectedTime() == LONG_MAX) {
-			timestamp = LONG_MAX_STRING;
+		if (timestamp == LONG_MAX) {
+			timeToUse = LONG_MAX_STRING;
 		} else {
-			timestamp = model.selectedTime() + 1;
+			timeToUse = timestamp + 1;
 		}
 
-		comot.getRecording(instanceId, objectId, timestamp, function(data) {
+		comot.getRecording(instanceId, objectId, timeToUse, function(data) {
 			$("#output_revisions").html(JsonHuman.format(data));
 		}, function(error) {
 			$("#output_revisions").html("");
-			notify.info("No revision for service '" + instanceId + "', object '" + objectId
-					+ ((timestamp == LONG_MAX_STRING) ? " currently valid" : " ' at time '" + utils.longToDateString(timestamp))
-					+ "'");
+			notify.info("No revision for service '"
+					+ instanceId
+					+ "', object '"
+					+ objectId
+					+ ((timeToUse == LONG_MAX_STRING) ? " currently valid" : " ' at time '"
+							+ utils.longToDateString(timeToUse)) + "'");
 		});
 
-		refreshChanges();
 	}
 
-	function refreshChanges() {
-
-		var instanceId = model.instanceId();
-		var objectId = model.selectedObjectId();
+	function refreshChanges(instanceId) {
 
 		// refresh changes
 		comot.getAllEvents(instanceId, function(data) {
 			model.changes.removeAll();
-			for (var i = 0; i < data.length; i++) {
+			for (var i = data.length - 1; i >= 0; i--) {
 
-				var propsArr = data[i].propertiesMap.entry;
+				var event = data[i];
+				var propsArr = event.propertiesMap.entry;
 				var props = {};
+
 				for (var j = 0; j < propsArr.length; j++) {
-					props[propsArr[j].key] = propsArr[j].value.value;
+					event[propsArr[j].key] = propsArr[j].value.value;
 				}
 
-				data[i].props = props;
-				data[i].time = utils.longToDateString(props.eventTime);
+				// event.props = props;
+				event.time = utils.longToDateString(event.eventTime);
 
-				model.changes.push(data[i]);
+				model.changes.push(event);
 			}
 		}, function(error) {
 			model.changes.removeAll();
-			notify.info("No changes for service '" + instanceId + "', object '" + objectId + "'");
+			notify.info("No changes for service '" + instanceId + "'");
 		})
 	}
-
-
 
 });

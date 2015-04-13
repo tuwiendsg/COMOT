@@ -42,7 +42,7 @@ public class ConverterToInternal {
 		region = new ManagedRegion();
 		nodes = new HashMap<>();
 
-		createNode(obj);
+		region.setStartNode(createNode(obj));
 
 		return region;
 	}
@@ -66,7 +66,6 @@ public class ConverterToInternal {
 		nodes.put(node.getBusinessId(), node);
 		region.addNode(node);
 		region.addClass(clazz.getSimpleName(), clazz.getCanonicalName());
-		region.setStartNode(node);
 
 		node.setRelationships(createAllRelationships(node, obj, fields));
 
