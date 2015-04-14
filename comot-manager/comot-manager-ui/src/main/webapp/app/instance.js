@@ -17,6 +17,8 @@ define(function(require) {
 		allEpsServices : ko.observableArray(),
 		selectedEpsServices : ko.observableArray(),
 		allServices : ko.observableArray(),
+		elasticConfiguration : ko.observable(),
+		service : ko.observable(),
 		// functions
 		startInstance : startInstance,
 		stopInstance : stopInstance,
@@ -24,6 +26,7 @@ define(function(require) {
 		removeEps : removeEps,
 		showThisGroup : showThisGroup,
 		triggerCustomEvent : triggerCustomEvent,
+		reconfigureElasticity : reconfigureElasticity,
 		// life-cycle
 		deactivate : function() {
 			if (typeof source.close === 'function') {
@@ -79,6 +82,12 @@ define(function(require) {
 					var transitions = data.transitions.entry;
 					var service = data.service;
 					populateGraphs(service, transitions);
+
+					// elasticity
+					var elTree = createElement(service, processTransitionsToMap(transitions));
+
+					model.elasticConfiguration(elTree);
+					model.service(service);
 				});
 
 			});
@@ -88,9 +97,6 @@ define(function(require) {
 	return model;
 
 	function showThisGroup(groupId) {
-
-		console.log(groupId);
-
 		model.groupId(groupId);
 		populateLifecycle();
 
@@ -154,13 +160,19 @@ define(function(require) {
 		});
 	}
 
+	function reconfigureElasticity() {
+
+		comot.reconfigureElasticity(model.serviceId(), model.instanceId(), model.service(), "Elasticity reconfigured",
+				"Failed to reconfigure elasticity");
+	}
+
 	function registerForEvents(path, events) {
 
 		if (!!window.EventSource) {
 			var source = new EventSource(path);
 
 			source.addEventListener('message', function(e) {
-				// console.log(e);
+
 				var message = JSON.parse(e.data);
 				var transitions = message.stateMessage.transitions.entry;
 				var event = message.stateMessage.event;
@@ -232,6 +244,62 @@ define(function(require) {
 		}
 	}
 
+	function createElement(object, tMap) {
+
+		var type = tMap[object.id].groupType;
+		var members;
+
+		var element = {
+			'name' : object.id,
+			'children' : [],
+			'state' : tMap[object.id].currentState,
+			'type' : type,
+			'directives' : ko.observableArray(object.Directives.Directive),
+			addDirective : function() {
+				element.directives.push({
+					id : "",
+					directive : "",
+					added : true
+				})
+			},
+			removeDirective : function(item) {
+				element.directives.remove(item);
+			}
+		};
+
+		if (type === "UNIT") {
+			element.elasticUnit = object.elasticUnit;
+		}
+
+		if (type === "TOPOLOGY" || type === "SERVICE") {
+			members = object.Topology;
+			if (typeof members != 'undefined') {
+				for (var i = 0; i < members.length; i++) {
+					element.children.push(createElement(members[i], tMap));
+				}
+			}
+		}
+
+		if (type === "TOPOLOGY") {
+			members = object.ServiceUnits.Unit;
+			if (typeof members != 'undefined') {
+				for (var i = 0; i < members.length; i++) {
+					element.children.push(createElement(members[i], tMap));
+				}
+			}
+
+		} else if (type === "UNIT") {
+			members = object.Instances.instances;
+			if (typeof members != 'undefined') {
+				for (var i = 0; i < members.length; i++) {
+					element.children.push(createElement(members[i], tMap));
+				}
+			}
+		}
+
+		return element;
+	}
+
 });
 
 function showEvent(events, event) {
@@ -253,47 +321,6 @@ function showEvent(events, event) {
 		'lifecycle' : lifecycle
 	});
 
-}
-
-function createElement(object, tMap) {
-
-	var type = tMap[object.id].groupType;
-	var members;
-
-	var element = {
-		'name' : object.id,
-		'children' : [],
-		'state' : tMap[object.id].currentState,
-		'type' : type
-	};
-
-	if (type === "TOPOLOGY" || type === "SERVICE") {
-		members = object.Topology;
-		if (typeof members != 'undefined') {
-			for (var i = 0; i < members.length; i++) {
-				element.children.push(createElement(members[i], tMap));
-			}
-		}
-	}
-
-	if (type === "TOPOLOGY") {
-		members = object.ServiceUnits.Unit;
-		if (typeof members != 'undefined') {
-			for (var i = 0; i < members.length; i++) {
-				element.children.push(createElement(members[i], tMap));
-			}
-		}
-
-	} else if (type === "UNIT") {
-		members = object.Instances.instances;
-		if (typeof members != 'undefined') {
-			for (var i = 0; i < members.length; i++) {
-				element.children.push(createElement(members[i], tMap));
-			}
-		}
-	}
-
-	return element;
 }
 
 function createLifecycle(graph, divId, lastState, currentState) {
@@ -460,7 +487,6 @@ function createTree(root, divId) {
 
 		if (element.children.length === 0) {
 			countLeafs = countLeafs + 1;
-			console.log(element.name);
 		}
 
 		for (var i = 0; i < element.children.length; i++) {

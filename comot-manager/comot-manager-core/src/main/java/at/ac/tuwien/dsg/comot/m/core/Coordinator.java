@@ -27,6 +27,7 @@ import at.ac.tuwien.dsg.comot.m.common.enums.Type;
 import at.ac.tuwien.dsg.comot.m.common.eps.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.event.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEventModifying;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
@@ -89,6 +90,13 @@ public class Coordinator {
 
 		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.REMOVED));
 
+	}
+
+	public void reconfigureElasticity(String serviceId, String instanceId, CloudService service) throws AmqpException,
+			JAXBException, EpsException {
+
+		sendLifeCycle(Type.SERVICE, new LifeCycleEventModifying(serviceId, instanceId, serviceId,
+				Action.RECONFIGURE_ELASTICITY, null, service));
 	}
 
 	public void assignSupportingOsu(String serviceId, String instanceId, String osuInstanceId)

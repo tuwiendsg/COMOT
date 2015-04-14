@@ -29,6 +29,7 @@ import org.glassfish.jersey.media.sse.SseFeature;
 import org.oasis.tosca.Definitions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.AmqpException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -203,6 +204,18 @@ public class ServicesResource {
 
 		// TODO
 		return null;
+	}
+
+	@PUT
+	@Path("/services/{serviceId}/instances/{instanceId}/elasticity")
+	public Response reconfigureElasticity(
+			@PathParam("serviceId") String serviceId,
+			@PathParam("instanceId") String instanceId,
+			CloudService service) throws AmqpException, JAXBException, EpsException {
+
+		coordinator.reconfigureElasticity(serviceId, instanceId, service);
+
+		return Response.ok().build();
 	}
 
 	@GET

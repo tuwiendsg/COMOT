@@ -24,26 +24,25 @@
 	<h4>Management:</h4>
 	<div class="panel panel-default">
 		<div class="panel-body">
-			<button type="button" class="btn btn-default" data-bind="click: startInstance">
+			<button type="button" class="btn btn-primary" data-bind="click: startInstance">
 				<span class="glyphicon glyphicon-play" aria-hidden="true"></span> Start
 			</button>
-			<button type="button" class="btn btn-default" data-bind="click: stopInstance">
+			<button type="button" class="btn btn-primary" data-bind="click: stopInstance">
 				<span class="glyphicon glyphicon-stop" aria-hidden="true"></span> Stop
 			</button>
 			<div class="btn-group">
-				<button type="button" class="btn btn-default">Assign supporting service</button>
-				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-					<span class="caret"></span> <span class="sr-only"></span>
+				<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+					<span class="caret"></span> Assign supporting service
 				</button>
 				<ul class="dropdown-menu" role="menu" data-bind="foreach: allEpsServices">
 					<li><a href="#" data-bind="click: $parent.assignEps, text: id"></a></li>
 				</ul>
 			</div>
-			<a data-bind="attr: { href: '#services/'+serviceId()+'/instances/'+instanceId()+'/analysis' }"><button type="button"
-					class="btn btn-default">
+			<a data-bind="attr: { href: '#services/'+serviceId()+'/instances/'+instanceId()+'/analysis' }"><button
+					type="button" class="btn btn-default">
 					<span class="glyphicon glyphicon-search" aria-hidden="true"></span> Analysis
-				</button></a> <a data-bind="attr: { href: '#services/'+serviceId()+'/instances/'+instanceId()+'/history' }"><button type="button"
-					class="btn btn-default">
+				</button></a> <a data-bind="attr: { href: '#services/'+serviceId()+'/instances/'+instanceId()+'/history' }"><button
+					type="button" class="btn btn-default">
 					<span class="glyphicon glyphicon-search" aria-hidden="true"></span> Event Log
 				</button></a>
 
@@ -89,9 +88,55 @@
 					</div>
 				</div>
 			</div>
+			<div>&nbsp;</div>
+			<h4>Elasticity configuration:</h4>
+			<div data-bind="template: { name: 'entityTemplate', data: elasticConfiguration } "></div>
 
 		</div>
 	</div>
+
+
+
+	<script type="text/ko" id="entityTemplate">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<b><span data-bind="text: type"></span></b>
+    		<span data-bind="text: name"></span>
+			<button type="button" class="btn btn-default btn-xs pull-right" data-bind="click: addDirective">Add</button>
+		</div>
+		<div class="panel-body">
+ 			<!-- ko foreach : directives -->
+				<div class="row">
+    				<div class="form-group">
+						<!-- ko if: typeof added != 'undefined'  -->
+						<div class="col-md-2">
+  							<input class="form-control" data-bind="value: id" placeholder="ID">
+						</div>
+						<!-- /ko -->
+						<!-- ko if: typeof added == 'undefined' -->
+  						<label class="col-md-2 control-label" data-bind="text: id"></label>
+						<!-- /ko -->
+						<div class="col-md-9">
+  							<input class="form-control" data-bind="value: directive" placeholder="SYBL directive">
+						</div>
+					</div>
+					<button type="button" class="btn btn-default btn-xs vcenter" data-bind="click: $parent.removeDirective">Remove</button>
+				</div>
+    		<!-- /ko -->
+			
+   			<!-- ko foreach : children -->
+				<!-- ko if: type === 'TOPOLOGY' || (type === 'UNIT' && elasticUnit)  -->
+    				<div data-bind="template: { name: 'entityTemplate', data: $data }"></div>
+				<!-- /ko -->
+    		<!-- /ko -->
+			
+			<!-- ko if: type === 'SERVICE' -->
+				<button type="button" class="btn btn-primary" data-bind="click: $root.reconfigureElasticity">Save</button>
+			<!-- /ko -->
+		</div>
+	</div>
+	</script>
+
 
 	<h4>State hierarchy:</h4>
 	<div id="tree_div"></div>

@@ -51,6 +51,7 @@
 				notify.error(onError);
 			}
 		}
+
 		return core;
 	}
 
@@ -165,6 +166,16 @@
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "DELETE";
 		request.url = eps + epsId + "/instances/" + epsInstanceId;
+		return $.ajax(request);
+	}
+	
+	exports.reconfigureElasticity = function(serviceId, instanceId, service, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "PUT";
+		request.data = JSON.stringify(service);
+		request.contentType = "application/json";
+		request.url = services + serviceId + instances + instanceId + "/elasticity";
 		return $.ajax(request);
 	}
 
@@ -288,13 +299,50 @@
 		request.url = recordings + csInstanceId + "/objects";
 		return $.ajax(request);
 	}
-	
+
 	exports.getUnitInstanceDeploymentEvents = function(serviceId, csInstanceId, onSuccess, onError) {
 
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "GET";
 		request.dataType = "json"
-		request.url = recordings + csInstanceId + "/"+serviceId+"/analytics/unitInstanceDeploymentEvents";
+		request.url = recordings + csInstanceId + "/" + serviceId + "/analytics/unitInstanceDeploymentEvents";
+		
+		var spinner = '#spinnerGetUnitInstanceDeploymentEvents';
+
+		request.beforeSend = function() {
+			if ($(spinner).length) {
+				$(spinner).show();
+			}
+		};
+		request.complete = function() {
+			if ($(spinner).length) {
+				$(spinner).hide();
+			}
+		};
+		
+		return $.ajax(request);
+	}
+
+	exports.getElasticActions = function(serviceId, csInstanceId, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "GET";
+		request.dataType = "json"
+		request.url = recordings + csInstanceId + "/" + serviceId + "/analytics/elasticActions";
+
+		var spinner = '#spinnerGetElasticActions';
+
+		request.beforeSend = function() {
+			if ($(spinner).length) {
+				$(spinner).show();
+			}
+		};
+		request.complete = function() {
+			if ($(spinner).length) {
+				$(spinner).hide();
+			}
+		};
+
 		return $.ajax(request);
 	}
 }));

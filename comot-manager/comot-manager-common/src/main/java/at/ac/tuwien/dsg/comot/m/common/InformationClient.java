@@ -55,6 +55,10 @@ public class InformationClient {
 		return null;
 	}
 
+	public void reconfigureElasticity(String serviceId, CloudService service) throws EpsException {
+		client.reconfigureElasticity(serviceId, service);
+	}
+
 	public List<CloudService> getServices() throws EpsException {
 		return client.getServices();
 	}

@@ -261,6 +261,11 @@ public class ToscaMapper {
 				}
 			}
 		}
+		navigator = new Navigator(service);
+
+		for (ServiceUnit unit : navigator.getAllUnits()) {
+			unit.setElasticUnit(navigator.isTrueServiceUnit(unit.getId()));
+		}
 
 		// log.debug("Final mapping: {}", Utils.asJsonString(cloudService));
 

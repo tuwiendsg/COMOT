@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import at.ac.tuwien.dsg.comot.m.common.Modifier;
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
@@ -70,6 +71,21 @@ public class InformationServiceMock {
 		return services.get(serviceId);
 	}
 
+	public void reconfigureElasticity(String serviceId, CloudService elConfig) {
+
+		try {
+			log.info("input {}", Utils.asJsonString(elConfig));
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		CloudService service = services.get(serviceId);
+
+		Modifier.replaceSyblDirectives(elConfig, service);
+
+	}
+
 	public String createServiceInstance(String serviceId) {
 
 		if (!services.containsKey(serviceId)) {
@@ -89,7 +105,8 @@ public class InformationServiceMock {
 
 		CloudService service = services.get(serviceId);
 
-		for (UnitInstance uInst : _getServiceInstance(instanceId).getUnitInstances()) {
+		for (Iterator<UnitInstance> i = _getServiceInstance(instanceId).getUnitInstances().iterator(); i.hasNext();) {
+			UnitInstance uInst = i.next();
 			removeUnitInstance(serviceId, instanceId, uInst.getId());
 		}
 

@@ -71,6 +71,19 @@ public class Resource {
 		return Response.ok(list).build();
 	}
 
+	@PUT
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path(Constants.SERVICE_ONE_ELASTICITY)
+	public Response reconfigureElasticity(@PathParam("serviceId") String serviceId, CloudService service)
+			throws ClassNotFoundException, IOException {
+
+		synchronized (sync) {
+
+			infoServ.reconfigureElasticity(serviceId, service);
+		}
+		return Response.ok().build();
+	}
+
 	// SERVICE INSTANCE
 	@POST
 	@Consumes(MediaType.WILDCARD)

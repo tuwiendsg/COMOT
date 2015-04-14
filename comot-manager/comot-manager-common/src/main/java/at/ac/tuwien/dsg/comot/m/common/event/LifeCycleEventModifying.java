@@ -33,6 +33,30 @@ public class LifeCycleEventModifying extends LifeCycleEvent {
 			String csInstanceId,
 			String groupId,
 			Action action,
+			String parentId,
+			ServiceEntity entity) {
+		super(serviceId, csInstanceId, groupId, action);
+		this.parentId = parentId;
+		this.entity = entity;
+	}
+
+	public LifeCycleEventModifying(
+			String serviceId,
+			String csInstanceId,
+			String groupId,
+			Action action,
+			String parentId,
+			UnitInstance instance) {
+		super(serviceId, csInstanceId, groupId, action);
+		this.parentId = parentId;
+		this.instance = instance;
+	}
+
+	public LifeCycleEventModifying(
+			String serviceId,
+			String csInstanceId,
+			String groupId,
+			Action action,
 			String origin,
 			Long time,
 			String parentId,

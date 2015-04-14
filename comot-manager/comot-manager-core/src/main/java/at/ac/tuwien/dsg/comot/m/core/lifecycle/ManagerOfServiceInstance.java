@@ -233,6 +233,15 @@ public class ManagerOfServiceInstance {
 
 				groupManager.checkAndExecute(action, groupId);
 
+			} else if (Action.RECONFIGURE_ELASTICITY == action) {
+
+				if (modEvent == null) {
+					throw new ComotException("The event '" + event + "' should be of type: "
+							+ LifeCycleEventModifying.class);
+				}
+
+				infoService.reconfigureElasticity(serviceId, (CloudService) modEvent.getEntity());
+
 			} else {
 				groupManager.checkAndExecute(action, groupId);
 			}
@@ -241,13 +250,7 @@ public class ManagerOfServiceInstance {
 
 			State currentState = transitions.get(serviceId).getCurrentState();
 			State previousState = transitions.get(serviceId).getLastState();
-			//
-			// // create binding
-			// if (currentState == previousState) {
-			// change = "FALSE";
-			// } else {
-			// change = "TRUE";
-			// }
+
 			change = Boolean.toString(transitions.get(serviceId).isFresh()).toUpperCase();
 
 			String bindingKey = csInstanceId + "." + change + "." + previousState + "." + currentState + "." + action

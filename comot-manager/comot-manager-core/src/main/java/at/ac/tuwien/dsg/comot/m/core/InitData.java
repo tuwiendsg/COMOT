@@ -173,12 +173,12 @@ public class InitData {
 			e.printStackTrace();
 		}
 
-		try {
-			infoService.createService(mapperTosca.createModel(UtilsCs
-					.loadTosca("./../resources/test/tosca/ExampleExecutableOnVM.xml")));
-		} catch (JAXBException | IOException e) {
-			e.printStackTrace();
-		}
+		// try {
+		// infoService.createService(mapperTosca.createModel(UtilsCs
+		// .loadTosca("./../resources/test/tosca/ExampleExecutableOnVM.xml")));
+		// } catch (JAXBException | IOException e) {
+		// e.printStackTrace();
+		// }
 
 	}
 

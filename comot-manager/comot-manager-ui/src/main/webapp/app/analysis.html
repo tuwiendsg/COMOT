@@ -1,98 +1,39 @@
 <div class="container">
 
-	<h2>Analysis - Deployment time of Unit Instances</h2>
+	<h2>Analysis</h2>
 
 	<h4>
 		<b>ID:</b> <span data-bind="text: instanceId"></span>
 	</h4>
 	<div>&nbsp;</div>
 
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<b>Average deployment time per Service Unit</b>
-		</div>
 
-		<div class="col-md-4">
-			<h4>Units:</h4>
-			<table class="table table-condensed">
-				<thead>
-					<tr>
-						<th>Name</th>
-						<th>Instances</th>
-						<th>Avg. Time (s)</th>
-					</tr>
-				</thead>
-
-				<tbody data-bind="foreach: allUnits">
-					<!-- ko if: name !== 'ALL' -->
-					<tr>
-						<td data-bind="text: name"></td>
-						<td class="vert-align" data-bind="text: instancesCount"></td>
-						<td data-bind="text: avgTime"></td>
-					</tr>
-					<!-- /ko -->
-				</tbody>
-			</table>
-		</div>
-
-		<div class="panel-body">
-			<div id="output2" class="col-md-8"></div>
+	<div role="tabpanel">
+		<!-- Nav tabs -->
+		<ul class="nav nav-tabs" role="tablist" data-bind="foreach: tabs">
+			<li role="presentation" data-bind="css: { active: show }"><a role="tab" href="#" data-toggle="tab"
+				data-bind="text: name, click : $parent.showTab"></a></li>
+		</ul>
+		<!-- Tab panes  -->
+		<div class="tab-content" data-bind="foreach: tabs">
+			<div role="tabpanel" class="tab-pane" data-bind="css: { active: show }">
+				<div>&nbsp;</div>
+				<div data-bind="compose: { model:module , activationData:[ $parent.serviceId(), $parent.instanceId()] } "></div>
+			</div>
 		</div>
 	</div>
 
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<b>Aggregated deployment time</b>
-		</div>
-		<div class="panel-body">
-			<h5>Select one or multiple types:</h5>
-			<!-- ko foreach: types -->
-			<button type="button" class="btn btn-default btn-sm"
-				data-bind="click: $parent.switchType, text: name, css: { active: selected }"></button>
-			<!-- /ko -->
-			<h5>Select one or multiple Service Units:</h5>
-			<!-- ko foreach: units -->
-			<button type="button" class="btn btn-default btn-sm"
-				data-bind="click: $parent.switchUnit, text: name, css: { active: selected }"></button>
-			<!-- /ko -->
-
-			<div>&nbsp;</div>
-			<div class="col-md-6">
-				<h4>Unit Statistics</h4>
-				<table class="table table-condensed">
-					<thead>
-						<tr>
-							<th>Name</th>
-							<th>Instances</th>
-							<th>Avg. Time (s)</th>
-						</tr>
-					</thead>
-					<tbody data-bind="foreach: aggregatedUnits">
-						<tr>
-							<!-- ko if: name !== 'ALL' -->
-							<td><span data-bind="text: name"></span></td>
-							<td class="vert-align"><span data-bind="text: instancesCount"></span></td>
-							<td><span data-bind="text: avgTime"></span></td>
-							<!-- /ko -->
-							<!-- ko if: name === 'ALL' -->
-							<td><b data-bind="text: name"></b></td>
-							<td class="vert-align"><b data-bind="text: instancesCount"></b></td>
-							<td><b data-bind="text: avgTime"></b></td>
-							<!-- /ko -->
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<div class="col-md-6">
-				<h4>Average length</h4>
-				<div id="output"></div>
-			</div>
-			<div class="col-md-12">
-				<h4>Individual instances through time</h4>
-				<div id="output3"></div>
-			</div>
-
-		</div>
+	<!-- http://stackoverflow.com/questions/22312355/ns-error-failure-in-firefox-when-drawing-dimple-js-chart-after-jquery -->
+	<div class="col-md-8">
+		<div id="output1temp"></div>
 	</div>
+	<div class="col-md-6">
+		<div id="output2temp"></div>
+	</div>
+	<div class="col-md-12">
+		<div id="output3temp"></div>
+	</div>
+
+
 
 </div>

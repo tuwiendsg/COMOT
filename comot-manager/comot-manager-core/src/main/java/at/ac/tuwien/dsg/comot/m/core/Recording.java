@@ -21,6 +21,7 @@ import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessageLifeCycle;
 import at.ac.tuwien.dsg.comot.m.common.event.state.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.event.state.Transition;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
+import at.ac.tuwien.dsg.comot.m.recorder.model.Change;
 import at.ac.tuwien.dsg.comot.m.recorder.revisions.ConverterToInternal;
 import at.ac.tuwien.dsg.comot.m.recorder.revisions.CustomReflectionUtils;
 import at.ac.tuwien.dsg.comot.m.recorder.revisions.RevisionApi;
@@ -137,6 +138,14 @@ public class Recording extends Processor {
 			log.error("Exception event happened, but no managed region. {}", msg);
 		}
 
+	}
+
+	public static Long extractEventTime(Change change) {
+		return (Long) change.getProperty(PROP_EVENT_TIME);
+	}
+
+	public static String extractEventName(Change change) {
+		return change.getProperty(PROP_EVENT_NAME).toString();
 	}
 
 }

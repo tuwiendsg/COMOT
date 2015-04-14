@@ -144,7 +144,30 @@ define(function(require) {
 		console.log("view");
 	}
 
-	function removeInstance(serviceId, instanceId) {
+	function removeInstance(epsId, epsInstanceId) {
+
+		console.log(epsId +" "+ epsInstanceId);
+		
+		comot.removeDynamicEps(epsId, epsInstanceId, function(data) {
+
+			for (var i = 0; i < model.services().length; i++) {
+				if (model.services()[i].id === epsId) {
+
+					model.services()[i].instances.remove(function(item) {
+						return item.id === epsInstanceId;
+					});
+
+//					for (var j = 0; j < model.services()[i].instances.length; j++) {
+//						var epsInstance = model.services()[i].instances()[j];
+//
+//						if (epsInstance.id === epsInstanceId) {
+//							model.services()[i].instances.remove(epsInstance);
+//						}
+//					}
+
+				}
+			}
+		}, "Could not remove the dynamic EPS");
 
 	}
 

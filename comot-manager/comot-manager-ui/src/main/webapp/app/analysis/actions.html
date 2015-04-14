@@ -1,0 +1,28 @@
+<div class="container">
+
+	<!--  style="visibility: hidden" -->
+	<div id="spinnerGetElasticActions" class="col-md-2 col-md-offset-5">
+		<div>&nbsp;</div>
+		<img src="img/spinner.gif">
+		<div>&nbsp;</div>
+	</div>
+
+
+	<div class="col-md-10 col-md-offset-1">
+
+
+		<div data-bind="foreach: actionPlans">
+
+			<h4>Action Plan</h4>
+			<!-- 
+			<p>Triggered: <span data-bind="text: time"></span></p>
+			
+			<div data-bind="foreach: actionPlans">
+-->
+			<div data-bind="html: html"></div>
+		</div>
+
+	</div>
+
+
+</div>

@@ -13,6 +13,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
+import at.ac.tuwien.dsg.comot.m.core.analytics.ElasticPlanReport;
+import at.ac.tuwien.dsg.comot.m.core.analytics.ElasticityAnalyzis;
 import at.ac.tuwien.dsg.comot.m.core.analytics.ResultLine;
 import at.ac.tuwien.dsg.comot.m.core.analytics.TimeAnalyzis;
 import at.ac.tuwien.dsg.comot.m.recorder.RecorderException;
@@ -40,6 +43,8 @@ public class RevisionResource {
 	protected RevisionApi revisionApi;
 	@Autowired
 	protected TimeAnalyzis analyticEngine;
+	@Autowired
+	protected ElasticityAnalyzis elAnalysis;
 
 	@GET
 	@Path("/{serviceId}/analytics/unitInstanceDeploymentEvents")
@@ -53,6 +58,22 @@ public class RevisionResource {
 		List<ResultLine> results = analyticEngine.deploymentEvents(serviceId, instanceId);
 
 		final GenericEntity<List<ResultLine>> list = new GenericEntity<List<ResultLine>>(results) {
+		};
+		return Response.ok(list).build();
+	}
+
+	@GET
+	@Path("/{serviceId}/analytics/elasticActions")
+	@Consumes(MediaType.WILDCARD)
+	public Response getElasticActions(
+			@PathParam("instanceId") String instanceId,
+			@PathParam("serviceId") String serviceId
+			) throws InstantiationException, IllegalAccessException, IllegalArgumentException, ClassNotFoundException,
+					JAXBException, RecorderException {
+
+		List<ElasticPlanReport> results = elAnalysis.doOneService(serviceId, instanceId);
+
+		final GenericEntity<List<ElasticPlanReport>> list = new GenericEntity<List<ElasticPlanReport>>(results) {
 		};
 		return Response.ok(list).build();
 	}

@@ -1,16 +1,30 @@
-package at.ac.tuwien.dsg.comot.m.core.test;
+package at.ac.tuwien.dsg.comot.m.core.test.analysis;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.bind.JAXBException;
+
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
+import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.enums.Action;
 import at.ac.tuwien.dsg.comot.m.core.Recording;
+import at.ac.tuwien.dsg.comot.m.core.analytics.ElasticPlanReport;
+import at.ac.tuwien.dsg.comot.m.core.analytics.ElasticityAnalyzis;
 import at.ac.tuwien.dsg.comot.m.core.analytics.TimeAnalyzis;
+import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
 import at.ac.tuwien.dsg.comot.m.recorder.RecorderException;
+import at.ac.tuwien.dsg.comot.m.recorder.repo.ChangeRepo;
 import at.ac.tuwien.dsg.comot.m.recorder.revisions.RevisionApi;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
@@ -18,14 +32,22 @@ import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 import at.ac.tuwien.dsg.comot.model.type.State;
 import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
 
-public class AnalyticsTest extends AbstractTest {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = { AppContextTest.class, AppContextCore.class })
+@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
+public class AnalyticsTest {
 
-	// protected WrappingNeoServerBootstrapper srv;
+	protected final Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private TimeAnalyzis engine;
 	@Autowired
 	protected RevisionApi revisionApi;
+	@Autowired
+	protected ChangeRepo changeRepo;
+
+	@Autowired
+	protected ElasticityAnalyzis elAnalysis;
 
 	// @Before
 	// public void setUp() {
@@ -39,6 +61,17 @@ public class AnalyticsTest extends AbstractTest {
 	// public void cleanUp() {
 	// srv.stop();
 	// }
+	@Test
+	public void bbbb() throws JAXBException, InstantiationException, IllegalAccessException, IllegalArgumentException,
+			ClassNotFoundException, RecorderException {
+
+		// elAnalysis.bbbb();
+
+		for (ElasticPlanReport report : elAnalysis.doOneService("HelloElasticity", "HelloElasticity_1")) {
+			log.info("{}", Utils.asJsonString(report));
+		}
+
+	}
 
 	@Test
 	public void aaaaa() throws IllegalArgumentException, IllegalAccessException, InstantiationException,

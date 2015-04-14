@@ -50,6 +50,7 @@ public class Constants {
 
 	public static final String SERVICES = "services";
 	public static final String SERVICE_ONE = "services/{serviceId}";
+	public static final String SERVICE_ONE_ELASTICITY = "services/{serviceId}/elasticity";
 	public static final String INSTANCES = SERVICE_ONE + "/instances";
 	public static final String INSTANCE_ONE = SERVICE_ONE + "/instances/{instanceId}";
 	public static final String UNIT_INSTANCE_ONE = INSTANCE_ONE + "/units/{unitId}/unitInstances/{unitInstanceId}";

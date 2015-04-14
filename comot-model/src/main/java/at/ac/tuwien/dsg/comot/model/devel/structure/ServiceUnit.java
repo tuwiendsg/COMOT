@@ -27,6 +27,8 @@ public class ServiceUnit extends ServiceEntity {
 	protected Integer minInstances = 1;
 	@XmlAttribute
 	protected Integer maxInstances = 1;
+	@XmlAttribute
+	protected Boolean elasticUnit;
 
 	@RelatedToVia(type = "HOST_ON")
 	protected HostOnRel host;
@@ -146,5 +148,19 @@ public class ServiceUnit extends ServiceEntity {
 	public void setOsuInstance(OsuInstance osuInstance) {
 		this.osuInstance = osuInstance;
 	}
+
+	/**
+	 * Whether it is also a unit in sense of rSYBL and MELA
+	 * @return
+	 */
+	public Boolean getElasticUnit() {
+		return elasticUnit;
+	}
+
+	public void setElasticUnit(Boolean elasticUnit) {
+		this.elasticUnit = elasticUnit;
+	}
+	
+	
 
 }

@@ -1,5 +1,8 @@
 package at.ac.tuwien.dsg.comot.m.common.enums;
 
+import at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.ActionEvent;
+import at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.ActionPlanEvent;
+import at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.CustomEvent;
 import at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.IEvent;
 
 public enum ComotEvent {
@@ -43,17 +46,37 @@ public enum ComotEvent {
 
 	public static String rsyblEventName(IEvent event) {
 
-		IEvent.Type type = event.getType();
-		IEvent.Stage stage = event.getStage();
-		String eventName = RSYBL_PREFIX + SEPARATOR + event.getClass().getSimpleName().toUpperCase();
-
-		if (type != null) {
-			eventName += SEPARATOR + type;
+		if (event instanceof ActionPlanEvent) {
+			return rsyblActionPlan(event.getStage());
+		} else if (event instanceof ActionEvent) {
+			return rsyblAction(event.getStage());
+		} else {
+			return rsyblCustom(event.getType());
 		}
+	}
 
-		if (stage != null) {
-			eventName += SEPARATOR + stage;
-		}
+	public static String rsyblActionPlan(IEvent.Stage stage) {
+
+		String eventName = RSYBL_PREFIX;
+		eventName += SEPARATOR + ActionPlanEvent.class.getSimpleName().toUpperCase();
+		eventName += SEPARATOR + stage;
 		return eventName;
 	}
+
+	public static String rsyblAction(IEvent.Stage stage) {
+
+		String eventName = RSYBL_PREFIX;
+		eventName += SEPARATOR + ActionEvent.class.getSimpleName().toUpperCase();
+		eventName += SEPARATOR + stage;
+		return eventName;
+	}
+
+	public static String rsyblCustom(IEvent.Type type) {
+		return rsyblCustomPrefix() + SEPARATOR + type;
+	}
+
+	public static String rsyblCustomPrefix() {
+		return RSYBL_PREFIX + SEPARATOR + CustomEvent.class.getSimpleName().toUpperCase();
+	}
+
 }

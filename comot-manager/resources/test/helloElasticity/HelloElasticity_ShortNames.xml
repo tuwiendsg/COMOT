@@ -42,9 +42,9 @@
 				<ns2:Capabilities />
 				<ns2:Policies>
 					<ns2:Policy id="EventProcessingUnit_EP_ST1" policyType="SYBLStrategy"
-						name="EP_ST1:STRATEGY CASE responseTime &lt; 10 ms:scaleIn" />
+						name="St1:STRATEGY CASE responseTime &lt; 10 ms:scaleIn" />
 					<ns2:Policy id="EventProcessingUnit_EP_ST2" policyType="SYBLStrategy"
-						name="EP_ST2:STRATEGY CASE responseTime &gt; 50 ms:scaleOut" />
+						name="St2:STRATEGY CASE responseTime &gt; 50 ms:scaleOut" />
 				</ns2:Policies>
 				<ns2:DeploymentArtifacts>
 					<ns2:DeploymentArtifact xmlns:salsa="https://github.com/tuwiendsg/SALSA" name="deployEventProcessingArtifact"

@@ -30,10 +30,11 @@ define(function(require) {
 				moduleId : 'history',
 				nav : false
 			},{
-				route : 'services/:serviceId/instances/:instanceId/analysis',
+				route : 'services/:serviceId/instances/:instanceId/analysis*details',
 				title : 'Analysis',
 				moduleId : 'analysis',
-				nav : false
+				nav : false,
+				hash: '#services/:serviceId/instances/:instanceId/analysis'
 			}
 			// , {
 			// route : 'new',

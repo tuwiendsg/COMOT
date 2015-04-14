@@ -108,9 +108,9 @@ public class STemplates {
 		ServiceUnit unitSw = new ServiceUnit(swNodeId, "Test node unit", 2, 5);
 		unitSw.setOsuInstance(new OsuInstance(osuInstanceId(swNodeId), osuSw));
 
-		unitSw.addDirective(new SyblDirective("str1", DirectiveType.STRATEGY,
+		unitSw.addDirective(new SyblDirective("ST1", DirectiveType.STRATEGY,
 				"ST1: STRATEGY CASE cpuUsage < 40 % : scalein"));
-		unitSw.addDirective(new SyblDirective("con1", DirectiveType.CONSTRAINT,
+		unitSw.addDirective(new SyblDirective("Co2", DirectiveType.CONSTRAINT,
 				"Co2: CONSTRAINT dataAccuracy > 95 % WHEN total_cost > 400 ;"));
 
 		ServiceUnit unitSw2 = new ServiceUnit(swNodeId2, "Test node unit 2", 2, 5);
@@ -131,7 +131,7 @@ public class STemplates {
 		topology.addServiceUnit(unitSw);
 		topology.addServiceUnit(unitOs);
 		topology.addServiceUnit(unitSw2);
-		topology.addDirective(new SyblDirective("con4", DirectiveType.CONSTRAINT,
+		topology.addDirective(new SyblDirective("Co4", DirectiveType.CONSTRAINT,
 				"Co4: CONSTRAINT total_cost < 800"));
 
 		CloudService service = new CloudService(serviceId);
@@ -165,11 +165,11 @@ public class STemplates {
 	}
 	
 	public static String osuInstanceId(String unitId) {
-		return unitId + "_osuInstance";
+		return unitId + "_OSU_INSTANCE";
 	}
 	
 	public static String osuId(String unitId) {
-		return unitId + "_osu";
+		return unitId + "_OSU";
 	}
 
 	public static String instanceId(String unitId) {

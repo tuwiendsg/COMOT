@@ -53,6 +53,16 @@ public class InformationClientRest extends ServiceClient {
 		return result;
 	}
 
+	public void reconfigureElasticity(String serviceId, CloudService service) throws EpsException {
+
+		Response response = client.target(baseUri)
+				.path(Constants.SERVICE_ONE_ELASTICITY)
+				.resolveTemplate("serviceId", serviceId)
+				.request(MediaType.TEXT_PLAIN)
+				.put(Entity.xml(service));
+		processResponseStatus(response);
+	}
+
 	// public CloudService getService(String serviceId) {
 	//
 	// Response response = client.target(baseUri)

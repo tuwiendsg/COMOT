@@ -17,7 +17,8 @@
 	</context-param>
 	<context-param>
 		<param-name>spring.profiles.default</param-name>
-		<param-value>IMPERMANENT_NEO4J_DB,INSERT_INIT_DATA</param-value>
+		<param-value>EMBEDDED_NEO4J_DB</param-value>
+		<!-- EMBEDDED_NEO4J_DB,IMPERMANENT_NEO4J_DB  -->
 	</context-param>
 
 	<listener>
