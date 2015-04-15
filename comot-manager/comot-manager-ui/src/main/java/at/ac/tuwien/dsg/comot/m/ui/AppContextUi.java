@@ -14,4 +14,7 @@ import at.ac.tuwien.dsg.comot.m.recorder.AppContextServrec;
 @ComponentScan("at.ac.tuwien.dsg.comot.m.ui")
 public class AppContextUi {
 
+	public static final String CONFIGURABLE = "CONFIGURABLE";
+	public static final String PRECONFIGURED = "PRECONFIGURED";
+
 }

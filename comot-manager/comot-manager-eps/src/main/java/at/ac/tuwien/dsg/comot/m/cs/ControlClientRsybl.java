@@ -98,7 +98,7 @@ public class ControlClientRsybl implements ControlClient {
 	@Override
 	public void updateService(CloudService service) throws EpsException, JAXBException {
 		CloudServiceXML cloudServiceXML = rsyblMapper.extractRsybl(service);
-		rsybl.updateElasticityRequirements(service.getId(), UtilsCs.asString(cloudServiceXML));
+		rsybl.updateServiceDescription(service.getId(), UtilsCs.asString(cloudServiceXML));
 	}
 
 	@Override

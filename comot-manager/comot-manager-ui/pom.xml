@@ -84,8 +84,18 @@
 			<plugin>
 				<groupId>org.apache.tomcat.maven</groupId>
 				<artifactId>tomcat7-maven-plugin</artifactId>
-				<version>2.2</version>
+				<version>2.3-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<id>tomcat-create-exec-war</id>
+						<goals>
+							<goal>exec-war</goal>
+						</goals>
+						<phase>package</phase>
+					</execution>
+				</executions>
 				<configuration>
+					<finalName>comot.jar</finalName>
 					<port>8380</port>
 					<path>/comot</path>
 				</configuration>
@@ -95,7 +105,7 @@
 				<version>2.7</version>
 				<executions>
 					<execution>
-						<id>legacy-copy-resources</id>
+						<id>copy-configuration</id>
 						<phase>process-resources</phase>
 						<goals>
 							<goal>copy-resources</goal>
@@ -104,7 +114,7 @@
 							<outputDirectory>${basedir}/target/config</outputDirectory>
 							<resources>
 								<resource>
-									<directory>${basedir}/src/main/resources/config</directory>
+									<directory>${basedir}/src/main/resources/properties</directory>
 									<filtering>false</filtering>
 								</resource>
 							</resources>

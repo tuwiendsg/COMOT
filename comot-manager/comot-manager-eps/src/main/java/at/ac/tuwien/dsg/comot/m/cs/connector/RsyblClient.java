@@ -32,7 +32,7 @@ public class RsyblClient extends ServiceClient {
 	protected static final String ECE_PATH = "{id}/elasticityCapabilitiesEffects";
 	protected static final String START_CONTROL_PATH = "{id}/startControl";
 	protected static final String STOP_CONTROL_PATH = "{id}/stopControl";
-	protected static final String REPLACE_REQUIREMENTS_PATH = "{id}/elasticityRequirements/xml";
+	// protected static final String REPLACE_REQUIREMENTS_PATH = "{id}/elasticityRequirements/xml";
 	protected static final String LIST_ALL_SERVICES_PATH = "elasticservices";
 	protected static final String REMOVE_PATH = "managedService/{id}";
 
@@ -192,18 +192,13 @@ public class RsyblClient extends ServiceClient {
 		log.info(ln + "stopControl '{}'. Response: '{}'", serviceId, msg);
 	}
 
-	/**
-	 * = replaceRequirements
-	 * 
-	 * @param serviceId
-	 * @param cloudServiceXML
-	 * @throws EpsException
-	 */
-	public void updateElasticityRequirements(String serviceId, String cloudServiceXML)
+	public void updateServiceDescription(String serviceId, String cloudServiceXML)
 			throws EpsException {
 
+		log.debug("updateServiceDescription {}", cloudServiceXML);
+
 		Response response = client.target(getBaseUri())
-				.path(REPLACE_REQUIREMENTS_PATH)
+				.path(SERV_DESCRIPTION_PATH)
 				.resolveTemplate("id", serviceId)
 				.request(MediaType.WILDCARD_TYPE)
 				.post(Entity.xml(cloudServiceXML));
@@ -212,8 +207,33 @@ public class RsyblClient extends ServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		log.info(ln + "updateElasticityRequirements '{}'. Response: '{}'", serviceId, msg);
+		log.info(ln + "updateServiceDescription '{}'. Response: '{}'", serviceId, msg);
 	}
+
+	// /**
+	// * = replaceRequirements
+	// *
+	// * @param serviceId
+	// * @param cloudServiceXML
+	// * @throws EpsException
+	// */
+	// public void updateElasticityRequirements(String serviceId, String cloudServiceXML)
+	// throws EpsException {
+	//
+	// log.debug("updateElasticityRequirements {}", cloudServiceXML);
+	//
+	// Response response = client.target(getBaseUri())
+	// .path(REPLACE_REQUIREMENTS_PATH)
+	// .resolveTemplate("id", serviceId)
+	// .request(MediaType.WILDCARD_TYPE)
+	// .post(Entity.xml(cloudServiceXML));
+	//
+	// processResponseStatus(response);
+	//
+	// String msg = response.readEntity(String.class);
+	//
+	// log.info(ln + "updateElasticityRequirements '{}'. Response: '{}'", serviceId, msg);
+	// }
 
 	public List<String> listAllServices() throws EpsException {
 

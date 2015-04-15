@@ -46,7 +46,6 @@ public class ToscaOrika {
 	protected static final Logger log = LoggerFactory.getLogger(ToscaOrika.class);
 	// public static final String OS = "os";
 	public static final QName ATTRIBUTE_ID = new QName("id");
-	public static final String SYBL_ID_SEPARATOR = ":";
 
 	protected MapperFacade facade;
 
@@ -56,20 +55,23 @@ public class ToscaOrika {
 		MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
 		mapperFactory.classMap(SyblDirective.class, TPolicy.class)
-				.field("directive", "name")
+				// .field("directive", "name")
 				.field("type", "policyType")
 				.customize(
 						new CustomMapper<SyblDirective, TPolicy>() {
 							@Override
 							public void mapAtoB(SyblDirective dir, TPolicy policy, MappingContext context) {
+
+								policy.setName(dir.getId() + RsyblOrika.SEPARATOR_ID + dir.getDirective());
 								// policy.getOtherAttributes().put(ATTRIBUTE_ID, dir.getId());
 							}
 
 							@Override
 							public void mapBtoA(TPolicy policy, SyblDirective dir, MappingContext context) {
 
-								dir.setId(policy.getName().substring(0, policy.getName().indexOf(SYBL_ID_SEPARATOR)));
-
+								int separatorIndex = policy.getName().indexOf(RsyblOrika.SEPARATOR_ID);
+								dir.setId(policy.getName().substring(0, separatorIndex));
+								dir.setDirective(policy.getName().substring(separatorIndex + 1));
 								// dir.setId(policy.getOtherAttributes().get(ATTRIBUTE_ID));
 							}
 						})

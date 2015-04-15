@@ -74,14 +74,50 @@
 							</h5>
 							<!-- /ko -->
 							<!-- ko foreach: osu.PrimitiveOperations.Operation -->
-							<button type="button" class="btn btn-default"
+							<!-- ko if: additionalInput -->
+							<button type="button" class="btn btn-default btn-sm " data-toggle="modal" data-target="#myModal">
+								<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> <span data-bind="text: name"></span>
+							</button>
+							<!-- Modal -->
+							<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+								aria-hidden="true">
+								<div class="modal-dialog" style="width: 900px">
+									<div class="modal-content">
+										<form data-bind="submit: $root.triggerCustomEventWithInput">
+											<div class="modal-header">
+												<button type="button" class="close" data-dismiss="modal">
+													<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+												</button>
+												<h4 class="modal-title" id="myModalLabel">
+													<span data-bind="text: name"></span>
+												</h4>
+											</div>
+											<div class="modal-body">
+												<b>Input data:</b> <input type="text" name="id" data-bind="value: $parent.id"
+													style="visibility: hidden"> <input type="text" name="operation" data-bind="value: executeMethod"
+													style="visibility: hidden">
+												<textarea name="data" class="form-control col-md-12" rows="30"></textarea>
+													<div>&nbsp;</div>
+											</div>
+											<div class="modal-footer">
+												<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+												<button type="submit" class="btn btn-primary">Submit</button>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+							<!-- /ko -->
+							<!-- ko if: additionalInput == false-->
+							<button type="button" class="btn btn-primary btn-sm"
 								data-bind="click: function() { $root.triggerCustomEvent( $parent, executeMethod) }">
 								<span data-bind="text: name"></span>
 							</button>
 							<!-- /ko -->
+							<!-- /ko -->
 						</div>
 						<div class="col-md-1 nopadding">
-							<button type="button" class="btn btn-default pull-right" data-bind="click: $root.removeEps">
+							<button type="button" class="btn btn-primary pull-right btn-sm" data-bind="click: $root.removeEps">
 								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Unassign
 							</button>
 						</div>
@@ -95,10 +131,9 @@
 		</div>
 	</div>
 
-
-
 	<script type="text/ko" id="entityTemplate">
-	<div class="panel panel-default">
+	<!-- ko if: $data !== ""  -->
+	<div class="panel panel-default">	
 		<div class="panel-heading">
 			<b><span data-bind="text: type"></span></b>
     		<span data-bind="text: name"></span>
@@ -131,10 +166,11 @@
     		<!-- /ko -->
 			
 			<!-- ko if: type === 'SERVICE' -->
-				<button type="button" class="btn btn-primary" data-bind="click: $root.reconfigureElasticity">Save</button>
+				<button type="button" class="btn btn-primary btn-sm" data-bind="click: $root.reconfigureElasticity">Save</button>
 			<!-- /ko -->
 		</div>
 	</div>
+	<!-- /ko -->
 	</script>
 
 
@@ -144,8 +180,8 @@
 
 	<div class="col-md-6">
 		<div class="btn-group pull-right">
-			<button type="button" class="btn btn-default" data-bind="text: groupId"></button>
-			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+			<button type="button" class="btn btn-default btn-sm" data-bind="text: groupId"></button>
+			<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 				<span class="caret"></span> <span class="sr-only">Toggle Dropdown</span>
 			</button>
 			<ul class="dropdown-menu" role="menu" data-bind="foreach: transitions">
@@ -161,31 +197,34 @@
 	</div>
 
 	<!-- EVENTS -->
+
 	<div class="col-md-6">
-		<div class="table-responsive">
-			<table class="table table-condensed">
-				<thead>
-					<tr>
-						<th>Event</th>
-						<th>Target</th>
-						<th>Origin</th>
-					</tr>
-				</thead>
-				<tbody data-bind="foreach: events">
-					<!-- style="display: block; height: 450px; overflow: auto" -->
-					<tr>
-						<td><small data-bind="text: name, style: { fontWeight: lifecycle ? 'bold' : '' }  "></small></td>
-						<td><small data-bind="text: target"></small></td>
-						<td><small data-bind="text: origin"></small></td>
-					</tr>
-				</tbody>
-			</table>
+		<div class="row"></div>
+		<div class="row">
+			<h4>Latest events:</h4>
+			<div class="table-responsive">
+				<table class="table table-condensed">
+					<thead>
+						<tr>
+							<th>Event</th>
+							<th>Target</th>
+							<th>Origin</th>
+						</tr>
+					</thead>
+					<tbody data-bind="foreach: events">
+						<!-- style="display: block; height: 450px; overflow: auto" -->
+						<tr>
+							<td><small data-bind="text: name, style: { fontWeight: lifecycle ? 'bold' : '' }  "></small></td>
+							<td><small data-bind="text: target"></small></td>
+							<td><small data-bind="text: origin"></small></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
 
 	<div id="output"></div>
-
-
 
 </div>
 

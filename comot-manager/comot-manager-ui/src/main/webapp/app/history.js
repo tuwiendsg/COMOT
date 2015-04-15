@@ -54,9 +54,7 @@ define(function(require) {
 
 		},
 		serviceData : function(event) {
-
-			getRevision(model.instanceId(), model.serviceId(), event.timestamp);
-			$('#myModal').modal()
+			getServiceRevision(model.instanceId(), model.serviceId(), event.timestamp);
 		},
 		// life-cycle
 		activate : function(serviceId, instanceId) {
@@ -77,7 +75,7 @@ define(function(require) {
 
 	return model;
 
-	function getRevision(instanceId, objectId, timestamp) {
+	function getServiceRevision(instanceId, objectId, timestamp) {
 		var timeToUse;
 
 		if (timestamp == LONG_MAX) {
@@ -88,6 +86,8 @@ define(function(require) {
 
 		comot.getRecording(instanceId, objectId, timeToUse, function(data) {
 			$("#output_revisions").html(JsonHuman.format(data));
+			$('#myModal').modal();
+
 		}, function(error) {
 			$("#output_revisions").html("");
 			notify.info("No revision for service '"

@@ -14,7 +14,7 @@ define(function(require) {
 				title : 'Cloud Services',
 				moduleId : 'services',
 				nav : true
-			},{
+			}, {
 				route : 'eps',
 				title : 'Dynamic EPS',
 				moduleId : 'eps',
@@ -29,12 +29,12 @@ define(function(require) {
 				title : 'History',
 				moduleId : 'history',
 				nav : false
-			},{
+			}, {
 				route : 'services/:serviceId/instances/:instanceId/analysis*details',
 				title : 'Analysis',
 				moduleId : 'analysis',
 				nav : false,
-				hash: '#services/:serviceId/instances/:instanceId/analysis'
+				hash : '#services/:serviceId/instances/:instanceId/analysis'
 			}
 			// , {
 			// route : 'new',
@@ -45,6 +45,14 @@ define(function(require) {
 			]).buildNavigationModel();
 
 			return router.activate();
+		},
+		attached : function() {
+			var $loading = $('#ajaxLoading').hide();
+			$(document).ajaxStart(function() {
+				$loading.show();
+			}).ajaxStop(function() {
+				$loading.hide();
+			});
 		}
 	};
 });

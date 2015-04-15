@@ -58,9 +58,9 @@ public class OfferedServiceUnit extends Entity implements HasUniqueId, Serializa
 	protected String type;
 
 	@Indexed
-	private String category = "unknown";
+	private String category;
 	@Indexed
-	private String subcategory = "unknown";
+	private String subcategory;
 
 	@RelatedTo(direction = Direction.OUTGOING)
 	@Fetch

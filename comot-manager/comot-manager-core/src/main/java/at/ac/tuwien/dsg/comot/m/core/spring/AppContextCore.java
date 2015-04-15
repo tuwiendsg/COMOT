@@ -18,7 +18,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -40,7 +39,6 @@ import at.ac.tuwien.dsg.comot.m.recorder.AppContextServrec;
 
 @Configuration
 @EnableTransactionManagement
-@PropertySource({ "classpath:properties/application.properties" })
 @ComponentScan({ "at.ac.tuwien.dsg.comot.m.core", "at.ac.tuwien.dsg.comot.m.adapter" })
 @Import({ AppContextEps.class, AppContextServrec.class })
 @EnableAsync

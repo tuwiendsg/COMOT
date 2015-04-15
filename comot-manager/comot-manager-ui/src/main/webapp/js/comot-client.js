@@ -22,7 +22,7 @@
 		return services + serviceId + instances + instanceId + "/events";
 	}
 
-	function getRequestCore(onSuccess, onError) {
+	function getRequestCore(onSuccess, onError, spinner) {
 
 		var core = {};
 
@@ -52,6 +52,18 @@
 			}
 		}
 
+		if (typeof spinner !== 'undefined') {
+			core.beforeSend = function() {
+				if ($(spinner).length) {
+					$(spinner).show();
+				}
+			};
+			core.complete = function() {
+				if ($(spinner).length) {
+					$(spinner).hide();
+				}
+			};
+		}
 		return core;
 	}
 
@@ -145,10 +157,12 @@
 		return $.ajax(request);
 	}
 
-	exports.triggerCustomEvent = function(serviceId, instanceId, epsId, eventName, onSuccess, onError) {
+	exports.triggerCustomEvent = function(serviceId, instanceId, epsId, eventName, optionalMesage, onSuccess, onError) {
 
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "PUT";
+		request.data = optionalMesage;
+		request.contentType = "text/plain";
 		request.url = services + serviceId + instances + instanceId + "/eps/" + epsId + "/events/" + eventName;
 		return $.ajax(request);
 	}
@@ -168,7 +182,7 @@
 		request.url = eps + epsId + "/instances/" + epsInstanceId;
 		return $.ajax(request);
 	}
-	
+
 	exports.reconfigureElasticity = function(serviceId, instanceId, service, onSuccess, onError) {
 
 		var request = getRequestCore(onSuccess, onError);
@@ -270,6 +284,7 @@
 		request.type = "GET";
 		request.dataType = "json"
 		request.url = recordings + csInstanceId + "/objects/" + objectId + "/" + timestamp;
+
 		return $.ajax(request);
 	}
 
@@ -302,47 +317,19 @@
 
 	exports.getUnitInstanceDeploymentEvents = function(serviceId, csInstanceId, onSuccess, onError) {
 
-		var request = getRequestCore(onSuccess, onError);
+		var request = getRequestCore(onSuccess, onError, '#spinnerGetUnitInstanceDeploymentEvents');
 		request.type = "GET";
 		request.dataType = "json"
 		request.url = recordings + csInstanceId + "/" + serviceId + "/analytics/unitInstanceDeploymentEvents";
-		
-		var spinner = '#spinnerGetUnitInstanceDeploymentEvents';
-
-		request.beforeSend = function() {
-			if ($(spinner).length) {
-				$(spinner).show();
-			}
-		};
-		request.complete = function() {
-			if ($(spinner).length) {
-				$(spinner).hide();
-			}
-		};
-		
 		return $.ajax(request);
 	}
 
 	exports.getElasticActions = function(serviceId, csInstanceId, onSuccess, onError) {
 
-		var request = getRequestCore(onSuccess, onError);
+		var request = getRequestCore(onSuccess, onError, '#spinnerGetElasticActions');
 		request.type = "GET";
 		request.dataType = "json"
 		request.url = recordings + csInstanceId + "/" + serviceId + "/analytics/elasticActions";
-
-		var spinner = '#spinnerGetElasticActions';
-
-		request.beforeSend = function() {
-			if ($(spinner).length) {
-				$(spinner).show();
-			}
-		};
-		request.complete = function() {
-			if ($(spinner).length) {
-				$(spinner).hide();
-			}
-		};
-
 		return $.ajax(request);
 	}
 }));

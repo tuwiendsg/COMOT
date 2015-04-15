@@ -63,6 +63,8 @@ public class Control extends Processor implements ControlEventsListener {
 				instanceId + ".*.*.*." + Action.MAINTENANCE_STARTED + ".#"));
 		bindings.add(bindingLifeCycle(queueName,
 				instanceId + ".TRUE.*." + State.PASSIVE + ".#"));
+		bindings.add(bindingLifeCycle(queueName,
+				"*.*.*.*." + Action.RECONFIGURE_ELASTICITY + ".#"));
 
 		bindings.add(bindingCustom(queueName,
 				instanceId + "." + getId() + ".*.SERVICE"));
@@ -77,10 +79,25 @@ public class Control extends Processor implements ControlEventsListener {
 
 		if (action == Action.DEPLOYED) {
 			control(serviceId, instanceId);
+
 		} else if (action == Action.UNDEPLOYED) {
 			removeManaged(instanceId);
+
 		} else if (action == Action.MAINTENANCE_STARTED) {
 			stopControl(instanceId);
+
+		} else if (action == Action.RECONFIGURE_ELASTICITY) {
+
+			if (isManaged(instanceId)) {
+
+				CloudService servicefromInfo = infoService.getServiceInstance(instanceId);
+
+				servicefromInfo.setId(instanceId);
+				servicefromInfo.setName(instanceId);
+
+				control.updateService(servicefromInfo);
+			}
+
 		}
 
 	}

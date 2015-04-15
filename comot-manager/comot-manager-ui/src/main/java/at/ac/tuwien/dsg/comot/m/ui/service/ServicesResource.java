@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.AmqpException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import at.ac.tuwien.dsg.comot.m.adapter.general.Manager;
@@ -85,8 +86,14 @@ public class ServicesResource {
 	@Autowired
 	protected InformationClient infoServ;
 
+	@javax.annotation.Resource
+	public Environment env;
+
 	@PostConstruct
 	public void startUp() {
+
+		log.info("wwwwwwwwwwwwwwwwwwwwwwwwwwwww " + env.getProperty("diraaaa"));
+
 		log.info("REST resource created");
 
 	}

@@ -47,17 +47,17 @@ public abstract class ServiceClient {
 		case 1:
 			break;
 		case 2:
-			log.trace(name + "HTTP response status code={}", code);
+			log.trace(ln + "HTTP response status code={}", code);
 			break;
 		case 3:
 			break;
 		case 4:
 			msg = response.readEntity(String.class);
-			log.trace(name + "HTTP response status code={} , message='{}' ", code, msg);
+			log.trace(ln + "HTTP response status code={} , message='{}' ", code, msg);
 			throw new EpsException(code, msg, name);
 		case 5:
 			msg = response.readEntity(String.class);
-			log.trace(name + "HTTP response status code={} , message='{}' ", code, msg);
+			log.trace(ln + "HTTP response status code={} , message='{}' ", code, msg);
 			throw new EpsException(code, msg, name);
 		}
 

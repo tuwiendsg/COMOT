@@ -30,7 +30,8 @@ public class RsyblOrika {
 
 	protected final Logger log = LoggerFactory.getLogger(RsyblOrika.class);
 
-	public static final String SEPARATOR = ";";
+	public static final String SEPARATOR_ID = ":";
+	public static final String SEPARATOR_DIRECTIVES = ";";
 
 	protected MapperFacade facade;
 
@@ -90,10 +91,10 @@ public class RsyblOrika {
 
 			for (Object obj : source) {
 				directive = (SyblDirective) obj;
-				String strDir = directive.getDirective();
+				String strDir = directive.getId() + SEPARATOR_ID + directive.getDirective();
 
-				if (!strDir.trim().endsWith(SEPARATOR)) {
-					strDir += SEPARATOR;
+				if (!strDir.trim().endsWith(SEPARATOR_DIRECTIVES)) {
+					strDir += SEPARATOR_DIRECTIVES;
 				}
 
 				switch (directive.getType()) {
@@ -120,7 +121,7 @@ public class RsyblOrika {
 						rDirecitve.setMonitoring(rDirecitve.getMonitoring() + strDir);
 					}
 					break;
-				case PRIORIIES:
+				case PRIORITY:
 					if (null == rDirecitve.getPriorities()) {
 						rDirecitve.setPriorities(strDir);
 					} else {

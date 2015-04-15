@@ -17,8 +17,9 @@ define(function(require) {
 		allEpsServices : ko.observableArray(),
 		selectedEpsServices : ko.observableArray(),
 		allServices : ko.observableArray(),
-		elasticConfiguration : ko.observable(),
+		elasticConfiguration : ko.observable(""),
 		service : ko.observable(),
+		optionalMessage : ko.observable(""),
 		// functions
 		startInstance : startInstance,
 		stopInstance : stopInstance,
@@ -27,6 +28,17 @@ define(function(require) {
 		showThisGroup : showThisGroup,
 		triggerCustomEvent : triggerCustomEvent,
 		reconfigureElasticity : reconfigureElasticity,
+		triggerCustomEventWithInput : function(form) {
+
+//			console.log(form);
+//			console.log(form.elements["id"].value);
+//			console.log(form.elements["operation"].value);
+//			console.log(form.elements["data"].value);
+
+			triggerCustomEvent(form.elements["id"].value, form.elements["operation"].value, form.elements["data"].value);
+
+			$('#myModal').modal('hide');
+		},
 		// life-cycle
 		deactivate : function() {
 			if (typeof source.close === 'function') {
@@ -39,10 +51,12 @@ define(function(require) {
 				model.events.removeAll();
 			}
 			model.selectedEpsServices.removeAll();
-
 			model.serviceId(serviceId);
 			model.instanceId(instanceId);
 			model.groupId(serviceId);
+
+		},
+		attached : function() {
 
 			comot.getEpsInstancesAll(function(epses) {
 				processEpsesInstances(epses);
@@ -59,16 +73,8 @@ define(function(require) {
 						})
 						model.selectedEpsServices.push(epsArr[0]);
 					}
-
 				});
-
 			});
-
-			comot.getAllInstances(function(data) {
-				model.allServices(data);
-			});
-		},
-		attached : function() {
 
 			comot.lifecycle("SERVICE", function(data) {
 
@@ -89,7 +95,10 @@ define(function(require) {
 					model.elasticConfiguration(elTree);
 					model.service(service);
 				});
+			});
 
+			comot.getAllInstances(function(data) {
+				model.allServices(data);
 			});
 		}
 	}
@@ -99,7 +108,6 @@ define(function(require) {
 	function showThisGroup(groupId) {
 		model.groupId(groupId);
 		populateLifecycle();
-
 	}
 
 	function processEpsesInstances(epses) {
@@ -107,12 +115,17 @@ define(function(require) {
 		for (var i = 0; i < epses.length; i++) {
 			var eps = epses[i];
 
-			if (typeof eps.serviceInstance !== 'undefined') {
-
+			console.log("aaa")
+			console.log(eps)
+			
+			if (typeof eps.serviceInstance === 'undefined') {
+				console.log("bbb")
 				var map = {};
 				for (var j = 0; j < eps.osu.resources.length; j++) {
 					map[eps.osu.resources[j].type.name] = eps.osu.resources[j].name;
 				}
+				
+				console.log(map)
 
 				if (typeof map["VIEW"] !== 'undefined') {
 					var path = map["VIEW"];
@@ -152,12 +165,16 @@ define(function(require) {
 		});
 	}
 
-	function triggerCustomEvent(eps, eventName) {
+	function triggerCustomEvent(epsId, eventName, optionalInput) {
 
-		var epsId = eps.id;
-		comot.triggerCustomEvent(model.serviceId(), model.instanceId(), epsId, eventName, function(data) {
+		if (typeof optionalInput === 'undefined') {
+			optionalInput = "";
+		}
 
-		});
+		comot.triggerCustomEvent(model.serviceId(), model.instanceId(), epsId, eventName, optionalInput,
+				function(data) {
+
+				});
 	}
 
 	function reconfigureElasticity() {
@@ -216,7 +233,7 @@ define(function(require) {
 		model.transitions(transitions);
 
 		// tree
-		createTree(createElement(service, tMap), "#tree_div");
+		createTree(createElement(service, tMap), "#tree_div", model);
 		// lifecycle
 		populateLifecycle();
 		// human json
@@ -253,22 +270,33 @@ define(function(require) {
 			'name' : object.id,
 			'children' : [],
 			'state' : tMap[object.id].currentState,
-			'type' : type,
-			'directives' : ko.observableArray(object.Directives.Directive),
-			addDirective : function() {
+			'type' : type
+		};
+
+		// elasticity configuration view
+		if (type === "UNIT" || type === "TOPOLOGY" || type === "SERVICE") {
+			element.directives = ko.observableArray(object.Directives.Directive);
+			element.addDirective = function() {
 				element.directives.push({
 					id : "",
 					directive : "",
 					added : true
 				})
-			},
-			removeDirective : function(item) {
+			};
+			element.removeDirective = function(item) {
 				element.directives.remove(item);
 			}
-		};
+		}
 
 		if (type === "UNIT") {
 			element.elasticUnit = object.elasticUnit;
+		}
+		// 
+
+		if (type === "INSTANCE") {
+			if (typeof object.ip !== 'undefined') {
+				element.ip = object.ip;
+			}
 		}
 
 		if (type === "TOPOLOGY" || type === "SERVICE") {
@@ -312,6 +340,10 @@ function showEvent(events, event) {
 	} else {
 		name = event.action;
 		lifecycle = true;
+	}
+
+	if (events().length == 6) {
+		events.shift();
 	}
 
 	events.push({
@@ -404,7 +436,7 @@ function createLifecycle(graph, divId, lastState, currentState) {
 
 }
 
-function createTree(root, divId) {
+function createTree(root, divId, model) {
 
 	// dimensions
 	var margin = {
@@ -451,21 +483,27 @@ function createTree(root, divId) {
 			function(d) {
 				return "translate(" + d.y + "," + d.x + ")";
 			});
-	// .attr("data-bind", function(d) {
-	// return "click: function() { $root.showThisGroup( '" + d.name + "') }";
-	// });
 
 	// set box
 	node.append("rect").attr("x", -(boxWidth / 2)).attr("y", -(boxHeight / 2)).attr("width", boxWidth).attr("height",
-			boxHeight).attr("rx", 7).attr("ry", 7);
+			boxHeight).attr("rx", 7).attr("ry", 7).attr("data-toggle", "tooltip").attr("title", function(d) {
+		return "Click to view lifecycle";
+	}).on("click", function(d) {
+		model.showThisGroup(d.name);
+		d3.event.stopPropagation();
+	});
 
 	// set lines
-	node.append("text").attr("dx", lineDX).attr("dy", firstLineDY + (lineSpaceDY * 0)).attr("data-toggle", "tooltip")
-			.attr("title", function(d) {
-				return d.type;
-			}).text(function(d) {
-				return d.type;
-			});
+	node.append("text").attr("dx", lineDX).attr("dy", firstLineDY + (lineSpaceDY * 0)).text(function(d) {
+		return d.type;
+	});
+	node.append("text").attr("dx", 40).attr("dy", firstLineDY + (lineSpaceDY * 0)).text(function(d) {
+		if (typeof d.ip !== 'undefined') {
+			return d.ip;
+		} else {
+			return "";
+		}
+	});
 	node.append("text").attr("class", "bold").attr("dx", lineDX).attr("dy", firstLineDY + (lineSpaceDY * 1)).text(
 			function(d) {
 				return d.name;

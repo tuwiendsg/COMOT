@@ -31,9 +31,11 @@ import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.m.core.test.utils.LoadGenerator;
 import at.ac.tuwien.dsg.comot.m.core.test.utils.TestAgentAdapter;
 import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
+import at.ac.tuwien.dsg.comot.model.SyblDirective;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
+import at.ac.tuwien.dsg.comot.model.type.DirectiveType;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 import com.rabbitmq.client.ConsumerCancelledException;
@@ -126,6 +128,27 @@ public class ControllerTest extends AbstractTest {
 
 		// insertExistingRunningInstanceOfThisServiceToSystem("HelloElasticityNoDB");
 		insertExistingRunningInstanceOfThisServiceToSystem(serviceId);
+
+		UtilsTest.sleepInfinit();
+	}
+
+	@Test
+	public void testReconfigureEl() throws AmqpException, ShutdownSignalException,
+			ConsumerCancelledException,
+			EpsException, JAXBException, ComotException, IOException, InterruptedException {
+
+		// insertExistingRunningInstanceOfThisServiceToSystem("HelloElasticityNoDB");
+		insertExistingRunningInstanceOfThisServiceToSystem(serviceId);
+
+		log.info("aaaaaaaaaaaaa");
+		UtilsTest.sleepSeconds(5);
+
+		CloudService service = infoService.getServiceInstance(instanceId);
+		Navigator nav = new Navigator(service);
+		nav.getUnit("EventProc").getDirectives()
+				.add(new SyblDirective("aa", DirectiveType.STRATEGY, "STRATEGY CASE responseTime < 7 ms:scaleIn"));
+
+		coordinator.reconfigureElasticity(serviceId, instanceId, service);
 
 		UtilsTest.sleepInfinit();
 	}
