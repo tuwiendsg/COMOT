@@ -95,7 +95,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<finalName>comot.jar</finalName>
+					<finalName>comot-manager.jar</finalName>
 					<port>8380</port>
 					<path>/comot</path>
 				</configuration>

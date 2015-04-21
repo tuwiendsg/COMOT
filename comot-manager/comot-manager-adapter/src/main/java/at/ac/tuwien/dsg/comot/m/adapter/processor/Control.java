@@ -35,11 +35,14 @@ import at.ac.tuwien.dsg.comot.model.type.State;
 import at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.ActionEvent;
 import at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.ActionPlanEvent;
 import at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.IEvent;
+import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionRulesConfiguration;
 
 @Component
 @Scope("prototype")
 public class Control extends Processor implements ControlEventsListener {
 
+	public static final Long TIMEOUT = 5000L;
+	
 	@Autowired
 	protected ControlClient control;
 	@Autowired
@@ -65,6 +68,12 @@ public class Control extends Processor implements ControlEventsListener {
 				instanceId + ".TRUE.*." + State.PASSIVE + ".#"));
 		bindings.add(bindingLifeCycle(queueName,
 				"*.*.*.*." + Action.RECONFIGURE_ELASTICITY + ".#"));
+		bindings.add(bindingLifeCycle(queueName,
+				"*.*.*.*." + Action.START_CONTROLLER + ".#"));
+		bindings.add(bindingLifeCycle(queueName,
+				"*.*.*.*." + Action.STOP_CONTROLLER + ".#"));
+		bindings.add(bindingLifeCycle(queueName,
+				"*.*.*.*." + Action.KILL + ".#"));
 
 		bindings.add(bindingCustom(queueName,
 				instanceId + "." + getId() + ".*.SERVICE"));
@@ -80,11 +89,8 @@ public class Control extends Processor implements ControlEventsListener {
 		if (action == Action.DEPLOYED) {
 			control(serviceId, instanceId);
 
-		} else if (action == Action.UNDEPLOYED) {
+		} else if (action == Action.REMOVED) {
 			removeManaged(instanceId);
-
-		} else if (action == Action.MAINTENANCE_STARTED) {
-			stopControl(instanceId);
 
 		} else if (action == Action.RECONFIGURE_ELASTICITY) {
 
@@ -98,8 +104,24 @@ public class Control extends Processor implements ControlEventsListener {
 				control.updateService(servicefromInfo);
 			}
 
-		}
+		} else if (action == Action.START_CONTROLLER) {
 
+			control(serviceId, instanceId);
+
+		} else if (action == Action.STOP_CONTROLLER) {
+
+			stopControl(instanceId);
+			
+			Thread.sleep(TIMEOUT);
+			
+			manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, action));
+			
+		} else if (action == Action.KILL) {
+			
+			log.info("managed: {}, controlled: {}", isManaged(instanceId), isControlled(instanceId));
+			
+			removeManaged(instanceId);
+		}
 	}
 
 	@Override
@@ -121,14 +143,18 @@ public class Control extends Processor implements ControlEventsListener {
 			if (stateService == State.RUNNING) {
 				control(serviceId, instanceId);
 			}
+
 		} else if (event.equals(ComotEvent.RSYBL_STOP.toString())) {
 
 			stopControl(instanceId);
 
-		} else if (event.equals(ComotEvent.RSYBL_SET_MCR.toString())) {
+		} else if (event.equals(ComotEvent.SET_MCR.toString())) {
+
+			control.updateMcr(instanceId, Utils.asObjectFromXml(optionalMessage, CompositionRulesConfiguration.class));
 
 		} else if (event.equals(ComotEvent.RSYBL_SET_EFFECTS.toString())) {
 
+			control.updateEffects(instanceId, optionalMessage);
 		}
 
 	}
@@ -173,6 +199,7 @@ public class Control extends Processor implements ControlEventsListener {
 
 		if (isManaged(instanceId)) {
 			control.removeService(instanceId);
+			control.removeListener(instanceId);
 			managedSet.remove(instanceId);
 		}
 

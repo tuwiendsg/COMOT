@@ -32,13 +32,12 @@ public enum ComotEvent {
 
 	MELA_START,
 	MELA_STOP,
-	MELA_SET_MCR,
-	MELA_GET_MCR,
+	GET_MCR,
 	MELA_GET_STRUCTURE,
 
 	RSYBL_START,
 	RSYBL_STOP,
-	RSYBL_SET_MCR,
+	SET_MCR,
 	RSYBL_SET_EFFECTS;
 
 	public static final String RSYBL_PREFIX = "RSYBL";

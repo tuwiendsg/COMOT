@@ -14,6 +14,12 @@ public class AggregationStrategy {
 			return currentState;
 		} else {
 
+//			for (Group member : members) {
+//				if (member.getCurrentState() == State.ERROR) {
+//					return State.ERROR;
+//				}
+//			}
+
 			State one = members.get(0).getCurrentState();
 
 			if (allMembersTheSameState(members)) {
@@ -23,6 +29,7 @@ public class AggregationStrategy {
 					return one;
 				}
 			} else {
+
 				return currentState;
 			}
 		}

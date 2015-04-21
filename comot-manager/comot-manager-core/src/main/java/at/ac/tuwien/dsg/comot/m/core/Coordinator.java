@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.InformationClient;
+import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.enums.Action;
 import at.ac.tuwien.dsg.comot.m.common.enums.EpsEvent;
@@ -31,8 +32,11 @@ import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEventModifying;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
+import at.ac.tuwien.dsg.comot.model.SyblDirective;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceEntity;
 import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
+import at.ac.tuwien.dsg.comot.model.type.DirectiveType;
 
 @Component
 public class Coordinator {
@@ -77,8 +81,7 @@ public class Coordinator {
 
 	}
 
-	public void stopServiceInstance(String serviceId, String instanceId)
-			throws IOException, JAXBException {
+	public void stopServiceInstance(String serviceId, String instanceId) throws IOException, JAXBException {
 
 		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STOP));
 
@@ -93,10 +96,15 @@ public class Coordinator {
 	}
 
 	public void reconfigureElasticity(String serviceId, String instanceId, CloudService service) throws AmqpException,
-			JAXBException, EpsException {
+			JAXBException {
 
 		sendLifeCycle(Type.SERVICE, new LifeCycleEventModifying(serviceId, instanceId, serviceId,
 				Action.RECONFIGURE_ELASTICITY, null, service));
+	}
+
+	public void kill(String serviceId, String instanceId) throws AmqpException, JAXBException {
+
+		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.KILL));
 	}
 
 	public void assignSupportingOsu(String serviceId, String instanceId, String osuInstanceId)

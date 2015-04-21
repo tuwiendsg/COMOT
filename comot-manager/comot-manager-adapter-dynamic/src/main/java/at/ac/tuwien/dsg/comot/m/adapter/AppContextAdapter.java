@@ -26,12 +26,15 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import at.ac.tuwien.dsg.comot.m.common.InformationClient;
 import at.ac.tuwien.dsg.comot.m.common.InformationClientRest;
 import at.ac.tuwien.dsg.comot.m.common.eps.ControlClient;
+import at.ac.tuwien.dsg.comot.m.common.eps.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.eps.MonitoringClient;
 import at.ac.tuwien.dsg.comot.m.cs.AppContextEps;
 import at.ac.tuwien.dsg.comot.m.cs.ControlClientRsybl;
+import at.ac.tuwien.dsg.comot.m.cs.DeploymentClientSalsa;
 import at.ac.tuwien.dsg.comot.m.cs.MonitoringClientMela;
 import at.ac.tuwien.dsg.comot.m.cs.connector.MelaClient;
 import at.ac.tuwien.dsg.comot.m.cs.connector.RsyblClient;
+import at.ac.tuwien.dsg.comot.m.cs.connector.SalsaClient;
 
 @Configuration
 @PropertySource({ "classpath:properties/application.properties" })
@@ -102,6 +105,11 @@ public class AppContextAdapter {
 	@Bean
 	public ControlClient controlClient() throws URISyntaxException {
 		return new ControlClientRsybl(new RsyblClient(new URI(env.getProperty("uri.controller"))));
+	}
+	
+	@Bean
+	public DeploymentClient deploymentClient() throws URISyntaxException {
+		return new DeploymentClientSalsa(new SalsaClient(new URI(env.getProperty("uri.deployemnt"))));
 	}
 
 	public static String getBrokerHost() {

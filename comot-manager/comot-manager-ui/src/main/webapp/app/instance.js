@@ -23,6 +23,7 @@ define(function(require) {
 		// functions
 		startInstance : startInstance,
 		stopInstance : stopInstance,
+		killInstance : killInstance,
 		assignEps : assignEps,
 		removeEps : removeEps,
 		showThisGroup : showThisGroup,
@@ -115,17 +116,13 @@ define(function(require) {
 		for (var i = 0; i < epses.length; i++) {
 			var eps = epses[i];
 
-			console.log("aaa")
-			console.log(eps)
 			
 			if (typeof eps.serviceInstance === 'undefined') {
-				console.log("bbb")
+
 				var map = {};
 				for (var j = 0; j < eps.osu.resources.length; j++) {
 					map[eps.osu.resources[j].type.name] = eps.osu.resources[j].name;
 				}
-				
-				console.log(map)
 
 				if (typeof map["VIEW"] !== 'undefined') {
 					var path = map["VIEW"];
@@ -142,9 +139,15 @@ define(function(require) {
 		});
 	}
 
-	function stopInstance(serviceId, instanceId) {
+	function stopInstance() {
 
 		comot.stopServiceInstance(model.serviceId(), model.instanceId(), function(data) {
+		});
+	}
+	
+	function killInstance() {
+
+		comot.killServiceInstance(model.serviceId(), model.instanceId(), function(data) {
 		});
 	}
 

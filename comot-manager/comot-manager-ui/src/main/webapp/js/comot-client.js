@@ -140,6 +140,14 @@
 		request.url = services + serviceId + instances + instanceId + "/stop";
 		return $.ajax(request);
 	}
+	
+	exports.killServiceInstance = function(serviceId, instanceId, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "PUT";
+		request.url = services + serviceId + instances + instanceId + "/kill";
+		return $.ajax(request);
+	}
 
 	exports.assignSupportingEps = function(serviceId, instanceId, epsId, onSuccess, onError) {
 

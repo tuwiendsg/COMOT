@@ -93,12 +93,12 @@ public class Change implements Serializable {
 
 		DynamicProperties properties = new ComotDynamicPropertiesContainer();
 
-		// for (String key : map.keySet()) {
-		// if (map.get(key) != null) {
-		// properties.setProperty(key, map.get(key));
-		// }
-		// }
-		properties.setPropertiesFrom(map);
+		for (String key : map.keySet()) {
+			if (map.get(key) != null) {
+				properties.setProperty(key, map.get(key));
+			}
+		}
+		//properties.setPropertiesFrom(map);
 		return properties;
 	}
 

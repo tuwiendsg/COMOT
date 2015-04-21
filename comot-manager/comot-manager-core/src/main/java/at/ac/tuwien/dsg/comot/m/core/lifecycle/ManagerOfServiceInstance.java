@@ -35,12 +35,16 @@ import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEventModifying;
 import at.ac.tuwien.dsg.comot.m.common.event.state.ComotMessage;
 import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessageLifeCycle;
 import at.ac.tuwien.dsg.comot.m.common.event.state.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.event.state.Transition;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotLifecycleException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.provider.ComotLifecycleEvent;
+import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
+import at.ac.tuwien.dsg.comot.model.provider.PrimitiveOperation;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 @Component
@@ -68,6 +72,8 @@ public class ManagerOfServiceInstance {
 
 	protected String csInstanceId;
 	protected String serviceId;
+
+	protected LifeCycleEvent cashedEvent;
 
 	public String queueName() {
 		return LC_MANAGER_QUEUE + csInstanceId;
@@ -185,7 +191,7 @@ public class ManagerOfServiceInstance {
 					groupManager.checkAndExecute(action, groupId);
 				}
 
-			} else if (Action.DEPLOYED.equals(action)) {
+			} else if (Action.DEPLOYED == action) {
 
 				targetGroup = groupManager.checkAndExecute(action, groupId);
 
@@ -203,6 +209,34 @@ public class ManagerOfServiceInstance {
 				} else {
 					groupManager.checkAndExecute(action, groupId);
 				}
+
+			} else if (Action.STOP == action || Action.START_MAINTENANCE == action) {
+
+				groupManager.checkAndExecute(action, groupId);
+				
+				boolean controllerAssigned = false;
+
+				for (OsuInstance osuInstTemp : infoService.getSupportingServices(csInstanceId)) {
+					for (PrimitiveOperation op : osuInstTemp.getOsu().getPrimitiveOperations()) {
+						if (op instanceof ComotLifecycleEvent) {
+							if (Action.valueOf(op.getExecuteMethod()) == Action.STOP_CONTROLLER) {
+								controllerAssigned = true;
+							}
+						}
+					}
+				}
+
+				if (controllerAssigned) {
+					cashedEvent = event;
+					event = new LifeCycleEvent(serviceId, csInstanceId, groupId, Action.STOP_CONTROLLER, csInstanceId,
+							System.currentTimeMillis());
+				}
+
+			} else if (Action.STOP_CONTROLLER == action) {
+
+				event = cashedEvent;
+
+				groupManager.checkAndExecute(event.getAction(), groupId);
 
 			} else if (Action.UNDEPLOYED == action) {
 
@@ -246,44 +280,54 @@ public class ManagerOfServiceInstance {
 				groupManager.checkAndExecute(action, groupId);
 			}
 
-			Map<String, Transition> transitions = groupManager.extractTransitions(event);
-
-			State currentState = transitions.get(serviceId).getCurrentState();
-			State previousState = transitions.get(serviceId).getLastState();
-
-			change = Boolean.toString(transitions.get(serviceId).isFresh()).toUpperCase();
-
-			String bindingKey = csInstanceId + "." + change + "." + previousState + "." + currentState + "." + action
-					+ "." + groupManager.getGroup(groupId).getType() + "." + event.getOrigin();
-
-			// clean service
-			if (service == null) {
-				service = infoService.getServiceInstance(serviceId, csInstanceId);
-			}
-			// UtilsLc.removeProviderInfo(service);
-
-			StateMessage message = new StateMessage(event, transitions, service);
-
-			send(Constants.EXCHANGE_LIFE_CYCLE, bindingKey, message);
-
-			// remove groups
-
-			for (Iterator<Group> iterator = groupManager.getGroup(serviceId).getAllMembersNested().iterator(); iterator
-					.hasNext();) {
-				Group temp = iterator.next();
-				if (temp.getCurrentState() == State.FINAL) {
-					if (temp.getId().equals(serviceId)) {
-						clean();
-					} else {
-						temp.getParent().removeMemberNested(temp.getId());
-					}
-				}
-			}
+			sendLifeCycleEvent(service, event);
 
 		} catch (ComotLifecycleException e) {
 			e.setEvent(event);
 			throw e;
 		}
+	}
+
+	public void sendLifeCycleEvent(CloudService service, LifeCycleEvent event) throws ClassNotFoundException,
+			IOException, EpsException, AmqpException, JAXBException {
+
+		String groupId = event.getGroupId();
+		Action action = event.getAction();
+
+		Map<String, Transition> transitions = groupManager.extractTransitions(event);
+
+		State currentState = transitions.get(serviceId).getCurrentState();
+		State previousState = transitions.get(serviceId).getLastState();
+
+		String change = Boolean.toString(transitions.get(serviceId).isFresh()).toUpperCase();
+
+		String bindingKey = csInstanceId + "." + change + "." + previousState + "." + currentState + "." + action
+				+ "." + groupManager.getGroup(groupId).getType() + "." + event.getOrigin();
+
+		// clean service
+		if (service == null) {
+			service = infoService.getServiceInstance(serviceId, csInstanceId);
+		}
+		// UtilsLc.removeProviderInfo(service);
+
+		StateMessage message = new StateMessage(event, transitions, service);
+
+		send(Constants.EXCHANGE_LIFE_CYCLE, bindingKey, message);
+
+		// remove groups
+
+		for (Iterator<Group> iterator = groupManager.getGroup(serviceId).getAllMembersNested().iterator(); iterator
+				.hasNext();) {
+			Group temp = iterator.next();
+			if (temp.getCurrentState() == State.FINAL) {
+				if (temp.getId().equals(serviceId)) {
+					clean();
+				} else {
+					temp.getParent().removeMemberNested(temp.getId());
+				}
+			}
+		}
+
 	}
 
 	public void executeCustomEvent(CustomEvent event) throws AmqpException, JAXBException, ClassNotFoundException,
@@ -314,8 +358,8 @@ public class ManagerOfServiceInstance {
 		if (e instanceof ComotLifecycleException) {
 			ComotLifecycleException lcs = (ComotLifecycleException) e;
 
-			msg = new ExceptionMessage(serviceId, csInstanceId, csInstanceId, System.currentTimeMillis(),
-					ComotLifecycleException.class.getSimpleName(), lcs.getMessage(), Utils.asJsonString(lcs.getEvent()));
+			msg = new ExceptionMessageLifeCycle(serviceId, csInstanceId, csInstanceId, System.currentTimeMillis(),
+					ComotLifecycleException.class.getSimpleName(), lcs.getMessage(), null, lcs.getEvent());
 		} else {
 			msg = new ExceptionMessage(serviceId, csInstanceId, csInstanceId, System.currentTimeMillis(), e);
 		}

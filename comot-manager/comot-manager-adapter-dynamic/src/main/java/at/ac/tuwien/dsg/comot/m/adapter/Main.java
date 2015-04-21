@@ -18,6 +18,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import at.ac.tuwien.dsg.comot.m.adapter.general.Manager;
 import at.ac.tuwien.dsg.comot.m.adapter.general.PerInstanceQueueManager;
 import at.ac.tuwien.dsg.comot.m.adapter.processor.Control;
+import at.ac.tuwien.dsg.comot.m.adapter.processor.Deployment;
 import at.ac.tuwien.dsg.comot.m.adapter.processor.Monitoring;
 import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.InformationClient;
@@ -75,7 +76,7 @@ public class Main {
 					}
 				});
 
-				if (cmd.hasOption("m") || cmd.hasOption("r")) {
+				if (cmd.hasOption("m") || cmd.hasOption("r") || cmd.hasOption("s")) {
 
 					Manager manager = context.getBean(PerInstanceQueueManager.class);
 
@@ -90,6 +91,11 @@ public class Main {
 					} else if (cmd.hasOption("r")) {
 
 						Control processor = context.getBean(Control.class);
+						manager.start(participantId, processor);
+						
+					} else if (cmd.hasOption("s")) {
+
+						Deployment processor = context.getBean(Deployment.class);
 						manager.start(participantId, processor);
 					}
 
@@ -115,6 +121,7 @@ public class Main {
 		options.addOption("h", "help", false, "print help");
 		options.addOption("m", "mela", false, "Start MELA adapter");
 		options.addOption("r", "rsybl", false, "Start rSYBL adapter");
+		options.addOption("s", "salsa", false, "Start SALSA adapter");
 		// options.addOption("id", "serviceInstanceId", true, "The id under which this service indtance is deployed");
 		options.addOption("mh", "routerHost", true, "Host of the message router");
 		options.addOption("ih", "infoHost", true, "Host of the information service");

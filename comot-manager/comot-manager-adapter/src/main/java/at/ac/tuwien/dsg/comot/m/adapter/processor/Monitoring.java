@@ -50,6 +50,8 @@ public class Monitoring extends Processor {
 				instanceId + ".*.*.*." + Action.ELASTIC_CHANGE_FINISHED + ".#"));
 		bindings.add(bindingLifeCycle(queueName,
 				instanceId + ".TRUE.*." + State.PASSIVE + ".#"));
+		bindings.add(bindingLifeCycle(queueName,
+				"*.*.*.*." + Action.KILL + ".#"));
 
 		bindings.add(bindingCustom(queueName,
 				instanceId + "." + getId() + ".*.SERVICE"));
@@ -91,6 +93,11 @@ public class Monitoring extends Processor {
 			if (monitoring.isMonitored(instanceId)) {
 				monitoring.stopMonitoring(instanceId);
 			}
+
+		} else if (action == Action.KILL) {
+			if (monitoring.isMonitored(instanceId)) {
+				monitoring.stopMonitoring(instanceId);
+			}
 		}
 
 	}
@@ -118,9 +125,9 @@ public class Monitoring extends Processor {
 				monitoring.stopMonitoring(instanceId);
 			}
 
-		} else if (event.equals(ComotEvent.MELA_SET_MCR.toString())) {
+		} else if (event.equals(ComotEvent.SET_MCR.toString())) {
 
-		} else if (event.equals(ComotEvent.MELA_GET_MCR.toString())) {
+		} else if (event.equals(ComotEvent.GET_MCR.toString())) {
 
 		} else if (event.equals(ComotEvent.MELA_GET_STRUCTURE.toString())) {
 

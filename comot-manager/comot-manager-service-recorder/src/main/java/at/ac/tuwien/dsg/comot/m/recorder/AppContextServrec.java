@@ -22,18 +22,16 @@ import at.ac.tuwien.dsg.comot.model.AppContextModel;
 @EnableNeo4jRepositories
 @Import({ AppContextModel.class })
 @ComponentScan
-// @Transactional
 public class AppContextServrec extends Neo4jConfiguration {
 
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 
 	public static final String IMPERMANENT_NEO4J_DB = "IMPERMANENT_NEO4J_DB";
-	public static final String STANDALONE_NEO4J_DB = "STANDALONE_NEO4J_DB";
 	public static final String EMBEDDED_NEO4J_DB = "EMBEDDED_NEO4J_DB";
 
 	@Autowired
 	protected GraphDatabaseService db;
-
+	
 	public AppContextServrec() {
 		setBasePackage("at.ac.tuwien.dsg.comot.m.recorder");
 	}
@@ -43,4 +41,5 @@ public class AppContextServrec extends Neo4jConfiguration {
 		log.info("GraphDatabaseService:  {}", db);
 		return new ExecutionEngine(db);
 	}
+	
 }

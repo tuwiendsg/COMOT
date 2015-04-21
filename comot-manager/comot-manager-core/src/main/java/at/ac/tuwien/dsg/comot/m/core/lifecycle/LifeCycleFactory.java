@@ -27,19 +27,18 @@ public class LifeCycleFactory {
 		serviceLc.addTransition(State.RUNNING, Action.MAINTENANCE_STARTED, State.MAINTENANCE);
 		serviceLc.addTransition(State.RUNNING, Action.UNDEPLOYMENT_STARTED, State.UNDEPLOYING);
 		serviceLc.addTransition(State.RUNNING, Action.STOP, State.RUNNING);
-		serviceLc.addTransition(State.RUNNING, Action.START_TEST, State.RUNNING);
-		serviceLc.addTransition(State.RUNNING, Action.FINISH_TEST, State.RUNNING);
 		serviceLc.addTransition(State.RUNNING, Action.START_MAINTENANCE, State.RUNNING);
 		serviceLc.addTransition(State.RUNNING, Action.START_CONTROLLER, State.RUNNING);
 		serviceLc.addTransition(State.RUNNING, Action.STOP_CONTROLLER, State.RUNNING);
-		serviceLc.addTransition(State.RUNNING, Action.RECONFIGURE_ELASTICITY, State.RUNNING);
 
 		serviceLc.addTransition(State.ELASTIC_CHANGE, Action.ELASTIC_CHANGE_FINISHED, State.RUNNING);
 
 		serviceLc.addTransition(State.MAINTENANCE, Action.MAINTENANCE_FINISHED, State.RUNNING);
 
-		serviceLc.addTransition(State.RUNNING, Action.UNDEPLOYMENT_STARTED, State.UNDEPLOYING);
 		serviceLc.addTransition(State.ERROR, Action.UNDEPLOYMENT_STARTED, State.UNDEPLOYING);
+		serviceLc.addTransition(State.ERROR, Action.STOP, State.ERROR);
+		serviceLc.addTransition(State.ERROR, Action.MAINTENANCE_STARTED, State.MAINTENANCE);
+		serviceLc.addTransition(State.ERROR, Action.START_MAINTENANCE, State.ERROR);
 
 		serviceLc.addTransition(State.UNDEPLOYING, Action.UNDEPLOYED, State.PASSIVE);
 
@@ -59,20 +58,19 @@ public class LifeCycleFactory {
 		othersLc.addTransition(State.RUNNING, Action.MAINTENANCE_STARTED, State.MAINTENANCE);
 		othersLc.addTransition(State.RUNNING, Action.UNDEPLOYMENT_STARTED, State.UNDEPLOYING);
 		othersLc.addTransition(State.RUNNING, Action.STOP, State.RUNNING);
-		othersLc.addTransition(State.RUNNING, Action.START_TEST, State.RUNNING);
-		othersLc.addTransition(State.RUNNING, Action.FINISH_TEST, State.RUNNING);
 		othersLc.addTransition(State.RUNNING, Action.START_MAINTENANCE, State.RUNNING);
 		othersLc.addTransition(State.RUNNING, Action.START_CONTROLLER, State.RUNNING);
 		othersLc.addTransition(State.RUNNING, Action.STOP_CONTROLLER, State.RUNNING);
-		othersLc.addTransition(State.RUNNING, Action.RECONFIGURE_ELASTICITY, State.RUNNING);
 
 		othersLc.addTransition(State.ELASTIC_CHANGE, Action.ELASTIC_CHANGE_FINISHED, State.RUNNING);
 
 		othersLc.addTransition(State.MAINTENANCE, Action.MAINTENANCE_FINISHED, State.RUNNING);
 		othersLc.addTransition(State.MAINTENANCE, Action.REMOVED, State.FINAL);
 
-		othersLc.addTransition(State.RUNNING, Action.UNDEPLOYMENT_STARTED, State.UNDEPLOYING);
 		othersLc.addTransition(State.ERROR, Action.UNDEPLOYMENT_STARTED, State.UNDEPLOYING);
+		othersLc.addTransition(State.ERROR, Action.STOP, State.ERROR);
+		othersLc.addTransition(State.ERROR, Action.MAINTENANCE_STARTED, State.MAINTENANCE);
+		othersLc.addTransition(State.ERROR, Action.START_MAINTENANCE, State.ERROR);
 
 		othersLc.addTransition(State.UNDEPLOYING, Action.UNDEPLOYED, State.PASSIVE);
 
@@ -89,12 +87,9 @@ public class LifeCycleFactory {
 		unitInstanceLc.addTransition(State.RUNNING, Action.MAINTENANCE_STARTED, State.MAINTENANCE);
 		unitInstanceLc.addTransition(State.RUNNING, Action.UNDEPLOYMENT_STARTED, State.UNDEPLOYING);
 		unitInstanceLc.addTransition(State.RUNNING, Action.STOP, State.RUNNING);
-		unitInstanceLc.addTransition(State.RUNNING, Action.START_TEST, State.RUNNING);
-		unitInstanceLc.addTransition(State.RUNNING, Action.FINISH_TEST, State.RUNNING);
 		unitInstanceLc.addTransition(State.RUNNING, Action.START_MAINTENANCE, State.RUNNING);
 		unitInstanceLc.addTransition(State.RUNNING, Action.START_CONTROLLER, State.RUNNING);
 		unitInstanceLc.addTransition(State.RUNNING, Action.STOP_CONTROLLER, State.RUNNING);
-		unitInstanceLc.addTransition(State.RUNNING, Action.RECONFIGURE_ELASTICITY, State.RUNNING);
 
 		unitInstanceLc.addTransition(State.ELASTIC_CHANGE, Action.ELASTIC_CHANGE_FINISHED, State.RUNNING);
 		unitInstanceLc.addTransition(State.ELASTIC_CHANGE, Action.UNDEPLOYMENT_STARTED, State.UNDEPLOYING);
@@ -102,8 +97,10 @@ public class LifeCycleFactory {
 		unitInstanceLc.addTransition(State.MAINTENANCE, Action.MAINTENANCE_FINISHED, State.RUNNING);
 		unitInstanceLc.addTransition(State.MAINTENANCE, Action.UNDEPLOYMENT_STARTED, State.UNDEPLOYING);
 
-		unitInstanceLc.addTransition(State.RUNNING, Action.UNDEPLOYMENT_STARTED, State.UNDEPLOYING);
 		unitInstanceLc.addTransition(State.ERROR, Action.UNDEPLOYMENT_STARTED, State.UNDEPLOYING);
+		unitInstanceLc.addTransition(State.ERROR, Action.STOP, State.ERROR);
+		unitInstanceLc.addTransition(State.ERROR, Action.MAINTENANCE_STARTED, State.MAINTENANCE);
+		unitInstanceLc.addTransition(State.ERROR, Action.START_MAINTENANCE, State.ERROR);
 
 		unitInstanceLc.addTransition(State.UNDEPLOYING, Action.UNDEPLOYED, State.FINAL);
 

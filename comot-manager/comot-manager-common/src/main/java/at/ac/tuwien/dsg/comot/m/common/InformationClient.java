@@ -27,6 +27,12 @@ public class InformationClient {
 
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 
+	public static final String NON_EPS = "NON_EPS";
+	public static final String EPS = "EPS";
+	public static final String ALL = "ALL";
+	public static final String STATIC = "STATIC";
+	public static final String DYNAMIC = "DYNAMIC";
+
 	protected InformationClientRest client;
 
 	public InformationClient() {
@@ -200,22 +206,6 @@ public class InformationClient {
 		client.assignEps(instanceId, osuInstanceId);
 	}
 
-	// public Map<String, String> getInstancesHavingThisOsuAssigned(String osuInstanceId) throws EpsException {
-	// Map<String, String> instances = new HashMap<>();
-	//
-	// for (CloudService service : client.getServices()) {
-	// for (ServiceInstance instance : service.getInstances()) {
-	// for (OsuInstance osuInstance : instance.getSupport()) {
-	// if (osuInstance.getId().equals(osuInstanceId)) {
-	// instances.put(instance.getId(), service.getId());
-	// }
-	// }
-	// }
-	// }
-	//
-	// return instances;
-	// }
-
 	public void removeEpsAssignment(String instanceId, String osuInstanceId) throws EpsException {
 		client.removeEpsAssignment(instanceId, osuInstanceId);
 	}
@@ -269,6 +259,35 @@ public class InformationClient {
 			}
 		}
 		return null;
+	}
+
+	public List<OsuInstance> getElasticPlatformServicesInstances(String type) throws EpsException {
+
+		List<OsuInstance> allEpsInstances = new ArrayList<>(getOsuInstances());
+
+		if (ALL.equals(type)) {
+
+		} else if (STATIC.equals(type)) {
+			for (Iterator<OsuInstance> iterator = allEpsInstances.iterator(); iterator.hasNext();) {
+				OsuInstance osu = iterator.next();
+				if (InformationClient.isDynamicEps(osu.getOsu())) {
+					iterator.remove();
+				}
+			}
+
+		} else if (DYNAMIC.equals(type)) {
+			for (Iterator<OsuInstance> iterator = allEpsInstances.iterator(); iterator.hasNext();) {
+				OsuInstance osu = iterator.next();
+				if (!InformationClient.isDynamicEps(osu.getOsu())) {
+					iterator.remove();
+				}
+			}
+
+		} else {
+			allEpsInstances = new ArrayList<OsuInstance>();
+		}
+
+		return allEpsInstances;
 	}
 
 	public void deeteAll() throws EpsException {

@@ -34,8 +34,12 @@ public class LifeCycle {
 
 		log.trace("executeAction(parentState={}, currentState={}, action={} )", parentState, currentState, action);
 
-		if (action == Action.ERROR) {
+		if (action == Action.ERROR || action == Action.KILL) {
 			return State.ERROR;
+		}
+		
+		if (action == Action.START_TEST || action == Action.FINISH_TEST || action  == Action.RECONFIGURE_ELASTICITY) {
+			return currentState;
 		}
 
 		if (states.contains(currentState)) {

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:Definitions xmlns:ns2="http://docs.oasis-open.org/tosca/ns/2011/12" id="eps_salsa" name="eps_salsa">
+    <ns2:ServiceTemplate id="salsa_topology">
+        <ns2:BoundaryDefinitions>
+            <ns2:Policies/>
+        </ns2:BoundaryDefinitions>
+        <ns2:TopologyTemplate>
+        
+            <ns2:NodeTemplate xmlns:salsa="https://github.com/tuwiendsg/SALSA" minInstances="1" maxInstances="1" id="OS_for_eps_salsa" type="salsa:os">
+                <ns2:Properties>
+                    <MappingProperties>
+                        <MappingProperty type="os">
+                            <property name="packages">openjdk-7-jre</property>
+                            <property name="provider">dsg@openstack</property>
+                            <property name="instanceType">000001920</property>
+                            <property name="baseImage">be6ae07b-7deb-4926-bfd7-b11afe228d6a</property>
+                        </MappingProperty>
+                    </MappingProperties>
+                </ns2:Properties>
+                <ns2:Policies/>
+            </ns2:NodeTemplate>
+            
+            <ns2:NodeTemplate xmlns:salsa="https://github.com/tuwiendsg/SALSA" name="SALSA" minInstances="1" maxInstances="1" id="salsa" type="salsa:software">
+                <ns2:Properties>
+                    <MappingProperties>
+                        <MappingProperty type="action">
+                            <property name="deploy">./salsa-engine-service start</property>
+                        </MappingProperty>
+                    </MappingProperties>
+                </ns2:Properties>
+                <ns2:Capabilities>
+                    <ns2:Capability id="salsa_capa" type="salsa:variable"/>
+                </ns2:Capabilities>
+                <ns2:Policies/>
+                <ns2:DeploymentArtifacts>
+                    <ns2:DeploymentArtifact artifactType="salsa:misc" artifactRef="salsa:salsaJar"/>
+                    <ns2:DeploymentArtifact artifactType="salsa:misc" artifactRef="salsa:pioneerJar"/>
+                    <ns2:DeploymentArtifact artifactType="salsa:misc" artifactRef="salsa:userData"/>
+                    <ns2:DeploymentArtifact artifactType="salsa:misc" artifactRef="salsa:salsaService"/>
+                </ns2:DeploymentArtifacts>
+            </ns2:NodeTemplate>
+            
+            <ns2:NodeTemplate xmlns:salsa="https://github.com/tuwiendsg/SALSA" name="Adapter" minInstances="1" maxInstances="1" id="adapter" type="salsa:software">
+                <ns2:Properties>
+                    <MappingProperties>
+                        <MappingProperty type="action">
+                            <property name="deploy">java -jar epsAdapter.jar -salsa -routerHost 128.130.172.191 -infoHost 128.130.172.191 -infoPort 8080</property>
+                        </MappingProperty>
+                    </MappingProperties>
+                </ns2:Properties>
+                <ns2:Requirements>
+                    <ns2:Requirement fulfilled="false" id="salsa_req" type="salsa:variable"/>
+                </ns2:Requirements>
+                <ns2:Policies/>
+                <ns2:DeploymentArtifacts>
+                    <ns2:DeploymentArtifact artifactType="salsa:misc" artifactRef="salsa:adapterJar"/>
+                </ns2:DeploymentArtifacts>
+            </ns2:NodeTemplate>
+            
+            <ns2:RelationshipTemplate xmlns:salsa="https://github.com/tuwiendsg/SALSA" id="adapter_to_mela" type="salsa:CONNECTTO">
+                <ns2:SourceElement ref="salsa_capa"/>
+                <ns2:TargetElement ref="salsa_req"/>
+            </ns2:RelationshipTemplate>
+            <ns2:RelationshipTemplate xmlns:salsa="https://github.com/tuwiendsg/SALSA" id="salsa_HOSTON_OS_for_eps_salsa" type="salsa:HOSTON">
+                <ns2:SourceElement ref="salsa"/>
+                <ns2:TargetElement ref="OS_for_eps_salsa"/>
+            </ns2:RelationshipTemplate>
+            <ns2:RelationshipTemplate xmlns:salsa="https://github.com/tuwiendsg/SALSA" id="adapter_HOSTON_OS_for_eps_salsa" type="salsa:HOSTON">
+                <ns2:SourceElement ref="adapter"/>
+                <ns2:TargetElement ref="OS_for_eps_salsa"/>
+            </ns2:RelationshipTemplate>
+            
+        </ns2:TopologyTemplate>
+    </ns2:ServiceTemplate>
+    
+    <ns2:ArtifactTemplate xmlns:salsa="https://github.com/tuwiendsg/SALSA" id="salsaJar" type="salsa:misc">
+        <ns2:ArtifactReferences>
+            <ns2:ArtifactReference reference="http://128.130.172.215/salsa/upload/files/TMP/hung/salsa-engine.jar"/>
+        </ns2:ArtifactReferences>
+    </ns2:ArtifactTemplate>
+    <ns2:ArtifactTemplate xmlns:salsa="https://github.com/tuwiendsg/SALSA" id="pioneerJar" type="salsa:misc">
+        <ns2:ArtifactReferences>
+            <ns2:ArtifactReference reference="http://128.130.172.215/salsa/upload/files/TMP/hung/salsa-pioneer.jar"/>
+        </ns2:ArtifactReferences>
+    </ns2:ArtifactTemplate>    
+    <ns2:ArtifactTemplate xmlns:salsa="https://github.com/tuwiendsg/SALSA" id="salsaService" type="salsa:misc">
+        <ns2:ArtifactReferences>
+            <ns2:ArtifactReference reference="http://128.130.172.215/salsa/upload/files/TMP/hung/salsa-engine-service"/>
+        </ns2:ArtifactReferences>
+    </ns2:ArtifactTemplate>        
+    <ns2:ArtifactTemplate xmlns:salsa="https://github.com/tuwiendsg/SALSA" id="userData" type="salsa:misc">
+        <ns2:ArtifactReferences>
+            <ns2:ArtifactReference reference="http://128.130.172.215/salsa/upload/files/juraj/dynamic_eps/cloudUserParameters.ini"/>
+        </ns2:ArtifactReferences>
+    </ns2:ArtifactTemplate>
+    <ns2:ArtifactTemplate xmlns:salsa="https://github.com/tuwiendsg/SALSA" id="adapterJar" type="salsa:misc">
+        <ns2:ArtifactReferences>
+            <ns2:ArtifactReference reference="http://128.130.172.215/salsa/upload/files/juraj/dynamic_eps/epsAdapter.jar"/>
+        </ns2:ArtifactReferences>
+    </ns2:ArtifactTemplate>
+    
+</ns2:Definitions>

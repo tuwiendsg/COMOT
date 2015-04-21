@@ -95,6 +95,8 @@ public class TimeAnalyzis {
 			List<Change> changes = new ArrayList<>();
 			for (Change one : changeRepo.getAllChangesInRangeForObject(instanceId, unitInstanceId, startTime,
 					deplFinTime)) {
+				// TODO remove those not of SALSA origin
+				
 				changes.add(one);
 			}
 

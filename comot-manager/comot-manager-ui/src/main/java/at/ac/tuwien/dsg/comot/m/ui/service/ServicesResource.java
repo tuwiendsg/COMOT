@@ -38,8 +38,10 @@ import org.springframework.stereotype.Service;
 import at.ac.tuwien.dsg.comot.m.adapter.general.Manager;
 import at.ac.tuwien.dsg.comot.m.adapter.general.SingleQueueManager;
 import at.ac.tuwien.dsg.comot.m.common.InformationClient;
+import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.enums.Type;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
+import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.core.Coordinator;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycle;
@@ -52,9 +54,12 @@ import at.ac.tuwien.dsg.comot.m.ui.model.Lc;
 import at.ac.tuwien.dsg.comot.m.ui.model.LcState;
 import at.ac.tuwien.dsg.comot.m.ui.model.ServiceAndInstances;
 import at.ac.tuwien.dsg.comot.m.ui.model.ServiceInstanceUi;
+import at.ac.tuwien.dsg.comot.model.SyblDirective;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceEntity;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
+import at.ac.tuwien.dsg.comot.model.type.DirectiveType;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 // WADL http://localhost:8380/comot/rest/application.wadl
@@ -65,12 +70,6 @@ import at.ac.tuwien.dsg.comot.model.type.State;
 public class ServicesResource {
 
 	private static final Logger log = LoggerFactory.getLogger(ServicesResource.class);
-
-	public static final String NON_EPS = "NON_EPS";
-	public static final String EPS = "EPS";
-	public static final String ALL = "ALL";
-	public static final String STATIC = "STATIC";
-	public static final String DYNAMIC = "DYNAMIC";
 
 	// public static final String TOSCA_FILE = "./TOSCA-v1.0.xsd";
 
@@ -91,11 +90,7 @@ public class ServicesResource {
 
 	@PostConstruct
 	public void startUp() {
-
-		log.info("wwwwwwwwwwwwwwwwwwwwwwwwwwwww " + env.getProperty("diraaaa"));
-
 		log.info("REST resource created");
-
 	}
 
 	@POST
@@ -162,6 +157,18 @@ public class ServicesResource {
 	}
 
 	@PUT
+	@Path("/services/{serviceId}/instances/{instanceId}/kill")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response kill(
+			@PathParam("serviceId") String serviceId,
+			@PathParam("instanceId") String instanceId) throws EpsException,
+			ComotException, ClassNotFoundException, IOException, JAXBException {
+
+		coordinator.kill(serviceId, instanceId);
+		return Response.ok().build();
+	}
+
+	@PUT
 	@Path("/services/{serviceId}/instances/{instanceId}/eps/{epsId}")
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response assignSupportingEps(
@@ -219,6 +226,28 @@ public class ServicesResource {
 			@PathParam("serviceId") String serviceId,
 			@PathParam("instanceId") String instanceId,
 			CloudService service) throws AmqpException, JAXBException, EpsException {
+
+		Navigator nav = new Navigator(service);
+
+		for (ServiceEntity entity : nav.getAllServiceEntities()) {
+			for (SyblDirective dir : entity.getDirectives()) {
+				if (dir.getType() == null) {
+
+					String preProcessed = dir.getDirective().trim().toUpperCase();
+
+					if (preProcessed.startsWith("STRATEGY")) {
+						dir.setType(DirectiveType.STRATEGY);
+					} else if (preProcessed.startsWith("CONSTRAINT")) {
+						dir.setType(DirectiveType.CONSTRAINT);
+					} else if (preProcessed.startsWith("MONITORING")) {
+						dir.setType(DirectiveType.MONITORING);
+					} else {
+						throw new ComotIllegalArgumentException("Can not determine the type of the  SYBL directive: '"
+								+ dir.getDirective() + "'");
+					}
+				}
+			}
+		}
 
 		coordinator.reconfigureElasticity(serviceId, instanceId, service);
 
@@ -301,7 +330,7 @@ public class ServicesResource {
 	@Consumes(MediaType.WILDCARD)
 	@Path("/services")
 	public Response getServices(
-			@DefaultValue(NON_EPS) @QueryParam("type") String type) throws ClassNotFoundException, IOException,
+			@DefaultValue(InformationClient.NON_EPS) @QueryParam("type") String type) throws ClassNotFoundException, IOException,
 			EpsException {
 
 		type = type.toUpperCase();
@@ -315,9 +344,9 @@ public class ServicesResource {
 			}
 		}
 
-		if (ALL.equals(type)) {
+		if (InformationClient.ALL.equals(type)) {
 
-		} else if (EPS.equals(type)) {
+		} else if (InformationClient.EPS.equals(type)) {
 
 			for (Iterator<CloudService> iterator = allServices.iterator(); iterator.hasNext();) {
 				CloudService service = iterator.next();
@@ -326,7 +355,7 @@ public class ServicesResource {
 				}
 			}
 
-		} else if (NON_EPS.equals(type)) {
+		} else if (InformationClient.NON_EPS.equals(type)) {
 
 			for (Iterator<CloudService> iterator = allServices.iterator(); iterator.hasNext();) {
 				CloudService service = iterator.next();
@@ -353,13 +382,13 @@ public class ServicesResource {
 	@Consumes(MediaType.WILDCARD)
 	@Path("/eps")
 	public Response getElasticPlatformServices(
-			@DefaultValue(ALL) @QueryParam("type") String type) throws EpsException {
+			@DefaultValue(InformationClient.ALL) @QueryParam("type") String type) throws EpsException {
 
 		List<OfferedServiceUnit> allEps = new ArrayList<>(infoServ.getOsus());
 
-		if (ALL.equals(type)) {
+		if (InformationClient.ALL.equals(type)) {
 
-		} else if (STATIC.equals(type)) {
+		} else if (InformationClient.STATIC.equals(type)) {
 			for (Iterator<OfferedServiceUnit> iterator = allEps.iterator(); iterator.hasNext();) {
 				OfferedServiceUnit osu = iterator.next();
 				if (InformationClient.isDynamicEps(osu)) {
@@ -367,7 +396,7 @@ public class ServicesResource {
 				}
 			}
 
-		} else if (DYNAMIC.equals(type)) {
+		} else if (InformationClient.DYNAMIC.equals(type)) {
 			for (Iterator<OfferedServiceUnit> iterator = allEps.iterator(); iterator.hasNext();) {
 				OfferedServiceUnit osu = iterator.next();
 				if (!InformationClient.isDynamicEps(osu)) {
@@ -393,31 +422,9 @@ public class ServicesResource {
 	@Consumes(MediaType.WILDCARD)
 	@Path("/eps/instances")
 	public Response getElasticPlatformServicesInstances(
-			@DefaultValue(ALL) @QueryParam("type") String type) throws EpsException {
+			@DefaultValue(InformationClient.ALL) @QueryParam("type") String type) throws EpsException {
 
-		List<OsuInstance> allEpsInstances = new ArrayList<>(infoServ.getOsuInstances());
-
-		if (ALL.equals(type)) {
-
-		} else if (STATIC.equals(type)) {
-			for (Iterator<OsuInstance> iterator = allEpsInstances.iterator(); iterator.hasNext();) {
-				OsuInstance osu = iterator.next();
-				if (InformationClient.isDynamicEps(osu.getOsu())) {
-					iterator.remove();
-				}
-			}
-
-		} else if (DYNAMIC.equals(type)) {
-			for (Iterator<OsuInstance> iterator = allEpsInstances.iterator(); iterator.hasNext();) {
-				OsuInstance osu = iterator.next();
-				if (!InformationClient.isDynamicEps(osu.getOsu())) {
-					iterator.remove();
-				}
-			}
-
-		} else {
-			allEpsInstances = new ArrayList<OsuInstance>();
-		}
+		List<OsuInstance> allEpsInstances = infoServ.getElasticPlatformServicesInstances(type);
 
 		return Response.ok(allEpsInstances.toArray(new OsuInstance[allEpsInstances.size()])).build();
 	}

@@ -85,6 +85,8 @@ public class Deployment extends Processor {
 				instanceId + ".*.*.*." + Action.ELASTIC_CHANGE_STARTED + ".*.#"));
 		bindings.add(bindingLifeCycle(queueName,
 				instanceId + ".*.*.*." + Action.ELASTIC_CHANGE_FINISHED + ".*.#"));
+		bindings.add(bindingLifeCycle(queueName,
+				"*.*.*.*." + Action.KILL + ".#"));
 
 		return bindings;
 	}
@@ -134,6 +136,12 @@ public class Deployment extends Processor {
 				tasks.remove(instanceId);
 			}
 
+		} else if (action == Action.KILL) {
+			
+			if (deployment.isManaged(instanceId)) {
+				manager.sendLifeCycle(Type.SERVICE,
+						new LifeCycleEvent(serviceId, instanceId, groupId, Action.UNDEPLOYMENT_STARTED));
+			}
 		}
 	}
 

@@ -114,6 +114,7 @@ public class Recording extends Processor {
 		Map<String, Object> changeProperties = new HashMap<>();
 		changeProperties.put(PROP_ORIGIN, originId);
 		changeProperties.put(PROP_EVENT_TIME, msg.getTime());
+		changeProperties.put(PROP_EVENT_NAME, msg.getType());
 		changeProperties.put(PROP_EXCEPTION_TYPE, msg.getType());
 		changeProperties.put(PROP_EXCEPTION_MSG, msg.getMessage());
 		changeProperties.put(PROP_EXCEPTION_DETAIL, msg.getDetails());

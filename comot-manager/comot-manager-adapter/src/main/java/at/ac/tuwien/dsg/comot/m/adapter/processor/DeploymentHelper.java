@@ -90,7 +90,7 @@ public class DeploymentHelper {
 			} while (notAllRunning);
 			log.info("stopped checking");
 		} catch (Throwable e) {
-			e.printStackTrace();
+			log.error("{}", e);
 		}
 
 	}
@@ -143,7 +143,7 @@ public class DeploymentHelper {
 		} catch (InterruptedException e) {
 			log.info("Task interrupted as expected");
 		} catch (Throwable e) {
-			e.printStackTrace();
+			log.error("{}", e);
 		}
 		return null;
 

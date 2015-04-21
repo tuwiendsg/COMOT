@@ -18,7 +18,7 @@ import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlSeeAlso({ ComotCustomEvent.class })
+@XmlSeeAlso({ ComotCustomEvent.class, ComotLifecycleEvent.class })
 @NodeEntity
 public class PrimitiveOperation implements Serializable {
 
