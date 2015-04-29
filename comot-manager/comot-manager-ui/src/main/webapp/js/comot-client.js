@@ -120,6 +120,16 @@
 
 	// API
 
+	exports.createTemplateTosca = function(tosca, onSuccess, onError) {
+
+		var request = getRequestCore(onSuccess, onError);
+		request.type = "POST";
+		request.url = templates + "tosca";
+		request.data = tosca;
+		request.contentType = "application/xml";
+		return $.ajax(request);
+	}
+	
 	exports.removeTemplate = function(templateId, onSuccess, onError) {
 
 		var request = getRequestCore(onSuccess, onError);

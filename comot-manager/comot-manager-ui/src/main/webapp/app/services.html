@@ -11,10 +11,23 @@
 			<b>Cloud Services</b>
 		</div>
 		<div class="panel-body">
-			<button type="button" class="btn btn-default btn-sm pull-right"
-				data-bind="click: function() { $root.newInstanceService( id) }">
-				<span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> New service
-			</button>
+			<form data-bind="submit: $root.newService">
+				<div class="row">
+					<div class="col-md-3">
+						<b>Create new service from TOSCA:</b>
+					</div>
+					<div class="col-md-1">
+						<button type="submit" class="btn btn-primary btn-sm">
+							<span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Submit
+						</button>
+					</div>
+					<div class="col-md-4">
+						<input id="fileTosca" type="file" name="tosca">
+					</div>
+				</div>
+			</form>
+			<div>&nbsp;</div>
+			<b>Current services:</b>
 			<table class="table table-hover table-condensed">
 				<thead>
 					<tr>
@@ -64,6 +77,23 @@
 		</div>
 		<div class="panel-body">
 
+			<form data-bind="submit: $root.newTemplate">
+				<div class="row">
+					<div class="col-md-3">
+						<b>Create new template from TOSCA:</b>
+					</div>
+					<div class="col-md-1">
+						<button type="submit" class="btn btn-primary btn-sm">
+							<span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Submit
+						</button>
+					</div>
+					<div class="col-md-4">
+						<input id="fileToscaTemplate" type="file" name="tosca">
+					</div>
+				</div>
+			</form>
+			<div>&nbsp;</div>
+			<b>Current templates:</b>
 			<table class="table table-hover table-condensed">
 				<thead>
 					<tr>
@@ -99,29 +129,6 @@
 			</table>
 		</div>
 	</div>
-
-	<!-- Modal -->
-	<div class="modal fade" id="toscaDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog" style="width: 900px">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">
-						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
-					</button>
-					<h4 class="modal-title" id="myModalLabel">Elastic cloud service definition</h4>
-				</div>
-				<div class="modal-body">
-					<textarea class="form-control" data-bind="value: newService()" rows="30" data-bind="value: mcr"></textarea>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					<button type="button" class="btn btn-primary">Save changes</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
-
 
 </div>
 

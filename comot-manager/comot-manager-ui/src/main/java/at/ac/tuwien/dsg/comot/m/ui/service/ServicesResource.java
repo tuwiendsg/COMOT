@@ -109,7 +109,7 @@ public class ServicesResource {
 	}
 
 	@POST
-	@Path("/templates/tosca")
+	@Path("/templates")
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response createTemplate(CloudService service) throws EpsException, ComotException, JAXBException,
 			ClassNotFoundException, IOException {
@@ -120,7 +120,7 @@ public class ServicesResource {
 	}
 
 	@POST
-	@Path("/templates")
+	@Path("/templates/tosca")
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response createTemplate(Definitions def) throws EpsException, ComotException, JAXBException,
 			ClassNotFoundException, IOException {

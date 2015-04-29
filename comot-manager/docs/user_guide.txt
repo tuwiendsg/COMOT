@@ -1,0 +1,20 @@
+1. build
+
+- "mvn clean install" on the comot-model project
+- "mvn clean install" on the comot-manager project
+
+2. install RabbitMQ (tested with version 3.4.4) https://www.rabbitmq.com/
+
+3. start information service 
+
+- comot-manager\comot-manager-info-service-mock\target\infoServiceMock.jar
+- "java -jar infoServiceMock.jar" 
+
+4. start management system 
+
+- comot-manager\comot-manager-ui\target\comot-manager.jar
+- "java -jar -XX:MaxPermSize=256m comot-manager.jar -httpPort 8380"
+- configure IP of static MELA, SALSA, rSYBL, information service, RabbitMQ broker in comot-manager\comot-manager-ui\target\config\application.properties
+
+5. (optional) If you want to use dynamic EPSs in OpenStack
+- information service and RabbitMQ broker must be started on a VM with a public IP

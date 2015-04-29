@@ -31,7 +31,7 @@ define(function(require) {
 				route : 'services',
 				title : 'Cloud Services',
 				moduleId : 'services',
-				nav : true
+				nav : false
 			}, {
 				route : 'eps',
 				title : 'Dynamic EPS',
@@ -39,12 +39,12 @@ define(function(require) {
 				nav : true
 			}, {
 				route : 'services/:serviceId',
-				title : 'Service Instance',
+				title : 'Cloud Service',
 				moduleId : 'instance',
 				nav : false
 			}, {
 				route : 'services/:serviceId/history',
-				title : 'History',
+				title : 'Event Log',
 				moduleId : 'history',
 				nav : false
 			}, {
@@ -54,12 +54,6 @@ define(function(require) {
 				nav : false,
 				hash : '#services/:serviceId/analysis'
 			}
-			// , {
-			// route : 'new',
-			// title : 'New',
-			// moduleId : 'new',
-			// nav : true
-			// }
 			]).buildNavigationModel();
 
 			return router.activate();

@@ -126,98 +126,107 @@ public class InitData {
 		control.hasPrimitiveOperation(
 				new ComotCustomEvent("Stop controller", ComotEvent.RSYBL_STOP.toString(), false));
 
-		// DYNAMIC EPS MELA
-
-		CloudService melaService = mapperTosca.createModel(UtilsCs
-				.loadTosca(fileBase + "adapterMela/mela_tosca_with_adapter_from_salsa.xml"));
-
-		OfferedServiceUnit monitoringDynamic = new OfferedServiceUnit();
-		monitoringDynamic.setId(Constants.MELA_SERVICE_DYNAMIC);
-		monitoringDynamic.setType(OsuType.EPS.toString());
-
-		monitoringDynamic.hasPrimitiveOperation(
-				new ComotCustomEvent("Set Metric Composition Rules", ComotEvent.SET_MCR.toString(), true));
-		monitoringDynamic.hasPrimitiveOperation(
-				new ComotCustomEvent("Start monitoring", ComotEvent.MELA_START.toString(), false));
-		monitoringDynamic.hasPrimitiveOperation(
-				new ComotCustomEvent("Stop monitoring", ComotEvent.MELA_STOP.toString(), false));
-
-		monitoringDynamic.setServiceTemplate(new Template(melaService.getId(), melaService));
-
-		// DYNAMIC EPS RSYBL
-
-		CloudService rsyblService = mapperTosca.createModel(UtilsCs
-				.loadTosca(fileBase + "adapterRsybl/rsybl_mela_with_adapter_tosca.xml"));
-
-		OfferedServiceUnit rsyblDynamic = new OfferedServiceUnit();
-		rsyblDynamic.setId(Constants.RSYBL_SERVICE_DYNAMIC);
-		rsyblDynamic.setType(OsuType.EPS.toString());
-
-		rsyblDynamic.hasPrimitiveOperation(
-				new ComotLifecycleEvent("Stop controller", Action.STOP_CONTROLLER.toString()));
-
-		rsyblDynamic.hasPrimitiveOperation(
-				new ComotCustomEvent("Set Metric Composition Rules", ComotEvent.SET_MCR.toString(), true));
-		rsyblDynamic.hasPrimitiveOperation(
-				new ComotCustomEvent("Start control", ComotEvent.RSYBL_START.toString(), false));
-		rsyblDynamic.hasPrimitiveOperation(
-				new ComotCustomEvent("Stop control", ComotEvent.RSYBL_STOP.toString(), false));
-
-		rsyblDynamic.setServiceTemplate(new Template(rsyblService.getId(), rsyblService));
-
-		// DYNAMIC EPS SALSA
-
-		CloudService salsaService = mapperTosca.createModel(UtilsCs
-				.loadTosca(fileBase + "adapterSalsa/salsa_tosca.xml"));
-
-		OfferedServiceUnit salsaDynamic = new OfferedServiceUnit();
-		salsaDynamic.setId(Constants.SALSA_SERVICE_DYNAMIC);
-		salsaDynamic.setType(OsuType.EPS.toString());
-
-		salsaDynamic.setServiceTemplate(new Template(salsaService.getId(), salsaService));
-
-		// // INSERT
-		infoService.addOsu(monitoringDynamic);
-		infoService.addOsu(rsyblDynamic);
-		infoService.addOsu(salsaDynamic);
-
 		infoService.addOsu(deployment);
 		infoService.addOsu(monitoring);
 		infoService.addOsu(control);
 
+		// DYNAMIC EPS MELA
+
 		try {
-			infoService.createTemplate(mapperTosca.createModel(UtilsCs
-					.loadTosca(fileBase + "test/helloElasticity/HelloElasticity_ShortNames.xml")));
+
+			CloudService melaService = mapperTosca.createModel(UtilsCs
+					.loadTosca(fileBase + "adapterMela/mela_tosca_with_adapter_from_salsa.xml"));
+
+			OfferedServiceUnit monitoringDynamic = new OfferedServiceUnit();
+			monitoringDynamic.setId(Constants.MELA_SERVICE_DYNAMIC);
+			monitoringDynamic.setType(OsuType.EPS.toString());
+
+			monitoringDynamic.hasPrimitiveOperation(
+					new ComotCustomEvent("Set Metric Composition Rules", ComotEvent.SET_MCR.toString(), true));
+			monitoringDynamic.hasPrimitiveOperation(
+					new ComotCustomEvent("Start monitoring", ComotEvent.MELA_START.toString(), false));
+			monitoringDynamic.hasPrimitiveOperation(
+					new ComotCustomEvent("Stop monitoring", ComotEvent.MELA_STOP.toString(), false));
+
+			monitoringDynamic.setServiceTemplate(new Template(melaService.getId(), melaService));
+
+			infoService.addOsu(monitoringDynamic);
+
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
-		// try {
-		// infoService.createTemplate(mapperTosca.createModel(UtilsCs
-		// .loadTosca(fileBase + "test/helloElasticity/HelloElasticityNoDB.xml")));
-		// } catch (JAXBException | IOException e) {
-		// e.printStackTrace();
-		// }
-		// try {
-		//
-		// infoService.createTemplate(mapperTosca.createModel(UtilsCs
-		// .loadTosca(fileBase + "test/helloElasticity/HelloElasticityNoDB_Constraint.xml")));
-		//
-		// } catch (JAXBException | IOException e) {
-		// e.printStackTrace();
-		// }
+
+		// DYNAMIC EPS RSYBL
 		try {
-			infoService.createTemplate(mapperTosca.createModel(UtilsCs
-					.loadTosca(fileBase + "test/tosca/daas_m2m_fromSalsa.xml")));
+			CloudService rsyblService = mapperTosca.createModel(UtilsCs
+					.loadTosca(fileBase + "adapterRsybl/rsybl_mela_with_adapter_tosca.xml"));
+
+			OfferedServiceUnit rsyblDynamic = new OfferedServiceUnit();
+			rsyblDynamic.setId(Constants.RSYBL_SERVICE_DYNAMIC);
+			rsyblDynamic.setType(OsuType.EPS.toString());
+
+			rsyblDynamic.hasPrimitiveOperation(
+					new ComotLifecycleEvent("Stop controller", Action.STOP_CONTROLLER.toString()));
+
+			rsyblDynamic.hasPrimitiveOperation(
+					new ComotCustomEvent("Set Metric Composition Rules", ComotEvent.SET_MCR.toString(), true));
+			rsyblDynamic.hasPrimitiveOperation(
+					new ComotCustomEvent("Start control", ComotEvent.RSYBL_START.toString(), false));
+			rsyblDynamic.hasPrimitiveOperation(
+					new ComotCustomEvent("Stop control", ComotEvent.RSYBL_STOP.toString(), false));
+
+			rsyblDynamic.setServiceTemplate(new Template(rsyblService.getId(), rsyblService));
+
+			infoService.addOsu(rsyblDynamic);
+
+		} catch (JAXBException | IOException e) {
+			e.printStackTrace();
+		}
+
+		// DYNAMIC EPS SALSA
+		try {
+			CloudService salsaService = mapperTosca.createModel(UtilsCs
+					.loadTosca(fileBase + "adapterSalsa/salsa_tosca.xml"));
+
+			OfferedServiceUnit salsaDynamic = new OfferedServiceUnit();
+			salsaDynamic.setId(Constants.SALSA_SERVICE_DYNAMIC);
+			salsaDynamic.setType(OsuType.EPS.toString());
+
+			salsaDynamic.setServiceTemplate(new Template(salsaService.getId(), salsaService));
+
+			infoService.addOsu(salsaDynamic);
+
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
 
 		try {
 			infoService.createTemplate(mapperTosca.createModel(UtilsCs
-					.loadTosca(fileBase + "test/eval/HelloElasticity_error.xml")));
+					.loadTosca(fileBase + "init/HelloElasticity.xml")));
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
+
+		// try {
+		// infoService.createTemplate(mapperTosca.createModel(UtilsCs
+		// .loadTosca(fileBase + "test/helloElasticity/HelloElasticity_ShortNames.xml")));
+		// } catch (JAXBException | IOException e) {
+		// e.printStackTrace();
+		// }
+		//
+		// try {
+		// infoService.createTemplate(mapperTosca.createModel(UtilsCs
+		// .loadTosca(fileBase + "test/tosca/daas_m2m_fromSalsa.xml")));
+		// } catch (JAXBException | IOException e) {
+		// e.printStackTrace();
+		// }
+		//
+		// try {
+		// infoService.createTemplate(mapperTosca.createModel(UtilsCs
+		// .loadTosca(fileBase + "test/eval/HelloElasticity_error.xml")));
+		// } catch (JAXBException | IOException e) {
+		// e.printStackTrace();
+		// }
 
 	}
 

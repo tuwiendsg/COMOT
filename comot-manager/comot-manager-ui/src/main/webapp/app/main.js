@@ -24,7 +24,7 @@ requirejs.config({
 		transitions : '../lib/durandal/js/transitions',
 		knockout : '../lib/knockout/knockout-3.3.0',
 		komapping : '../lib/knockout/knockout.mapping',
-		jquery : '../lib/jquery/jquery-1.11.2',
+		jquery : '../lib/jquery/jquery-1.11.2.min',
 		crel : '../lib/json-human/crel',
 		json_human : '../lib/json-human/json.human',
 		d3 : '../lib/d3/d3.min',

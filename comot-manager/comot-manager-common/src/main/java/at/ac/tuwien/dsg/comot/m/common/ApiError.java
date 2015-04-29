@@ -16,7 +16,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *******************************************************************************/
-package at.ac.tuwien.dsg.comot.m.ui.model;
+package at.ac.tuwien.dsg.comot.m.common;
 
 import java.io.Serializable;
 
@@ -26,24 +26,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
-public class Error implements Serializable {
+public class ApiError implements Serializable {
 
 	private static final long serialVersionUID = 6692918664587778374L;
 
 	protected String message;
 	protected String origin;
 
-	public Error() {
+	public ApiError() {
 
 	}
 
-	public Error(String message, String origin) {
+	public ApiError(String message, String origin) {
 		super();
 		this.message = message;
 		this.origin = origin;
 	}
 
-	public Error(String message) {
+	public ApiError(String message) {
 		super();
 		this.message = message;
 	}
