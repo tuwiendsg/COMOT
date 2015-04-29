@@ -53,7 +53,6 @@ public abstract class Processor {
 	public abstract void onLifecycleEvent(
 			StateMessage msg,
 			String serviceId,
-			String instanceId,
 			String groupId,
 			Action action,
 			String originId,
@@ -63,7 +62,6 @@ public abstract class Processor {
 	public abstract void onCustomEvent(
 			StateMessage msg,
 			String serviceId,
-			String instanceId,
 			String groupId,
 			String event,
 			String epsId,
@@ -73,7 +71,6 @@ public abstract class Processor {
 	public abstract void onExceptionEvent(
 			ExceptionMessage msg,
 			String serviceId,
-			String instanceId,
 			String originId) throws Exception;
 
 	public String logId() {

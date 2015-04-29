@@ -6,21 +6,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
-import javax.xml.bind.JAXBException;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.oasis.tosca.Definitions;
-import org.springframework.beans.BeansException;
 
 import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.enums.Action;
 import at.ac.tuwien.dsg.comot.m.common.enums.EpsEvent;
-import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
 import at.ac.tuwien.dsg.comot.m.core.test.utils.TestAgentAdapter;
@@ -28,20 +21,15 @@ import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
-import com.rabbitmq.client.ConsumerCancelledException;
-import com.rabbitmq.client.ShutdownSignalException;
-
 public class DeploymentTest extends AbstractTest {
 
 	protected String serviceId;
-	protected String instanceId;
 
 	protected TestAgentAdapter agent;
 	protected String staticDeplId;
 
 	@Before
-	public void setUp() throws JAXBException, IOException, ClassNotFoundException, ShutdownSignalException,
-			ConsumerCancelledException, InterruptedException, EpsException, BeansException, URISyntaxException {
+	public void setUp() throws Exception {
 
 		staticDeplId = infoService.instanceIdOfStaticEps(Constants.SALSA_SERVICE_STATIC);
 		agent = new TestAgentAdapter("prototype", env.getProperty("uri.broker.host"));
@@ -50,10 +38,9 @@ public class DeploymentTest extends AbstractTest {
 		Definitions tosca1 = UtilsCs.loadTosca("./../resources/test/tosca/ExampleExecutableOnVM.xml");
 
 		CloudService service = mapperTosca.createModel(tosca1);
-		serviceId = coordinator.createCloudService(service);
-		instanceId = coordinator.createServiceInstance(serviceId);
+		serviceId = coordinator.createService(mapperTosca.createModel(tosca1));
 
-		assertFalse(deployment.isManaged(instanceId));
+		assertFalse(deployment.isManaged(serviceId));
 
 		agent.assertLifeCycleEvent(Action.CREATED);
 
@@ -61,44 +48,42 @@ public class DeploymentTest extends AbstractTest {
 
 	@After
 	public void clean() throws EpsException {
-		if (deployment.isManaged(instanceId)) {
+		if (deployment.isManaged(serviceId)) {
 			UtilsTest.sleepSeconds(10);
-			deployment.undeploy(instanceId);
+			deployment.undeploy(serviceId);
 		}
 	}
 
 	@Test
-	public void removeServiceInstance() throws ClassNotFoundException, IOException, JAXBException,
-			ShutdownSignalException, ConsumerCancelledException, InterruptedException, EpsException {
+	public void removeServiceInstance() throws Exception {
 
-		assertNotNull(infoService.getServiceInstance(serviceId, instanceId));
-		assertTrue(lcManager.isInstanceManaged(instanceId));
+		assertNotNull(infoService.getService(serviceId));
+		assertTrue(lcManager.isInstanceManaged(serviceId));
 
-		coordinator.removeServiceInstance(serviceId, instanceId);
+		coordinator.removeService(serviceId);
 
 		agent.assertLifeCycleEvent(Action.REMOVED);
 
-		assertNull(infoService.getServiceInstance(serviceId, instanceId));
-		assertFalse(lcManager.isInstanceManaged(instanceId));
+		assertNull(infoService.getService(serviceId));
+		assertFalse(lcManager.isInstanceManaged(serviceId));
 
 	}
 
 	@Test(timeout = 300000)
-	public void testAssignStartStop() throws IOException, JAXBException, ClassNotFoundException,
-			EpsException, ComotException, ShutdownSignalException, ConsumerCancelledException, InterruptedException {
+	public void testAssignStartStop() throws Exception {
 
-		coordinator.assignSupportingOsu(serviceId, instanceId, staticDeplId);
+		coordinator.assignSupportingOsu(serviceId, staticDeplId);
 
 		agent.assertCustomEvent(EpsEvent.EPS_SUPPORT_REQUESTED.toString());
 		agent.assertCustomEvent(EpsEvent.EPS_SUPPORT_ASSIGNED.toString());
 
-		assertFalse(deployment.isManaged(instanceId));
-		assertTrue(infoService.isOsuAssignedToInstance(instanceId, Constants.SALSA_SERVICE_STATIC));
+		assertFalse(deployment.isManaged(serviceId));
+		assertTrue(infoService.isOsuAssignedToService(serviceId, Constants.SALSA_SERVICE_STATIC));
 
 		// DEPLOY when passive
-		assertEquals(State.PASSIVE, lcManager.getCurrentState(instanceId, serviceId));
+		assertEquals(State.PASSIVE, lcManager.getCurrentState(serviceId, serviceId));
 
-		coordinator.startServiceInstance(serviceId, instanceId);
+		coordinator.startService(serviceId);
 
 		agent.assertLifeCycleEvent(Action.START);
 
@@ -111,33 +96,32 @@ public class DeploymentTest extends AbstractTest {
 		agent.waitForLifeCycleEvent(Action.DEPLOYED);
 
 		// check that deployed and UNDEPLOY
-		assertEquals(State.RUNNING, lcManager.getCurrentState(instanceId, serviceId));
-		assertTrue(deployment.isManaged(instanceId));
-		assertTrue(deployment.isRunning(instanceId));
+		assertEquals(State.RUNNING, lcManager.getCurrentState(serviceId, serviceId));
+		assertTrue(deployment.isManaged(serviceId));
+		assertTrue(deployment.isRunning(serviceId));
 
-		coordinator.stopServiceInstance(serviceId, instanceId);
+		coordinator.stopService(serviceId);
 
 		agent.assertLifeCycleEvent(Action.STOP);
 		agent.assertLifeCycleEvent(Action.UNDEPLOYMENT_STARTED);
 		agent.assertLifeCycleEvent(Action.UNDEPLOYED);
 
 		// check that really undeployed when PASSIVE
-		assertEquals(State.PASSIVE, lcManager.getCurrentState(instanceId, serviceId));
-		assertFalse(deployment.isManaged(instanceId));
-		assertTrue(infoService.isOsuAssignedToInstance(instanceId, Constants.SALSA_SERVICE_STATIC));
+		assertEquals(State.PASSIVE, lcManager.getCurrentState(serviceId, serviceId));
+		assertFalse(deployment.isManaged(serviceId));
+		assertTrue(infoService.isOsuAssignedToService(serviceId, Constants.SALSA_SERVICE_STATIC));
 
 	}
 
 	@Test(timeout = 300000)
-	public void testAssignStartUnassign() throws IOException, JAXBException, ClassNotFoundException,
-			EpsException, ComotException, ShutdownSignalException, ConsumerCancelledException, InterruptedException {
+	public void testAssignStartUnassign() throws Exception {
 
-		coordinator.assignSupportingOsu(serviceId, instanceId, staticDeplId);
+		coordinator.assignSupportingOsu(serviceId, staticDeplId);
 
 		agent.assertCustomEvent(EpsEvent.EPS_SUPPORT_REQUESTED.toString());
 		agent.assertCustomEvent(EpsEvent.EPS_SUPPORT_ASSIGNED.toString());
 
-		coordinator.startServiceInstance(serviceId, instanceId);
+		coordinator.startService(serviceId);
 
 		agent.assertLifeCycleEvent(Action.START);
 
@@ -145,18 +129,18 @@ public class DeploymentTest extends AbstractTest {
 		agent.waitForLifeCycleEvent(Action.DEPLOYED);
 
 		// check that deployed and UNDEPLOY
-		assertEquals(State.RUNNING, lcManager.getCurrentState(instanceId, serviceId));
-		assertTrue(deployment.isManaged(instanceId));
-		assertTrue(deployment.isRunning(instanceId));
+		assertEquals(State.RUNNING, lcManager.getCurrentState(serviceId, serviceId));
+		assertTrue(deployment.isManaged(serviceId));
+		assertTrue(deployment.isRunning(serviceId));
 
-		coordinator.removeAssignmentOfSupportingOsu(serviceId, instanceId, staticDeplId);
+		coordinator.removeAssignmentOfSupportingOsu(serviceId, staticDeplId);
 
 		agent.assertCustomEvent(EpsEvent.EPS_SUPPORT_REMOVED.toString());
 		agent.assertLifeCycleEvent(Action.UNDEPLOYMENT_STARTED);
 		agent.assertLifeCycleEvent(Action.UNDEPLOYED);
 
-		assertEquals(State.PASSIVE, lcManager.getCurrentState(instanceId, serviceId));
-		assertFalse(deployment.isManaged(instanceId));
-		assertFalse(infoService.isOsuAssignedToInstance(instanceId, Constants.SALSA_SERVICE_STATIC));
+		assertEquals(State.PASSIVE, lcManager.getCurrentState(serviceId, serviceId));
+		assertFalse(deployment.isManaged(serviceId));
+		assertFalse(infoService.isOsuAssignedToService(serviceId, Constants.SALSA_SERVICE_STATIC));
 	}
 }

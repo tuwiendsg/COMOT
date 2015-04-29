@@ -42,7 +42,7 @@ import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionR
 public class Control extends Processor implements ControlEventsListener {
 
 	public static final Long TIMEOUT = 5000L;
-	
+
 	@Autowired
 	protected ControlClient control;
 	@Autowired
@@ -82,133 +82,129 @@ public class Control extends Processor implements ControlEventsListener {
 	}
 
 	@Override
-	public void onLifecycleEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
+	public void onLifecycleEvent(StateMessage msg, String serviceId, String groupId,
 			Action action, String optionalMessage, CloudService service, Map<String, Transition> transitions)
 			throws Exception {
 
 		if (action == Action.DEPLOYED) {
-			control(serviceId, instanceId);
+			control(serviceId);
 
 		} else if (action == Action.REMOVED) {
-			removeManaged(instanceId);
+			removeManaged(serviceId);
 
 		} else if (action == Action.RECONFIGURE_ELASTICITY) {
 
-			if (isManaged(instanceId)) {
+			if (isManaged(serviceId)) {
 
-				CloudService servicefromInfo = infoService.getServiceInstance(instanceId);
+				CloudService servicefromInfo = infoService.getService(serviceId);
 
-				servicefromInfo.setId(instanceId);
-				servicefromInfo.setName(instanceId);
+				servicefromInfo.setId(serviceId);
+				servicefromInfo.setName(serviceId);
 
 				control.updateService(servicefromInfo);
 			}
 
 		} else if (action == Action.START_CONTROLLER) {
 
-			control(serviceId, instanceId);
+			control(serviceId);
 
 		} else if (action == Action.STOP_CONTROLLER) {
 
-			stopControl(instanceId);
-			
+			stopControl(serviceId);
+
 			Thread.sleep(TIMEOUT);
-			
-			manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, action));
-			
+
+			manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, serviceId, action));
+
 		} else if (action == Action.KILL) {
-			
-			log.info("managed: {}, controlled: {}", isManaged(instanceId), isControlled(instanceId));
-			
-			removeManaged(instanceId);
+
+			log.info("managed: {}, controlled: {}", isManaged(serviceId), isControlled(serviceId));
+
+			removeManaged(serviceId);
 		}
 	}
 
 	@Override
-	public void onCustomEvent(StateMessage msg, String serviceId, String instanceId, String groupId, String event,
+	public void onCustomEvent(StateMessage msg, String serviceId, String groupId, String event,
 			String epsId, String originId, String optionalMessage) throws Exception {
 
 		State stateService = msg.getTransitions().get(serviceId).getCurrentState();
 
 		if (EpsEvent.EPS_SUPPORT_ASSIGNED.toString().equals(event)) {
 			if (stateService == State.RUNNING) {
-				control(serviceId, instanceId);
+				control(serviceId);
 			}
 
 		} else if (EpsEvent.EPS_SUPPORT_REMOVED.toString().equals(event)) {
 
-			removeManaged(instanceId);
+			removeManaged(serviceId);
 
 		} else if (event.equals(ComotEvent.RSYBL_START.toString())) {
 			if (stateService == State.RUNNING) {
-				control(serviceId, instanceId);
+				control(serviceId);
 			}
 
 		} else if (event.equals(ComotEvent.RSYBL_STOP.toString())) {
 
-			stopControl(instanceId);
+			stopControl(serviceId);
 
 		} else if (event.equals(ComotEvent.SET_MCR.toString())) {
 
-			control.updateMcr(instanceId, Utils.asObjectFromXml(optionalMessage, CompositionRulesConfiguration.class));
+			control.updateMcr(serviceId, Utils.asObjectFromXml(optionalMessage, CompositionRulesConfiguration.class));
 
 		} else if (event.equals(ComotEvent.RSYBL_SET_EFFECTS.toString())) {
 
-			control.updateEffects(instanceId, optionalMessage);
+			control.updateEffects(serviceId, optionalMessage);
 		}
 
 	}
 
 	@Override
-	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String instanceId, String originId)
-			throws Exception {
+	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String originId) throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
-	protected void manage(String serviceId, String instanceId) throws ClassNotFoundException, IOException,
+	protected void manage(String serviceId) throws ClassNotFoundException, IOException,
 			EpsException, JAXBException {
 
-		if (!isManaged(instanceId)) {
+		if (!isManaged(serviceId)) {
 
-			CloudService servicefromInfo = infoService.getServiceInstance(instanceId);
-
-			servicefromInfo.setId(instanceId);
-			servicefromInfo.setName(instanceId);
+			CloudService servicefromInfo = infoService.getService(serviceId);
 
 			control.sendInitialConfig(servicefromInfo);
 
-			managedSet.add(instanceId);
+			managedSet.add(serviceId);
 		}
 	}
 
-	protected void control(String serviceId, String instanceId) throws Exception {
+	protected void control(String serviceId) throws Exception {
 
-		manage(serviceId, instanceId);
+		manage(serviceId);
 
-		if (!isControlled(instanceId)) {
-			control.startControl(instanceId);
-			control.registerForEvents(instanceId, this);
-			controlledSet.add(instanceId);
+		if (!isControlled(serviceId)) {
+			control.startControl(serviceId);
+			control.registerForEvents(serviceId, this);
+			controlledSet.add(serviceId);
 		}
 	}
 
-	protected void removeManaged(String instanceId) throws EpsException {
+	protected void removeManaged(String serviceId) throws EpsException {
 
-		stopControl(instanceId);
+		stopControl(serviceId);
 
-		if (isManaged(instanceId)) {
-			control.removeService(instanceId);
-			control.removeListener(instanceId);
-			managedSet.remove(instanceId);
+		if (isManaged(serviceId)) {
+			control.removeService(serviceId);
+			control.removeListener(serviceId);
+			managedSet.remove(serviceId);
 		}
 
 	}
 
-	protected void stopControl(String instanceId) throws EpsException {
-		if (isControlled(instanceId)) {
-			control.stopControl(instanceId);
-			controlledSet.remove(instanceId);
+	protected void stopControl(String serviceId) throws EpsException {
+		if (isControlled(serviceId)) {
+			control.stopControl(serviceId);
+			controlledSet.remove(serviceId);
 		}
 	}
 
@@ -223,13 +219,10 @@ public class Control extends Processor implements ControlEventsListener {
 	@Override
 	public void onMessage(IEvent event) {
 
-		String instanceId = null;
 		String serviceId = null;
 		try {
 			String optionalMsg = null;
-			instanceId = event.getServiceId();
-			CloudService instance = infoService.getServiceInstance(instanceId);
-			serviceId = instance.getId();
+			serviceId = event.getServiceId();
 			String customEventName = ComotEvent.rsyblEventName(event);
 
 			try {
@@ -246,19 +239,18 @@ public class Control extends Processor implements ControlEventsListener {
 				Type type = Type.SERVICE;
 
 				if (apEvent.getStage() == IEvent.Stage.START) {
-					manager.sendLifeCycle(type, new LifeCycleEvent(serviceId, instanceId, serviceId,
-							Action.ELASTIC_CHANGE_STARTED));
+					manager.sendLifeCycle(type, new LifeCycleEvent(serviceId, serviceId, Action.ELASTIC_CHANGE_STARTED));
 
-					manager.sendCustom(Type.SERVICE, new CustomEvent(serviceId, instanceId, serviceId,
-							customEventName, null, optionalMsg));
+					manager.sendCustom(Type.SERVICE, new CustomEvent(serviceId, serviceId, customEventName, null,
+							optionalMsg));
 
 				} else if (apEvent.getStage() == IEvent.Stage.FINISHED || apEvent.getStage() == IEvent.Stage.FINISHED) {
 
-					manager.sendCustom(Type.SERVICE, new CustomEvent(serviceId, instanceId, serviceId,
-							customEventName, null, optionalMsg));
+					manager.sendCustom(Type.SERVICE, new CustomEvent(serviceId, serviceId, customEventName, null,
+							optionalMsg));
 
-					manager.sendLifeCycle(type, new LifeCycleEvent(serviceId, instanceId, serviceId,
-							Action.ELASTIC_CHANGE_FINISHED));
+					manager.sendLifeCycle(type,
+							new LifeCycleEvent(serviceId, serviceId, Action.ELASTIC_CHANGE_FINISHED));
 				}
 
 			} else {
@@ -275,7 +267,7 @@ public class Control extends Processor implements ControlEventsListener {
 					targetId = serviceId;
 				}
 
-				manager.sendCustom(Type.SERVICE, new CustomEvent(serviceId, instanceId, targetId,
+				manager.sendCustom(Type.SERVICE, new CustomEvent(serviceId, targetId,
 						customEventName, null, optionalMsg));
 			}
 
@@ -283,7 +275,7 @@ public class Control extends Processor implements ControlEventsListener {
 
 		} catch (Exception e) {
 			try {
-				manager.sendException(serviceId, instanceId, e);
+				manager.sendException(serviceId, e);
 			} catch (Throwable e1) {
 				log.error("{}", e1);
 			}

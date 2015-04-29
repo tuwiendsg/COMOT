@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 import javax.xml.bind.JAXBException;
 
@@ -14,7 +13,6 @@ import org.junit.Test;
 import org.oasis.tosca.Definitions;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.comot.m.common.Constants;
@@ -44,7 +42,6 @@ import com.rabbitmq.client.ShutdownSignalException;
 public class ControllerTest extends AbstractTest {
 
 	protected String serviceId;
-	protected String instanceId;
 
 	// protected final String INSTANCE_ID = "HelloElasticityNoDB";// "HelloElasticityNoDB";
 
@@ -56,9 +53,7 @@ public class ControllerTest extends AbstractTest {
 	protected LoadGenerator generator;
 
 	@Before
-	public void setUp() throws JAXBException, IOException, ClassNotFoundException, ShutdownSignalException,
-			ConsumerCancelledException, InterruptedException, EpsException, ComotException, BeansException,
-			URISyntaxException {
+	public void setUp() throws Exception {
 
 		staticDeplId = infoService.instanceIdOfStaticEps(Constants.SALSA_SERVICE_STATIC);
 		staticMonitoringId = infoService.instanceIdOfStaticEps(Constants.MELA_SERVICE_STATIC);
@@ -69,39 +64,36 @@ public class ControllerTest extends AbstractTest {
 		Definitions tosca1 = UtilsCs.loadTosca(UtilsTest.TEST_FILE_BASE
 				+ "helloElasticity/HelloElasticity_ShortNames.xml");
 
-		CloudService service = mapperTosca.createModel(tosca1);
-		serviceId = coordinator.createCloudService(service);
-		instanceId = coordinator.createServiceInstance(serviceId);
+		serviceId = coordinator.createService(mapperTosca.createModel(tosca1));
 
 		agent.assertLifeCycleEvent(Action.CREATED);
 
 	}
 
 	@Test
-	public void testDeployAndControl() throws IOException, JAXBException, ClassNotFoundException, EpsException,
-			ShutdownSignalException, ConsumerCancelledException, InterruptedException, ComotException {
+	public void testDeployAndControl() throws Exception {
 
 		// deploy
-		assertFalse(deployment.isManaged(instanceId));
+		assertFalse(deployment.isManaged(serviceId));
 
 		log.info("staticDeplId " + staticDeplId);
 
-		coordinator.assignSupportingOsu(serviceId, instanceId, staticDeplId);
+		coordinator.assignSupportingOsu(serviceId, staticDeplId);
 		agent.waitForCustomEvent(EpsEvent.EPS_SUPPORT_ASSIGNED.toString());
 
-		coordinator.startServiceInstance(serviceId, instanceId);
+		coordinator.startService(serviceId);
 
 		agent.waitForLifeCycleEvent(Action.DEPLOYED);
 		agent.waitForLifeCycleEvent(Action.DEPLOYED);
 		agent.waitForLifeCycleEvent(Action.DEPLOYED);
 		agent.waitForLifeCycleEvent(Action.DEPLOYED);
-		assertEquals(State.RUNNING, lcManager.getCurrentState(instanceId, serviceId));
-		assertTrue(deployment.isManaged(instanceId));
-		assertTrue(deployment.isRunning(instanceId));
+		assertEquals(State.RUNNING, lcManager.getCurrentState(serviceId, serviceId));
+		assertTrue(deployment.isManaged(serviceId));
+		assertTrue(deployment.isRunning(serviceId));
 
 		// controler test
 
-		coordinator.assignSupportingOsu(serviceId, instanceId, staticControlId);
+		coordinator.assignSupportingOsu(serviceId, staticControlId);
 
 		agent.waitForCustomEvent(EpsEvent.EPS_SUPPORT_ASSIGNED.toString());
 		log.info("Controller assigned");
@@ -133,22 +125,19 @@ public class ControllerTest extends AbstractTest {
 	}
 
 	@Test
-	public void testReconfigureEl() throws AmqpException, ShutdownSignalException,
-			ConsumerCancelledException,
-			EpsException, JAXBException, ComotException, IOException, InterruptedException {
+	public void testReconfigureEl() throws Exception {
 
 		// insertExistingRunningInstanceOfThisServiceToSystem("HelloElasticityNoDB");
 		insertExistingRunningInstanceOfThisServiceToSystem(serviceId);
 
-		log.info("aaaaaaaaaaaaa");
 		UtilsTest.sleepSeconds(5);
 
-		CloudService service = infoService.getServiceInstance(instanceId);
+		CloudService service = infoService.getService(serviceId);
 		Navigator nav = new Navigator(service);
 		nav.getUnit("EventProc").getDirectives()
 				.add(new SyblDirective("aa", DirectiveType.STRATEGY, "STRATEGY CASE responseTime < 7 ms:scaleIn"));
 
-		coordinator.reconfigureElasticity(serviceId, instanceId, service);
+		coordinator.reconfigureElasticity(serviceId, service);
 
 		UtilsTest.sleepInfinit();
 	}
@@ -161,30 +150,28 @@ public class ControllerTest extends AbstractTest {
 			JAXBException, ComotException, IOException, ShutdownSignalException, ConsumerCancelledException,
 			InterruptedException {
 
-		log.info("instanceId {}", instanceId);
+		log.info("serviceId {}", serviceId);
 
-		assertTrue(deployment.isManaged(instanceId));
-		assertTrue(deployment.isRunning(instanceId));
+		assertTrue(deployment.isManaged(serviceId));
+		assertTrue(deployment.isRunning(serviceId));
 
-		coordinator.assignSupportingOsu(serviceId, instanceId, staticDeplId);
-		coordinator.assignSupportingOsu(serviceId, instanceId, staticControlId);
+		coordinator.assignSupportingOsu(serviceId, staticDeplId);
+		coordinator.assignSupportingOsu(serviceId, staticControlId);
 
 		agent.waitForCustomEvent(EpsEvent.EPS_SUPPORT_ASSIGNED.toString());
 		agent.waitForCustomEvent(EpsEvent.EPS_SUPPORT_ASSIGNED.toString());
 
-		CloudService instance = infoService.getServiceInstance(instanceId);
-		instance.setId(instanceId);
-		instance.setName(instanceId);
+		CloudService instance = infoService.getService(serviceId);
 
 		instance = deployment.refreshStatus(instance);
 		Navigator nav = new Navigator(instance);
 		String bindingKey;
 
 		// service deployment
-		LifeCycleEvent event = new LifeCycleEvent(serviceId, instanceId, serviceId, Action.DEPLOYMENT_STARTED, "test",
+		LifeCycleEvent event = new LifeCycleEvent(serviceId, serviceId, Action.DEPLOYMENT_STARTED, "test",
 				System.currentTimeMillis());
 
-		bindingKey = instanceId + "." + LifeCycleEvent.class.getSimpleName() + "."
+		bindingKey = serviceId + "." + LifeCycleEvent.class.getSimpleName() + "."
 				+ event.getAction() + "." + Type.SERVICE;
 
 		amqp.convertAndSend(Constants.EXCHANGE_REQUESTS, bindingKey, Utils.asJsonString(event));
@@ -193,19 +180,19 @@ public class ControllerTest extends AbstractTest {
 			for (UnitInstance uInst : unit.getInstances()) {
 
 				// start deployment instances
-				event = new LifeCycleEventModifying(serviceId, instanceId, uInst.getId(),
+				event = new LifeCycleEventModifying(serviceId, uInst.getId(),
 						Action.DEPLOYMENT_STARTED, "test", System.currentTimeMillis(), unit.getId(), uInst);
 
-				bindingKey = instanceId + "." + LifeCycleEvent.class.getSimpleName() + "."
+				bindingKey = serviceId + "." + LifeCycleEvent.class.getSimpleName() + "."
 						+ event.getAction() + "." + Type.INSTANCE;
 
 				amqp.convertAndSend(Constants.EXCHANGE_REQUESTS, bindingKey, Utils.asJsonString(event));
 
 				// finish deployment instances
-				event = new LifeCycleEventModifying(serviceId, instanceId, uInst.getId(), Action.DEPLOYED, "test",
+				event = new LifeCycleEventModifying(serviceId, uInst.getId(), Action.DEPLOYED, "test",
 						System.currentTimeMillis(), unit.getId(), uInst);
 
-				bindingKey = instanceId + "." + LifeCycleEvent.class.getSimpleName() + "."
+				bindingKey = serviceId + "." + LifeCycleEvent.class.getSimpleName() + "."
 						+ event.getAction() + "." + Type.INSTANCE;
 
 				amqp.convertAndSend(Constants.EXCHANGE_REQUESTS, bindingKey, Utils.asJsonString(event));

@@ -49,14 +49,15 @@ public class Constants {
 	public static final String VIEW = "VIEW";
 	public static final String PLACE_HOLDER_INSTANCE_ID = "{PLACE_HOLDER_INSTANCE_ID}";
 
+	public static final String TEMPLATES = "templates";
+	public static final String TEMPLATES_ONE = "templates/{templateId}";
+	public static final String TEMPLATES_ONE_SERVICES = "templates/{templateId}/services";
 	public static final String SERVICES = "services";
 	public static final String SERVICE_ONE = "services/{serviceId}";
 	public static final String SERVICE_ONE_ELASTICITY = "services/{serviceId}/elasticity";
-	public static final String INSTANCES = SERVICE_ONE + "/instances";
-	public static final String INSTANCE_ONE = SERVICE_ONE + "/instances/{instanceId}";
-	public static final String UNIT_INSTANCE_ONE = INSTANCE_ONE + "/units/{unitId}/unitInstances/{unitInstanceId}";
+	public static final String UNIT_INSTANCE_ONE = SERVICE_ONE + "/units/{unitId}/unitInstances/{unitInstanceId}";
 
-	public static final String EPS_INSTANCE_ASSIGNMENT = INSTANCE_ONE + "/assignedEpses/{epsId}";
+	public static final String EPS_INSTANCE_ASSIGNMENT = SERVICE_ONE + "/assignedEpses/{epsId}";
 
 	public static final String EPSES = "epses";
 	public static final String EPS_ONE_INSTANCES = "epses/{epsId}/instances";

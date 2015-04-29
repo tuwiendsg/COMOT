@@ -65,7 +65,7 @@ public class ElasticityAnalyzis {
 	}
 
 	@Transactional
-	public List<ElasticPlanReport> doOneService(String serviceId, String instanceId) throws JAXBException,
+	public List<ElasticPlanReport> doOneService(String serviceId) throws JAXBException,
 			InstantiationException, IllegalAccessException, IllegalArgumentException, ClassNotFoundException,
 			RecorderException {
 
@@ -74,7 +74,7 @@ public class ElasticityAnalyzis {
 		SyblDirective directive;
 		List<ElasticPlanReport> list = new ArrayList<>();
 
-		for (Iterator<Change> iterator = changeRepo.getAllChangesInRange(instanceId, 0L, Long.MAX_VALUE).iterator(); iterator
+		for (Iterator<Change> iterator = changeRepo.getAllChangesInRange(serviceId, 0L, Long.MAX_VALUE).iterator(); iterator
 				.hasNext();) {
 			change = iterator.next();
 			eventType = Recording.extractEventName(change);
@@ -90,14 +90,14 @@ public class ElasticityAnalyzis {
 				list.add(actionPlan);
 
 				for (Constraint one : ap.getConstraints()) {
-					directive = (SyblDirective) revisionApi.getRevision(instanceId, one.getId(), change.getTimestamp());
+					directive = (SyblDirective) revisionApi.getRevision(serviceId, one.getId(), change.getTimestamp());
 
 					one.setId(directive.getDirective());
 					// actionPlan.addDirective(directive);
 				}
 
 				for (Strategy one : ap.getStrategies()) {
-					directive = (SyblDirective) revisionApi.getRevision(instanceId, one.getId(), change.getTimestamp());
+					directive = (SyblDirective) revisionApi.getRevision(serviceId, one.getId(), change.getTimestamp());
 
 					one.setId(directive.getDirective());
 					// actionPlan.addDirective(directive);

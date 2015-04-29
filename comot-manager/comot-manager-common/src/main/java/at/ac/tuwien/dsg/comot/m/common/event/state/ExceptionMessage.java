@@ -17,8 +17,6 @@ public class ExceptionMessage extends ComotMessage {
 	@XmlAttribute
 	protected String serviceId;
 	@XmlAttribute
-	protected String csInstanceId;
-	@XmlAttribute
 	protected String origin;
 	@XmlAttribute
 	protected Long time;
@@ -34,7 +32,7 @@ public class ExceptionMessage extends ComotMessage {
 
 	}
 
-	public ExceptionMessage(String serviceId, String csInstanceId, String origin, Long time, Exception exception) {
+	public ExceptionMessage(String serviceId, String origin, Long time, Exception exception) {
 		super();
 
 		Throwable root = ExceptionUtils.getRootCause(exception);
@@ -52,7 +50,6 @@ public class ExceptionMessage extends ComotMessage {
 			details = ExceptionUtils.getStackTrace(root);
 		}
 
-		this.csInstanceId = csInstanceId;
 		this.origin = origin;
 		this.type = type;
 		this.message = message;
@@ -61,12 +58,9 @@ public class ExceptionMessage extends ComotMessage {
 		this.time = time;
 	}
 
-	public ExceptionMessage(String serviceId, String csInstanceId, String origin, Long time, String type,
-			String message,
-			String details) {
+	public ExceptionMessage(String serviceId, String origin, Long time, String type, String message, String details) {
 		super();
 		this.serviceId = serviceId;
-		this.csInstanceId = csInstanceId;
 		this.origin = origin;
 		this.time = time;
 		this.type = type;
@@ -74,10 +68,9 @@ public class ExceptionMessage extends ComotMessage {
 		this.details = details;
 	}
 
-	public ExceptionMessage(String serviceId, String csInstanceId, String origin) {
+	public ExceptionMessage(String serviceId, String origin) {
 		super();
 		this.serviceId = serviceId;
-		this.csInstanceId = csInstanceId;
 		this.origin = origin;
 		this.time = System.currentTimeMillis();
 	}
@@ -88,14 +81,6 @@ public class ExceptionMessage extends ComotMessage {
 
 	public void setType(String type) {
 		this.type = type;
-	}
-
-	public String getCsInstanceId() {
-		return csInstanceId;
-	}
-
-	public void setCsInstanceId(String csInstanceId) {
-		this.csInstanceId = csInstanceId;
 	}
 
 	public String getOrigin() {
@@ -140,7 +125,7 @@ public class ExceptionMessage extends ComotMessage {
 
 	@Override
 	public String toString() {
-		return "ExceptionMessage [serviceId=" + serviceId + ", csInstanceId=" + csInstanceId + ", origin=" + origin
+		return "ExceptionMessage [serviceId=" + serviceId + ", origin=" + origin
 				+ ", time=" + time + ", type=" + type + ", message=" + message + ", details=" + details + "]";
 	}
 

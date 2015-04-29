@@ -30,10 +30,14 @@ import at.ac.tuwien.dsg.comot.m.adapter.UtilsLc;
 import at.ac.tuwien.dsg.comot.m.adapter.general.SingleQueueManager;
 import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.InformationClient;
+import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.enums.Action;
+import at.ac.tuwien.dsg.comot.m.common.enums.EpsEvent;
 import at.ac.tuwien.dsg.comot.m.common.enums.Type;
 import at.ac.tuwien.dsg.comot.m.common.event.AbstractEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.state.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.event.state.Transition;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.core.EpsBuilder;
@@ -61,8 +65,8 @@ public class LifeCycleManager {
 	@Autowired
 	protected InformationClient infoService;
 
-	protected Map<String, ManagerOfServiceInstance> managers = Collections
-			.synchronizedMap(new HashMap<String, ManagerOfServiceInstance>());
+	protected Map<String, ServiceManager> managers = Collections
+			.synchronizedMap(new HashMap<String, ServiceManager>());
 
 	public LifeCycleManager() {
 	}
@@ -86,6 +90,8 @@ public class LifeCycleManager {
 				"*." + LifeCycleEvent.class.getSimpleName() + "." + Action.CREATED + "." + Type.SERVICE, null));
 		admin.declareBinding(new Binding(MANAGER_QUEUE, DestinationType.QUEUE, Constants.EXCHANGE_REQUESTS,
 				"*." + LifeCycleEvent.class.getSimpleName() + "." + Action.REMOVED + "." + Type.SERVICE, null));
+		admin.declareBinding(new Binding(MANAGER_QUEUE, DestinationType.QUEUE, Constants.EXCHANGE_REQUESTS,
+				"*." + CustomEvent.class.getSimpleName() + "." + EpsEvent.EPS_DYNAMIC_REQUESTED + ".*", null));
 
 		container.start();
 
@@ -105,17 +111,35 @@ public class LifeCycleManager {
 			try {
 
 				AbstractEvent abEvent = UtilsLc.abstractEvent(message);
-				LifeCycleEvent event = (LifeCycleEvent) abEvent;
+				String serviceId = abEvent.getServiceId();
 
-				String csInstanceId = event.getCsInstanceId();
+				if (abEvent instanceof LifeCycleEvent) {
 
-				if (Action.CREATED == event.getAction()) {
+					LifeCycleEvent event = (LifeCycleEvent) abEvent;
 
-					createInstanceManager(csInstanceId, event);
+					if (Action.CREATED == event.getAction()) {
+						createInstanceManager(serviceId, event);
 
-				} else if (Action.REMOVED == event.getAction()) {
+					} else if (Action.REMOVED == event.getAction()) {
+						try {
+							managers.get(serviceId).groupManager.check(event.getAction(), serviceId);
+							removeInstanceManager(serviceId);
+						} catch (Exception e) {
 
-					removeInstanceManager(csInstanceId);
+						}
+					}
+
+				} else if (abEvent instanceof CustomEvent) {
+					CustomEvent event = (CustomEvent) abEvent;
+
+					if (event.getCustomEvent().equals(EpsEvent.EPS_DYNAMIC_REQUESTED.toString())) {
+
+						String bindingKey = event.getServiceId() + "." + event.getEpsId() + "."
+								+ event.getCustomEvent() + "." + Type.SERVICE;
+
+						amqp.convertAndSend(Constants.EXCHANGE_CUSTOM_EVENT, bindingKey,
+								Utils.asJsonString(new StateMessage(event, null, null)));
+					}
 				}
 
 			} catch (JAXBException | ClassNotFoundException | AmqpException | IOException | EpsException e) {
@@ -124,44 +148,44 @@ public class LifeCycleManager {
 		}
 	}
 
-	protected void createInstanceManager(String csInstanceId, LifeCycleEvent event) throws ClassNotFoundException,
+	protected void createInstanceManager(String serviceId, LifeCycleEvent event) throws ClassNotFoundException,
 			AmqpException, IOException, JAXBException, EpsException {
 
-		if (managers.containsKey(csInstanceId)) {
+		if (managers.containsKey(serviceId)) {
 			return;
 		}
 
-		ManagerOfServiceInstance manager = context.getBean(ManagerOfServiceInstance.class);
-		managers.put(csInstanceId, manager);
+		ServiceManager manager = context.getBean(ServiceManager.class);
+		managers.put(serviceId, manager);
 
 		manager.createInstance(event);
 
 	}
 
-	protected void removeInstanceManager(String csInstanceId) {
-		managers.remove(csInstanceId);
+	protected void removeInstanceManager(String serviceId) {
+		managers.remove(serviceId);
 
 	}
 
-	public State getCurrentState(String instanceId, String groupId) {
-		return managers.get(instanceId).getCurrentState(groupId);
+	public State getCurrentState(String serviceId, String groupId) {
+		return managers.get(serviceId).getCurrentState(groupId);
 	}
 
-	public State getCurrentStateService(String instanceId) {
-		return managers.get(instanceId).getCurrentStateService();
+	public State getCurrentStateService(String serviceId) {
+		return managers.get(serviceId).getCurrentStateService();
 
 	}
 
-	public Map<String, Transition> getCurrentState(String instanceId) {
-		if (managers.containsKey(instanceId)) {
-			return managers.get(instanceId).getCurrentState();
+	public Map<String, Transition> getCurrentState(String serviceId) {
+		if (managers.containsKey(serviceId)) {
+			return managers.get(serviceId).getCurrentState();
 		} else {
 			return null;
 		}
 	}
 
-	public boolean isInstanceManaged(String instanceId) {
-		if (managers.containsKey(instanceId)) {
+	public boolean isInstanceManaged(String serviceId) {
+		if (managers.containsKey(serviceId)) {
 			return true;
 		} else {
 			return false;

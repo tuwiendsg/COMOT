@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
+import at.ac.tuwien.dsg.comot.m.common.exception.ComotLifecycleException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.ui.model.Error;
 
@@ -57,6 +58,10 @@ public class ComotExceptionMapper implements ExceptionMapper<Exception> {
 			log.error("Something bad happened: {}", e);
 			return Response.serverError().entity(resolve(req, new Error())).build();
 
+		} else if (e.getClass().equals(ComotLifecycleException.class)) {
+			log.warn("Lifecycle exception: {}", e.getMessage());
+			return Response.status(404).entity(resolve(req, new Error(e.getMessage()))).build();
+
 		} else {
 			log.error("Wut? {}", e);
 			return Response.serverError().entity(resolve(req, new Error())).build();
@@ -66,8 +71,6 @@ public class ComotExceptionMapper implements ExceptionMapper<Exception> {
 	private Object resolve(HttpServletRequest req, Error error) {
 
 		String accept = req.getHeader("Accept");
-
-		log.info(accept);
 
 		if (accept.equalsIgnoreCase("text/plain") || accept.equals("*/*")) {
 			return error.toString();

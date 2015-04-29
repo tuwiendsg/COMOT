@@ -98,7 +98,7 @@ public class Change implements Serializable {
 				properties.setProperty(key, map.get(key));
 			}
 		}
-		//properties.setPropertiesFrom(map);
+		// properties.setPropertiesFrom(map);
 		return properties;
 	}
 

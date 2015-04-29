@@ -11,7 +11,6 @@ define(function(require) {
 	var model = {
 		// properties
 		serviceId : ko.observable(""),
-		instanceId : ko.observable(""),
 		selectedEvent : ko.observable(),
 		changes : ko.observableArray(),
 		// functions
@@ -54,18 +53,15 @@ define(function(require) {
 
 		},
 		serviceData : function(event) {
-			getServiceRevision(model.instanceId(), model.serviceId(), event.timestamp);
+			getServiceRevision(model.serviceId(), model.serviceId(), event.timestamp);
 		},
 		// life-cycle
-		activate : function(serviceId, instanceId) {
-
+		activate : function(serviceId) {
 			model.serviceId(serviceId);
-			model.instanceId(instanceId);
 		},
 		attached : function() {
-
-			repeater.runWith(model.instanceId(), function() {
-				refreshChanges(model.instanceId());
+			repeater.runWith(model.serviceId(), function() {
+				refreshChanges(model.serviceId());
 			})
 		},
 		detached : function() {
@@ -75,7 +71,7 @@ define(function(require) {
 
 	return model;
 
-	function getServiceRevision(instanceId, objectId, timestamp) {
+	function getServiceRevision(serviceId, objectId, timestamp) {
 		var timeToUse;
 
 		if (timestamp == LONG_MAX) {
@@ -84,14 +80,14 @@ define(function(require) {
 			timeToUse = timestamp + 1;
 		}
 
-		comot.getRecording(instanceId, objectId, timeToUse, function(data) {
+		comot.getRecording(serviceId, objectId, timeToUse, function(data) {
 			$("#output_revisions").html(JsonHuman.format(data));
 			$('#myModal').modal();
 
 		}, function(error) {
 			$("#output_revisions").html("");
 			notify.info("No revision for service '"
-					+ instanceId
+					+ serviceId
 					+ "', object '"
 					+ objectId
 					+ ((timeToUse == LONG_MAX_STRING) ? " currently valid" : " ' at time '"
@@ -100,10 +96,10 @@ define(function(require) {
 
 	}
 
-	function refreshChanges(instanceId) {
+	function refreshChanges(serviceId) {
 
 		// refresh changes
-		comot.getAllEvents(instanceId, function(data) {
+		comot.getAllEvents(serviceId, function(data) {
 			model.changes.removeAll();
 			for (var i = data.length - 1; i >= 0; i--) {
 
@@ -122,7 +118,7 @@ define(function(require) {
 			}
 		}, function(error) {
 			model.changes.removeAll();
-			notify.info("No changes for service '" + instanceId + "'");
+			notify.info("No changes for service '" + serviceId + "'");
 		})
 	}
 

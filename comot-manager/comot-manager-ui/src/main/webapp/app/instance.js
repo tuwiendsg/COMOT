@@ -8,7 +8,6 @@ define(function(require) {
 	var model = {
 		// properties
 		serviceId : ko.observable(""),
-		instanceId : ko.observable(""),
 		groupId : ko.observable(""),
 		groupType : ko.observable("SERVICE"),
 		lifecycle : ko.observable(),
@@ -16,10 +15,9 @@ define(function(require) {
 		events : ko.observableArray(),
 		allEpsServices : ko.observableArray(),
 		selectedEpsServices : ko.observableArray(),
-		allServices : ko.observableArray(),
 		elasticConfiguration : ko.observable(""),
 		service : ko.observable(),
-		optionalMessage : ko.observable(""),
+		isEpsService : ko.observable(true),
 		// functions
 		startInstance : startInstance,
 		stopInstance : stopInstance,
@@ -31,11 +29,6 @@ define(function(require) {
 		reconfigureElasticity : reconfigureElasticity,
 		triggerCustomEventWithInput : function(form) {
 
-//			console.log(form);
-//			console.log(form.elements["id"].value);
-//			console.log(form.elements["operation"].value);
-//			console.log(form.elements["data"].value);
-
 			triggerCustomEvent(form.elements["id"].value, form.elements["operation"].value, form.elements["data"].value);
 
 			$('#myModal').modal('hide');
@@ -46,15 +39,23 @@ define(function(require) {
 				source.close();
 			}
 		},
-		activate : function(serviceId, instanceId) {
-
-			if (instanceId != model.instanceId()) {
-				model.events.removeAll();
-			}
+		activate : function(serviceId) {
+			
+			model.isEpsService(true);
+			model.events.removeAll();
 			model.selectedEpsServices.removeAll();
 			model.serviceId(serviceId);
-			model.instanceId(instanceId);
 			model.groupId(serviceId);
+
+			comot.getServicesNonEps(function(data) {
+
+				for (var i = 0; i < data.length; i++) {
+					if (data[i].id === serviceId) {
+						model.isEpsService(false);
+						break;
+					}
+				}
+			})
 
 		},
 		attached : function() {
@@ -63,10 +64,10 @@ define(function(require) {
 				processEpsesInstances(epses);
 				model.allEpsServices(epses);
 
-				comot.getServiceInstance(model.serviceId(), model.instanceId(), function(data) {
+				comot.getService(model.serviceId(), function(data) {
 
 					var service = data.service;
-					var epses = service.ServiceInstances.Instance[0].support;
+					var epses = service.support;
 
 					for (var i = 0; i < epses.length; i++) {
 						var epsArr = model.allEpsServices.remove(function(item) {
@@ -81,26 +82,25 @@ define(function(require) {
 
 				model.lifecycle(data);
 
-				var path = comot.eventPath(model.serviceId(), model.instanceId());
+				var path = comot.eventPath(model.serviceId());
 				source = registerForEvents(path, model.events);
 
-				comot.getServiceInstance(model.serviceId(), model.instanceId(), function(data) {
+				comot.getService(model.serviceId(), function(data) {
 
-					var transitions = data.transitions.entry;
 					var service = data.service;
-					populateGraphs(service, transitions);
 
-					// elasticity
-					var elTree = createElement(service, processTransitionsToMap(transitions));
+					if (typeof data.transitions != 'undefined') {
 
-					model.elasticConfiguration(elTree);
+						var transitions = data.transitions.entry;
+
+						populateGraphs(service, transitions);
+						var elTree = createElement(service, processTransitionsToMap(transitions));
+						model.elasticConfiguration(elTree);
+					}
 					model.service(service);
 				});
 			});
 
-			comot.getAllInstances(function(data) {
-				model.allServices(data);
-			});
 		}
 	}
 
@@ -116,7 +116,6 @@ define(function(require) {
 		for (var i = 0; i < epses.length; i++) {
 			var eps = epses[i];
 
-			
 			if (typeof eps.serviceInstance === 'undefined') {
 
 				var map = {};
@@ -126,7 +125,7 @@ define(function(require) {
 
 				if (typeof map["VIEW"] !== 'undefined') {
 					var path = map["VIEW"];
-					path = path.replace("{PLACE_HOLDER_INSTANCE_ID}", model.instanceId());
+					path = path.replace("{PLACE_HOLDER_INSTANCE_ID}", model.serviceId());
 					eps.viewEndpoint = "http://" + map["IP"] + ":" + map["PORT"] + path;
 				}
 			}
@@ -135,25 +134,25 @@ define(function(require) {
 
 	function startInstance() {
 
-		comot.startServiceInstance(model.serviceId(), model.instanceId(), function(data) {
+		comot.startService(model.serviceId(), function(data) {
 		});
 	}
 
 	function stopInstance() {
 
-		comot.stopServiceInstance(model.serviceId(), model.instanceId(), function(data) {
+		comot.stopService(model.serviceId(), function(data) {
 		});
 	}
-	
+
 	function killInstance() {
 
-		comot.killServiceInstance(model.serviceId(), model.instanceId(), function(data) {
+		comot.killService(model.serviceId(), function(data) {
 		});
 	}
 
 	function assignEps(eps) {
 
-		comot.assignSupportingEps(model.serviceId(), model.instanceId(), eps.id, function(data) {
+		comot.assignSupportingEps(model.serviceId(), eps.id, function(data) {
 			model.allEpsServices.remove(eps)
 			model.selectedEpsServices.push(eps);
 		});
@@ -162,7 +161,7 @@ define(function(require) {
 	function removeEps(eps) {
 		var epsId = eps.id;
 
-		comot.removeSupportingEps(model.serviceId(), model.instanceId(), epsId, function(data) {
+		comot.removeSupportingEps(model.serviceId(), epsId, function(data) {
 			model.allEpsServices.push(eps)
 			model.selectedEpsServices.remove(eps);
 		});
@@ -174,15 +173,14 @@ define(function(require) {
 			optionalInput = "";
 		}
 
-		comot.triggerCustomEvent(model.serviceId(), model.instanceId(), epsId, eventName, optionalInput,
-				function(data) {
+		comot.triggerCustomEvent(model.serviceId(), epsId, eventName, optionalInput, function(data) {
 
-				});
+		});
 	}
 
 	function reconfigureElasticity() {
 
-		comot.reconfigureElasticity(model.serviceId(), model.instanceId(), model.service(), "Elasticity reconfigured",
+		comot.reconfigureElasticity(model.serviceId(), model.service(), "Elasticity reconfigured",
 				"Failed to reconfigure elasticity");
 	}
 

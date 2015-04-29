@@ -41,14 +41,14 @@ public class EpsBuilder extends Processor {
 	@Override
 	public void start() throws Exception {
 
-		infoService.deeteAll();
+		infoService.deleteAll();
 		context.getBean(InitData.class).setUpTestData();
 
 		// create static EPSes
 		for (OfferedServiceUnit osu : infoService.getOsus()) {
 			try {
 
-				if (osu.getService() == null) {
+				if (osu.getServiceTemplate() == null) {
 
 					Class<?> clazz = null;
 					String ip = null;
@@ -81,17 +81,17 @@ public class EpsBuilder extends Processor {
 	public List<Binding> getBindings(String queueName, String instanceId) {
 		List<Binding> bindings = new ArrayList<>();
 
-		bindings.add(bindingCustom(queueName, "*.*." + EpsEvent.EPS_DYNAMIC_REQUESTED + ".SERVICE"));
-		bindings.add(bindingCustom(queueName, "*.*." + EpsEvent.EPS_DYNAMIC_REMOVED + ".SERVICE"));
-		bindings.add(bindingCustom(queueName, "*.*." + EpsEvent.EPS_SUPPORT_ASSIGNED + ".SERVICE"));
-		bindings.add(bindingLifeCycle(queueName, "*.*.*.*." + Action.CREATED + ".SERVICE.#"));
+		bindings.add(bindingCustom(queueName, "*.*." + EpsEvent.EPS_DYNAMIC_REQUESTED + "." + Type.SERVICE));
+		bindings.add(bindingCustom(queueName, "*.*." + EpsEvent.EPS_DYNAMIC_REMOVED + "." + Type.SERVICE));
+		bindings.add(bindingCustom(queueName, "*.*." + EpsEvent.EPS_SUPPORT_ASSIGNED + "." + Type.SERVICE));
+		bindings.add(bindingLifeCycle(queueName, "*.*.*.*." + Action.CREATED + "." + Type.SERVICE + ".#"));
 		// bindings.add(bindingLifeCycle(queueName, "*.*.*.*." + Action.REMOVED + ".SERVICE.#"));
 
 		return bindings;
 	}
 
 	@Override
-	public void onLifecycleEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
+	public void onLifecycleEvent(StateMessage msg, String serviceId, String groupId,
 			Action action, String optionalMessage, CloudService service, Map<String, Transition> transitions)
 			throws ClassNotFoundException, IOException, AmqpException, JAXBException, EpsException {
 
@@ -100,37 +100,44 @@ public class EpsBuilder extends Processor {
 			if (action == Action.CREATED) {
 				String staticDeplId = infoService.instanceIdOfStaticEps(Constants.SALSA_SERVICE_STATIC);
 
-				manager.sendCustom(Type.SERVICE, new CustomEvent(serviceId, instanceId, serviceId,
+				manager.sendCustom(Type.SERVICE, new CustomEvent(serviceId, serviceId,
 						EpsEvent.EPS_SUPPORT_REQUESTED.toString(), staticDeplId, null));
+
+			} else if (action == Action.UNDEPLOYED) {
+
+				manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, serviceId, Action.REMOVED));
 
 			}
 		}
 	}
 
 	@Override
-	public void onCustomEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
+	public void onCustomEvent(StateMessage msg, String serviceId, String groupId,
 			String event, String epsId, String origin, String optionalMessage) throws ClassNotFoundException,
 			AmqpException, JAXBException, EpsException {
 
 		EpsEvent action = EpsEvent.valueOf(event);
 
-		if (action == EpsEvent.EPS_DYNAMIC_REQUESTED) {
+		if (action == EpsEvent.EPS_DYNAMIC_REQUESTED && !origin.equals(getId())) {
+
+			serviceId = infoService.getOsuInstance(optionalMessage).getService().getId();
+
+			manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, serviceId, Action.CREATED));
 
 		} else if (action == EpsEvent.EPS_SUPPORT_ASSIGNED && infoService.isServiceOfDynamicEps(serviceId)) {
 
-			manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.START));
+			manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, serviceId, Action.START));
 
 		} else if (action == EpsEvent.EPS_DYNAMIC_REMOVED) {
 
-			manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.REMOVED));
+			manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, serviceId, Action.STOP));
 
 		}
 
 	}
 
 	@Override
-	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String instanceId, String originId)
-			throws Exception {
+	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String originId) throws Exception {
 		// TODO Auto-generated method stub
 
 	}

@@ -26,6 +26,5 @@ public class AppContextServrecEmbeddedDb {
 		log.info("Neo4jDB: {}", db);
 		return db;
 	}
-	
-	
+
 }

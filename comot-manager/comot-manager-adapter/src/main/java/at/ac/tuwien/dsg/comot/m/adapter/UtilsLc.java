@@ -1,7 +1,6 @@
 package at.ac.tuwien.dsg.comot.m.adapter;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashSet;
 
 import javax.xml.bind.JAXBException;
 
@@ -17,8 +16,6 @@ import at.ac.tuwien.dsg.comot.m.common.event.state.StateMessage;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
-import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
-import at.ac.tuwien.dsg.comot.model.runtime.ServiceInstance;
 
 public class UtilsLc {
 
@@ -27,9 +24,6 @@ public class UtilsLc {
 	public static void removeProviderInfo(CloudService service) {
 		for (ServiceUnit unit : Navigator.getAllUnits(service)) {
 			unit.setOsuInstance(null);
-		}
-		for (ServiceInstance instance : service.getInstances()) {
-			instance.setSupport(new HashSet<OsuInstance>());
 		}
 	}
 
@@ -43,9 +37,8 @@ public class UtilsLc {
 			osu.setQualities(null);
 		}
 
-		for (ServiceInstance instance : service.getInstances()) {
-			instance.setSupport(new HashSet<OsuInstance>());
-		}
+		service.setSupport(null);
+
 	}
 
 	public static ComotMessage comotMessage(Message message) throws UnsupportedEncodingException, JAXBException {

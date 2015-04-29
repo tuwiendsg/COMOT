@@ -62,7 +62,7 @@ public class Recording extends Processor {
 	}
 
 	@Override
-	public void onLifecycleEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
+	public void onLifecycleEvent(StateMessage msg, String serviceId, String groupId,
 			Action action, String originId, CloudService service, Map<String, Transition> transitions)
 			throws JAXBException, IllegalArgumentException, IllegalAccessException {
 
@@ -77,12 +77,12 @@ public class Recording extends Processor {
 
 		// log.info(logId() + "onMessage {}", Utils.asJsonString(msg));
 
-		revisionApi.createOrUpdateRegion(service, instanceId, groupId, CHANGE_TYPE_LIFECYCLE, changeProperties);
+		revisionApi.createOrUpdateRegion(service, serviceId, groupId, CHANGE_TYPE_LIFECYCLE, changeProperties);
 
 	}
 
 	@Override
-	public void onCustomEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
+	public void onCustomEvent(StateMessage msg, String serviceId, String groupId,
 			String event, String epsId, String originId, String optionalMessage) {
 
 		CustomEvent eventMsg = (CustomEvent) msg.getEvent();
@@ -99,16 +99,15 @@ public class Recording extends Processor {
 			changeProperties.put(PROP_MSG, optionalMessage);
 		}
 
-		if (revisionApi.verifyObject(instanceId, serviceId)) {
-			revisionApi.storeEvent(instanceId, groupId, CHANGE_TYPE_CUSTOM, changeProperties);
+		if (revisionApi.verifyObject(serviceId, serviceId)) {
+			revisionApi.storeEvent(serviceId, groupId, CHANGE_TYPE_CUSTOM, changeProperties);
 		} else {
 			log.error("Custom event happened, but no managed region. {}", msg.getEvent());
 		}
 	}
 
 	@Override
-	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String instanceId, String originId)
-			throws Exception {
+	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String originId) throws Exception {
 
 		String type;
 		Map<String, Object> changeProperties = new HashMap<>();
@@ -133,8 +132,8 @@ public class Recording extends Processor {
 			type = CHANGE_TYPE_EXCEPTION;
 		}
 
-		if (revisionApi.verifyObject(instanceId, serviceId)) {
-			revisionApi.storeEvent(instanceId, serviceId, type, changeProperties);
+		if (revisionApi.verifyObject(serviceId, serviceId)) {
+			revisionApi.storeEvent(serviceId, serviceId, type, changeProperties);
 		} else {
 			log.error("Exception event happened, but no managed region. {}", msg);
 		}

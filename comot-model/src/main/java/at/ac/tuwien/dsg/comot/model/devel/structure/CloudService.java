@@ -1,7 +1,6 @@
 package at.ac.tuwien.dsg.comot.model.devel.structure;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,10 +9,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import at.ac.tuwien.dsg.comot.model.runtime.ServiceInstance;
+import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -27,9 +25,8 @@ public class CloudService extends ServiceEntity {
 	protected Long dateCreated;
 	@XmlElement(name = "Topology")
 	protected Set<ServiceTopology> serviceTopologies = new HashSet<>();
-	@XmlElementWrapper(name = "ServiceInstances")
-	@XmlElement(name = "Instance")
-	protected Set<ServiceInstance> instances = new HashSet<>();
+	
+	protected Set<OsuInstance> support = new HashSet<>();;
 
 	public CloudService() {
 	}
@@ -43,11 +40,6 @@ public class CloudService extends ServiceEntity {
 		this.dateCreated = dateCreated;
 	}
 
-	public ServiceInstance createServiceInstance(String instanceId) {
-		ServiceInstance instance = new ServiceInstance(instanceId, System.currentTimeMillis());
-		instances.add(instance);
-		return instance;
-	}
 
 	public void addServiceTopology(ServiceTopology serviceTopology) {
 		if (serviceTopologies == null) {
@@ -60,9 +52,6 @@ public class CloudService extends ServiceEntity {
 		return new ArrayList<ServiceTopology>(serviceTopologies);
 	}
 	
-	public List<ServiceInstance> getInstancesList() {
-		return new ArrayList<ServiceInstance>(instances);
-	}
 
 	// GENERATED METHODS
 
@@ -82,14 +71,6 @@ public class CloudService extends ServiceEntity {
 		this.accessIp = accessIp;
 	}
 
-	public Set<ServiceInstance> getInstances() {
-		return instances;
-	}
-
-	public void setInstances(Set<ServiceInstance> instances) {
-		this.instances = instances;
-	}
-
 	public Long getDateCreated() {
 		return dateCreated;
 	}
@@ -97,5 +78,15 @@ public class CloudService extends ServiceEntity {
 	public void setDateCreated(Long dateCreated) {
 		this.dateCreated = dateCreated;
 	}
+
+	public Set<OsuInstance> getSupport() {
+		return support;
+	}
+
+	public void setSupport(Set<OsuInstance> support) {
+		this.support = support;
+	}
+	
+	
 
 }

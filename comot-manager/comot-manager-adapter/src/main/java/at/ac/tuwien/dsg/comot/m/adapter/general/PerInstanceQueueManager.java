@@ -86,28 +86,28 @@ public class PerInstanceQueueManager extends Manager {
 
 			try {
 				CustomEvent event = (CustomEvent) UtilsLc.stateMessage(message).getEvent();
-				String instanceId = event.getCsInstanceId();
 				String serviceId = event.getServiceId();
 				String groupId = event.getGroupId();
 				String action = event.getCustomEvent();
 
 				if (action.equals(EpsEvent.EPS_SUPPORT_REQUESTED.toString())) {
 
-					if (!containers.containsKey(instanceId)) {
+					if (!containers.containsKey(serviceId)) {
 
-						startServiceInstanceListener(instanceId);
+						startServiceInstanceListener(serviceId);
 
-						infoService.assignEps(serviceId, instanceId, participantId);
+						log.info("oooooooooooo {} {} ", serviceId, participantId);
+
+						infoService.assignEps(serviceId, participantId);
 
 						sendCustom(
 								Type.SERVICE,
-								new CustomEvent(serviceId, instanceId, groupId, EpsEvent.EPS_SUPPORT_ASSIGNED
-										.toString(),
+								new CustomEvent(serviceId, groupId, EpsEvent.EPS_SUPPORT_ASSIGNED.toString(),
 										participantId, null));
 					}
 
 				} else if (action.equals(EpsEvent.EPS_SUPPORT_REMOVED.toString())) {
-					removeInstanceListener(instanceId);
+					removeInstanceListener(serviceId);
 				}
 
 			} catch (Exception e) {
@@ -116,20 +116,20 @@ public class PerInstanceQueueManager extends Manager {
 		}
 	}
 
-	public void removeInstanceListener(String instanceId) throws EpsException {
+	public void removeInstanceListener(String serviceId) throws EpsException {
 
-		if (containers.containsKey(instanceId)) {
+		if (containers.containsKey(serviceId)) {
 
-			infoService.removeEpsAssignment(instanceId, participantId);
+			infoService.removeEpsAssignment(serviceId, participantId);
 
-			SimpleMessageListenerContainer container = containers.get(instanceId);
+			SimpleMessageListenerContainer container = containers.get(serviceId);
 			if (container != null) {
 				container.stop();
 				container.shutdown();
 			}
 
 			if (admin != null) {
-				admin.deleteQueue(queueNameInstance(instanceId));
+				admin.deleteQueue(queueNameInstance(serviceId));
 			}
 		}
 	}
@@ -151,6 +151,7 @@ public class PerInstanceQueueManager extends Manager {
 
 		if (container != null) {
 			container.stop();
+			container.shutdown();
 		}
 
 		if (admin != null) {

@@ -26,7 +26,6 @@ define(function(require) {
 	var model = {
 		// properties
 		serviceId : ko.observable(""),
-		instanceId : ko.observable(""),
 		units : ko.observableArray(),
 		instanceIds : ko.observableArray(),
 		types : ko.observableArray(),
@@ -61,15 +60,12 @@ define(function(require) {
 		},
 
 		// life-cycle
-		activate : function(serviceId, instanceId) {
-
+		activate : function(serviceId) {
 			model.serviceId(serviceId);
-			model.instanceId(instanceId);
-
 		},
 		attached : function() {
 
-			comot.getUnitInstanceDeploymentEvents(model.serviceId(), model.instanceId(), function(data) {
+			comot.getUnitInstanceDeploymentEvents(model.serviceId(), function(data) {
 
 				// console.log(data);
 				allData = data;

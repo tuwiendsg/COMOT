@@ -31,7 +31,6 @@ public class GroupManager {
 
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 
-	protected String csInstanceId;
 	protected String serviceId;
 	protected Group serviceGroup;
 	protected Group serviceGroupReadOnly;
@@ -234,7 +233,7 @@ public class GroupManager {
 		}
 		final State temp = serviceGroupReadOnly.getMemberNested(groupId).getCurrentState();
 
-		log.debug("getCurrentState(instanceId={}, groupId={}): {}", csInstanceId, groupId, temp);
+		log.debug("getCurrentState(instanceId={}, groupId={}): {}", serviceId, groupId, temp);
 
 		return temp;
 	}
@@ -254,11 +253,7 @@ public class GroupManager {
 	}
 
 	public String logId() {
-		return "[ MANAGER_" + csInstanceId + "] ";
-	}
-
-	public void setCsInstanceId(String csInstanceId) {
-		this.csInstanceId = csInstanceId;
+		return "[ MANAGER_" + serviceId + "] ";
 	}
 
 	public void setServiceId(String serviceId) {

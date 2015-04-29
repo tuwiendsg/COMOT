@@ -257,6 +257,18 @@ public class Navigator {
 
 	// GET ALL
 
+	public List<UnitInstance> getAllUnitInstances() {
+
+		List<UnitInstance> instances = new ArrayList<>();
+
+		for (Node node : map.values()) {
+			if (node.entity instanceof UnitInstance) {
+				instances.add((UnitInstance) node.entity);
+			}
+		}
+		return instances;
+	}
+
 	public List<ServiceEntity> getAllServiceEntities() {
 		List<ServiceEntity> list = new ArrayList<>();
 		list.add(service);

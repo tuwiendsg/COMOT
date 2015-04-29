@@ -20,13 +20,13 @@ public class LifeCycleEvent extends AbstractEvent {
 
 	}
 
-	public LifeCycleEvent(String serviceId, String csInstanceId, String groupId, Action action) {
-		super(serviceId, csInstanceId, groupId, null, null);
+	public LifeCycleEvent(String serviceId, String groupId, Action action) {
+		super(serviceId, groupId, null, null);
 		this.action = action;
 	}
 
-	public LifeCycleEvent(String serviceId, String csInstanceId, String groupId, Action action, String origin, Long time) {
-		super(serviceId, csInstanceId, groupId, origin, time);
+	public LifeCycleEvent(String serviceId, String groupId, Action action, String origin, Long time) {
+		super(serviceId, groupId, origin, time);
 		this.action = action;
 	}
 
@@ -34,8 +34,8 @@ public class LifeCycleEvent extends AbstractEvent {
 
 	@Override
 	public String toString() {
-		return "LifeCycleEvent [name=" + action + ", serviceId=" + serviceId + ", csInstanceId=" + csInstanceId
-				+ ", groupId=" + groupId + ", origin=" + origin + "]";
+		return "LifeCycleEvent [name=" + action + ", serviceId=" + serviceId + ", groupId=" + groupId + ", origin="
+				+ origin + "]";
 	}
 
 	public Action getAction() {

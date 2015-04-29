@@ -21,17 +21,17 @@ public class CustomEvent extends AbstractEvent {
 
 	}
 
-	public CustomEvent(String serviceId, String csInstanceId, String groupId, String customEvent, String epsId,
+	public CustomEvent(String serviceId, String groupId, String customEvent, String epsId,
 			String message) {
-		super(serviceId, csInstanceId, groupId, null, null);
+		super(serviceId, groupId, null, null);
 		this.customEvent = customEvent;
 		this.epsId = epsId;
 		this.message = message;
 	}
 
-	public CustomEvent(String serviceId, String csInstanceId, String groupId, String customEvent, String origin,
+	public CustomEvent(String serviceId, String groupId, String customEvent, String origin,
 			Long time, String epsId, String message) {
-		super(serviceId, csInstanceId, groupId, origin, time);
+		super(serviceId, groupId, origin, time);
 		this.customEvent = customEvent;
 		this.epsId = epsId;
 		this.message = message;
@@ -42,7 +42,7 @@ public class CustomEvent extends AbstractEvent {
 	@Override
 	public String toString() {
 		return "CustomEvent [name=" + customEvent + ", epsId=" + epsId + ", serviceId=" + serviceId
-				+ ", csInstanceId=" + csInstanceId + ", groupId=" + groupId + ", origin=" + origin + "]";
+				+ ", groupId=" + groupId + ", origin=" + origin + "]";
 	}
 
 	public String getCustomEvent() {

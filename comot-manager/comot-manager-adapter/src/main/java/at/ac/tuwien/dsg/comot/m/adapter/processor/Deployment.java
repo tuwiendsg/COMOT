@@ -92,31 +92,31 @@ public class Deployment extends Processor {
 	}
 
 	@Override
-	public void onLifecycleEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
+	public void onLifecycleEvent(StateMessage msg, String serviceId, String groupId,
 			Action action, String optionalMessage, CloudService service, Map<String, Transition> transitions)
 			throws Exception {
 
-		if (action == Action.START && !deployment.isManaged(instanceId)) {
+		if (action == Action.START && !deployment.isManaged(serviceId)) {
 			manager.sendLifeCycle(Type.SERVICE,
-					new LifeCycleEvent(serviceId, instanceId, groupId, Action.DEPLOYMENT_STARTED));
+					new LifeCycleEvent(serviceId, groupId, Action.DEPLOYMENT_STARTED));
 
-		} else if (action == Action.STOP && deployment.isManaged(instanceId)) {
+		} else if (action == Action.STOP && deployment.isManaged(serviceId)) {
 			manager.sendLifeCycle(Type.SERVICE,
-					new LifeCycleEvent(serviceId, instanceId, groupId, Action.UNDEPLOYMENT_STARTED));
+					new LifeCycleEvent(serviceId, groupId, Action.UNDEPLOYMENT_STARTED));
 
 		} else if (action == Action.DEPLOYMENT_STARTED) {
-			deployInstance(serviceId, instanceId);
+			deployInstance(serviceId);
 
 		} else if (action == Action.UNDEPLOYMENT_STARTED) {
 
-			unDeployInstance(serviceId, instanceId);
+			unDeployInstance(serviceId);
 
 		} else if (action == Action.ELASTIC_CHANGE_STARTED) {
 
-			if (!tasks.containsKey(instanceId)) {
-				StatusTask task = new StatusTask(instanceId, groupId, helper.monitoringStatusUntilInterupted(serviceId,
-						instanceId, service));
-				tasks.put(instanceId, task);
+			if (!tasks.containsKey(serviceId)) {
+				StatusTask task = new StatusTask(serviceId, groupId, helper.monitoringStatusUntilInterupted(
+						serviceId, service));
+				tasks.put(serviceId, task);
 			}
 
 		} else if (action == Action.ELASTIC_CHANGE_FINISHED) {
@@ -132,73 +132,71 @@ public class Deployment extends Processor {
 			log.info("stop {}", stop);
 
 			if (stop) {
-				tasks.get(instanceId).getThread().cancel(true);
-				tasks.remove(instanceId);
+				tasks.get(serviceId).getThread().cancel(true);
+				tasks.remove(serviceId);
 			}
 
 		} else if (action == Action.KILL) {
-			
-			if (deployment.isManaged(instanceId)) {
+
+			if (deployment.isManaged(serviceId)) {
 				manager.sendLifeCycle(Type.SERVICE,
-						new LifeCycleEvent(serviceId, instanceId, groupId, Action.UNDEPLOYMENT_STARTED));
+						new LifeCycleEvent(serviceId, groupId, Action.UNDEPLOYMENT_STARTED));
 			}
 		}
 	}
 
 	@Override
-	public void onCustomEvent(StateMessage msg, String serviceId, String instanceId, String groupId, String event,
+	public void onCustomEvent(StateMessage msg, String serviceId, String groupId, String event,
 			String epsId, String originId, String optionalMessage) throws Exception {
 
 		EpsEvent action = EpsEvent.valueOf(event);
 
 		if (action == EpsEvent.EPS_SUPPORT_REMOVED) {
 
-			if (deployment.isManaged(instanceId)) {
+			if (deployment.isManaged(serviceId)) {
 
-				manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId,
+				manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, serviceId,
 						Action.UNDEPLOYMENT_STARTED));
 
-				unDeployInstance(serviceId, instanceId);
+				unDeployInstance(serviceId);
 			}
 		}
 	}
 
 	@Override
-	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String instanceId, String originId)
+	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String originId)
 			throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
-	protected void deployInstance(String serviceId, String instanceId) throws ClassNotFoundException, IOException,
+	protected void deployInstance(String serviceId) throws ClassNotFoundException, IOException,
 			EpsException, ComotException, JAXBException, InterruptedException {
 
 		// managedSet.add(instanceId);
 
-		CloudService fullService = infoService.getServiceInstance(serviceId, instanceId);
-		fullService.setId(instanceId);
-		fullService.setName(instanceId);
+		CloudService fullService = infoService.getService(serviceId);
 
 		deployment.deploy(fullService);
 
-		helper.monitorStatusUntilDeployed(serviceId, instanceId, fullService);
+		helper.monitorStatusUntilDeployed(serviceId, fullService);
 
 	}
 
-	protected void unDeployInstance(String serviceId, String instanceId)
+	protected void unDeployInstance(String serviceId)
 			throws EpsException, ClassNotFoundException, IOException, JAXBException {
 
 		// managedSet.remove(instanceId);
 
-		CloudService service = infoService.getServiceInstance(serviceId, instanceId);
+		CloudService service = infoService.getService(serviceId);
 
-		deployment.undeploy(instanceId);
+		deployment.undeploy(serviceId);
 
 		for (ServiceUnit unit : Navigator.getAllUnits(service)) {
 			unit.setInstances(new HashSet<UnitInstance>());
 		}
 
-		manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.UNDEPLOYED));
+		manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, serviceId, Action.UNDEPLOYED));
 	}
 
 	public class StatusTask {

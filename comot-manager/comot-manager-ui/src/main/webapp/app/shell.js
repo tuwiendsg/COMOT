@@ -20,21 +20,21 @@ define(function(require) {
 				moduleId : 'eps',
 				nav : true
 			}, {
-				route : 'services/:serviceId/instances/:instanceId',
+				route : 'services/:serviceId',
 				title : 'Service Instance',
 				moduleId : 'instance',
 				nav : false
 			}, {
-				route : 'services/:serviceId/instances/:instanceId/history',
+				route : 'services/:serviceId/history',
 				title : 'History',
 				moduleId : 'history',
 				nav : false
 			}, {
-				route : 'services/:serviceId/instances/:instanceId/analysis*details',
+				route : 'services/:serviceId/analysis*details',
 				title : 'Analysis',
 				moduleId : 'analysis',
 				nav : false,
-				hash : '#services/:serviceId/instances/:instanceId/analysis'
+				hash : '#services/:serviceId/analysis'
 			}
 			// , {
 			// route : 'new',

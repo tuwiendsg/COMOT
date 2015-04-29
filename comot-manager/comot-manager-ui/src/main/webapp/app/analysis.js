@@ -9,7 +9,6 @@ define(function(require) {
 	var model = {
 		// properties
 		serviceId : ko.observable(""),
-		instanceId : ko.observable(""),
 		tabs : ko.observableArray([ {
 			name : 'Elastic actions',
 			module : 'analysis/actions',
@@ -22,9 +21,8 @@ define(function(require) {
 		// functions
 		showTab : showTab,
 		// life-cycle
-		activate : function(serviceId, instanceId) {
+		activate : function(serviceId) {
 			model.serviceId(serviceId);
-			model.instanceId(instanceId);
 		},
 		attached : function() {
 		},

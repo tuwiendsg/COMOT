@@ -13,7 +13,6 @@ import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 @XmlRootElement
 public class ServiceInstanceUi {
 
-	String instanceId;
 	CloudService service; // complete information
 	Map<String, Transition> transitions;
 
@@ -21,9 +20,8 @@ public class ServiceInstanceUi {
 
 	}
 
-	public ServiceInstanceUi(String instanceId, CloudService service, Map<String, Transition> transitions) {
+	public ServiceInstanceUi(CloudService service, Map<String, Transition> transitions) {
 		super();
-		this.instanceId = instanceId;
 		this.service = service;
 		this.transitions = transitions;
 	}

@@ -3,7 +3,7 @@
 	<h2>Analysis</h2>
 
 	<h4>
-		<b>ID:</b> <span data-bind="text: instanceId"></span>
+		<b>ID:</b> <span data-bind="text: serviceId"></span>
 	</h4>
 	<div>&nbsp;</div>
 
@@ -18,7 +18,7 @@
 		<div class="tab-content" data-bind="foreach: tabs">
 			<div role="tabpanel" class="tab-pane" data-bind="css: { active: show }">
 				<div>&nbsp;</div>
-				<div data-bind="compose: { model:module , activationData:[ $parent.serviceId(), $parent.instanceId()] } "></div>
+				<div data-bind="compose: { model:module , activationData:[ $parent.serviceId()] } "></div>
 			</div>
 		</div>
 	</div>

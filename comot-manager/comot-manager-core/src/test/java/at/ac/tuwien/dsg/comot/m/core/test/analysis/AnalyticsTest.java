@@ -67,7 +67,7 @@ public class AnalyticsTest {
 
 		// elAnalysis.bbbb();
 
-		for (ElasticPlanReport report : elAnalysis.doOneService("HelloElasticity", "HelloElasticity_1")) {
+		for (ElasticPlanReport report : elAnalysis.doOneService("HelloElasticity_1")) {
 			log.info("{}", Utils.asJsonString(report));
 		}
 
@@ -120,7 +120,7 @@ public class AnalyticsTest {
 
 		// UtilsTest.sleepInfinit();
 
-		engine.deploymentEvents(STemplates.serviceId, STemplates.serviceId);
+		engine.deploymentEvents(STemplates.serviceId);
 
 	}
 

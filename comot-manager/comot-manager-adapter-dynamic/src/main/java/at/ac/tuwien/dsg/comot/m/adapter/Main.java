@@ -27,7 +27,6 @@ import at.ac.tuwien.dsg.comot.m.common.enums.EpsEvent;
 import at.ac.tuwien.dsg.comot.m.common.enums.Type;
 import at.ac.tuwien.dsg.comot.m.common.event.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
-import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 
 public class Main {
 
@@ -36,8 +35,8 @@ public class Main {
 	public static final String SERVICE_INSTANCE_AS_PROPERTY = "service";
 	public static final String PROPERTIES_FILE = "./salsa.environment";
 
+	// private static String templateId;
 	private static String serviceId;
-	private static String instanceId;
 	private static String participantId;
 	private static AnnotationConfigApplicationContext context;
 	private static InformationClient info;
@@ -92,7 +91,7 @@ public class Main {
 
 						Control processor = context.getBean(Control.class);
 						manager.start(participantId, processor);
-						
+
 					} else if (cmd.hasOption("s")) {
 
 						Deployment processor = context.getBean(Deployment.class);
@@ -144,8 +143,8 @@ public class Main {
 			Properties prop = new Properties();
 			prop.load(input);
 
-			instanceId = prop.getProperty(SERVICE_INSTANCE_AS_PROPERTY);
-			log.info("service={}", instanceId);
+			serviceId = prop.getProperty(SERVICE_INSTANCE_AS_PROPERTY);
+			log.info("service={}", serviceId);
 
 		} catch (IOException e) {
 			log.error(" {}", e);
@@ -159,7 +158,7 @@ public class Main {
 			}
 		}
 
-		if (instanceId == null) {
+		if (serviceId == null) {
 			log.error("there is no property '{}'", SERVICE_INSTANCE_AS_PROPERTY);
 			System.exit(-1);
 		}
@@ -168,10 +167,12 @@ public class Main {
 
 	public static void setParticipantId() throws EpsException {
 
-		serviceId = info.getServiceInstance(instanceId).getId();
-		OfferedServiceUnit osu = info.getOsuByServiceId(serviceId);
-		participantId = info.createOsuInstance(osu.getId());
-		info.createOsuInstanceDynamic(osu.getId(), instanceId, participantId);
+		participantId = info.getOsuInstanceByServiceId(serviceId).getId();
+
+		// templateId = info.getService(serviceId);
+		// OfferedServiceUnit osu = info.getOsuByServiceId(templateId);
+		// participantId = info.createOsuInstance(osu.getId());
+		// info.createOsuInstanceDynamic(osu.getId(), serviceId, participantId);
 
 	}
 
@@ -179,15 +180,15 @@ public class Main {
 
 		RabbitTemplate amqp = context.getBean(RabbitTemplate.class);
 
-		CustomEvent event = new CustomEvent(serviceId, instanceId, serviceId, EpsEvent.EPS_DYNAMIC_CREATED.toString(),
+		CustomEvent event = new CustomEvent(serviceId, serviceId, EpsEvent.EPS_DYNAMIC_CREATED.toString(),
 				participantId, System.currentTimeMillis(), null, null);
 
 		amqp.convertAndSend(Constants.EXCHANGE_REQUESTS,
-				instanceId + "." + event.getClass().getSimpleName() + "." + EpsEvent.EPS_DYNAMIC_CREATED + "."
+				serviceId + "." + event.getClass().getSimpleName() + "." + EpsEvent.EPS_DYNAMIC_CREATED + "."
 						+ Type.SERVICE,
 				Utils.asJsonString(event));
 
-		log.info("Success creating adapter '{}' of serviceType {}", participantId, serviceId);
+		log.info("Success creating adapter '{}' of of service '{}'", participantId, serviceId);
 	}
 
 }

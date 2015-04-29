@@ -67,8 +67,15 @@ public class Resource extends Entity implements HasUniqueId {
         this.name = name;
         this.type = type;
     }
+    
 
-    public boolean addMetric(MetricValue metricValue) {
+    public Resource(String id, String name, ResourceOrQualityType type) {
+		super(name);
+		this.id = id;
+		this.type = type;
+	}
+
+	public boolean addMetric(MetricValue metricValue) {
         // check if metricvalue is consistant with type
          if (type.getMetricByName(metricValue.getName()) != null) {
             this.hasMetric.add(metricValue);

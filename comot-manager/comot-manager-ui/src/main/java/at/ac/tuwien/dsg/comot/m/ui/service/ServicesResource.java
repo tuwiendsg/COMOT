@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -29,7 +28,6 @@ import org.glassfish.jersey.media.sse.SseFeature;
 import org.oasis.tosca.Definitions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.AmqpException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
@@ -52,11 +50,11 @@ import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.m.ui.UiAdapter;
 import at.ac.tuwien.dsg.comot.m.ui.model.Lc;
 import at.ac.tuwien.dsg.comot.m.ui.model.LcState;
-import at.ac.tuwien.dsg.comot.m.ui.model.ServiceAndInstances;
 import at.ac.tuwien.dsg.comot.m.ui.model.ServiceInstanceUi;
 import at.ac.tuwien.dsg.comot.model.SyblDirective;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceEntity;
+import at.ac.tuwien.dsg.comot.model.devel.structure.Template;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
 import at.ac.tuwien.dsg.comot.model.type.DirectiveType;
@@ -79,7 +77,6 @@ public class ServicesResource {
 	protected ToscaMapper mapperTosca;
 	@Autowired
 	protected LifeCycleManager lcManager;
-
 	@Autowired
 	protected Coordinator coordinator;
 	@Autowired
@@ -94,112 +91,136 @@ public class ServicesResource {
 	}
 
 	@POST
-	@Path("/services")
+	@Path("/templates/tosca")
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response createService(Definitions def) throws EpsException, ComotException, JAXBException,
+	public Response createTemplate(CloudService service) throws EpsException, ComotException, JAXBException,
 			ClassNotFoundException, IOException {
 
-		coordinator.createCloudService(mapperTosca.createModel(def));
-		return Response.ok(def.getId()).build();
+		infoServ.createTemplate(service);
+
+		return Response.ok(service.getId()).build();
+	}
+
+	@POST
+	@Path("/templates")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response createTemplate(Definitions def) throws EpsException, ComotException, JAXBException,
+			ClassNotFoundException, IOException {
+
+		String templateId = infoServ.createTemplate(mapperTosca.createModel(def));
+
+		return Response.ok(templateId).build();
 	}
 
 	@DELETE
-	@Path("/services/{serviceId}")
-	public Response deleteService(@PathParam("serviceId") String serviceId) throws EpsException,
+	@Path("/templates/{templateId}")
+	public Response deleteTemplate(
+			@PathParam("templateId") String templateId) throws EpsException,
 			ComotException {
 
-		// TODO
+		infoServ.removeTemplate(templateId);
+
 		return Response.ok().build();
 	}
 
 	@POST
-	@Path("/services/{serviceId}/instances")
+	@Path("/templates/{templateId}/services")
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response createServiceInstance(@PathParam("serviceId") String serviceId) throws EpsException,
-			ComotException, ClassNotFoundException, IOException, JAXBException {
+	public Response createServiceFromTemplate(
+			@PathParam("templateId") String templateId) throws Exception {
 
-		String instanceId = coordinator.createServiceInstance(serviceId);
-		return Response.ok(instanceId).build();
+		String serviceId = coordinator.createServiceFromTemplate(templateId);
+		return Response.ok(serviceId).build();
+	}
+
+	@POST
+	@Path("/services/tosca")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response createService(
+			Definitions def) throws Exception {
+
+		String serviceId = coordinator.createService(mapperTosca.createModel(def));
+		return Response.ok(serviceId).build();
+	}
+
+	@POST
+	@Path("/services")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response createService(
+			CloudService service) throws Exception {
+
+		String serviceId = coordinator.createService(service);
+		return Response.ok(serviceId).build();
 	}
 
 	@DELETE
-	@Path("/services/{serviceId}/instances/{instanceId}")
-	public Response deleteServiceInstance(
-			@PathParam("serviceId") String serviceId,
-			@PathParam("instanceId") String instanceId) throws EpsException, ComotException {
+	@Path("/services/{serviceId}")
+	public Response deleteService(
+			@PathParam("serviceId") String serviceId) throws Exception {
 
-		// TODO
+		coordinator.removeService(serviceId);
 		return Response.ok().build();
 	}
 
 	@PUT
-	@Path("/services/{serviceId}/instances/{instanceId}/start")
+	@Path("/services/{serviceId}/active")
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response startServiceInstance(
-			@PathParam("serviceId") String serviceId,
-			@PathParam("instanceId") String instanceId) throws EpsException,
-			ComotException, ClassNotFoundException, IOException, JAXBException {
+			@PathParam("serviceId") String serviceId) throws Exception {
 
-		coordinator.startServiceInstance(serviceId, instanceId);
+		coordinator.startService(serviceId);
 		return Response.ok().build();
 	}
 
-	@PUT
-	@Path("/services/{serviceId}/instances/{instanceId}/stop")
+	@DELETE
+	@Path("/services/{serviceId}/active")
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response stopServiceInstance(
-			@PathParam("serviceId") String serviceId,
-			@PathParam("instanceId") String instanceId) throws EpsException,
-			ComotException, ClassNotFoundException, IOException, JAXBException {
+			@PathParam("serviceId") String serviceId) throws Exception {
 
-		coordinator.stopServiceInstance(serviceId, instanceId);
+		coordinator.stopService(serviceId);
 		return Response.ok().build();
 	}
 
 	@PUT
-	@Path("/services/{serviceId}/instances/{instanceId}/kill")
+	@Path("/services/{serviceId}/kill")
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response kill(
-			@PathParam("serviceId") String serviceId,
-			@PathParam("instanceId") String instanceId) throws EpsException,
-			ComotException, ClassNotFoundException, IOException, JAXBException {
+			@PathParam("serviceId") String serviceId) throws Exception {
 
-		coordinator.kill(serviceId, instanceId);
+		coordinator.kill(serviceId);
 		return Response.ok().build();
 	}
 
 	@PUT
-	@Path("/services/{serviceId}/instances/{instanceId}/eps/{epsId}")
+	@Path("/services/{serviceId}/eps/{epsId}")
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response assignSupportingEps(
 			@PathParam("serviceId") String serviceId,
-			@PathParam("instanceId") String instanceId,
 			@PathParam("epsId") String epsId) throws EpsException, ComotException, ClassNotFoundException,
 			IOException, JAXBException {
 
-		coordinator.assignSupportingOsu(serviceId, instanceId, epsId);
+		coordinator.assignSupportingOsu(serviceId, epsId);
 		return Response.ok().build();
 	}
 
 	@DELETE
-	@Path("/services/{serviceId}/instances/{instanceId}/eps/{epsId}")
+	@Path("/services/{serviceId}/eps/{epsId}")
 	public Response removeSupportingEps(
 			@PathParam("serviceId") String serviceId,
-			@PathParam("instanceId") String instanceId,
 			@PathParam("epsId") String epsId) throws EpsException, ComotException, ClassNotFoundException,
 			IOException, JAXBException {
 
-		coordinator.removeAssignmentOfSupportingOsu(serviceId, instanceId, epsId);
+		coordinator.removeAssignmentOfSupportingOsu(serviceId, epsId);
 		return Response.ok().build();
 	}
 
 	@PUT
-	@Path("/services/{serviceId}/instances/{instanceId}/eps/{epsId}/events/{eventName}")
+	@Path("/services/{serviceId}/eps/{epsId}/events/{eventName}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response triggerCustomEvent(
 			@PathParam("serviceId") String serviceId,
-			@PathParam("instanceId") String instanceId,
 			@PathParam("epsId") String epsId,
 			@PathParam("eventName") String eventName,
 			String optionalInput) throws EpsException, ComotException, ClassNotFoundException, IOException,
@@ -207,7 +228,7 @@ public class ServicesResource {
 
 		// log.info(">>>{}<<<", optionalInput);
 
-		coordinator.triggerCustomEvent(serviceId, instanceId, epsId, eventName, optionalInput);
+		coordinator.triggerCustomEvent(serviceId, epsId, eventName, optionalInput);
 		return Response.ok().build();
 	}
 
@@ -221,11 +242,10 @@ public class ServicesResource {
 	}
 
 	@PUT
-	@Path("/services/{serviceId}/instances/{instanceId}/elasticity")
+	@Path("/services/{serviceId}/elasticity")
 	public Response reconfigureElasticity(
 			@PathParam("serviceId") String serviceId,
-			@PathParam("instanceId") String instanceId,
-			CloudService service) throws AmqpException, JAXBException, EpsException {
+			CloudService service) throws Exception {
 
 		Navigator nav = new Navigator(service);
 
@@ -249,23 +269,22 @@ public class ServicesResource {
 			}
 		}
 
-		coordinator.reconfigureElasticity(serviceId, instanceId, service);
+		coordinator.reconfigureElasticity(serviceId, service);
 
 		return Response.ok().build();
 	}
 
 	@GET
-	@Path("/services/{serviceId}/instances/{instanceId}/events")
+	@Path("/services/{serviceId}/events")
 	@Consumes(SseFeature.SERVER_SENT_EVENTS)
 	@Produces(SseFeature.SERVER_SENT_EVENTS)
 	public EventOutput getServerSentEvents(
-			@PathParam("serviceId") String serviceId,
-			@PathParam("instanceId") String instanceId) throws Exception {
+			@PathParam("serviceId") String serviceId) throws Exception {
 
 		final EventOutput eventOutput = new EventOutput();
 
 		UiAdapter processor = context.getBean(UiAdapter.class);
-		processor.setUiAdapter(instanceId, eventOutput);
+		processor.setUiAdapter(serviceId, eventOutput);
 		processor.checkClient();
 
 		Manager manager = context.getBean(SingleQueueManager.class);
@@ -301,7 +320,8 @@ public class ServicesResource {
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Path("/services/lifecycle/{level}")
-	public Response getLifeCycle(@PathParam("level") Type level) {
+	public Response getLifeCycle(
+			@PathParam("level") Type level) {
 
 		LifeCycle lifeCycle = LifeCycleFactory.getLifeCycle(level);
 		Lc lc = new Lc();
@@ -328,9 +348,64 @@ public class ServicesResource {
 	 */
 	@GET
 	@Consumes(MediaType.WILDCARD)
+	@Path("/templates")
+	public Response getTemplates(
+			@DefaultValue(InformationClient.NON_EPS) @QueryParam("type") String type) throws ClassNotFoundException,
+			IOException, EpsException {
+
+		type = type.toUpperCase();
+
+		List<Template> all = infoServ.getTemplates();
+
+		Set<String> dynamicEpsServices = new HashSet<String>();
+		for (OfferedServiceUnit osu : infoServ.getOsus()) {
+			if (InformationClient.isDynamicEps(osu)) {
+				dynamicEpsServices.add(osu.getServiceTemplate().getId());
+			}
+		}
+
+		if (InformationClient.ALL.equals(type)) {
+
+		} else if (InformationClient.EPS.equals(type)) {
+
+			for (Iterator<Template> iterator = all.iterator(); iterator.hasNext();) {
+				Template one = iterator.next();
+				if (!dynamicEpsServices.contains(one.getId())) {
+					iterator.remove();
+				}
+			}
+
+		} else if (InformationClient.NON_EPS.equals(type)) {
+
+			for (Iterator<Template> iterator = all.iterator(); iterator.hasNext();) {
+				Template one = iterator.next();
+				if (dynamicEpsServices.contains(one.getId())) {
+					iterator.remove();
+				}
+			}
+
+		} else {
+			all = new ArrayList<Template>();
+		}
+
+		return Response.ok(all.toArray(new Template[all.size()])).build();
+	}
+
+	/**
+	 * 
+	 * @param type
+	 *            NON_EPS | EPS | ALL
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 * @throws EpsException
+	 */
+	@GET
+	@Consumes(MediaType.WILDCARD)
 	@Path("/services")
 	public Response getServices(
-			@DefaultValue(InformationClient.NON_EPS) @QueryParam("type") String type) throws ClassNotFoundException, IOException,
+			@DefaultValue(InformationClient.NON_EPS) @QueryParam("type") String type) throws ClassNotFoundException,
+			IOException,
 			EpsException {
 
 		type = type.toUpperCase();
@@ -338,9 +413,9 @@ public class ServicesResource {
 		List<CloudService> allServices = infoServ.getServices();
 
 		Set<String> dynamicEpsServices = new HashSet<String>();
-		for (OfferedServiceUnit osu : infoServ.getOsus()) {
-			if (InformationClient.isDynamicEps(osu)) {
-				dynamicEpsServices.add(osu.getService().getId());
+		for (OsuInstance osuInstance : infoServ.getOsuInstances()) {
+			if (InformationClient.isDynamicEps(osuInstance.getOsu())) {
+				dynamicEpsServices.add(osuInstance.getService().getId());
 			}
 		}
 
@@ -424,45 +499,46 @@ public class ServicesResource {
 	public Response getElasticPlatformServicesInstances(
 			@DefaultValue(InformationClient.ALL) @QueryParam("type") String type) throws EpsException {
 
-		List<OsuInstance> allEpsInstances = infoServ.getElasticPlatformServicesInstances(type);
+		List<OsuInstance> allEpsInstances = infoServ.getEpsInstances(type);
 
 		return Response.ok(allEpsInstances.toArray(new OsuInstance[allEpsInstances.size()])).build();
 	}
 
 	@GET
 	@Consumes(MediaType.WILDCARD)
-	@Path("/services/{serviceId}/instances/{instanceId}")
-	public Response getServicesInstance(
-			@PathParam("serviceId") String serviceId,
-			@PathParam("instanceId") String instanceId) throws ClassNotFoundException, IOException, EpsException {
+	@Path("/services/{serviceId}")
+	public Response getService(
+			@PathParam("serviceId") String serviceId) throws ClassNotFoundException, IOException, EpsException {
 
 		ServiceInstanceUi instanceUi = new ServiceInstanceUi(
-				instanceId,
-				infoServ.getServiceInstance(serviceId, instanceId),
-				lcManager.getCurrentState(instanceId));
+				infoServ.getService(serviceId),
+				lcManager.getCurrentState(serviceId));
 
 		return Response.ok(instanceUi).build();
 	}
 
-	// GUI only
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Path("/services/{serviceId}/tosca")
+	public Response getServiceTosca(
+			@PathParam("serviceId") String serviceId) throws ClassNotFoundException, IOException, EpsException,
+			JAXBException {
+
+		CloudService service = infoServ.getService(serviceId);
+
+		return Response.ok(mapperTosca.extractTosca(service)).build();
+	}
 
 	@GET
 	@Consumes(MediaType.WILDCARD)
-	@Path("/services/allInstances")
-	public Response getAllInstances() throws EpsException {
+	@Path("/templates/{templateId}/tosca")
+	public Response getTemplateTosca(
+			@PathParam("templateId") String templateId) throws ClassNotFoundException, IOException, EpsException,
+			JAXBException {
 
-		Map<String, List<String>> map = infoServ.getAllInstanceIds();
-		ServiceAndInstances[] array = new ServiceAndInstances[map.keySet().size()];
-		int i = 0;
+		CloudService service = infoServ.getTemplate(templateId).getDescription();
 
-		for (String serviceId : map.keySet()) {
-			array[i] = new ServiceAndInstances(serviceId, map.get(serviceId));
-			i++;
-		}
-
-		log.info("" + array);
-
-		return Response.ok(array).build();
+		return Response.ok(mapperTosca.extractTosca(service)).build();
 	}
 
 }

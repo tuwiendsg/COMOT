@@ -1,91 +1,107 @@
 
 <div class="container">
 
-	<h2>Cloud Services</h2>
+	<h2>Elastic Cloud Services</h2>
 	<div>&nbsp;</div>
 
-	<button type="button" class="btn btn-default pull-right" data-toggle="modal" data-target="#myModal">
-		<span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> New service
-	</button>
 
-	<h4>Available elastic cloud services:</h4>
-	<div>&nbsp;</div>
 
-	<div data-bind="foreach: services">
-		<div class="panel panel-primary">
-			<div class="panel-heading">
-				<h3 class="panel-title" data-bind="text: name"></h3>
-			</div>
-			<div class="panel-body">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<b>Cloud Services</b>
+		</div>
+		<div class="panel-body">
+			<button type="button" class="btn btn-default btn-sm pull-right"
+				data-bind="click: function() { $root.newInstanceService( id) }">
+				<span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> New service
+			</button>
+			<table class="table table-hover table-condensed">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>ID</th>
+						<th>Date created</th>
+						<th colspan="4">Details</th>
+						<th>Remove</th>
+					</tr>
+				</thead>
+				<tbody data-bind="foreach: services">
+					<tr>
+						<td data-bind="text: ($index() + 1)"></td>
+						<td data-bind="text: id"></td>
+						<td data-bind="text: dateCreatedFormated"></td>
+						<td><a data-bind="attr: { href: '#services/'+id }"><button type="button" class="btn btn-default  btn-sm">
+									<span class="glyphicon glyphicon-search" aria-hidden="true"></span> Manage
+								</button></a></td>
+						<td><a data-bind="attr: { href: '#services/'+id+'/analysis' }"><button type="button"
+									class="btn btn-default btn-sm">
+									<span class="glyphicon glyphicon-search" aria-hidden="true"></span> Analysis
+								</button></a></td>
+						<td><a data-bind="attr: { href: '#services/'+id+'/history' }"><button type="button"
+									class="btn btn-default btn-sm">
+									<span class="glyphicon glyphicon-search" aria-hidden="true"></span> Event Log
+								</button></a></td>
 
-				<div class="pull-right">
-					<button type="button" class="btn btn-default">
-						<span class="glyphicon glyphicon-search" aria-hidden="true"></span> View
-					</button>
-					<button type="button" class="btn btn-default">
-						<span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Remove
-					</button>
-				</div>
+						<td><a data-bind="attr: { href: 'rest/manager/services/'+id+'/tosca' }" target="_new"><button
+									type="button" class="btn btn-default btn-sm">
+									<span class="glyphicon glyphicon-search" aria-hidden="true"></span> View
+								</button></a></td>
+						<td>
+							<button type="button" class="btn btn-primary btn-sm" data-bind="click: $root.removeService">
+								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Remove
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
 
-				<p>
-					<b>ID:</b> <span data-bind="text: id"></span>
-				</p>
-				<p>
-					<b>Date created:</b> <span data-bind="text: dateCreatedFormated"></span>
-				</p>
+	<div class="panel panel-default">
+		<!-- Default panel contents -->
+		<div class="panel-heading">
+			<b>Service Templates</b>
+		</div>
+		<div class="panel-body">
 
-				<div>&nbsp;</div>
-				<button type="button" class="btn btn-default pull-right"
-					data-bind="click: function() { $root.newInstanceService( id) }">
-					<span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> New instance
-				</button>
-
-				<div data-bind="if: instances().length > 0">
-					<h4>Instances:</h4>
-
-					<table class="table table-hover table-condensed">
-						<thead>
-							<tr>
-								<th>#</th>
-								<th>ID</th>
-								<th>Date created</th>
-								<th colspan="3">Details</th>
-								<th>Remove</th>
-							</tr>
-						</thead>
-						<tbody data-bind="foreach: instances">
-							<tr>
-								<td data-bind="text: ($index() + 1)"></td>
-								<td data-bind="text: id"></td>
-								<td data-bind="text: dateCreatedFormated"></td>
-								<td><a data-bind="attr: { href: '#services/'+$parent.id+'/instances/'+id }"><button type="button"
-											class="btn btn-default">
-											<span class="glyphicon glyphicon-search" aria-hidden="true"></span> Manage
-										</button></a></td>
-								<td><a data-bind="attr: { href: '#services/'+$parent.id+'/instances/'+id+'/analysis' }"><button
-											type="button" class="btn btn-default">
-											<span class="glyphicon glyphicon-search" aria-hidden="true"></span> Analysis
-										</button></a></td>
-								<td><a data-bind="attr: { href: '#services/'+$parent.id+'/instances/'+id+'/history' }"><button
-											type="button" class="btn btn-default">
-											<span class="glyphicon glyphicon-search" aria-hidden="true"></span> Event Log
-										</button></a></td>
-								<td>
-									<button type="button" class="btn btn-default"
-										data-bind="click:function() { $root.removeInstance( $parent.id, id) }">
-										<span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Remove
-									</button>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
+			<table class="table table-hover table-condensed">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>ID</th>
+						<th>Date created</th>
+						<th>Description</th>
+						<th>Details</th>
+						<th>Service</th>
+						<th>Remove</th>
+					</tr>
+				</thead>
+				<tbody data-bind="foreach: templates">
+					<tr>
+						<td data-bind="text: ($index() + 1)"></td>
+						<td data-bind="text: id"></td>
+						<td data-bind="text: dateCreatedFormated"></td>
+						<td>Some description</td>
+						<td><a data-bind="attr: { href: 'rest/manager/templates/'+id+'/tosca' }" target="_new"><button
+									type="button" class="btn btn-default btn-sm">
+									<span class="glyphicon glyphicon-search" aria-hidden="true"></span> View
+								</button></a></td>
+						<td><button type="button" class="btn btn-primary btn-sm" data-bind="click: $root.newServiceFromTemplate">
+								<span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> New service
+							</button></td>
+						<td>
+							<button type="button" class="btn btn-primary btn-sm" data-bind="click: $root.removeTemplate">
+								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Remove
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 	</div>
 
 	<!-- Modal -->
-	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal fade" id="toscaDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog" style="width: 900px">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -104,6 +120,7 @@
 			</div>
 		</div>
 	</div>
+
 
 
 </div>

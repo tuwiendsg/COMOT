@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot.m.common.event;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -16,9 +17,11 @@ public abstract class AbstractEvent implements Serializable {
 	private static final long serialVersionUID = -1441246623921549350L;
 
 	@XmlAttribute
-	protected String serviceId;
+	protected String eventId;
 	@XmlAttribute
-	protected String csInstanceId;
+	protected String correlationId;
+	@XmlAttribute
+	protected String serviceId;
 	@XmlAttribute
 	protected String groupId;
 	@XmlAttribute
@@ -29,10 +32,10 @@ public abstract class AbstractEvent implements Serializable {
 	public AbstractEvent() {
 	}
 
-	public AbstractEvent(String serviceId, String csInstanceId, String groupId, String origin, Long time) {
+	public AbstractEvent(String serviceId, String groupId, String origin, Long time) {
 		super();
+		this.eventId = UUID.randomUUID().toString();
 		this.serviceId = serviceId;
-		this.csInstanceId = csInstanceId;
 		this.groupId = groupId;
 		this.origin = origin;
 		this.time = time;
@@ -46,14 +49,6 @@ public abstract class AbstractEvent implements Serializable {
 
 	public void setServiceId(String serviceId) {
 		this.serviceId = serviceId;
-	}
-
-	public String getCsInstanceId() {
-		return csInstanceId;
-	}
-
-	public void setCsInstanceId(String csInstanceId) {
-		this.csInstanceId = csInstanceId;
 	}
 
 	public String getGroupId() {
@@ -78,6 +73,22 @@ public abstract class AbstractEvent implements Serializable {
 
 	public void setTime(Long time) {
 		this.time = time;
+	}
+
+	public String getEventId() {
+		return eventId;
+	}
+
+	public void setEventId(String eventId) {
+		this.eventId = eventId;
+	}
+
+	public String getCorrelationId() {
+		return correlationId;
+	}
+
+	public void setCorrelationId(String correlationId) {
+		this.correlationId = correlationId;
 	}
 
 }

@@ -14,8 +14,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import at.ac.tuwien.dsg.comot.m.common.Constants;
+import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
+import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
+import at.ac.tuwien.dsg.comot.model.devel.structure.Template;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
 import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
@@ -43,7 +46,54 @@ public class Resource {
 
 	protected Object sync = new Object();
 
+	@POST
+	@Path(Constants.TEMPLATES)
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response createTemplate(CloudService service) throws EpsException, ComotException, JAXBException,
+			ClassNotFoundException, IOException {
+		synchronized (sync) {
+			infoServ.createTemplate(service.getId(), service);
+		}
+		return Response.ok().build();
+	}
+
+	@DELETE
+	@Path(Constants.TEMPLATES_ONE)
+	public Response deleteTemplate(@PathParam("templateId") String templateId) throws EpsException,
+			ComotException {
+		synchronized (sync) {
+			infoServ.removeTemplate(templateId);
+		}
+		return Response.ok().build();
+	}
+
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Path(Constants.TEMPLATES)
+	public Response getTemplates() throws ClassNotFoundException, IOException, EpsException {
+
+		List<Template> templates;
+		synchronized (sync) {
+			templates = infoServ.getTemplates();
+		}
+		return Response.ok(templates.toArray(new Template[templates.size()])).build();
+	}
+
 	// SERVICE
+
+	@POST
+	@Path(Constants.TEMPLATES_ONE_SERVICES)
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response createServiceFromTemplate(
+			@PathParam("templateId") String templateId) throws EpsException, ComotException, JAXBException,
+			ClassNotFoundException, IOException {
+		String result;
+		synchronized (sync) {
+			result = infoServ.createServiceFromTemplate(templateId);
+		}
+		return Response.ok(result).build();
+	}
 
 	@POST
 	@Produces(MediaType.TEXT_PLAIN)
@@ -55,6 +105,16 @@ public class Resource {
 			result = infoServ.createService(service);
 		}
 		return Response.ok(result).build();
+	}
+
+	@DELETE
+	@Path(Constants.SERVICE_ONE)
+	public Response deleteService(
+			@PathParam("serviceId") String serviceId) {
+		synchronized (sync) {
+			infoServ.removeService(serviceId);
+		}
+		return Response.ok().build();
 	}
 
 	@GET
@@ -84,55 +144,15 @@ public class Resource {
 		return Response.ok().build();
 	}
 
-	// SERVICE INSTANCE
-	@POST
-	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.TEXT_PLAIN)
-	@Path(Constants.INSTANCES)
-	public Response createServiceInstance(
-			@PathParam("serviceId") String serviceId) {
-		String result;
-		synchronized (sync) {
-			result = infoServ.createServiceInstance(serviceId);
-		}
-		return Response.ok(result).build();
-	}
-
-	@DELETE
-	@Consumes(MediaType.WILDCARD)
-	@Path(Constants.INSTANCE_ONE)
-	public Response removeServiceInstance(
-			@PathParam("serviceId") String serviceId,
-			@PathParam("instanceId") String instanceId) {
-		synchronized (sync) {
-			infoServ.removeServiceInstance(serviceId, instanceId);
-		}
-		return Response.ok().build();
-	}
-
-	@GET
-	@Consumes(MediaType.WILDCARD)
-	@Path(Constants.INSTANCE_ONE)
-	public Response getServiceInstance(
-			@PathParam("instanceId") String instanceId) throws ClassNotFoundException, IOException {
-
-		CloudService result;
-		synchronized (sync) {
-			result = infoServ.getServiceInstance(instanceId);
-		}
-		return Response.ok(result).build();
-	}
-
 	// UNIT INSTANCES
 	@PUT
 	@Path(Constants.UNIT_INSTANCE_ONE)
 	public Response putUnitInstance(
 			@PathParam("serviceId") String serviceId,
-			@PathParam("instanceId") String instanceId,
 			@PathParam("unitId") String unitId,
 			UnitInstance uInst) {
 		synchronized (sync) {
-			infoServ.putUnitInstance(serviceId, instanceId, unitId, uInst);
+			infoServ.putUnitInstance(serviceId, unitId, uInst);
 		}
 		return Response.ok().build();
 	}
@@ -142,10 +162,9 @@ public class Resource {
 	@Path(Constants.UNIT_INSTANCE_ONE)
 	public Response removeUnitInstance(
 			@PathParam("serviceId") String serviceId,
-			@PathParam("instanceId") String instanceId,
 			@PathParam("unitInstanceId") String unitInstanceId) {
 		synchronized (sync) {
-			infoServ.removeUnitInstance(serviceId, instanceId, unitInstanceId);
+			infoServ.removeUnitInstance(serviceId, unitInstanceId);
 		}
 		return Response.ok().build();
 	}
@@ -195,18 +214,10 @@ public class Resource {
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Path(Constants.EPS_ONE_INSTANCES)
 	public Response createOsuInstance(
-			@PathParam("epsId") String epsId, String optionalServiceInstanceId) {
+			@PathParam("epsId") String epsId) throws ClassNotFoundException, IOException {
 		String result;
 		synchronized (sync) {
-
-			if (optionalServiceInstanceId == null || optionalServiceInstanceId.equals("")) {
-				result = infoServ.createOsuInstance(epsId);
-			} else {
-				result = infoServ.createOsuInstanceDynamic(epsId,
-						StringUtils.split(optionalServiceInstanceId)[0],
-						StringUtils.split(optionalServiceInstanceId)[1]);
-			}
-
+			result = infoServ.createOsuInstance(epsId);
 		}
 		return Response.ok(result).build();
 	}
@@ -226,10 +237,10 @@ public class Resource {
 	@Consumes(MediaType.WILDCARD)
 	@Path(Constants.EPS_INSTANCE_ASSIGNMENT)
 	public Response assignEps(
-			@PathParam("instanceId") String instanceId,
+			@PathParam("serviceId") String serviceId,
 			@PathParam("epsId") String epsId) {
 		synchronized (sync) {
-			infoServ.assignSupportingService(instanceId, epsId);
+			infoServ.assignSupportingService(serviceId, epsId);
 		}
 		return Response.ok().build();
 	}
@@ -238,7 +249,7 @@ public class Resource {
 	@Consumes(MediaType.WILDCARD)
 	@Path(Constants.EPS_INSTANCE_ASSIGNMENT)
 	public Response removeEpsAssignment(
-			@PathParam("instanceId") String instanceId,
+			@PathParam("serviceId") String instanceId,
 			@PathParam("epsId") String epsId) {
 		synchronized (sync) {
 			infoServ.removeAssignmentOfSupportingOsu(instanceId, epsId);

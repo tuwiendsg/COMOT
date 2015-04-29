@@ -34,7 +34,7 @@ import at.ac.tuwien.dsg.comot.m.recorder.revisions.RevisionApi;
 @Service
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-@Path("/recordings/{instanceId}")
+@Path("/recordings/{serviceId}")
 public class RevisionResource {
 
 	private static final Logger log = LoggerFactory.getLogger(RevisionResource.class);
@@ -47,15 +47,14 @@ public class RevisionResource {
 	protected ElasticityAnalyzis elAnalysis;
 
 	@GET
-	@Path("/{serviceId}/analytics/unitInstanceDeploymentEvents")
+	@Path("/analytics/unitInstanceDeploymentEvents")
 	@Consumes(MediaType.WILDCARD)
 	public Response getUnitInstanceDeploymentEvents(
-			@PathParam("instanceId") String instanceId,
 			@PathParam("serviceId") String serviceId
 			) throws InstantiationException, IllegalAccessException, IllegalArgumentException, ClassNotFoundException,
 					RecorderException {
 
-		List<ResultLine> results = analyticEngine.deploymentEvents(serviceId, instanceId);
+		List<ResultLine> results = analyticEngine.deploymentEvents(serviceId);
 
 		final GenericEntity<List<ResultLine>> list = new GenericEntity<List<ResultLine>>(results) {
 		};
@@ -63,15 +62,14 @@ public class RevisionResource {
 	}
 
 	@GET
-	@Path("/{serviceId}/analytics/elasticActions")
+	@Path("/analytics/elasticActions")
 	@Consumes(MediaType.WILDCARD)
 	public Response getElasticActions(
-			@PathParam("instanceId") String instanceId,
 			@PathParam("serviceId") String serviceId
 			) throws InstantiationException, IllegalAccessException, IllegalArgumentException, ClassNotFoundException,
 					JAXBException, RecorderException {
 
-		List<ElasticPlanReport> results = elAnalysis.doOneService(serviceId, instanceId);
+		List<ElasticPlanReport> results = elAnalysis.doOneService(serviceId);
 
 		final GenericEntity<List<ElasticPlanReport>> list = new GenericEntity<List<ElasticPlanReport>>(results) {
 		};
@@ -82,7 +80,7 @@ public class RevisionResource {
 	@Path("/objects")
 	@Consumes(MediaType.WILDCARD)
 	public Response getManagedObjects(
-			@PathParam("instanceId") String instanceId
+			@PathParam("serviceId") String instanceId
 			) {
 
 		List<ManagedObject> objects = revisionApi.getManagedObjects(instanceId);
@@ -96,22 +94,22 @@ public class RevisionResource {
 	@Path("/objects/{objectId}/{timestamp}")
 	@Consumes(MediaType.WILDCARD)
 	public Response getRecording(
-			@PathParam("instanceId") String instanceId,
+			@PathParam("serviceId") String serviceId,
 			@PathParam("objectId") String objectId,
 			@PathParam("timestamp") Long timestamp) throws InstantiationException, IllegalAccessException,
 			IllegalArgumentException, ClassNotFoundException, RecorderException {
 
-		log.info("getRevision(serviceId={}, objectId={}, timestamp={})", instanceId, objectId, timestamp);
+		log.info("getRevision(serviceId={}, objectId={}, timestamp={})", serviceId, objectId, timestamp);
 
-		if (!revisionApi.verifyObject(instanceId, objectId)) {
-			throw new ComotIllegalArgumentException("For service " + instanceId + " there is no managed object "
+		if (!revisionApi.verifyObject(serviceId, objectId)) {
+			throw new ComotIllegalArgumentException("For service " + serviceId + " there is no managed object "
 					+ objectId);
 		}
 
-		Object obj = revisionApi.getRevision(instanceId, objectId, timestamp);
+		Object obj = revisionApi.getRevision(serviceId, objectId, timestamp);
 
 		if (obj == null) {
-			throw new ComotIllegalArgumentException("There is no revision of service" + instanceId + ", object="
+			throw new ComotIllegalArgumentException("There is no revision of service" + serviceId + ", object="
 					+ objectId + " at time=" + timestamp + " ");
 		}
 
@@ -122,12 +120,12 @@ public class RevisionResource {
 	@Path("/events")
 	@Consumes(MediaType.WILDCARD)
 	public Response getAllEventsInRange(
-			@PathParam("instanceId") String instanceId,
+			@PathParam("serviceId") String serviceId,
 			@DefaultValue("0") @QueryParam("from") Long from,
 			@DefaultValue("9223372036854775807") @QueryParam("to") Long to) // def Long.MAX_VALUE
 	{
 
-		Change change = revisionApi.getAllChanges(instanceId, from, to);
+		Change change = revisionApi.getAllChanges(serviceId, from, to);
 
 		List<Change> list = new ArrayList<>();
 		while (change != null) {
@@ -144,18 +142,18 @@ public class RevisionResource {
 	@Path("/objects/{objectId}/events")
 	@Consumes(MediaType.WILDCARD)
 	public Response getEvents(
-			@PathParam("instanceId") String instanceId,
+			@PathParam("serviceId") String serviceId,
 			@PathParam("objectId") String objectId,
 			@DefaultValue("0") @QueryParam("from") Long from,
 			@DefaultValue("9223372036854775807") @QueryParam("to") Long to) // def Long.MAX_VALUE
 	{
 
-		if (!revisionApi.verifyObject(instanceId, objectId)) {
-			throw new ComotIllegalArgumentException("For service " + instanceId + " there is no managed object "
+		if (!revisionApi.verifyObject(serviceId, objectId)) {
+			throw new ComotIllegalArgumentException("For service " + serviceId + " there is no managed object "
 					+ objectId);
 		}
 
-		Change change = revisionApi.getAllChangesThatModifiedThisObject(instanceId, objectId, from, to);
+		Change change = revisionApi.getAllChangesThatModifiedThisObject(serviceId, objectId, from, to);
 
 		List<Change> list = new ArrayList<>();
 		while (change != null) {

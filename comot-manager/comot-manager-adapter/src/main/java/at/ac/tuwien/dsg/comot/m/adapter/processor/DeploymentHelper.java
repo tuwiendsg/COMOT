@@ -3,8 +3,8 @@ package at.ac.tuwien.dsg.comot.m.adapter.processor;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Future;
 
 import javax.xml.bind.JAXBException;
@@ -54,7 +54,7 @@ public class DeploymentHelper {
 	protected String adapterId;
 
 	@Async
-	public void monitorStatusUntilDeployed(String serviceId, String instanceId, CloudService service)
+	public void monitorStatusUntilDeployed(String serviceId, CloudService service)
 			throws EpsException,
 			ComotException, IOException, JAXBException, InterruptedException, ClassNotFoundException {
 
@@ -71,7 +71,7 @@ public class DeploymentHelper {
 
 					notAllRunning = false;
 					memory.refresh(currentStates);
-					currentStates = oneInteration(memory, serviceId, instanceId, service);
+					currentStates = oneInteration(memory, serviceId, service);
 
 					if (currentStates.isEmpty()) {
 						notAllRunning = true;
@@ -96,11 +96,11 @@ public class DeploymentHelper {
 	}
 
 	@Async
-	public Future<Object> monitoringStatusUntilInterupted(String serviceId, String instanceId, CloudService service)
+	public Future<Object> monitoringStatusUntilInterupted(String serviceId, CloudService service)
 			throws EpsException,
 			ComotException, IOException, JAXBException, InterruptedException, ClassNotFoundException {
 
-		log.info("monitoringStatusUntilInterupted(instanceId={})", instanceId);
+		log.info("monitoringStatusUntilInterupted(instanceId={})", serviceId);
 
 		try {
 
@@ -108,10 +108,8 @@ public class DeploymentHelper {
 			Memory memory = new Memory();
 
 			UtilsLc.removeProviderInfo(service);
-			service.setId(instanceId);
-			service.setName(instanceId);
 
-			Set<UnitInstance> oldInstances = service.getInstancesList().get(0).getUnitInstances();
+			List<UnitInstance> oldInstances = new Navigator(service).getAllUnitInstances();
 
 			for (UnitInstance inst : oldInstances) {
 				currentStates.put(inst.getId(), DeploymentMapper.runningToState());
@@ -121,17 +119,17 @@ public class DeploymentHelper {
 				try {
 
 					memory.refresh(currentStates);
-					currentStates = oneInteration(memory, serviceId, instanceId, service);
+					currentStates = oneInteration(memory, serviceId, service);
 
 					for (Iterator<UnitInstance> iterator = oldInstances.iterator(); iterator.hasNext();) {
 						UnitInstance inst = iterator.next();
 
 						if (!currentStates.containsKey(inst.getId())) {
 
-							manager.sendLifeCycle(Type.INSTANCE, new LifeCycleEvent(serviceId, instanceId,
-									inst.getId(), Action.UNDEPLOYMENT_STARTED));
-							manager.sendLifeCycle(Type.INSTANCE, new LifeCycleEvent(serviceId, instanceId,
-									inst.getId(), Action.UNDEPLOYED));
+							manager.sendLifeCycle(Type.INSTANCE, new LifeCycleEvent(serviceId, inst.getId(),
+									Action.UNDEPLOYMENT_STARTED));
+							manager.sendLifeCycle(Type.INSTANCE, new LifeCycleEvent(serviceId, inst.getId(),
+									Action.UNDEPLOYED));
 							iterator.remove();
 						}
 					}
@@ -149,7 +147,7 @@ public class DeploymentHelper {
 
 	}
 
-	protected Map<String, String> oneInteration(Memory memory, String serviceId, String instanceId, CloudService service)
+	protected Map<String, String> oneInteration(Memory memory, String serviceId, CloudService service)
 			throws EpsException, ComotException, InterruptedException, AmqpException, JAXBException {
 
 		Map<String, String> currentStates = new HashMap<>();
@@ -172,7 +170,7 @@ public class DeploymentHelper {
 			stateNew = currentStates.get(uInstId);
 			lcStateNew = DeploymentMapper.convert(currentStates.get(uInstId));
 
-			evaluateChangeOfOneUnitInstance(serviceId, instanceId, uInstId, stateNew, lcStateNew,
+			evaluateChangeOfOneUnitInstance(serviceId, uInstId, stateNew, lcStateNew,
 					serviceReturned, memory);
 		}
 
@@ -181,7 +179,7 @@ public class DeploymentHelper {
 	}
 
 	protected void evaluateChangeOfOneUnitInstance(
-			String serviceId, String instanceId, String uInstId, String stateNew, State lcStateNew,
+			String serviceId, String uInstId, String stateNew, State lcStateNew,
 			CloudService serviceReturned, Memory memory)
 			throws AmqpException, JAXBException {
 
@@ -208,12 +206,12 @@ public class DeploymentHelper {
 		if (lcStateNew == null || lcStateNew == lcStateOld) {
 
 			manager.sendCustom(Type.INSTANCE,
-					new CustomEvent(serviceId, instanceId, uInstId, stateNew, adapterId, null));
+					new CustomEvent(serviceId, uInstId, stateNew, adapterId, null));
 
 		} else {
 
 			if (lcStateNew == State.ERROR) {
-				manager.sendLifeCycle(Type.INSTANCE, new LifeCycleEvent(serviceId, instanceId, uInstId, Action.ERROR));
+				manager.sendLifeCycle(Type.INSTANCE, new LifeCycleEvent(serviceId, uInstId, Action.ERROR));
 				return;
 
 			} else {
@@ -236,7 +234,7 @@ public class DeploymentHelper {
 				log.info("creating ModifyingLifeCycleEvent for: {}, navigator: {}", uInstId, nav);
 
 				manager.sendLifeCycle(Type.INSTANCE,
-						new LifeCycleEventModifying(serviceId, instanceId, uInstId, action, adapterId,
+						new LifeCycleEventModifying(serviceId, uInstId, action, adapterId,
 								System.currentTimeMillis(), nav.getUnitFor(uInstId).getId(), nav.getInstance(uInstId)));
 			}
 		}

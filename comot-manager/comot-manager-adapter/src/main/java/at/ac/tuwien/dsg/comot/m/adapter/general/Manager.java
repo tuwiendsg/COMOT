@@ -61,7 +61,7 @@ public abstract class Manager {
 		event.setOrigin(getId());
 		event.setTime(System.currentTimeMillis());
 
-		String bindingKey = event.getCsInstanceId() + "." + LifeCycleEvent.class.getSimpleName() + "."
+		String bindingKey = event.getServiceId() + "." + LifeCycleEvent.class.getSimpleName() + "."
 				+ event.getAction()
 				+ "." + targetLevel;
 
@@ -75,7 +75,7 @@ public abstract class Manager {
 		event.setOrigin(getId());
 		event.setTime(System.currentTimeMillis());
 
-		String bindingKey = event.getCsInstanceId() + "." + event.getClass().getSimpleName() + "."
+		String bindingKey = event.getServiceId() + "." + event.getClass().getSimpleName() + "."
 				+ event.getCustomEvent() + "." + targetLevel;
 
 		log.info(logId() + "EVENT-CUST key={}", bindingKey);
@@ -83,13 +83,13 @@ public abstract class Manager {
 		amqp.convertAndSend(Constants.EXCHANGE_REQUESTS, bindingKey, Utils.asJsonString(event));
 	}
 
-	public void sendException(String serviceId, String instanceId, Exception e) throws AmqpException, JAXBException {
+	public void sendException(String serviceId, Exception e) throws AmqpException, JAXBException {
 
 		// log.info(logId() + "EVENT-EX key={}", "TODO");
 
-		ExceptionMessage msg = new ExceptionMessage(serviceId, instanceId, getId(), System.currentTimeMillis(), e);
+		ExceptionMessage msg = new ExceptionMessage(serviceId, getId(), System.currentTimeMillis(), e);
 
-		String bindingKey = instanceId + "." + getId(); // TODO
+		String bindingKey = serviceId + "." + getId(); // TODO
 
 		amqp.convertAndSend(Constants.EXCHANGE_EXCEPTIONS, bindingKey, Utils.asJsonString(msg));
 

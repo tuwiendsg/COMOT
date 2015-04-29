@@ -30,52 +30,48 @@ public class LifeCycleEventModifying extends LifeCycleEvent {
 
 	public LifeCycleEventModifying(
 			String serviceId,
-			String csInstanceId,
 			String groupId,
 			Action action,
 			String parentId,
 			ServiceEntity entity) {
-		super(serviceId, csInstanceId, groupId, action);
+		super(serviceId, groupId, action);
 		this.parentId = parentId;
 		this.entity = entity;
 	}
 
 	public LifeCycleEventModifying(
 			String serviceId,
-			String csInstanceId,
 			String groupId,
 			Action action,
 			String parentId,
 			UnitInstance instance) {
-		super(serviceId, csInstanceId, groupId, action);
+		super(serviceId, groupId, action);
 		this.parentId = parentId;
 		this.instance = instance;
 	}
 
 	public LifeCycleEventModifying(
 			String serviceId,
-			String csInstanceId,
 			String groupId,
 			Action action,
 			String origin,
 			Long time,
 			String parentId,
 			ServiceEntity entity) {
-		super(serviceId, csInstanceId, groupId, action, origin, time);
+		super(serviceId, groupId, action, origin, time);
 		this.parentId = parentId;
 		this.entity = entity;
 	}
 
 	public LifeCycleEventModifying(
 			String serviceId,
-			String csInstanceId,
 			String groupId,
 			Action action,
 			String origin,
 			Long time,
 			String parentId,
 			UnitInstance instance) {
-		super(serviceId, csInstanceId, groupId, action, origin, time);
+		super(serviceId, groupId, action, origin, time);
 		this.parentId = parentId;
 		this.instance = instance;
 	}
@@ -124,7 +120,7 @@ public class LifeCycleEventModifying extends LifeCycleEvent {
 	@Override
 	public String toString() {
 		return "ModifyingLifeCycleEvent [name=" + action + ", serviceId=" + serviceId
-				+ ", csInstanceId=" + csInstanceId + ", groupId=" + groupId + ", origin=" + origin + ", parentId="
+				+ ", groupId=" + groupId + ", origin=" + origin + ", parentId="
 				+ parentId + "]";
 	}
 

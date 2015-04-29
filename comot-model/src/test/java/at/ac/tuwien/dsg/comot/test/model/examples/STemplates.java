@@ -1,5 +1,7 @@
 package at.ac.tuwien.dsg.comot.test.model.examples;
 
+import java.util.UUID;
+
 import at.ac.tuwien.dsg.comot.model.SyblDirective;
 import at.ac.tuwien.dsg.comot.model.devel.relationship.ConnectToRel;
 import at.ac.tuwien.dsg.comot.model.devel.relationship.HostOnRel;
@@ -85,7 +87,8 @@ public class STemplates {
 		osuOs.hasResource(new Resource("8f1428ac-f239-42e0-ab35-137f6e234101", new ResourceOrQualityType("baseImage")));
 		osuOs.hasResource(new Resource("openjdk-7-jre", new ResourceOrQualityType("packages")));
 
-		Resource url = new Resource("http://128.130.172.215/salsa/upload/files/DaasService/deployCassandraSeed.sh",
+		Resource url = new Resource(UUID.randomUUID().toString(),
+				"http://128.130.172.215/salsa/upload/files/DaasService/deployCassandraSeed.sh",
 				new ResourceOrQualityType(ResourceOrQualityType.ART_REFERENCE_TYPE));
 		Resource war = new Resource("deployWar", new ResourceOrQualityType("war"));
 		war.hasResource(url);
@@ -163,11 +166,11 @@ public class STemplates {
 		}
 		return service;
 	}
-	
+
 	public static String osuInstanceId(String unitId) {
 		return unitId + "_OSU_INSTANCE";
 	}
-	
+
 	public static String osuId(String unitId) {
 		return unitId + "_OSU";
 	}

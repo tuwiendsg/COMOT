@@ -1,11 +1,9 @@
 package at.ac.tuwien.dsg.comot.m.core.test;
 
 import java.util.Iterator;
-import java.util.List;
 
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Relationship;
 import org.neo4j.helpers.collection.IteratorUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,16 +24,19 @@ public class TestBean {
 	@Autowired
 	protected ExecutionEngine engine;
 
-	
 	@Transactional
 	public Double computeDuration(String region) {
 
-		Iterator<Double> iter = engine.execute("match (r:_REGION {_id: '"+region+"'} )-[:_FIRST_REV]-> ()-[relCol *]->(m:_Revision) UNWIND relCol as rel return avg(rel.timestamp - rel.`properties-eventTime`) as m").columnAs("m");
+		Iterator<Double> iter = engine
+				.execute(
+						"match (r:_REGION {_id: '"
+								+ region
+								+ "'} )-[:_FIRST_REV]-> ()-[relCol *]->(m:_Revision) UNWIND relCol as rel return avg(rel.timestamp - rel.`properties-eventTime`) as m")
+				.columnAs("m");
 		for (Double ll : IteratorUtil.asIterable(iter)) {
 			return ll;
 		}
 		return null;
 	}
-
 
 }

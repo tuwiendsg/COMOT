@@ -5,94 +5,89 @@ define(function(require) {
 
 	var model = {
 		// properties
+		templates : ko.observableArray(),
 		services : ko.observableArray(),
 		// functions
 		newService : newService,
-		viewService : viewService,
+		viewTosca : viewTosca,
 		removeService : removeService,
-		newInstanceService : newInstanceService,
-		viewInstance : viewInstance,
-		removeInstance : removeInstance,
+		newServiceFromTemplate : newServiceFromTemplate,
+		removeTemplate : removeTemplate,
 		// life-cycle
-		detached : function() {
-
-		},
-		deactivate : function() {
-
-		},
 		activate : function() {
-			model.services.removeAll();
-
-			comot.getServicesNonEps(function(services) {
-
-				for (var i = 0; i < services.length; i++) {
-					var service = services[i];
-					var instances = service.ServiceInstances.Instance;
-					
-					if (typeof instances !== 'undefned') {
-						for (var j = 0; j < instances.length; j++) {
-							instances[j].dateCreatedFormated = utils.longToDateString(instances[j].dateCreated);
-						}
-					}
-
-					model.services.push({
-						'name' : service.name,
-						'id' : service.id,
-						'dateCreatedFormated' : utils.longToDateString(service.dateCreated),
-						'instances' : ko.observableArray(instances)
-					});
-				}
-			})
+			refreshServices();
+			refreshTemplates();
 		},
-		attached : function() {
-
-		}
 	}
 
 	return model;
+
+	function removeTemplate(template) {
+
+		comot.removeTemplate(template.id, function() {
+
+			notify.success("Template " + template.id + " removed.");
+			model.templates.remove(template);
+
+		}, "Failed to remove template " + template.id);
+
+	}
+
+	function refreshTemplates() {
+
+		model.templates.removeAll();
+
+		comot.getTemplatesNonEps(function(templates) {
+
+			for (var i = 0; i < templates.length; i++) {
+				var template = templates[i];
+				template.dateCreatedFormated = utils.longToDateString(template.description.dateCreated);
+			}
+
+			model.templates(templates);
+		});
+	}
 
 	// SERVICE
 	function newService() {
 
 	}
 
-	function viewService(serviceId) {
+	function viewTosca(object) {
 
 	}
 
-	function removeService(serviceId) {
+	function removeService(service) {
+
+		comot.removeService(service.id, function() {
+
+			notify.success("Service " + service.id + " removed.");
+			model.services.remove(service);
+
+		}, "Failed to remove service " + service.id);
 
 	}
 
-	function newInstanceService(serviceId) {
+	function refreshServices() {
+		model.services.removeAll();
 
-		comot.createServiceInstance(serviceId, function(data) {
-			var instanceId = data;
+		comot.getServicesNonEps(function(services) {
 
-			comot.getServiceInstance(serviceId, instanceId, function(data) {
+			for (var i = 0; i < services.length; i++) {
+				var service = services[i];
+				service.dateCreatedFormated = utils.longToDateString(service.dateCreated);
+			}
 
-				var newInstance = data.service.ServiceInstances.Instance[0];
-
-				for (var i = 0; i < model.services().length; i++) {
-					if (model.services()[i].id === serviceId) {
-						newInstance.dateCreatedFormated = utils.longToDateString(newInstance.dateCreated);
-						model.services()[i].instances.push(newInstance);
-						break;
-					}
-				}
-
-			})
+			model.services(services);
 		})
-
 	}
 
-	// INSTANCE
-	function viewInstance(serviceId, instanceId) {
-		console.log("serviceId: " + serviceId + ", instance:" + instanceId);
-		console.log("view");
-	}
+	function newServiceFromTemplate(template) {
 
-	function removeInstance(serviceId, instanceId) {
+		comot.createServiceFromTemplate(template.id, function(data) {
+
+			refreshServices();
+		})
 
 	}
 

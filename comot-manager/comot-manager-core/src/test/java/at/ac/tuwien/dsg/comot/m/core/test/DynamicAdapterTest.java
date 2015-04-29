@@ -21,7 +21,6 @@ public class DynamicAdapterTest extends AbstractTest {
 
 	protected TestAgentAdapter agent;
 	protected String serviceId;
-	protected String instanceId;
 	protected String staticDeplId;
 
 	@Before

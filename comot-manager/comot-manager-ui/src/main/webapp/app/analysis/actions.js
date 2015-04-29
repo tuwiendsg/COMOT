@@ -6,31 +6,25 @@ define(function(require) {
 	var model = {
 		// properties
 		serviceId : ko.observable(""),
-		instanceId : ko.observable(""),
 		actionPlans : ko.observableArray(),
 		// functions
 
 		// life-cycle
-		activate : function(serviceId, instanceId) {
-
+		activate : function(serviceId) {
 			model.serviceId(serviceId);
-			model.instanceId(instanceId);
-
 		},
 		attached : function() {
 
-			comot.getElasticActions(model.serviceId(), model.instanceId(), function(data) {
+			comot.getElasticActions(model.serviceId(), function(data) {
 
 				// var viewData = $.extend(true, {}, data);
 
 				for (var i = 0; i < data.length; i++) {
-					var one = data[i];					
+					var one = data[i];
 					one.timestamp = utils.longToDateString(one.timestamp);
-					
-					console.log(one.changeTimestamp)
-					
+
 					delete data[i].changeTimestamp;
-					
+
 					for (var j = 0; j < one.actions.length; j++) {
 						one.actions[j].timestamp = utils.longToDateString(one.actions[j].timestamp);
 					}
@@ -40,14 +34,10 @@ define(function(require) {
 					tmp.appendChild(human);
 
 					one.html = tmp.innerHTML;
-
-
 				}
 
 				model.actionPlans(data)
-
 			});
-
 		},
 		detached : function() {
 

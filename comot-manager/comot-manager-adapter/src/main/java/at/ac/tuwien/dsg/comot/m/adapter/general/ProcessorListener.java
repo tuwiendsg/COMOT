@@ -30,7 +30,6 @@ public class ProcessorListener implements MessageListener {
 	@Override
 	public void onMessage(Message message) {
 
-		String instanceId = null;
 		String serviceId = null;
 		ComotMessage comotMsg;
 		try {
@@ -48,7 +47,6 @@ public class ProcessorListener implements MessageListener {
 			if (comotMsg instanceof StateMessage) {
 
 				StateMessage msg = (StateMessage) comotMsg;
-				instanceId = msg.getEvent().getCsInstanceId();
 				serviceId = msg.getEvent().getServiceId();
 				String groupId = msg.getEvent().getGroupId();
 				String origin = msg.getEvent().getOrigin();
@@ -61,10 +59,10 @@ public class ProcessorListener implements MessageListener {
 					Map<String, Transition> transitions = msg.getTransitions();
 
 					log.info(processor.logId()
-							+ "onLifecycleEvent: service={}, instance={}, group={}, action={}, origin={}",
-							serviceId, instanceId, groupId, action, origin);
+							+ "onLifecycleEvent: service={}, group={}, action={}, origin={}",
+							serviceId, groupId, action, origin);
 
-					processor.onLifecycleEvent(msg, serviceId, instanceId, groupId, action, origin, service,
+					processor.onLifecycleEvent(msg, serviceId, groupId, action, origin, service,
 							transitions);
 
 				} else {
@@ -76,28 +74,27 @@ public class ProcessorListener implements MessageListener {
 					String epsId = event.getEpsId();
 
 					log.info(processor.logId()
-							+ "onCustomEvent: service={}, instance={}, group={}, epsId={}, event={}, origin={}",
-							serviceId, instanceId, groupId, epsId, eventName, origin);
+							+ "onCustomEvent: service={}, group={}, epsId={}, event={}, origin={}",
+							serviceId, groupId, epsId, eventName, origin);
 
-					processor.onCustomEvent(msg, serviceId, instanceId, groupId, eventName, epsId, origin,
+					processor.onCustomEvent(msg, serviceId, groupId, eventName, epsId, origin,
 							optionalMessage);
 				}
 
 			} else if (comotMsg instanceof ExceptionMessage) {
 				ExceptionMessage msg = (ExceptionMessage) comotMsg;
 
-				instanceId = msg.getCsInstanceId();
 				serviceId = msg.getServiceId();
 				String originId = msg.getOrigin();
 
 				log.info(processor.logId() + "onExceptionEvent: {}", msg);
 
-				processor.onExceptionEvent(msg, serviceId, instanceId, originId);
+				processor.onExceptionEvent(msg, serviceId, originId);
 			}
 
 		} catch (Exception e) {
 			try {
-				processor.getManager().sendException(serviceId, instanceId, e);
+				processor.getManager().sendException(serviceId, e);
 			} catch (Throwable e1) {
 				log.error("{}", e1);
 			}

@@ -58,7 +58,7 @@ public class TimeAnalyzis {
 	// protected InformationClient infoServ;
 
 	@Transactional
-	public List<ResultLine> deploymentEvents(String serviceId, String instanceId) throws InstantiationException,
+	public List<ResultLine> deploymentEvents(String serviceId) throws InstantiationException,
 			IllegalAccessException,
 			IllegalArgumentException,
 			ClassNotFoundException, RecorderException {
@@ -66,11 +66,9 @@ public class TimeAnalyzis {
 		List<ResultLine> resultsList = new ArrayList<>();
 
 		RegionRepo regionRepo = context.getBean(RegionRepo.class);
-		regionRepo.setRegionId(instanceId);
+		regionRepo.setRegionId(serviceId);
 
-		log.info("deploymentEvents(serviceId={}, instanceId={})", serviceId, instanceId);
-
-		for (Node unInIdentity : getAllUnitInstancesIdentityNode(instanceId)) {
+		for (Node unInIdentity : getAllUnitInstancesIdentityNode(serviceId)) {
 
 			Long startTime = Long.MAX_VALUE;
 			Long deplFinTime = Long.MAX_VALUE;
@@ -93,10 +91,10 @@ public class TimeAnalyzis {
 			String unitInstanceId = unInIdentity.getProperty(InternalNode.ID).toString();
 
 			List<Change> changes = new ArrayList<>();
-			for (Change one : changeRepo.getAllChangesInRangeForObject(instanceId, unitInstanceId, startTime,
+			for (Change one : changeRepo.getAllChangesInRangeForObject(serviceId, unitInstanceId, startTime,
 					deplFinTime)) {
 				// TODO remove those not of SALSA origin
-				
+
 				changes.add(one);
 			}
 

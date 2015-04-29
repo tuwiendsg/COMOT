@@ -22,11 +22,11 @@
 					<b>EPS ID:</b> <span data-bind="text: id"></span>
 				</p>
 				<p>
-					<b>Cloud Service ID:</b> <span data-bind="text: serviceId"></span>
+					<b>Cloud Service ID:</b> <span data-bind="text: templateId"></span>
 				</p>
 				<div>&nbsp;</div>
 				<button type="button" class="btn btn-default pull-right"
-					data-bind="click: function() { $root.newInstance( id) }">
+					data-bind="click: $root.newEpsInstance">
 					<span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> New instance
 				</button>
 
@@ -38,7 +38,7 @@
 							<tr>
 								<th>#</th>
 								<th>ID</th>
-								<th>Service Instance ID</th>
+								<th>Service ID</th>
 								<th>Date created</th>
 								<th>Details</th>
 								<th>Remove</th>
@@ -48,15 +48,15 @@
 							<tr>
 								<td data-bind="text: ($index() + 1)"></td>
 								<td data-bind="text: id"></td>
-								<td data-bind="text: serviceInstnaceId"></td>
+								<td data-bind="text: serviceId"></td>
 								<td data-bind="text: dateCreatedFormated"></td>
-								<td><a data-bind="attr: { href: '#services/'+$parent.serviceId+'/instances/'+serviceInstnaceId }"><button type="button"
+								<td><a data-bind="attr: { href: '#services/'+ serviceId }"><button type="button"
 											class="btn btn-default">
 											<span class="glyphicon glyphicon-search" aria-hidden="true"></span> View
 										</button></a></td>
 								<td>
 									<button type="button" class="btn btn-default"
-										data-bind="click:function() { $root.removeInstance( $parent.id, id) }">
+										data-bind="click:function() { $root.removeEpsInstance( $parent.id, id) }">
 										<span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Remove
 									</button>
 								</td>

@@ -106,7 +106,7 @@ public class AppContextAdapter {
 	public ControlClient controlClient() throws URISyntaxException {
 		return new ControlClientRsybl(new RsyblClient(new URI(env.getProperty("uri.controller"))));
 	}
-	
+
 	@Bean
 	public DeploymentClient deploymentClient() throws URISyntaxException {
 		return new DeploymentClientSalsa(new SalsaClient(new URI(env.getProperty("uri.deployemnt"))));

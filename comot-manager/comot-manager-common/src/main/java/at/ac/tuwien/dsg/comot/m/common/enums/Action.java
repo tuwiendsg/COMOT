@@ -13,8 +13,7 @@ public enum Action {
 	UNDEPLOYED,
 	REMOVED,
 	ERROR,
-	
-	
+
 	START,
 	STOP,
 	RECONFIGURE_ELASTICITY,

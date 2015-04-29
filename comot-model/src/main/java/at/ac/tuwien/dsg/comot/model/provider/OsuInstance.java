@@ -12,7 +12,7 @@ import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
 import at.ac.tuwien.dsg.comot.model.HasUniqueId;
-import at.ac.tuwien.dsg.comot.model.runtime.ServiceInstance;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 
 @XmlRootElement
@@ -29,7 +29,7 @@ public class OsuInstance extends Entity implements HasUniqueId, Serializable {
 	protected String id;
 
 	protected OfferedServiceUnit osu;
-	protected ServiceInstance serviceInstance;
+	protected CloudService service;
 
 	public OsuInstance(){
 		
@@ -58,12 +58,14 @@ public class OsuInstance extends Entity implements HasUniqueId, Serializable {
 		this.osu = osu;
 	}
 
-	public ServiceInstance getServiceInstance() {
-		return serviceInstance;
+	public CloudService getService() {
+		return service;
 	}
 
-	public void setServiceInstance(ServiceInstance serviceInstance) {
-		this.serviceInstance = serviceInstance;
+	public void setService(CloudService service) {
+		this.service = service;
 	}
+
+
 
 }

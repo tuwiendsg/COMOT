@@ -6,6 +6,7 @@
 package at.ac.tuwien.dsg.comot.m.core;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import javax.xml.bind.JAXBException;
 
@@ -15,28 +16,29 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import at.ac.tuwien.dsg.comot.m.adapter.general.Manager;
+import at.ac.tuwien.dsg.comot.m.adapter.general.SingleQueueManager;
 import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.InformationClient;
-import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.enums.Action;
 import at.ac.tuwien.dsg.comot.m.common.enums.EpsEvent;
 import at.ac.tuwien.dsg.comot.m.common.enums.Type;
 import at.ac.tuwien.dsg.comot.m.common.eps.DeploymentClient;
+import at.ac.tuwien.dsg.comot.m.common.event.AbstractEvent;
 import at.ac.tuwien.dsg.comot.m.common.event.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEventModifying;
+import at.ac.tuwien.dsg.comot.m.common.event.state.ComotMessage;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
-import at.ac.tuwien.dsg.comot.model.SyblDirective;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceEntity;
 import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
-import at.ac.tuwien.dsg.comot.model.type.DirectiveType;
 
 @Component
 public class Coordinator {
@@ -44,7 +46,10 @@ public class Coordinator {
 	private static final Logger log = LoggerFactory.getLogger(Coordinator.class);
 
 	public static final String USER_ID = "Some_User";
+	public static final long TIMEOUT = 30000;
 
+	@Autowired
+	protected ApplicationContext context;
 	@Autowired
 	protected InformationClient infoService;
 	@Autowired
@@ -59,83 +64,79 @@ public class Coordinator {
 	@javax.annotation.Resource
 	public Environment env;
 
-	public String createCloudService(CloudService service) throws EpsException {
+	public String createService(CloudService service) throws Exception {
 
 		String serviceId = infoService.createService(service);
+		log.info("serviceId {}", serviceId);
+		sendLifeCycleWaitForId(new LifeCycleEventModifying(serviceId, serviceId, Action.CREATED, null, service));
+
+		return serviceId;
+
+	}
+
+	public String createServiceFromTemplate(String templateId) throws Exception {
+
+		String serviceId = infoService.createServiceFromTemplate(templateId);
+		CloudService service = infoService.getService(serviceId);
+
+		sendLifeCycleWaitForId(new LifeCycleEventModifying(serviceId, serviceId, Action.CREATED, null, service));
+
 		return serviceId;
 	}
 
-	public String createServiceInstance(String serviceId) throws EpsException, AmqpException, JAXBException {
+	public void startService(String serviceId) throws Exception {
 
-		String instanceId = infoService.createServiceInstance(serviceId);
-
-		log.info("sending CREATE");
-		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.CREATED));
-
-		return instanceId;
+		sendLifeCycleWaitForId(new LifeCycleEvent(serviceId, serviceId, Action.START));
 	}
 
-	public void startServiceInstance(String serviceId, String instanceId) throws IOException, JAXBException {
+	public void stopService(String serviceId) throws Exception {
 
-		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.START));
-
+		sendLifeCycleWaitForId(new LifeCycleEvent(serviceId, serviceId, Action.STOP));
 	}
 
-	public void stopServiceInstance(String serviceId, String instanceId) throws IOException, JAXBException {
+	public void removeService(String serviceId) throws Exception {
 
-		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.STOP));
-
+		sendLifeCycleWaitForId(new LifeCycleEvent(serviceId, serviceId, Action.REMOVED));
 	}
 
-	public void removeServiceInstance(String serviceId, String instanceId) throws AmqpException, JAXBException {
+	public void reconfigureElasticity(String serviceId, CloudService service) throws Exception {
 
-		// infoService.removeServiceInstance(serviceId, instanceId);
-
-		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.REMOVED));
-
-	}
-
-	public void reconfigureElasticity(String serviceId, String instanceId, CloudService service) throws AmqpException,
-			JAXBException {
-
-		sendLifeCycle(Type.SERVICE, new LifeCycleEventModifying(serviceId, instanceId, serviceId,
+		sendLifeCycleWaitForId(new LifeCycleEventModifying(serviceId, serviceId,
 				Action.RECONFIGURE_ELASTICITY, null, service));
 	}
 
-	public void kill(String serviceId, String instanceId) throws AmqpException, JAXBException {
+	public void kill(String serviceId) throws Exception {
 
-		sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, instanceId, serviceId, Action.KILL));
+		sendLifeCycleWaitForId(new LifeCycleEvent(serviceId, serviceId, Action.KILL));
 	}
 
-	public void assignSupportingOsu(String serviceId, String instanceId, String osuInstanceId)
+	public void assignSupportingOsu(String serviceId, String osuInstanceId)
 			throws IOException, JAXBException {
 
-		// infoService.assignSupportingService(serviceId, instanceId, osuInstanceId);
+		log.info("coord assign {} {}", serviceId, osuInstanceId);
 
 		sendCustom(Type.SERVICE,
-				new CustomEvent(serviceId, instanceId, serviceId, EpsEvent.EPS_SUPPORT_REQUESTED.toString(),
-						osuInstanceId, null));
-
+				new CustomEvent(serviceId, serviceId, EpsEvent.EPS_SUPPORT_REQUESTED.toString(), osuInstanceId, null));
 	}
 
-	public void removeAssignmentOfSupportingOsu(String serviceId, String instanceId, String osuInstanceId)
+	public void removeAssignmentOfSupportingOsu(String serviceId, String osuInstanceId)
 			throws ClassNotFoundException, IOException, JAXBException {
 
 		sendCustom(Type.SERVICE,
-				new CustomEvent(serviceId, instanceId, serviceId, EpsEvent.EPS_SUPPORT_REMOVED.toString(),
+				new CustomEvent(serviceId, serviceId, EpsEvent.EPS_SUPPORT_REMOVED.toString(),
 						osuInstanceId, null));
-
 	}
 
 	public String createDynamicService(String epsId) throws AmqpException, JAXBException, EpsException {
 
-		return createServiceInstance(infoService.getOsu(epsId).getService().getId());
+		String serviceId = infoService.createDynamicEpsInstance(epsId);
 
-		// CustomEvent event = new CustomEvent(null, null, null, EpsAction.EPS_DYNAMIC_REQUESTED.toString(),
-		// Constants.EPS_BUILDER, epsId);
-		// StateMessage msg = new StateMessage(event, null, null);
-		// amqp.convertAndSend(Constants.EXCHANGE_DYNAMIC_REGISTRATION, epsId, Utils.asJsonString(msg));
+		sendCustom(Type.SERVICE,
+				new CustomEvent(null, null, EpsEvent.EPS_DYNAMIC_REQUESTED.toString(), null, serviceId));
 
+		log.info("coord {}", serviceId);
+
+		return serviceId;
 	}
 
 	public void removeDynamicService(String epsId, String epsInstanceId) throws AmqpException, JAXBException,
@@ -143,18 +144,16 @@ public class Coordinator {
 
 		OsuInstance osuInatance = infoService.getOsuInstance(epsInstanceId);
 
-		String serviceId = osuInatance.getOsu().getService().getId();
-		String instanceId = osuInatance.getServiceInstance().getId();
+		String serviceId = osuInatance.getService().getId();
 
 		sendCustom(Type.SERVICE,
-				new CustomEvent(serviceId, instanceId, serviceId, EpsEvent.EPS_DYNAMIC_REMOVED.toString(),
+				new CustomEvent(serviceId, serviceId, EpsEvent.EPS_DYNAMIC_REMOVED.toString(),
 						Constants.EPS_BUILDER, null));
 
 	}
 
 	public void triggerCustomEvent(
 			String serviceId,
-			String csInstanceId,
 			String epsId,
 			String eventId,
 			String optionalInput) throws AmqpException, JAXBException {
@@ -163,13 +162,46 @@ public class Coordinator {
 			return;
 		}
 
-		sendCustom(Type.SERVICE, new CustomEvent(serviceId, csInstanceId, serviceId, eventId, epsId, optionalInput));
+		sendCustom(Type.SERVICE, new CustomEvent(serviceId, serviceId, eventId, epsId, optionalInput));
+
+	}
+
+	protected void sendLifeCycleWaitForId(final LifeCycleEvent event) throws Exception {
+
+		final String evantId = event.getEventId();
+
+		CoordinatorAdapter processor = new CoordinatorAdapter(event.getServiceId(), this) {
+			@Override
+			public void process(AbstractEvent event, boolean exception, ComotMessage msg) {
+				if (event.getEventId().equals(evantId)) {
+
+					response = msg;
+
+					if (exception) {
+						signal.result = false;
+					} else {
+						log.info("OK");
+						signal.result = true;
+					}
+				}
+			}
+
+			@Override
+			public void sendInternal() throws AmqpException, JAXBException {
+				coordinator.sendLifeCycle(Type.SERVICE, event);
+			}
+		};
+
+		Manager manager = context.getBean(SingleQueueManager.class);
+		manager.start("C_" + UUID.randomUUID().toString(), processor);
+
+		processor.send();
 
 	}
 
 	protected void sendLifeCycle(Type targetLevel, LifeCycleEvent event) throws AmqpException, JAXBException {
 
-		String bindingKey = event.getCsInstanceId() + "." + event.getClass().getSimpleName() + "." + event.getAction()
+		String bindingKey = event.getServiceId() + "." + LifeCycleEvent.class.getSimpleName() + "." + event.getAction()
 				+ "." + targetLevel;
 
 		// log.info(logId() +"SEND key={}", targetLevel);
@@ -182,7 +214,7 @@ public class Coordinator {
 
 	protected void sendCustom(Type targetLevel, CustomEvent event) throws AmqpException, JAXBException {
 
-		String bindingKey = event.getCsInstanceId() + "." + event.getClass().getSimpleName() + "."
+		String bindingKey = event.getServiceId() + "." + CustomEvent.class.getSimpleName() + "."
 				+ event.getCustomEvent() + "." + targetLevel;
 
 		// log.info(logId() +"SEND key={}", targetLevel);
@@ -191,4 +223,5 @@ public class Coordinator {
 
 		amqp.convertAndSend(Constants.EXCHANGE_REQUESTS, bindingKey, Utils.asJsonString(event));
 	}
+
 }

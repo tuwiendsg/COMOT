@@ -31,7 +31,7 @@ public class AppContextServrec extends Neo4jConfiguration {
 
 	@Autowired
 	protected GraphDatabaseService db;
-	
+
 	public AppContextServrec() {
 		setBasePackage("at.ac.tuwien.dsg.comot.m.recorder");
 	}
@@ -41,5 +41,5 @@ public class AppContextServrec extends Neo4jConfiguration {
 		log.info("GraphDatabaseService:  {}", db);
 		return new ExecutionEngine(db);
 	}
-	
+
 }

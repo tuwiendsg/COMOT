@@ -56,14 +56,14 @@ public class UiAdapter extends Processor {
 	}
 
 	@Override
-	public void onLifecycleEvent(StateMessage msg, String serviceId, String instanceId, String groupId, Action action,
+	public void onLifecycleEvent(StateMessage msg, String serviceId, String groupId, Action action,
 			String originId, CloudService service, Map<String, Transition> transitions) throws Exception {
 
 		sendToClient(msg);
 	}
 
 	@Override
-	public void onCustomEvent(StateMessage msg, String serviceId, String instanceId, String groupId, String event,
+	public void onCustomEvent(StateMessage msg, String serviceId, String groupId, String event,
 			String epsId, String originId, String optionalMessage) throws Exception {
 
 		sendToClient(msg);
@@ -71,7 +71,7 @@ public class UiAdapter extends Processor {
 	}
 
 	@Override
-	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String instanceId, String originId)
+	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String originId)
 			throws Exception {
 		// TODO Auto-generated method stub
 
@@ -89,8 +89,8 @@ public class UiAdapter extends Processor {
 			if (msg.isLifeCycleDefined()) {
 				LifeCycleEvent eventLc = (LifeCycleEvent) msg.getEvent();
 
-				Set<OsuInstance> osus = infoService.getSupportingServices(eventLc.getCsInstanceId());
-				msg.getService().getInstancesList().get(0).setSupport(osus);
+				Set<OsuInstance> osus = infoService.getService(eventLc.getServiceId()).getSupport();
+				msg.getService().setSupport(osus);
 			}
 
 			String msgForClient = Utils.asJsonString(msg);
@@ -118,8 +118,12 @@ public class UiAdapter extends Processor {
 				OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
 				eventBuilder.name("ping");
 				eventBuilder.data(String.class, "ping");
-				eventOutput.write(eventBuilder.build());
 
+				if (eventOutput.isClosed()) {
+					clean();
+				} else {
+					eventOutput.write(eventBuilder.build());
+				}
 			} catch (Throwable e) {
 				break;
 			}

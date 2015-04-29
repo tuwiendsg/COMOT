@@ -60,7 +60,7 @@ public class Monitoring extends Processor {
 	}
 
 	@Override
-	public void onLifecycleEvent(StateMessage msg, String serviceId, String instanceId, String groupId,
+	public void onLifecycleEvent(StateMessage msg, String serviceId, String groupId,
 			Action action, String optionalMessage, CloudService service, Map<String, Transition> transitions)
 			throws Exception {
 
@@ -69,12 +69,10 @@ public class Monitoring extends Processor {
 		// if not -> start
 		if (action == Action.DEPLOYED) {
 
-			CloudService servicefromInfo = infoService.getServiceInstance(serviceId, instanceId);
-			servicefromInfo.setId(instanceId);
-			servicefromInfo.setName(instanceId);
+			CloudService servicefromInfo = infoService.getService(serviceId);
 
-			if (monitoring.isMonitored(instanceId)) {
-				monitoring.updateService(instanceId, servicefromInfo);
+			if (monitoring.isMonitored(serviceId)) {
+				monitoring.updateService(serviceId, servicefromInfo);
 			} else {
 				monitoring.startMonitoring(servicefromInfo);
 			}
@@ -82,47 +80,45 @@ public class Monitoring extends Processor {
 			// when action UPDATE_FINISHED or EL_CHANGE_FINISHED -> update
 		} else if (action == Action.ELASTIC_CHANGE_FINISHED || action == Action.MAINTENANCE_FINISHED) {
 
-			CloudService servicefromInfo = infoService.getServiceInstance(serviceId, instanceId);
-			servicefromInfo.setId(instanceId);
-			servicefromInfo.setName(instanceId);
+			CloudService servicefromInfo = infoService.getService(serviceId);
 
-			monitoring.updateService(instanceId, servicefromInfo);
+			monitoring.updateService(serviceId, servicefromInfo);
 
 			// when current FINAL and change TRUE -> stop
 		} else if (action == Action.UNDEPLOYED) {
-			if (monitoring.isMonitored(instanceId)) {
-				monitoring.stopMonitoring(instanceId);
+			if (monitoring.isMonitored(serviceId)) {
+				monitoring.stopMonitoring(serviceId);
 			}
 
 		} else if (action == Action.KILL) {
-			if (monitoring.isMonitored(instanceId)) {
-				monitoring.stopMonitoring(instanceId);
+			if (monitoring.isMonitored(serviceId)) {
+				monitoring.stopMonitoring(serviceId);
 			}
 		}
 
 	}
 
 	@Override
-	public void onCustomEvent(StateMessage msg, String serviceId, String instanceId, String groupId, String event,
+	public void onCustomEvent(StateMessage msg, String serviceId, String groupId, String event,
 			String epsId, String originId, String optionalMessage) throws Exception {
 
 		State stateService = msg.getTransitions().get(serviceId).getCurrentState();
 
 		if (EpsEvent.EPS_SUPPORT_ASSIGNED.toString().equals(event)) {
-			startIfActive(instanceId, stateService);
+			startIfActive(serviceId, stateService);
 
 		} else if (EpsEvent.EPS_SUPPORT_REMOVED.toString().equals(event)) {
 
-			if (monitoring.isMonitored(instanceId)) {
-				monitoring.stopMonitoring(instanceId);
+			if (monitoring.isMonitored(serviceId)) {
+				monitoring.stopMonitoring(serviceId);
 			}
 
 		} else if (event.equals(ComotEvent.MELA_START.toString())) {
-			startIfActive(instanceId, stateService);
+			startIfActive(serviceId, stateService);
 
 		} else if (event.equals(ComotEvent.MELA_STOP.toString())) {
-			if (monitoring.isMonitored(instanceId)) {
-				monitoring.stopMonitoring(instanceId);
+			if (monitoring.isMonitored(serviceId)) {
+				monitoring.stopMonitoring(serviceId);
 			}
 
 		} else if (event.equals(ComotEvent.SET_MCR.toString())) {
@@ -135,15 +131,13 @@ public class Monitoring extends Processor {
 
 	}
 
-	protected void startIfActive(String instanceId, State state) throws EpsException, ComotException,
+	protected void startIfActive(String serviceId, State state) throws EpsException, ComotException,
 			ClassNotFoundException, IOException {
 
 		if (state == State.RUNNING || state == State.ELASTIC_CHANGE || state == State.MAINTENANCE) {
-			if (!monitoring.isMonitored(instanceId)) {
+			if (!monitoring.isMonitored(serviceId)) {
 
-				CloudService servicefromInfo = infoService.getServiceInstance(instanceId);
-				servicefromInfo.setId(instanceId);
-				servicefromInfo.setName(instanceId);
+				CloudService servicefromInfo = infoService.getService(serviceId);
 
 				monitoring.startMonitoring(servicefromInfo);
 			}
@@ -151,8 +145,7 @@ public class Monitoring extends Processor {
 	}
 
 	@Override
-	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String instanceId, String originId)
-			throws Exception {
+	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String originId) throws Exception {
 		// TODO Auto-generated method stub
 
 	}

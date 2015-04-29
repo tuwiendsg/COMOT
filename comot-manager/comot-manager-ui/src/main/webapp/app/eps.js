@@ -7,147 +7,69 @@ define(function(require) {
 		// properties
 		services : ko.observableArray(),
 		// functions
-		newService : newService,
-		viewService : viewService,
-		removeService : removeService,
-		newInstance : newInstance,
-		viewInstance : viewInstance,
-		removeInstance : removeInstance,
+		newEpsInstance : newEpsInstance,
+		removeEpsInstance : removeEpsInstance,
 		// life-cycle
-		detached : function() {
-
-		},
-		deactivate : function() {
-
-		},
 		activate : function() {
-			model.services.removeAll();
-
-			comot.getEpsDynamic(function(epses) {
-				comot.getEpsInstancesDynamic(function(epsesInstances) {
-
-					var viewEpses = [];
-
-					for (var i = 0; i < epses.length; i++) {
-
-						var eps = epses[i];
-						var instances = eps.service.ServiceInstances.Instance;
-						var map = {}
-
-						console.log(eps)
-
-						viewEpses[i] = {
-							'id' : eps.id,
-							'serviceId' : eps.service.id,
-							'instances' : ko.observableArray()
-						};
-
-						for (var j = 0; j < instances.length; j++) {
-							map[instances[j].id] = {
-								'id' : "",
-								'serviceInstnaceId' : instances[j].id,
-								'dateCreatedFormated' : utils.longToDateString(instances[j].dateCreated),
-							};
-						}
-
-						for (var j = 0; j < epsesInstances.length; j++) {
-							var oneEpsIn = epsesInstances[j];
-
-							if (oneEpsIn.osu.id === eps.id) {
-								map[oneEpsIn.serviceInstance.id].id = oneEpsIn.id;
-							}
-						}
-
-						for ( var key in map) {
-							viewEpses[i].instances.push(map[key]);
-						}
-
-					}
-					model.services(viewEpses);
-				});
-			});
-
-			// comot.getEpsInstancesDynamic(function(instances) {
-			//
-			// var map = {}
-			//
-			// for (var i = 0; i < instances.length; i++) {
-			// map[instances[i].osu.id] = instances[i].osu;
-			// }
-			//
-			// for ( var osuId in map) {
-			//
-			// var viewInstances = [];
-			//
-			// for (var j = 0; j < instances.length; j++) {
-			// viewInstances[j] = {
-			// 'id' : instances[j].id,
-			// 'serviceInstnaceId' : instances[j].serviceInstance.id,
-			// 'dateCreatedFormated' : utils.longToDateString(instances[j].serviceInstance.dateCreated),
-			// };
-			// }
-			//
-			// model.services.push({
-			// 'id' : osuId,
-			// 'serviceId' : map[osuId].service.id,
-			// 'instances' : ko.observableArray(viewInstances)
-			// });
-			//
-			// }
-			// })
+			refreshEps();
 		},
-		attached : function() {
-
-		}
 	}
 
 	return model;
 
-	// SERVICE
-	function newService() {
+	function refreshEps() {
+		model.services.removeAll();
 
-	}
+		comot.getEpsDynamic(function(epses) {
+			comot.getEpsInstancesDynamic(function(epsesInstances) {
 
-	function viewService(serviceId) {
+				var viewEpses = [];
 
-	}
+				for (var i = 0; i < epses.length; i++) {
 
-	function removeService(serviceId) {
+					var eps = epses[i];
+					var map = {}
+					var epsInstances = [];
 
-	}
+					viewEpses[i] = {
+						'id' : eps.id,
+						'templateId' : eps.serviceTemplate.id,
+						'instances' : ko.observableArray()
+					};
 
-	function newInstance(epsId) {
+					for (var j = 0; j < epsesInstances.length; j++) {
+						var oneEpsIn = epsesInstances[j];
 
-		comot.createDynamicEps(epsId, function(data) {
-			var serviceInstanceId = data;
-			var newInstance = {
-				'id' : "",
-				'serviceInstnaceId' : serviceInstanceId,
-				'dateCreatedFormated' : ""
-			}
+						if (oneEpsIn.osu.id === eps.id) {
+							epsInstances.push({
+								'id' : oneEpsIn.id,
+								'serviceId' : oneEpsIn.service.id,
+								'dateCreatedFormated' : utils.longToDateString(oneEpsIn.service.dateCreated),
+							});
+						}
+					}
 
-			for (var i = 0; i < model.services().length; i++) {
-				if (model.services()[i].id === epsId) {
-					// newInstance.dateCreatedFormated = utils.longToDateString(newInstance.dateCreated);
-					model.services()[i].instances.push(newInstance);
-					break;
+					viewEpses[i].instances(epsInstances);
 				}
-			}
 
+				model.services(viewEpses);
+			});
+		});
+
+	}
+
+	function newEpsInstance(eps) {
+
+		comot.createDynamicEps(eps.id, function(data) {
+			refreshEps();
 		})
 
 	}
 
-	// INSTANCE
-	function viewInstance(serviceId, instanceId) {
-		console.log("serviceId: " + serviceId + ", instance:" + instanceId);
-		console.log("view");
-	}
+	function removeEpsInstance(epsId, epsInstanceId) {
 
-	function removeInstance(epsId, epsInstanceId) {
+		console.log(epsId + " " + epsInstanceId);
 
-		console.log(epsId +" "+ epsInstanceId);
-		
 		comot.removeDynamicEps(epsId, epsInstanceId, function(data) {
 
 			for (var i = 0; i < model.services().length; i++) {
@@ -156,15 +78,6 @@ define(function(require) {
 					model.services()[i].instances.remove(function(item) {
 						return item.id === epsInstanceId;
 					});
-
-//					for (var j = 0; j < model.services()[i].instances.length; j++) {
-//						var epsInstance = model.services()[i].instances()[j];
-//
-//						if (epsInstance.id === epsInstanceId) {
-//							model.services()[i].instances.remove(epsInstance);
-//						}
-//					}
-
 				}
 			}
 		}, "Could not remove the dynamic EPS");
