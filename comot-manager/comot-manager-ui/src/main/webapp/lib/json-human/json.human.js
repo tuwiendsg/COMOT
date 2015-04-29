@@ -1,4 +1,3 @@
-
 /*globals define*/
 (function (root, factory) {
     "use strict";
