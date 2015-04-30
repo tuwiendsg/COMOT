@@ -77,7 +77,7 @@ public class MelaClient extends ServiceClient {
 		try {
 			log.debug("MonitoredElement: {}", UtilsCs.asString(element));
 		} catch (JAXBException e) {
-			e.printStackTrace();
+			log.error("{}", e);
 		}
 
 		Response response = client.target(getBaseUri())

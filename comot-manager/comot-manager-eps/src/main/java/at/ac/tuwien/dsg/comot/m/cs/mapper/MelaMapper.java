@@ -93,33 +93,6 @@ public class MelaMapper {
 			}
 		}
 
-		// add relationships TODO
-		// for (EntityRelationship rel : cloudService.getRelationships()) {
-		//
-		// log.trace("original from={} to={}", rel.getFrom(), rel.getTo());
-		//
-		// if (resolver.isServicePartRelationship(rel)) {
-		//
-		// String fromPartId = resolver.resolveToServicePart(rel.getFrom()).getId();
-		// String toPartId = resolver.resolveToServicePart(rel.getTo()).getId();
-		//
-		// log.trace("part from={} to={}", fromPartId, toPartId);
-		//
-		// if (map.containsKey(fromPartId) && map.containsKey(toPartId)
-		// && !rel.getType().equals(RelationshipType.LOCAL)) {
-		//
-		// tempRel = new Relationship()
-		// .withFrom(new MonitoredElement(fromPartId))
-		// .withTo(new MonitoredElement(toPartId))
-		// .withType(resolveType(rel.getType()));
-		//
-		// log.trace("inserted relationship from={} to={}", fromPartId, toPartId);
-		//
-		// map.get(fromPartId).getRelationships().add(tempRel);
-		// }
-		// }
-		// }
-
 		log.debug("Final mapping: {}", Utils.asXmlStringLog(root));
 
 		return root;
@@ -191,8 +164,7 @@ public class MelaMapper {
 		List<Requirement> requirements = new ArrayList<>();
 		Constraint rConstraint = SYBLDirectiveMappingFromXML.mapSYBLAnnotationToXMLConstraint(constraint);
 
-		// log.trace("Constraint parsed from the string '{}' {}", constraint, Utils.asJsonString(rConstraint));
-
+		
 		for (BinaryRestrictionsConjunction binaryRestrictions : rConstraint.getToEnforce().getBinaryRestriction()) {
 			for (BinaryRestriction binaryRestriction : binaryRestrictions.getBinaryRestrictions()) {
 

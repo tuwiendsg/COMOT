@@ -39,7 +39,7 @@ public class ToscaConverters {
 
 		@Override
 		public QName convertTo(String source, Type<QName> destinationType) {
-			return toSalsaQName(source.toString());
+			return toSalsaQName(source);
 		}
 
 		@Override

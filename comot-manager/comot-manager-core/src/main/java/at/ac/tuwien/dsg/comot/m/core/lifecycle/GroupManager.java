@@ -166,40 +166,6 @@ public class GroupManager {
 		}
 	}
 
-	// protected void removeGroup(Action action, String groupId) throws ComotLifecycleException, ClassNotFoundException,
-	// IOException {
-	//
-	// Group result = checkAndExecute(action, groupId);
-	//
-	// if(serviceId.equals(groupId)){
-	// serviceGroup = null;
-	// return;
-	// }
-	//
-	// serviceGroup.removeMemberNested(groupId);
-	//
-	// for (Group member : result.getAllMembersNested()) {
-	// lastStates.remove(member.getId());
-	// }
-	// }
-
-	// protected List<String> removeAllGroupsInstances(Action action, String groupId) throws ComotLifecycleException,
-	// ClassNotFoundException, IOException {
-	//
-	// Group result = checkAndExecute(action, groupId);
-	//
-	// List<String> list = new ArrayList<>();
-	//
-	// for (Group member : result.getAllMembersNested()) {
-	// if (member.getType() == Type.INSTANCE) {
-	// member.getParent().getMembers().remove(member);
-	// list.add(member.getId());
-	// lastStates.remove(member.getId());
-	// }
-	// }
-	// return list;
-	// }
-
 	public Map<String, Transition> extractTransitions(AbstractEvent event) throws ClassNotFoundException,
 			IOException {
 

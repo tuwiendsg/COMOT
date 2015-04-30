@@ -100,7 +100,7 @@ public class RsyblClient extends ServiceClient {
 		try {
 			log.debug("serviceDeployment {}", UtilsCs.asString(deploymentDescription));
 		} catch (JAXBException e) {
-			e.printStackTrace();
+			log.error("{}", e);
 		}
 
 		Response response = client.target(getBaseUri())

@@ -210,28 +210,6 @@ public class InitData {
 		} catch (JAXBException | IOException e) {
 			log.error("{}", e);
 		}
-
-		// try {
-		// infoService.createTemplate(mapperTosca.createModel(UtilsCs
-		// .loadTosca(fileBase + "test/helloElasticity/HelloElasticity_ShortNames.xml")));
-		// } catch (JAXBException | IOException e) {
-		// e.printStackTrace();
-		// }
-		//
-		// try {
-		// infoService.createTemplate(mapperTosca.createModel(UtilsCs
-		// .loadTosca(fileBase + "test/tosca/daas_m2m_fromSalsa.xml")));
-		// } catch (JAXBException | IOException e) {
-		// e.printStackTrace();
-		// }
-		//
-		// try {
-		// infoService.createTemplate(mapperTosca.createModel(UtilsCs
-		// .loadTosca(fileBase + "test/eval/HelloElasticity_error.xml")));
-		// } catch (JAXBException | IOException e) {
-		// e.printStackTrace();
-		// }
-
 	}
 
 }

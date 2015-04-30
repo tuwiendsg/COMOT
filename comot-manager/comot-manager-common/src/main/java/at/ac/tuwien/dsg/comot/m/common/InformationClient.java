@@ -151,24 +151,6 @@ public class InformationClient {
 		return instances;
 	}
 
-	// public List<ServiceInstance> getEpsServiceInstancesWithoutOsuInstance(String osuId) throws EpsException {
-	//
-	// Set<ServiceInstance> allEpsServiceInstances = getOsu(osuId).getService().getInstances();
-	// Set<String> allEpsServiceInstanceWithOsuInstancIds = new HashSet<>();
-	//
-	// for (OsuInstance inst : getOsuInstancesForOsu(osuId)) {
-	// allEpsServiceInstanceWithOsuInstancIds.add(inst.getServiceInstance().getId());
-	// }
-	//
-	// for (Iterator<ServiceInstance> iterator = allEpsServiceInstances.iterator(); iterator.hasNext();) {
-	// ServiceInstance sInst = iterator.next();
-	// if (allEpsServiceInstanceWithOsuInstancIds.contains(sInst)) {
-	// iterator.remove();
-	// }
-	// }
-	// return new ArrayList<>(allEpsServiceInstances);
-	// }
-
 	public OsuInstance getOsuInstance(String osuInstanceId) throws EpsException {
 		log.info("getOsuInstance " + osuInstanceId);
 		for (OsuInstance instance : client.getOsuInstances()) {
@@ -331,23 +313,6 @@ public class InformationClient {
 			return false;
 		}
 
-	}
-
-	public String createDynamicEpsInstance(String epsId) throws EpsException {
-
-		// log.info("epsId {}", epsId);
-		//
-		// String instanceId = createOsuInstance(epsId);
-		// log.info("instanceId {}", instanceId);
-		//
-		// String templateId = getOsu(epsId).getServiceTemplate().getId();
-		// log.info("templateId {}", templateId);
-		//
-		// String serviceId = client.createServiceFromTemplate(templateId);
-
-		String serviceId = createOsuInstance(epsId);
-
-		return serviceId;
 	}
 
 }
