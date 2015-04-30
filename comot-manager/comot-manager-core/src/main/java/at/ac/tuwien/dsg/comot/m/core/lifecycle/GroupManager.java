@@ -47,7 +47,7 @@ import at.ac.tuwien.dsg.comot.model.type.State;
 @Scope("prototype")
 public class GroupManager {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private static final Logger log = LoggerFactory.getLogger(GroupManager.class);
 
 	protected String serviceId;
 	protected Group serviceGroup;
