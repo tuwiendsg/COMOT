@@ -28,6 +28,9 @@ public class LifeCycleFactory {
 	protected static LifeCycle serviceLc;
 	protected static LifeCycle othersLc;
 
+	private LifeCycleFactory() {
+	}
+
 	static {
 
 		// SERVICE

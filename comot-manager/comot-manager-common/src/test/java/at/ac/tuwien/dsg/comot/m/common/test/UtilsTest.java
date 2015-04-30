@@ -37,7 +37,7 @@ public class UtilsTest {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				log.error("{}", e);
 			}
 		}
 	}
@@ -48,7 +48,7 @@ public class UtilsTest {
 			Thread.sleep(seconds * 1000);
 
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			log.error("{}", e);
 		}
 	}
 

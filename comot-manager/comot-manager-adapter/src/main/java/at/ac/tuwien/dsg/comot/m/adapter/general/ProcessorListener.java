@@ -113,7 +113,7 @@ public class ProcessorListener implements MessageListener {
 		} catch (Exception e) {
 			try {
 				processor.getManager().sendException(serviceId, e);
-			} catch (Throwable e1) {
+			} catch (Exception e1) {
 				log.error("{}", e1);
 			}
 			log.error("{}", e);

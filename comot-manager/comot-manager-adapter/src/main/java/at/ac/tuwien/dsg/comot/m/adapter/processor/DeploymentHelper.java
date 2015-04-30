@@ -107,7 +107,7 @@ public class DeploymentHelper {
 
 			} while (notAllRunning);
 			log.info("stopped checking");
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			log.error("{}", e);
 		}
 
@@ -158,7 +158,7 @@ public class DeploymentHelper {
 			} while (true);
 		} catch (InterruptedException e) {
 			log.info("Task interrupted as expected");
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			log.error("{}", e);
 		}
 		return null;

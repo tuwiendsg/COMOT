@@ -129,7 +129,7 @@ public class PerInstanceQueueManager extends Manager {
 				}
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error("{}", e);
 			}
 		}
 	}
@@ -180,7 +180,7 @@ public class PerInstanceQueueManager extends Manager {
 			try {
 				removeInstanceListener(instanceId);
 			} catch (EpsException e) {
-				e.printStackTrace();
+				log.error("{}", e);
 			}
 		}
 

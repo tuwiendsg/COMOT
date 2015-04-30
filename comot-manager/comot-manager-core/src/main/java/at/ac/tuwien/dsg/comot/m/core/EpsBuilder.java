@@ -91,7 +91,7 @@ public class EpsBuilder extends Processor {
 
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error("{}", e);
 			}
 		}
 	}

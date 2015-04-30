@@ -24,6 +24,8 @@ import java.net.URISyntaxException;
 
 import javax.xml.bind.JAXBException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -49,6 +51,8 @@ import at.ac.tuwien.dsg.comot.model.type.OsuType;
 
 @Component
 public class InitData {
+	
+	private static final Logger log = LoggerFactory.getLogger(InitData.class);
 
 	@Autowired
 	protected InformationClient infoService;
@@ -153,7 +157,7 @@ public class InitData {
 			infoService.addOsu(monitoringDynamic);
 
 		} catch (JAXBException | IOException e) {
-			e.printStackTrace();
+			log.error("{}", e);
 		}
 
 		// DYNAMIC EPS RSYBL
@@ -180,7 +184,7 @@ public class InitData {
 			infoService.addOsu(rsyblDynamic);
 
 		} catch (JAXBException | IOException e) {
-			e.printStackTrace();
+			log.error("{}", e);
 		}
 
 		// DYNAMIC EPS SALSA
@@ -197,14 +201,14 @@ public class InitData {
 			infoService.addOsu(salsaDynamic);
 
 		} catch (JAXBException | IOException e) {
-			e.printStackTrace();
+			log.error("{}", e);
 		}
 
 		try {
 			infoService.createTemplate(mapperTosca.createModel(UtilsCs
 					.loadTosca(fileBase + "init/HelloElasticity.xml")));
 		} catch (JAXBException | IOException e) {
-			e.printStackTrace();
+			log.error("{}", e);
 		}
 
 		// try {

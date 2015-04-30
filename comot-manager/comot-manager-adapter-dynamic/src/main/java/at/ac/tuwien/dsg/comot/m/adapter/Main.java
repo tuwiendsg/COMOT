@@ -48,7 +48,7 @@ import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 
 public class Main {
 
-	protected static Logger log = LoggerFactory.getLogger(Main.class);
+	private static final Logger log = LoggerFactory.getLogger(Main.class);
 
 	public static final String SERVICE_INSTANCE_AS_PROPERTY = "service";
 	public static final String PROPERTIES_FILE = "./salsa.environment";
@@ -127,8 +127,7 @@ public class Main {
 				showHelp(options);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("ERROR: " + e.getClass() + ", msg: " + e.getLocalizedMessage());
+			log.error("{}", e);
 			showHelp(options);
 		}
 	}
@@ -149,7 +148,7 @@ public class Main {
 	private static void showHelp(Options options) {
 		HelpFormatter h = new HelpFormatter();
 		h.printHelp("java -jar epsAdapter.jar -[m|r] -mh <host> -ih <host> -ip <port>", options);
-		System.exit(-1);
+		throw new IllegalArgumentException();
 	}
 
 	private static void setServiceInstanceId() {
@@ -171,14 +170,14 @@ public class Main {
 				try {
 					input.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					log.error("{}", e);
 				}
 			}
 		}
 
 		if (serviceId == null) {
 			log.error("there is no property '{}'", SERVICE_INSTANCE_AS_PROPERTY);
-			System.exit(-1);
+			throw new IllegalArgumentException("there is no property " + SERVICE_INSTANCE_AS_PROPERTY);
 		}
 
 	}
@@ -186,11 +185,6 @@ public class Main {
 	public static void setParticipantId() throws EpsException {
 
 		participantId = info.getOsuInstanceByServiceId(serviceId).getId();
-
-		// templateId = info.getService(serviceId);
-		// OfferedServiceUnit osu = info.getOsuByServiceId(templateId);
-		// participantId = info.createOsuInstance(osu.getId());
-		// info.createOsuInstanceDynamic(osu.getId(), serviceId, participantId);
 
 	}
 

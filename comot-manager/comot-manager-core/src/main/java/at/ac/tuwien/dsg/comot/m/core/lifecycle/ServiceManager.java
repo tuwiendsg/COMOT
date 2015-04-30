@@ -69,7 +69,7 @@ import at.ac.tuwien.dsg.comot.model.type.State;
 @Scope("prototype")
 public class ServiceManager {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private static final Logger log = LoggerFactory.getLogger(ServiceManager.class);
 
 	public static final String LC_MANAGER_QUEUE = "LC_MANAGER_QUEUE_";
 
@@ -149,9 +149,9 @@ public class ServiceManager {
 			} catch (Exception e) {
 				try {
 					sendException(e);
-					e.printStackTrace();
+					log.error("{}", e);
 				} catch (AmqpException | JAXBException e1) {
-					e1.printStackTrace();
+					log.error("{}", e);
 				}
 			}
 		}

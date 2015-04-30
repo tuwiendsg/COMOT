@@ -77,7 +77,7 @@ public class RsyblEventsTest {
 					}
 
 				} catch (JMSException e) {
-					e.printStackTrace();
+					log.error("{}", e);
 				}
 			}
 		};

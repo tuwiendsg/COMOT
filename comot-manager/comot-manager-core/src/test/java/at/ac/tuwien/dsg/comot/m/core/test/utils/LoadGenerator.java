@@ -86,12 +86,9 @@ public class LoadGenerator {
 							String result = response.readEntity(String.class);
 							int status = response.getStatus();
 
-							// log.info("ID {} {}: {}", id, status, result);
 						}
-						// } catch (InterruptedException e) {
-						// log.info("Requeste thread id was interrupted");
-					} catch (Throwable t) {
-						t.printStackTrace();
+					} catch (Exception e) {
+						log.error("{}", e);
 					}
 				}
 

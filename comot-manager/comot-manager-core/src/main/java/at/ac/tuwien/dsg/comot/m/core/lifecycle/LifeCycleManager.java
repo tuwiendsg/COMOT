@@ -161,7 +161,7 @@ public class LifeCycleManager {
 				}
 
 			} catch (JAXBException | ClassNotFoundException | AmqpException | IOException | EpsException e) {
-				e.printStackTrace();
+				log.error("{}", e);
 			}
 		}
 	}

@@ -120,7 +120,7 @@ public class UiAdapter extends Processor {
 			// eventBuilder.name(MSG_LIFE_CYCLE);
 			eventOutput.write(eventBuilder.build());
 
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			log.warn("Throwable -> cleanAdapter()");
 			clean();
 		}
@@ -142,7 +142,7 @@ public class UiAdapter extends Processor {
 				} else {
 					eventOutput.write(eventBuilder.build());
 				}
-			} catch (Throwable e) {
+			} catch (Exception e) {
 				break;
 			}
 			Thread.sleep(10000);
@@ -161,7 +161,7 @@ public class UiAdapter extends Processor {
 				eventOutput.close();
 			}
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			log.error("{}", e1);
 		}
 	}
 

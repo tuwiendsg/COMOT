@@ -231,7 +231,7 @@ public class ControlClientRsybl implements ControlClient {
 						}
 
 					} catch (JMSException e) {
-						e.printStackTrace();
+						log.error("{}", e);
 					}
 				}
 			};
