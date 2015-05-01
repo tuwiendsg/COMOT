@@ -29,7 +29,8 @@ import javax.xml.bind.JAXBException;
 import org.junit.Before;
 import org.junit.Test;
 import org.oasis.tosca.Definitions;
-import org.springframework.amqp.AmqpException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -58,6 +59,8 @@ import com.rabbitmq.client.ConsumerCancelledException;
 import com.rabbitmq.client.ShutdownSignalException;
 
 public class ControllerTest extends AbstractTest {
+
+	private static final Logger LOG = LoggerFactory.getLogger(ControllerTest.class);
 
 	protected String serviceId;
 
@@ -94,7 +97,7 @@ public class ControllerTest extends AbstractTest {
 		// deploy
 		assertFalse(deployment.isManaged(serviceId));
 
-		log.info("staticDeplId " + staticDeplId);
+		LOG.info("staticDeplId " + staticDeplId);
 
 		coordinator.assignSupportingOsu(serviceId, staticDeplId);
 		agent.waitForCustomEvent(EpsEvent.EPS_SUPPORT_ASSIGNED.toString());
@@ -114,16 +117,16 @@ public class ControllerTest extends AbstractTest {
 		coordinator.assignSupportingOsu(serviceId, staticControlId);
 
 		agent.waitForCustomEvent(EpsEvent.EPS_SUPPORT_ASSIGNED.toString());
-		log.info("Controller assigned");
+		LOG.info("Controller assigned");
 
 		// UtilsTest.sleepSeconds(10);
 		// assertTrue(control.isControlled(instanceId));
-		// log.info("Controller active");
+		// LOG.info("Controller active");
 		//
 		// generator.startLoadTunel();
 		//
 		// agent.waitForLifeCycleEvent(Action.ELASTIC_CHANGE_STARTED);
-		// log.info("Controller ELASTIC_CHANGE_STARTED");
+		// LOG.info("Controller ELASTIC_CHANGE_STARTED");
 		//
 		// generator.stop();
 
@@ -132,7 +135,7 @@ public class ControllerTest extends AbstractTest {
 	}
 
 	@Test
-	public void testInsertExistingAndControl() throws AmqpException, ShutdownSignalException,
+	public void testInsertExistingAndControl() throws ShutdownSignalException,
 			ConsumerCancelledException,
 			EpsException, JAXBException, ComotException, IOException, InterruptedException {
 
@@ -163,12 +166,11 @@ public class ControllerTest extends AbstractTest {
 	@Autowired
 	protected RabbitTemplate amqp;
 
-	public void insertExistingRunningInstanceOfThisServiceToSystem(String serviceId) throws AmqpException,
-			EpsException,
-			JAXBException, ComotException, IOException, ShutdownSignalException, ConsumerCancelledException,
+	public void insertExistingRunningInstanceOfThisServiceToSystem(String serviceId) throws JAXBException,
+			ComotException, IOException, ShutdownSignalException, ConsumerCancelledException,
 			InterruptedException {
 
-		log.info("serviceId {}", serviceId);
+		LOG.info("serviceId {}", serviceId);
 
 		assertTrue(deployment.isManaged(serviceId));
 		assertTrue(deployment.isRunning(serviceId));

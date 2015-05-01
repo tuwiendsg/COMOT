@@ -31,8 +31,6 @@ import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.Type;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
@@ -45,8 +43,6 @@ import at.ac.tuwien.dsg.comot.rsybl.SYBLDirective;
 
 @Component
 public class RsyblOrika {
-
-	protected final Logger log = LoggerFactory.getLogger(RsyblOrika.class);
 
 	public static final String SEPARATOR_ID = ":";
 	public static final String SEPARATOR_DIRECTIVES = ";";
@@ -110,6 +106,7 @@ public class RsyblOrika {
 			for (Object obj : source) {
 				directive = (SyblDirective) obj;
 				String strDir = directive.getId() + SEPARATOR_ID + directive.getDirective();
+				String prevDir;
 
 				if (!strDir.trim().endsWith(SEPARATOR_DIRECTIVES)) {
 					strDir += SEPARATOR_DIRECTIVES;
@@ -118,33 +115,20 @@ public class RsyblOrika {
 				switch (directive.getType()) {
 
 				case CONSTRAINT:
-					if (null == rDirecitve.getConstraints()) {
-						rDirecitve.setConstraints(strDir);
-					} else {
-						rDirecitve.setConstraints(rDirecitve.getConstraints() + strDir);
-					}
+					prevDir = rDirecitve.getConstraints();
+					rDirecitve.setConstraints(((prevDir == null) ? "" : prevDir) + strDir);
 					break;
 				case STRATEGY:
-					if (null == rDirecitve.getStrategies()) {
-						rDirecitve.setStrategies(strDir);
-					} else {
-						rDirecitve.setStrategies(rDirecitve.getStrategies() + strDir);
-					}
+					prevDir = rDirecitve.getStrategies();
+					rDirecitve.setStrategies(((prevDir == null) ? "" : prevDir) + strDir);
 					break;
-
 				case MONITORING:
-					if (null == rDirecitve.getMonitoring()) {
-						rDirecitve.setMonitoring(strDir);
-					} else {
-						rDirecitve.setMonitoring(rDirecitve.getMonitoring() + strDir);
-					}
+					prevDir = rDirecitve.getMonitoring();
+					rDirecitve.setMonitoring(((prevDir == null) ? "" : prevDir) + strDir);
 					break;
 				case PRIORITY:
-					if (null == rDirecitve.getPriorities()) {
-						rDirecitve.setPriorities(strDir);
-					} else {
-						rDirecitve.setPriorities(rDirecitve.getPriorities() + strDir);
-					}
+					prevDir = rDirecitve.getPriorities();
+					rDirecitve.setPriorities(((prevDir == null) ? "" : prevDir) + strDir);
 					break;
 				default:
 					throw new IllegalArgumentException("Unexpected value " + directive.getType()

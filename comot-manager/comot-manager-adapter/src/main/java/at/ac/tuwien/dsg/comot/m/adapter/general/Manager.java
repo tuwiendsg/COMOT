@@ -22,10 +22,10 @@ import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
@@ -35,11 +35,12 @@ import at.ac.tuwien.dsg.comot.m.common.enums.Type;
 import at.ac.tuwien.dsg.comot.m.common.event.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessage;
+import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 
 public abstract class Manager {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(Manager.class);
 
 	public static final String ADAPTER_QUEUE = "ADAPTER_QUEUE_";
 
@@ -56,7 +57,7 @@ public abstract class Manager {
 	protected String participantId;
 	protected Processor processor;
 
-	public void start(String participantId, Processor processor) throws Exception {
+	public void start(String participantId, Processor processor) throws BeansException, ComotException {
 		this.participantId = participantId;
 		this.processor = processor;
 
@@ -65,7 +66,7 @@ public abstract class Manager {
 
 		start();
 
-		log.info("started participant: '{}'", participantId);
+		LOG.info("started participant: '{}'", participantId);
 	}
 
 	public abstract void start();
@@ -74,7 +75,7 @@ public abstract class Manager {
 
 	public abstract void removeInstanceListener(String instanceId) throws EpsException;
 
-	public void sendLifeCycle(Type targetLevel, LifeCycleEvent event) throws AmqpException, JAXBException {
+	public void sendLifeCycle(Type targetLevel, LifeCycleEvent event) throws JAXBException {
 
 		event.setOrigin(getId());
 		event.setTime(System.currentTimeMillis());
@@ -83,12 +84,12 @@ public abstract class Manager {
 				+ event.getAction()
 				+ "." + targetLevel;
 
-		log.info(logId() + "EVENT-LC key={}", bindingKey);
+		LOG.info(logId() + "EVENT-LC key={}", bindingKey);
 
 		amqp.convertAndSend(Constants.EXCHANGE_REQUESTS, bindingKey, Utils.asJsonString(event));
 	}
 
-	public void sendCustom(Type targetLevel, CustomEvent event) throws AmqpException, JAXBException {
+	public void sendCustom(Type targetLevel, CustomEvent event) throws JAXBException {
 
 		event.setOrigin(getId());
 		event.setTime(System.currentTimeMillis());
@@ -96,18 +97,16 @@ public abstract class Manager {
 		String bindingKey = event.getServiceId() + "." + event.getClass().getSimpleName() + "."
 				+ event.getCustomEvent() + "." + targetLevel;
 
-		log.info(logId() + "EVENT-CUST key={}", bindingKey);
+		LOG.info(logId() + "EVENT-CUST key={}", bindingKey);
 
 		amqp.convertAndSend(Constants.EXCHANGE_REQUESTS, bindingKey, Utils.asJsonString(event));
 	}
 
-	public void sendException(String serviceId, Exception e) throws AmqpException, JAXBException {
-
-		// log.info(logId() + "EVENT-EX key={}", "TODO");
+	public void sendException(String serviceId, Exception e) throws JAXBException {
 
 		ExceptionMessage msg = new ExceptionMessage(serviceId, getId(), System.currentTimeMillis(), e);
 
-		String bindingKey = serviceId + "." + getId(); // TODO
+		String bindingKey = serviceId + "." + getId();
 
 		amqp.convertAndSend(Constants.EXCHANGE_EXCEPTIONS, bindingKey, Utils.asJsonString(msg));
 

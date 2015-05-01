@@ -30,6 +30,8 @@ import java.util.concurrent.Future;
 
 import javax.xml.bind.JAXBException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Binding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -58,6 +60,8 @@ import at.ac.tuwien.dsg.comot.model.type.State;
 @Scope("prototype")
 public class Deployment extends Processor {
 
+	private static final Logger LOG = LoggerFactory.getLogger(Deployment.class);
+
 	@Autowired
 	protected ApplicationContext context;
 	@Autowired
@@ -70,7 +74,7 @@ public class Deployment extends Processor {
 	protected Map<String, StatusTask> tasks = Collections.synchronizedMap(new HashMap<String, StatusTask>());
 
 	@Override
-	public void start() throws EpsException {
+	public void start() {
 
 		helper.setDeploymentAdapter(this);
 		helper.setAdapterId(getId());
@@ -147,19 +151,18 @@ public class Deployment extends Processor {
 				}
 			}
 
-			log.info("stop {}", stop);
+			LOG.info("stop {}", stop);
 
 			if (stop) {
 				tasks.get(serviceId).getThread().cancel(true);
 				tasks.remove(serviceId);
 			}
 
-		} else if (action == Action.KILL) {
+		} else if (action == Action.KILL && deployment.isManaged(serviceId)) {
 
-			if (deployment.isManaged(serviceId)) {
-				manager.sendLifeCycle(Type.SERVICE,
-						new LifeCycleEvent(serviceId, groupId, Action.UNDEPLOYMENT_STARTED));
-			}
+			manager.sendLifeCycle(Type.SERVICE,
+					new LifeCycleEvent(serviceId, groupId, Action.UNDEPLOYMENT_STARTED));
+
 		}
 	}
 
@@ -169,22 +172,19 @@ public class Deployment extends Processor {
 
 		EpsEvent action = EpsEvent.valueOf(event);
 
-		if (action == EpsEvent.EPS_SUPPORT_REMOVED) {
+		if (action == EpsEvent.EPS_SUPPORT_REMOVED && deployment.isManaged(serviceId)) {
 
-			if (deployment.isManaged(serviceId)) {
+			manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, serviceId,
+					Action.UNDEPLOYMENT_STARTED));
 
-				manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, serviceId,
-						Action.UNDEPLOYMENT_STARTED));
+			unDeployInstance(serviceId);
 
-				unDeployInstance(serviceId);
-			}
 		}
 	}
 
 	@Override
 	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String originId)
 			throws Exception {
-		// TODO Auto-generated method stub
 
 	}
 

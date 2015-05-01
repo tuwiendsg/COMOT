@@ -58,7 +58,7 @@ import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionR
 
 public class ControlClientRsybl implements ControlClient {
 
-	private static final Logger log = LoggerFactory.getLogger(ControlClientRsybl.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ControlClientRsybl.class);
 
 	protected RsyblClient rsybl;
 	@Autowired
@@ -66,7 +66,7 @@ public class ControlClientRsybl implements ControlClient {
 	@Autowired
 	protected DeploymentMapper deploymentMapper;
 
-	protected String QUEUE_NAME = "events";
+	private static final String QUEUE_NAME = "events";
 	protected ConnectionFactory factory;
 	protected Connection connection;
 	protected Session session;
@@ -86,7 +86,7 @@ public class ControlClientRsybl implements ControlClient {
 			CloudService service) throws EpsException, JAXBException {
 
 		if (service == null) {
-			log.warn("sendInitialConfig(service=null )");
+			LOG.warn("sendInitialConfig(service=null )");
 			return;
 		}
 
@@ -193,7 +193,7 @@ public class ControlClientRsybl implements ControlClient {
 							if (event instanceof ActionPlanEvent) {
 								ActionPlanEvent apEvent = (ActionPlanEvent) event;
 
-								log.info(
+								LOG.info(
 										"ALL onActionPlanEvent(serviceId={}, stage={}, type={}, strategies={}, constraints={}, effects={})",
 										apEvent.getServiceId(), apEvent.getStage(), apEvent.getType(),
 										extractStrategies(apEvent.getStrategies()),
@@ -202,7 +202,7 @@ public class ControlClientRsybl implements ControlClient {
 							} else if (event instanceof ActionEvent) {
 								ActionEvent aEvent = (ActionEvent) event;
 
-								log.info(
+								LOG.info(
 										"ALL onActionEvent(serviceId={}, stage={}, type={}, actionId={}, targetId={})",
 										aEvent.getServiceId(), aEvent.getStage(), aEvent.getType(),
 										aEvent.getActionId(), aEvent.getTargetId());
@@ -210,28 +210,25 @@ public class ControlClientRsybl implements ControlClient {
 							} else if (event instanceof at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.CustomEvent) {
 								at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.CustomEvent aEvent = (at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.CustomEvent) event;
 
-								log.info(
+								LOG.info(
 										"ALL onCustomEvent(serviceId={}, stage={}, type={}, targetId={}, message={})",
 										aEvent.getServiceId(), aEvent.getStage(), aEvent.getType(), aEvent.getTarget(),
 										aEvent.getMessage());
 							} else {
-								log.warn("ALL unexpected IEvent serviceId={} stage={} {}", event.getServiceId(),
+								LOG.warn("ALL unexpected IEvent serviceId={} stage={} {}", event.getServiceId(),
 										event.getStage(), obj);
 							}
-
-							// log.debug("IEvent serviceId={} stage={} {}", event.getServiceId(), event.getStage(),
-							// obj);
 
 							if (listanersMap.containsKey(event.getServiceId())) {
 								listanersMap.get(event.getServiceId()).onMessage(event);
 							}
 
 						} else {
-							log.warn("unexpected JMS message {}", obj);
+							LOG.warn("unexpected JMS message {}", obj);
 						}
 
 					} catch (JMSException e) {
-						log.error("{}", e);
+						LOG.error("{}", e);
 					}
 				}
 			};
@@ -293,7 +290,7 @@ public class ControlClientRsybl implements ControlClient {
 		}
 
 		if (rsybl != null) {
-			log.info("closing rsybl client");
+			LOG.info("closing rsybl client");
 			rsybl.close();
 		}
 	}

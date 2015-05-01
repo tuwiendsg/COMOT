@@ -42,7 +42,7 @@ import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 @Component
 public class InformationServiceMock {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(InformationServiceMock.class);
 
 	protected Map<String, Template> templates = Collections.synchronizedMap(new HashMap<String, Template>());
 	protected Map<String, CloudService> services = Collections.synchronizedMap(new HashMap<String, CloudService>());
@@ -117,7 +117,7 @@ public class InformationServiceMock {
 
 	public String createServiceFromTemplate(String templateId) throws ClassNotFoundException, IOException {
 
-		log.info("createServiceFromTemplate {}", templateId);
+		LOG.info("createServiceFromTemplate {}", templateId);
 
 		CloudService templateServ = templates.get(templateId).getDescription();
 		String serviceId = getInstanceId(templateId);
@@ -197,7 +197,7 @@ public class InformationServiceMock {
 	// String osuInstanceId = getOsuInstanceId(osuId);
 	// OsuInstance osuInstance = new OsuInstance(osuInstanceId, osu);
 	// osuInstances.put(osuInstanceId, osuInstance);
-	// log.info("createOsuInstance(osuId={}):{}", osuId, osuInstanceId);
+	// LOG.info("createOsuInstance(osuId={}):{}", osuId, osuInstanceId);
 	// return osuInstanceId;
 	// }
 
@@ -209,12 +209,12 @@ public class InformationServiceMock {
 		// create osuInstance
 		OsuInstance osuInstance = new OsuInstance(osuInstanceId, osu);
 		osuInstances.put(osuInstanceId, osuInstance);
-		log.info("createOsuInstance(osuId={}):{}", osuId, osuInstanceId);
+		LOG.info("createOsuInstance(osuId={}):{}", osuId, osuInstanceId);
 
 		if (osu.getServiceTemplate() != null) {
 			// create service
 			String templateId = osu.getServiceTemplate().getId();
-			log.info("templateId {}", templateId);
+			LOG.info("templateId {}", templateId);
 			String serviceId = createServiceFromTemplate(templateId);
 
 			osuInstances.get(osuInstanceId).setService(services.get(serviceId));
@@ -255,7 +255,7 @@ public class InformationServiceMock {
 
 		boolean value = false;
 
-		log.info("isOsuAssignedToInstance {} {}", serviceId, osuInstanceId);
+		LOG.info("isOsuAssignedToInstance {} {}", serviceId, osuInstanceId);
 
 		for (OsuInstance osuInstance : services.get(serviceId).getSupport()) {
 			if (osuInstance.getId().equals(osuInstanceId)) {
@@ -263,7 +263,7 @@ public class InformationServiceMock {
 			}
 		}
 
-		log.info("isOsuAssignedToInstance( instanceId={}, osuInstanceId={}): {}", serviceId, osuInstanceId, value);
+		LOG.info("isOsuAssignedToInstance( instanceId={}, osuInstanceId={}): {}", serviceId, osuInstanceId, value);
 		return value;
 	}
 

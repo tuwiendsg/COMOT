@@ -38,7 +38,7 @@ import at.ac.tuwien.dsg.comot.model.type.OsuType;
 
 public class InformationClient {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(InformationClient.class);
 
 	public static final String NON_EPS = "NON_EPS";
 	public static final String EPS = "EPS";
@@ -152,9 +152,9 @@ public class InformationClient {
 	}
 
 	public OsuInstance getOsuInstance(String osuInstanceId) throws EpsException {
-		log.info("getOsuInstance " + osuInstanceId);
+		LOG.info("getOsuInstance " + osuInstanceId);
 		for (OsuInstance instance : client.getOsuInstances()) {
-			log.info(instance.getId());
+			LOG.info(instance.getId());
 			if (instance.getId().equals(osuInstanceId)) {
 				return instance;
 			}
@@ -223,7 +223,7 @@ public class InformationClient {
 			}
 		}
 
-		log.info("isOsuAssignedToInstance( serviceId={}, osu={}): {}", serviceId, osuId, value);
+		LOG.info("isOsuAssignedToInstance( serviceId={}, osu={}): {}", serviceId, osuId, value);
 		return value;
 	}
 
@@ -237,7 +237,7 @@ public class InformationClient {
 			}
 		}
 
-		log.info("isOsuInstanceAssignedToInstance( serviceId={}, osuInstanceId={}): {}", serviceId, osuInstanceId,
+		LOG.info("isOsuInstanceAssignedToInstance( serviceId={}, osuInstanceId={}): {}", serviceId, osuInstanceId,
 				value);
 		return value;
 	}

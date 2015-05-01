@@ -16,25 +16,22 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *******************************************************************************/
-package at.ac.tuwien.dsg.comot.m.info;
+package at.ac.tuwien.dsg.comot.m.common.exception;
 
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.server.spring.scope.RequestContextFilter;
+public class ComotAdapterException extends ComotException {
 
-/**
- * https://jersey.java.net/documentation/latest/media.html#json.moxy
- * 
- * @author Juraj
- *
- */
-public class JerseyMoxyConfig extends ResourceConfig {
+	private static final long serialVersionUID = 8270238900100063793L;
 
-	public JerseyMoxyConfig() {
-		// REST RESOURCES
-		register(Resource.class);
-		// CONFIGURATION
-		register(RequestContextFilter.class);
-
-		register(ComotExceptionMapper.class);
+	public ComotAdapterException(String message) {
+		super(message);
 	}
+
+	public ComotAdapterException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public ComotAdapterException(Throwable cause) {
+		super(cause);
+	}
+
 }

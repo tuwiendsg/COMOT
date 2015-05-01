@@ -42,7 +42,7 @@ import at.ac.tuwien.dsg.comot.model.AppContextModel;
 @ComponentScan
 public class AppContextServrec extends Neo4jConfiguration {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(AppContextServrec.class);
 
 	public static final String IMPERMANENT_NEO4J_DB = "IMPERMANENT_NEO4J_DB";
 	public static final String EMBEDDED_NEO4J_DB = "EMBEDDED_NEO4J_DB";
@@ -56,7 +56,7 @@ public class AppContextServrec extends Neo4jConfiguration {
 
 	@Bean
 	public ExecutionEngine executionEngine() {
-		log.info("GraphDatabaseService:  {}", db);
+		LOG.info("GraphDatabaseService:  {}", db);
 		return new ExecutionEngine(db);
 	}
 

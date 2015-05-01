@@ -24,7 +24,6 @@ import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
-import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.Binding;
 
 import at.ac.tuwien.dsg.comot.m.adapter.general.Processor;
@@ -91,7 +90,7 @@ public class CoordinatorAdapter extends Processor {
 
 	}
 
-	public void send() throws ComotException, InterruptedException, AmqpException, JAXBException,
+	public void send() throws ComotException, InterruptedException, JAXBException,
 			ComotLifecycleException {
 
 		sendInternal();
@@ -115,7 +114,7 @@ public class CoordinatorAdapter extends Processor {
 
 	}
 
-	public void sendInternal() throws AmqpException, JAXBException {
+	public void sendInternal() throws JAXBException {
 
 	}
 

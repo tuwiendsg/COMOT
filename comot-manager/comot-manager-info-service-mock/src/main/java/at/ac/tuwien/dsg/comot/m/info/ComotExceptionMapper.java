@@ -36,12 +36,11 @@ import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotLifecycleException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 
-
 @Provider
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
 public class ComotExceptionMapper implements ExceptionMapper<Exception> {
 
-	private static final Logger log = LoggerFactory.getLogger(ComotExceptionMapper.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ComotExceptionMapper.class);
 	protected static final String NAME = "COMOT";
 
 	@Context
@@ -52,37 +51,37 @@ public class ComotExceptionMapper implements ExceptionMapper<Exception> {
 
 		if (e instanceof WebApplicationException) {
 			WebApplicationException we = (WebApplicationException) e;
-			log.warn("REST interface exception", e);
+			LOG.warn("REST interface exception", e);
 			return Response
 					.status(we.getResponse().getStatus())
 					.entity(resolve(req, new ApiError()))
 					.build();
 
 		} else if (e.getClass().equals(ComotIllegalArgumentException.class)) {
-			log.warn("Wrong user input: {}", e.getMessage());
+			LOG.warn("Wrong user input: {}", e.getMessage());
 			return Response.status(404).entity(resolve(req, new ApiError(e.getMessage()))).build();
 
 		} else if (e.getClass().equals(EpsException.class)) {
 			EpsException ce = (EpsException) e;
 
 			if (ce.isClientError()) {
-				log.warn("Core service CLIENT ERROR", e);
+				LOG.warn("Core service CLIENT ERROR", e);
 			} else {
-				log.warn("Core service SERVER ERROR", e);
+				LOG.warn("Core service SERVER ERROR", e);
 			}
 			return Response.status(ce.getCode()).entity(resolve(req, new ApiError(ce.getMsg(), ce.getComponentName())))
 					.build();
 
 		} else if (e.getClass().equals(ComotException.class)) {
-			log.error("Something bad happened: {}", e);
+			LOG.error("Something bad happened: {}", e);
 			return Response.serverError().entity(resolve(req, new ApiError())).build();
 
 		} else if (e.getClass().equals(ComotLifecycleException.class)) {
-			log.warn("Lifecycle exception: {}", e.getMessage());
+			LOG.warn("Lifecycle exception: {}", e.getMessage());
 			return Response.status(404).entity(resolve(req, new ApiError(e.getMessage()))).build();
 
 		} else {
-			log.error("Wut? {}", e);
+			LOG.error("Wut? {}", e);
 			return Response.serverError().entity(resolve(req, new ApiError())).build();
 		}
 	}

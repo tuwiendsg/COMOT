@@ -47,7 +47,7 @@ import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescripti
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public abstract class AbstractTest {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractTest.class);
 
 	@Resource
 	protected Environment env;

@@ -38,7 +38,7 @@ import scala.util.Random;
 
 public class LoadGenerator {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(LoadGenerator.class);
 
 	protected ExecutorService scheduler;
 
@@ -88,7 +88,7 @@ public class LoadGenerator {
 
 						}
 					} catch (Exception e) {
-						log.error("{}", e);
+						LOG.error("{}", e);
 					}
 				}
 

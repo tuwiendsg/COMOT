@@ -29,7 +29,7 @@ import java.net.URI;
  */
 public class DefaultSalsaClient implements SalsaClient {
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultSalsaClient.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultSalsaClient.class);
 
     private final HttpClient httpClient;
 
@@ -82,10 +82,10 @@ public class DefaultSalsaClient implements SalsaClient {
 
         String toscaDescriptionXml = toscaDescriptionBuilder.toXml(CloudService);
 
-        if (log.isDebugEnabled()) {
-            log.debug(Markers.CLIENT, "Deploying cloud application '{}'", CloudService.getId());
-            log.debug(Markers.CLIENT, "Using configuration '{}'", configuration);
-            log.debug(Markers.CLIENT, "TOSCA: {}", toscaDescriptionXml);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(Markers.CLIENT, "Deploying cloud application '{}'", CloudService.getId());
+            LOG.debug(Markers.CLIENT, "Using configuration '{}'", configuration);
+            LOG.debug(Markers.CLIENT, "TOSCA: {}", toscaDescriptionXml);
         }
 
         URI deploymentUri = UriBuilder.fromPath(configuration.getDeployPath()).build(CloudService.getName());
@@ -96,8 +96,8 @@ public class DefaultSalsaClient implements SalsaClient {
 
     @Override
     public SalsaResponse undeploy(String serviceId) throws SalsaClientException {
-        if (log.isDebugEnabled()) {
-            log.debug(Markers.CLIENT, "Undeploying service with serviceId '{}'", serviceId);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(Markers.CLIENT, "Undeploying service with serviceId '{}'", serviceId);
         }
 
         URI undeployUri = UriBuilder.fromPath(configuration.getUndeployPath()).build(serviceId);
@@ -107,8 +107,8 @@ public class DefaultSalsaClient implements SalsaClient {
 
     @Override
     public SalsaResponse spawn(String serviceId, String topologyId, String nodeId, int instanceCount) throws SalsaClientException {
-        if (log.isDebugEnabled()) {
-            log.debug(Markers.CLIENT, "Spawning additional instances (+{}) for serviceId {}, topologyId {} and nodeId {}",
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(Markers.CLIENT, "Spawning additional instances (+{}) for serviceId {}, topologyId {} and nodeId {}",
                     instanceCount, serviceId, topologyId, nodeId);
         }
 
@@ -119,8 +119,8 @@ public class DefaultSalsaClient implements SalsaClient {
 
     @Override
     public SalsaResponse destroy(String serviceId, String topologyId, String nodeId, String instanceId) throws SalsaClientException {
-        if (log.isDebugEnabled()) {
-            log.debug(Markers.CLIENT, "Destroying instance with id {} (service: {} topology: {} node: {})",
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(Markers.CLIENT, "Destroying instance with id {} (service: {} topology: {} node: {})",
                     instanceId, serviceId, topologyId, nodeId);
         }
 
@@ -131,8 +131,8 @@ public class DefaultSalsaClient implements SalsaClient {
 
     @Override
     public SalsaResponse status(String serviceId) throws SalsaClientException {
-        if (log.isDebugEnabled()) {
-            log.debug(Markers.CLIENT, "Checking status for serviceId {}", serviceId);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(Markers.CLIENT, "Checking status for serviceId {}", serviceId);
         }
 
         URI statusUri = UriBuilder.fromPath(configuration.getStatusPath()).build(serviceId);
@@ -150,7 +150,7 @@ public class DefaultSalsaClient implements SalsaClient {
         try {
             return handleResponse(httpClient.execute(endpoint, method), salsaAction);
         } catch (IOException e) {
-            log.error(Markers.CLIENT, "IOException during SALSA request", e);
+            LOG.error(Markers.CLIENT, "IOException during SALSA request", e);
             throw new SalsaClientException("IOException during SALSA request", e);
         }
     }
@@ -159,9 +159,9 @@ public class DefaultSalsaClient implements SalsaClient {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         response.getEntity().writeTo(outputStream);
         String responseBody = new String(outputStream.toByteArray());
-        if (log.isDebugEnabled()) {
-            log.debug(Markers.CLIENT, "Got HTTP status: {}", response.getStatusLine());
-            log.debug(Markers.CLIENT, "Got HTTP response body: {}", responseBody);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(Markers.CLIENT, "Got HTTP status: {}", response.getStatusLine());
+            LOG.debug(Markers.CLIENT, "Got HTTP response body: {}", responseBody);
         }
 
         return buildSalsaResponse(action, response.getStatusLine().getStatusCode(), responseBody);
@@ -175,7 +175,7 @@ public class DefaultSalsaClient implements SalsaClient {
                 .withExpectedCode(action.expectedResultCode());
 
         if (action.expectedHttpResultCode != result) {
-            log.warn(Markers.CLIENT, "Unexpected result code from Salsa. Expected {} for action {}, but got {}",
+            LOG.warn(Markers.CLIENT, "Unexpected result code from Salsa. Expected {} for action {}, but got {}",
                     action.expectedResultCode(), action, result);
         }
 
@@ -190,8 +190,8 @@ public class DefaultSalsaClient implements SalsaClient {
 
     public SalsaResponse getServiceDeploymentInfo(String serviceId) {
 
-        if (log.isDebugEnabled()) {
-            log.debug(Markers.CLIENT, "Getting deployment information for serviceId {}", serviceId);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(Markers.CLIENT, "Getting deployment information for serviceId {}", serviceId);
         }
 
         URI statusUri = UriBuilder.fromPath(configuration.getDeploymentInfoPath()).build(serviceId);

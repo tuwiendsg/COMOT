@@ -31,7 +31,7 @@ import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 
 public abstract class ServiceClient {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(ServiceClient.class);
 
 	protected String name;
 	protected String ln;
@@ -65,17 +65,17 @@ public abstract class ServiceClient {
 		case 1:
 			break;
 		case 2:
-			log.trace(ln + "HTTP response status code={}", code);
+			LOG.trace(ln + "HTTP response status code={}", code);
 			break;
 		case 3:
 			break;
 		case 4:
 			msg = response.readEntity(String.class);
-			log.trace(ln + "HTTP response status code={} , message='{}' ", code, msg);
+			LOG.trace(ln + "HTTP response status code={} , message='{}' ", code, msg);
 			throw new EpsException(code, msg, name);
 		case 5:
 			msg = response.readEntity(String.class);
-			log.trace(ln + "HTTP response status code={} , message='{}' ", code, msg);
+			LOG.trace(ln + "HTTP response status code={} , message='{}' ", code, msg);
 			throw new EpsException(code, msg, name);
 		}
 

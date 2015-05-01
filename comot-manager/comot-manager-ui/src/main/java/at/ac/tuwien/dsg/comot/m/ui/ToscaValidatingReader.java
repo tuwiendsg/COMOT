@@ -52,12 +52,9 @@ import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
 @Consumes(MediaType.APPLICATION_XML)
 public class ToscaValidatingReader implements MessageBodyReader<Definitions> {
 
-	protected static final Logger log = LoggerFactory.getLogger(ToscaValidatingReader.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(ToscaValidatingReader.class);
 
-	private static final String TOSCA_URI = "http://docs.oasis-open.org/tosca/TOSCA/v1.0/os/schemas/TOSCA-v1.0.xsd"; // TODO
-																														// load
-																														// from
-																														// localhost
+	private static final String TOSCA_URI = "http://docs.oasis-open.org/tosca/TOSCA/v1.0/os/schemas/TOSCA-v1.0.xsd";
 
 	@Context
 	protected Providers providers;
@@ -91,10 +88,11 @@ public class ToscaValidatingReader implements MessageBodyReader<Definitions> {
 			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 			unmarshaller.setSchema(schema);
 
-			log.debug("TOSCA validation passed");
+			LOG.debug("TOSCA validation passed");
 
 			return (Definitions) unmarshaller.unmarshal(arg5);
 		} catch (UnmarshalException e) {
+			LOG.info("{}", e);
 			throw new ComotIllegalArgumentException("Validation of TOSCA failed: " + e.getCause());
 		} catch (JAXBException e) {
 			throw new RuntimeException(e);

@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 @Component
 public class ComotVisServiceExceptionMapper implements ExceptionMapper<Exception> {
 
-    static final Logger log = LoggerFactory.getLogger(ComotVisServiceExceptionMapper.class);
+    static final Logger LOG = LoggerFactory.getLogger(ComotVisServiceExceptionMapper.class);
 
     @PostConstruct
     public void init() {
@@ -26,7 +26,7 @@ public class ComotVisServiceExceptionMapper implements ExceptionMapper<Exception
 
     public Response toResponse(Exception exception) {
 //        return Response.serverError().entity("Internal Error: " + exception.getMessage()).build();
-        log.error(exception.getMessage(), exception);
+        LOG.error(exception.getMessage(), exception);
         return Response.serverError().entity("Internal Error: " + exception).build();
     }
 

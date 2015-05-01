@@ -20,7 +20,7 @@ package at.ac.tuwien.dsg.comot.m.common.exception;
 
 import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
 
-public class ComotLifecycleException extends Exception {
+public class ComotLifecycleException extends ComotException {
 
 	private static final long serialVersionUID = 6270339245853337512L;
 

@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 @Path("/")
 public class ComotVisualizationService {
 
-    static final org.slf4j.Logger log = LoggerFactory.getLogger(ComotVisualizationService.class);
+    static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ComotVisualizationService.class);
 
     @Autowired
     private ComotVisControl systemControl;

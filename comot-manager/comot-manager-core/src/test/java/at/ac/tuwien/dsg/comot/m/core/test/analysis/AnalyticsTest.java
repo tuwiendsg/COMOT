@@ -55,7 +55,7 @@ import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public class AnalyticsTest {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(AnalyticsTest.class);
 
 	@Autowired
 	private TimeAnalyzis engine;
@@ -86,7 +86,7 @@ public class AnalyticsTest {
 		// elAnalysis.bbbb();
 
 		for (ElasticPlanReport report : elAnalysis.doOneService("HelloElasticity_1")) {
-			log.info("{}", Utils.asJsonString(report));
+			LOG.info("{}", Utils.asJsonString(report));
 		}
 
 	}

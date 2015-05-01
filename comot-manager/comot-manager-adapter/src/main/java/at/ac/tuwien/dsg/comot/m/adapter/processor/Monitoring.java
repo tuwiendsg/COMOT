@@ -38,7 +38,6 @@ import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessage;
 import at.ac.tuwien.dsg.comot.m.common.event.state.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.event.state.Transition;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
@@ -108,10 +107,9 @@ public class Monitoring extends Processor {
 				monitoring.stopMonitoring(serviceId);
 			}
 
-		} else if (action == Action.KILL) {
-			if (monitoring.isMonitored(serviceId)) {
-				monitoring.stopMonitoring(serviceId);
-			}
+		} else if (action == Action.KILL && monitoring.isMonitored(serviceId)) {
+
+			monitoring.stopMonitoring(serviceId);
 		}
 
 	}
@@ -139,17 +137,10 @@ public class Monitoring extends Processor {
 				monitoring.stopMonitoring(serviceId);
 			}
 
-		} else if (event.equals(ComotEvent.SET_MCR.toString())) {
-
-		} else if (event.equals(ComotEvent.GET_MCR.toString())) {
-
-		} else if (event.equals(ComotEvent.MELA_GET_STRUCTURE.toString())) {
-
 		}
-
 	}
 
-	protected void startIfActive(String serviceId, State state) throws EpsException, ComotException,
+	protected void startIfActive(String serviceId, State state) throws ComotException,
 			ClassNotFoundException, IOException {
 
 		if (state == State.RUNNING || state == State.ELASTIC_CHANGE || state == State.MAINTENANCE) {

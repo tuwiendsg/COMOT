@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AppContextModelTest {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	protected final Logger LOG = LoggerFactory.getLogger(getClass());
 	private static final String DB_PATH = "target/data/db";
 
 	@Bean(destroyMethod = "shutdown")

@@ -32,7 +32,7 @@ import at.ac.tuwien.dsg.comot.model.type.State;
 
 public class LifeCycle {
 
-	private static final Logger log = LoggerFactory.getLogger(UtilsLc.class);
+	private static final Logger LOG = LoggerFactory.getLogger(UtilsLc.class);
 
 	protected Set<State> states = new HashSet<>();
 	protected List<LifeCycleTransition> transitions = new ArrayList<>();
@@ -50,7 +50,7 @@ public class LifeCycle {
 
 	public State executeAction(State parentState, State currentState, Action action) {
 
-		log.trace("executeAction(parentState={}, currentState={}, action={} )", parentState, currentState, action);
+		LOG.trace("executeAction(parentState={}, currentState={}, action={} )", parentState, currentState, action);
 
 		if (action == Action.ERROR || action == Action.KILL) {
 			return State.ERROR;
@@ -63,7 +63,7 @@ public class LifeCycle {
 		if (states.contains(currentState)) {
 			for (LifeCycleTransition transition : transitions) {
 
-				log.trace("{}", transition);
+				LOG.trace("{}", transition);
 				if (transition.getState() == currentState && transition.getAction() == action) {
 					if (transition.getParentState() == null) {
 						return transition.nextState;
@@ -89,7 +89,7 @@ public class LifeCycle {
 			}
 		}
 
-		log.debug("translateToAction(oldState={}, newState={}) : {}", oldState, newState, result);
+		LOG.debug("translateToAction(oldState={}, newState={}) : {}", oldState, newState, result);
 		return result;
 	}
 

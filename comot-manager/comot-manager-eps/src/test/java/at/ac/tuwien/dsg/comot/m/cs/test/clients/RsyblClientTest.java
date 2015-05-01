@@ -25,6 +25,8 @@ import javax.xml.bind.JAXBException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.comot.m.common.Utils;
@@ -42,6 +44,8 @@ import at.ac.tuwien.dsg.comot.rsybl.CloudServiceXML;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 
 public class RsyblClientTest extends AbstractTest {
+
+	private static final Logger LOG = LoggerFactory.getLogger(RsyblClientTest.class);
 
 	@Autowired
 	private SalsaClient salsa;
@@ -80,8 +84,8 @@ public class RsyblClientTest extends AbstractTest {
 		CloudServiceXML cloudServiceXML = rsyblMapper.extractRsybl(service);
 		DeploymentDescription deploymentDescription = deploymentMapper.extractDeployment(service);
 
-		log.info("{}", UtilsCs.asString(cloudServiceXML));
-		log.info("{}", UtilsCs.asString(deploymentDescription));
+		LOG.info("{}", UtilsCs.asString(cloudServiceXML));
+		LOG.info("{}", UtilsCs.asString(deploymentDescription));
 
 		// controlClient.setHostAndPort("128.130.172.191", 8280);
 		controlClient.setHostAndPort("localhost", 8280);
@@ -112,7 +116,7 @@ public class RsyblClientTest extends AbstractTest {
 	public void listService() throws EpsException, InterruptedException, JAXBException {
 		List<String> list = controlClient.listAllServices();
 
-		log.info("{}", list);
+		LOG.info("{}", list);
 	}
 
 }

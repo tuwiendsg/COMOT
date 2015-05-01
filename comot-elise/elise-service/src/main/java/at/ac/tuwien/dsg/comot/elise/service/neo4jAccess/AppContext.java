@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AppContext  extends Neo4jConfiguration {
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger LOG = LoggerFactory.getLogger(getClass());
     
     public AppContext() {
 	setBasePackage("at.ac.tuwien.dsg.comot");

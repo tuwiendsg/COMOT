@@ -56,7 +56,7 @@ import at.ac.tuwien.dsg.mela.common.requirements.Requirements;
 @Component
 public class MelaMapper {
 
-	protected final Logger log = LoggerFactory.getLogger(MelaMapper.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MelaMapper.class);
 
 	@Autowired
 	protected MelaOrika mapper;
@@ -70,7 +70,7 @@ public class MelaMapper {
 		MonitoredElement root = mapper.get().map(cloudService, MonitoredElement.class);
 		Map<MonitoredElement, MonitoredElement> map = extractAllElements(root, new MonitoredElement());
 
-		log.trace("Orika mapping: {}", Utils.asXmlStringLog(root));
+		LOG.trace("Orika mapping: {}", Utils.asXmlStringLog(root));
 
 		// add VMs
 		for (MonitoredElement element : map.keySet()) {
@@ -93,7 +93,7 @@ public class MelaMapper {
 			}
 		}
 
-		log.debug("Final mapping: {}", Utils.asXmlStringLog(root));
+		LOG.debug("Final mapping: {}", Utils.asXmlStringLog(root));
 
 		return root;
 	}
@@ -158,13 +158,12 @@ public class MelaMapper {
 	// !!! number must be on the right side, there is a bug in rsybl
 	protected List<Requirement> parseToRequirement(ServiceEntity servicePart, String constraint) {
 
-		log.trace("parsing constraint: {}", constraint);
+		LOG.trace("parsing constraint: {}", constraint);
 
 		Requirement req;
 		List<Requirement> requirements = new ArrayList<>();
 		Constraint rConstraint = SYBLDirectiveMappingFromXML.mapSYBLAnnotationToXMLConstraint(constraint);
 
-		
 		for (BinaryRestrictionsConjunction binaryRestrictions : rConstraint.getToEnforce().getBinaryRestriction()) {
 			for (BinaryRestriction binaryRestriction : binaryRestrictions.getBinaryRestrictions()) {
 

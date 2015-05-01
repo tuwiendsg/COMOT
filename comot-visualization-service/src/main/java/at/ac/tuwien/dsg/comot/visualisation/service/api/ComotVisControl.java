@@ -44,7 +44,7 @@ public class ComotVisControl {
     @Autowired
     private ApplicationContext context;
 
-    static final Logger log = LoggerFactory.getLogger(ComotVisControl.class);
+    static final Logger LOG = LoggerFactory.getLogger(ComotVisControl.class);
 
     private List<ComotUIModule> modules = new ArrayList<ComotUIModule>();
 
@@ -54,7 +54,7 @@ public class ComotVisControl {
 
         for (String module : comotUIModulesDefined.keySet()) {
             ComotUIModule comotUIModule = comotUIModulesDefined.get(module);
-            log.debug("Found COMOT UI Module '{}': {}", module, comotUIModule);
+            LOG.debug("Found COMOT UI Module '{}': {}", module, comotUIModule);
             modules.add(comotUIModule);
         }
     }

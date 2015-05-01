@@ -35,7 +35,7 @@ import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ModelTest {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	protected final Logger LOG = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	protected ApplicationContext context;

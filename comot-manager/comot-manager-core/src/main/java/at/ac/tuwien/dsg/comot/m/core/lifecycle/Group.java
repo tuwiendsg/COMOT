@@ -35,7 +35,7 @@ import at.ac.tuwien.dsg.comot.model.type.State;
 
 public class Group implements Serializable {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(Group.class);
 
 	private static final long serialVersionUID = 2534198672357223629L;
 
@@ -100,7 +100,7 @@ public class Group implements Serializable {
 
 		if (members.isEmpty()) {
 			if (LifeCycleFactory.getLifeCycle(type).executeAction(parent.getCurrentState(), currentState, action) == null) {
-				log.warn(
+				LOG.warn(
 						"Action '{}' is not allowed in state '{}' patentState '{}'. GroupId={} , type={} <- the root of problem",
 						action, currentState, parent.getCurrentState(), id, type);
 				return false;

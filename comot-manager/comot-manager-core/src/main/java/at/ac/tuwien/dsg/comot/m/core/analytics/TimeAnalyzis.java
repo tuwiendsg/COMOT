@@ -53,7 +53,7 @@ import at.ac.tuwien.dsg.comot.model.type.State;
 @Component
 public class TimeAnalyzis {
 
-	private static final Logger log = LoggerFactory.getLogger(TimeAnalyzis.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TimeAnalyzis.class);
 
 	@Autowired
 	private ApplicationContext context;
@@ -151,7 +151,7 @@ public class TimeAnalyzis {
 						length,
 						(name.equals(Action.DEPLOYMENT_STARTED.toString()) ? "ALLOCATING" : name));
 
-				log.info(line.toString());
+				LOG.info(line.toString());
 
 				resultsList.add(line);
 
@@ -163,7 +163,7 @@ public class TimeAnalyzis {
 					sum,
 					"SUM");
 
-			log.info(line.toString());
+			LOG.info(line.toString());
 
 			resultsList.add(line);
 		}

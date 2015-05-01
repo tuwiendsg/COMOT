@@ -44,7 +44,7 @@ import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescripti
 @Component
 public class DeploymentMapper {
 
-	protected final Logger log = LoggerFactory.getLogger(DeploymentMapper.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DeploymentMapper.class);
 
 	public DeploymentDescription extractDeployment(CloudService service) {
 
@@ -91,7 +91,7 @@ public class DeploymentMapper {
 			}
 		}
 
-		log.trace("Final mapping: {}", Utils.asXmlStringLog(description));
+		LOG.trace("Final mapping: {}", Utils.asXmlStringLog(description));
 		return description;
 	}
 

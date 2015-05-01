@@ -35,7 +35,7 @@ import at.ac.tuwien.dsg.comot.model.type.OsuType;
 @Component
 public class Engine {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(Engine.class);
 
 	protected Navigator navNeu;
 	protected Navigator navOld;
@@ -187,16 +187,6 @@ public class Engine {
 		if (forceUpdate.contains(unitNew)) {
 			return true;
 		}
-
-		//
-		// ServiceUnit unitOld = navOld.getUnit(unitNew.getId());
-		//
-		//
-		//
-		// if(unitNew.getDeploymentArtifactsList().get(0).getUrisList().get(0)
-		// .equals(unitOld.getDeploymentArtifactsList().get(0).getUrisList().get(0))){
-		//
-		// }
 
 		return false;
 	}

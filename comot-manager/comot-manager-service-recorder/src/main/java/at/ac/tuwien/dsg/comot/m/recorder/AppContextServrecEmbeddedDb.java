@@ -32,7 +32,7 @@ import org.springframework.core.env.Environment;
 @Profile(AppContextServrec.EMBEDDED_NEO4J_DB)
 public class AppContextServrecEmbeddedDb {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(AppContextServrecEmbeddedDb.class);
 
 	@Autowired
 	protected Environment env;
@@ -41,7 +41,7 @@ public class AppContextServrecEmbeddedDb {
 	public GraphDatabaseService graphDatabaseService() {
 		GraphDatabaseService db = new GraphDatabaseFactory().newEmbeddedDatabase(env
 				.getProperty("recorder.neo4j.embedded"));
-		log.info("Neo4jDB: {}", db);
+		LOG.info("Neo4jDB: {}", db);
 		return db;
 	}
 

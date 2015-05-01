@@ -26,6 +26,8 @@ import java.util.Set;
 
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.OutboundEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Binding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -46,6 +48,8 @@ import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
 @Component
 @Scope("prototype")
 public class UiAdapter extends Processor {
+
+	private static final Logger LOG = LoggerFactory.getLogger(UiAdapter.class);
 
 	@Autowired
 	protected InformationClient infoService;
@@ -91,8 +95,6 @@ public class UiAdapter extends Processor {
 	@Override
 	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String originId)
 			throws Exception {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void sendToClient(StateMessage msg) {
@@ -100,7 +102,7 @@ public class UiAdapter extends Processor {
 		try {
 
 			if (eventOutput.isClosed()) {
-				log.debug("eventOutput.isClosed()");
+				LOG.debug("eventOutput.isClosed()");
 				clean();
 			}
 
@@ -113,15 +115,15 @@ public class UiAdapter extends Processor {
 
 			String msgForClient = Utils.asJsonString(msg);
 
-			log.trace(logId() + "onMessage {}", msgForClient);
+			LOG.trace(logId() + "onMessage {}", msgForClient);
 
 			OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
 			eventBuilder.data(String.class, msgForClient);
-			// eventBuilder.name(MSG_LIFE_CYCLE);
 			eventOutput.write(eventBuilder.build());
 
-		} catch (Exception t) {
-			log.warn("Throwable -> cleanAdapter()");
+		} catch (Exception e) {
+			LOG.trace("{}", e);
+			LOG.warn("Throwable -> cleanAdapter()");
 			clean();
 		}
 	}
@@ -132,7 +134,7 @@ public class UiAdapter extends Processor {
 		while (true) {
 
 			try {
-				log.trace("checking eventOutput");
+				LOG.trace("checking eventOutput");
 				OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
 				eventBuilder.name("ping");
 				eventBuilder.data(String.class, "ping");
@@ -143,12 +145,13 @@ public class UiAdapter extends Processor {
 					eventOutput.write(eventBuilder.build());
 				}
 			} catch (Exception e) {
+				LOG.trace("{}", e);
 				break;
 			}
 			Thread.sleep(10000);
 		}
 
-		log.debug("regular check request cleanAdapter()");
+		LOG.debug("regular check request cleanAdapter()");
 		clean();
 	}
 
@@ -161,7 +164,7 @@ public class UiAdapter extends Processor {
 				eventOutput.close();
 			}
 		} catch (IOException e1) {
-			log.error("{}", e1);
+			LOG.error("{}", e1);
 		}
 	}
 

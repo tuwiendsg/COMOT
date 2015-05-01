@@ -47,7 +47,7 @@ import at.ac.tuwien.dsg.comot.model.type.State;
 @Scope("prototype")
 public class GroupManager {
 
-	private static final Logger log = LoggerFactory.getLogger(GroupManager.class);
+	private static final Logger LOG = LoggerFactory.getLogger(GroupManager.class);
 
 	protected String serviceId;
 	protected Group serviceGroup;
@@ -64,7 +64,7 @@ public class GroupManager {
 			throw new ComotLifecycleException("The group '" + groupId + "' does not exist");
 		}
 
-		log.info(logId() + "checkAndExecute BEFORE groupId={} : {}", groupId, serviceGroup);
+		LOG.info(logId() + "checkAndExecute BEFORE groupId={} : {}", groupId, serviceGroup);
 
 		if (!group.canExecute(action)) {
 
@@ -75,7 +75,7 @@ public class GroupManager {
 		group.executeAction(action, strategy);
 		serviceGroupReadOnly = (Group) Utils.deepCopy(serviceGroup);
 
-		log.info(logId() + "checkAndExecute AFTER groupId={} : {}", groupId, serviceGroup);
+		LOG.info(logId() + "checkAndExecute AFTER groupId={} : {}", groupId, serviceGroup);
 
 		return group;
 	}
@@ -105,7 +105,7 @@ public class GroupManager {
 		}
 
 		checkAndExecute(action, serviceGroup.getId());
-		log.info(serviceGroup.toString());
+		LOG.info(serviceGroup.toString());
 
 		return serviceGroup;
 	}
@@ -217,7 +217,7 @@ public class GroupManager {
 		}
 		final State temp = serviceGroupReadOnly.getMemberNested(groupId).getCurrentState();
 
-		log.debug("getCurrentState(instanceId={}, groupId={}): {}", serviceId, groupId, temp);
+		LOG.debug("getCurrentState(instanceId={}, groupId={}): {}", serviceId, groupId, temp);
 
 		return temp;
 	}

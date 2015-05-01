@@ -28,6 +28,8 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Before;
 import org.junit.Test;
 import org.oasis.tosca.Definitions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.comot.m.common.Utils;
@@ -49,6 +51,8 @@ import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitorin
 import at.ac.tuwien.dsg.mela.common.requirements.Requirements;
 
 public class MelaMappingTest extends AbstractTest {
+
+	private static final Logger LOG = LoggerFactory.getLogger(MelaMappingTest.class);
 
 	@Autowired
 	protected MelaOrika orika;
@@ -75,31 +79,31 @@ public class MelaMappingTest extends AbstractTest {
 	public void mapperTest() throws JAXBException, ClassNotFoundException, IOException, EpsException,
 			ComotException {
 
-		// log.info("original {}", Utils.asJsonString(serviceForMapping));
+		// LOG.info("original {}", Utils.asJsonString(serviceForMapping));
 
 		Definitions def = salsaClient.getTosca(TEST_SERVICE_ID);
 		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService serviceState;
 		serviceState = salsaClient.getStatus(TEST_SERVICE_ID);
 
-		log.info("enriched {}", UtilsCs.asString(serviceState));
+		LOG.info("enriched {}", UtilsCs.asString(serviceState));
 
 		CloudService service = mapperTosca.createModel(def);
 		mapperDepl.enrichModel(TEST_SERVICE_ID, service, serviceState);
 
-		// log.info("enriched {}", Utils.asJsonString(service));
+		// LOG.info("enriched {}", Utils.asJsonString(service));
 
 		MonitoredElement element = mapper.extractMela(service);
-		log.info("mela {}", UtilsCs.asString(element));
+		LOG.info("mela {}", UtilsCs.asString(element));
 
 	}
 
 	@Test
 	public void requirementsTest() throws JAXBException, ClassNotFoundException, IOException {
 
-		// log.info("original {}", Utils.asJsonString(serviceForMapping));
+		// LOG.info("original {}", Utils.asJsonString(serviceForMapping));
 
 		Requirements element = mapper.extractRequirements(serviceForMapping);
-		log.info("mela {}", Utils.asXmlString(element));
+		LOG.info("mela {}", Utils.asXmlString(element));
 
 	}
 
@@ -120,7 +124,7 @@ public class MelaMappingTest extends AbstractTest {
 
 		ElementMonitoring element = mapperMelaOutput.extractOutput(def);
 
-		log.info("mela {}", Utils.asXmlString(element));
+		LOG.info("mela {}", Utils.asXmlString(element));
 	}
 
 }

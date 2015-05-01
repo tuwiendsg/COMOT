@@ -29,7 +29,6 @@ import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Binding.DestinationType;
@@ -42,6 +41,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.adapter.UtilsLc;
@@ -65,7 +65,7 @@ import at.ac.tuwien.dsg.comot.model.type.State;
 @Component
 public class LifeCycleManager {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(LifeCycleManager.class);
 
 	public static final String MANAGER_QUEUE = "MANAGER_QUEUE";
 
@@ -107,8 +107,6 @@ public class LifeCycleManager {
 		admin.declareBinding(new Binding(MANAGER_QUEUE, DestinationType.QUEUE, Constants.EXCHANGE_REQUESTS,
 				"*." + LifeCycleEvent.class.getSimpleName() + "." + Action.CREATED + "." + Type.SERVICE, null));
 		admin.declareBinding(new Binding(MANAGER_QUEUE, DestinationType.QUEUE, Constants.EXCHANGE_REQUESTS,
-				"*." + LifeCycleEvent.class.getSimpleName() + "." + Action.REMOVED + "." + Type.SERVICE, null));
-		admin.declareBinding(new Binding(MANAGER_QUEUE, DestinationType.QUEUE, Constants.EXCHANGE_REQUESTS,
 				"*." + CustomEvent.class.getSimpleName() + "." + EpsEvent.EPS_DYNAMIC_REQUESTED + ".*", null));
 
 		container.start();
@@ -137,16 +135,8 @@ public class LifeCycleManager {
 
 					if (Action.CREATED == event.getAction()) {
 						createInstanceManager(serviceId, event);
-
-					} else if (Action.REMOVED == event.getAction()) {
-						try {
-							managers.get(serviceId).groupManager.check(event.getAction(), serviceId);
-							removeInstanceManager(serviceId);
-						} catch (Exception e) {
-
-						}
 					}
-
+					
 				} else if (abEvent instanceof CustomEvent) {
 					CustomEvent event = (CustomEvent) abEvent;
 
@@ -160,14 +150,14 @@ public class LifeCycleManager {
 					}
 				}
 
-			} catch (JAXBException | ClassNotFoundException | AmqpException | IOException | EpsException e) {
-				log.error("{}", e);
+			} catch (JAXBException | ClassNotFoundException | IOException | EpsException e) {
+				LOG.error("{}", e);
 			}
 		}
 	}
 
 	protected void createInstanceManager(String serviceId, LifeCycleEvent event) throws ClassNotFoundException,
-			AmqpException, IOException, JAXBException, EpsException {
+			IOException, JAXBException, EpsException {
 
 		if (managers.containsKey(serviceId)) {
 			return;
@@ -180,6 +170,7 @@ public class LifeCycleManager {
 
 	}
 
+	//@Async
 	protected void removeInstanceManager(String serviceId) {
 		managers.remove(serviceId);
 

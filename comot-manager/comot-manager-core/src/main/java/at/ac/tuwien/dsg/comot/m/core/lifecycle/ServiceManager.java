@@ -27,7 +27,6 @@ import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Binding.DestinationType;
@@ -69,7 +68,7 @@ import at.ac.tuwien.dsg.comot.model.type.State;
 @Scope("prototype")
 public class ServiceManager {
 
-	private static final Logger log = LoggerFactory.getLogger(ServiceManager.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ServiceManager.class);
 
 	public static final String LC_MANAGER_QUEUE = "LC_MANAGER_QUEUE_";
 
@@ -96,10 +95,10 @@ public class ServiceManager {
 		return LC_MANAGER_QUEUE + serviceId;
 	}
 
-	public void createInstance(LifeCycleEvent event) throws ClassNotFoundException, AmqpException, IOException,
+	public void createInstance(LifeCycleEvent event) throws ClassNotFoundException, IOException,
 			JAXBException, EpsException {
 
-		log.info("init event {}", event);
+		LOG.info("init event {}", event);
 
 		this.serviceId = event.getServiceId();
 
@@ -118,7 +117,7 @@ public class ServiceManager {
 
 		try {
 			executeLifeCycleEvent(event);
-		} catch (ComotLifecycleException | ComotException e) {
+		} catch (ComotException e) {
 			sendException(e);
 		}
 
@@ -134,7 +133,7 @@ public class ServiceManager {
 			try {
 				AbstractEvent event = UtilsLc.abstractEvent(message);
 
-				log.info(logId() + " processing: {}", event);
+				LOG.info(logId() + " processing: {}", event);
 
 				if (event instanceof LifeCycleEvent) {
 					LifeCycleEvent incomingEvent = (LifeCycleEvent) event;
@@ -149,16 +148,16 @@ public class ServiceManager {
 			} catch (Exception e) {
 				try {
 					sendException(e);
-					log.error("{}", e);
-				} catch (AmqpException | JAXBException e1) {
-					log.error("{}", e);
+					LOG.error("{}", e);
+				} catch (JAXBException e1) {
+					LOG.error("{}", e1);
 				}
 			}
 		}
 	}
 
-	public void executeLifeCycleEvent(LifeCycleEvent event) throws EpsException, IOException, ComotException,
-			AmqpException, JAXBException, ComotLifecycleException, ClassNotFoundException {
+	public void executeLifeCycleEvent(LifeCycleEvent event) throws IOException, ComotException,
+			JAXBException, ClassNotFoundException {
 
 		String groupId = event.getGroupId();
 		Action action = event.getAction();
@@ -218,7 +217,7 @@ public class ServiceManager {
 								+ LifeCycleEventModifying.class);
 					}
 
-					log.info("updating instance: {}", targetGroup.getId());
+					LOG.info("updating instance: {}", targetGroup.getId());
 					infoService
 							.putUnitInstance(serviceId, modEvent.getParentId(), modEvent.getInstance());
 
@@ -271,10 +270,7 @@ public class ServiceManager {
 				if (serviceId.equals(groupId)) { // SERVICE
 					service = infoService.getService(serviceId);
 					infoService.removeService(serviceId);
-					// parentManager.removeInstanceManager(this);
-
-				} else {
-					// TODO adapt the information model
+					parentManager.removeInstanceManager(serviceId);
 				}
 
 				groupManager.checkAndExecute(action, groupId);
@@ -307,7 +303,7 @@ public class ServiceManager {
 	}
 
 	public void sendLifeCycleEvent(CloudService service, LifeCycleEvent event) throws ClassNotFoundException,
-			IOException, EpsException, AmqpException, JAXBException {
+			IOException, EpsException, JAXBException {
 
 		String groupId = event.getGroupId();
 		Action action = event.getAction();
@@ -340,6 +336,7 @@ public class ServiceManager {
 			if (temp.getCurrentState() == State.FINAL) {
 				if (temp.getId().equals(serviceId)) {
 					clean();
+					
 				} else {
 					temp.getParent().removeMemberNested(temp.getId());
 				}
@@ -348,7 +345,7 @@ public class ServiceManager {
 
 	}
 
-	public void executeCustomEvent(CustomEvent event) throws AmqpException, JAXBException, ClassNotFoundException,
+	public void executeCustomEvent(CustomEvent event) throws JAXBException, ClassNotFoundException,
 			IOException, ComotException, EpsException {
 
 		String groupId = event.getGroupId();
@@ -369,7 +366,7 @@ public class ServiceManager {
 
 	}
 
-	protected void sendException(Exception e) throws AmqpException, JAXBException {
+	protected void sendException(Exception e) throws JAXBException {
 
 		ExceptionMessage msg;
 
@@ -386,9 +383,9 @@ public class ServiceManager {
 
 	}
 
-	protected void send(String exchange, String bindingKey, ComotMessage message) throws AmqpException, JAXBException {
+	protected void send(String exchange, String bindingKey, ComotMessage message) throws JAXBException {
 
-		log.info(logId() + "STAT-EVENT exchange={} key={}", exchange, bindingKey);
+		LOG.info(logId() + "STAT-EVENT exchange={} key={}", exchange, bindingKey);
 		amqp.convertAndSend(exchange, bindingKey, Utils.asJsonString(message));
 	}
 

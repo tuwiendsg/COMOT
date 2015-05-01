@@ -39,7 +39,7 @@ import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionR
 
 public class RsyblClient extends ServiceClient {
 
-	private final Logger log = LoggerFactory.getLogger(RsyblClient.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RsyblClient.class);
 
 	protected static final String DEF_BASE_PATH = "http://127.0.0.1:8280/rSYBL/restWS";
 
@@ -74,12 +74,12 @@ public class RsyblClient extends ServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		log.info(ln + "prepareControl '{}'. Response: '{}'", serviceId, msg);
+		LOG.info(ln + "prepareControl '{}'. Response: '{}'", serviceId, msg);
 	}
 
 	public void serviceDescription(String serviceId, String cloudServiceXML) throws EpsException {
 
-		log.debug("serviceDescription {}", cloudServiceXML);
+		LOG.debug("serviceDescription {}", cloudServiceXML);
 
 		Response response = client.target(getBaseUri())
 				.path(SERV_DESCRIPTION_PATH)
@@ -91,16 +91,16 @@ public class RsyblClient extends ServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		log.info(ln + "serviceDescription '{}'. Response: '{}'", serviceId, msg);
+		LOG.info(ln + "serviceDescription '{}'. Response: '{}'", serviceId, msg);
 	}
 
 	public void serviceDeployment(String serviceId, DeploymentDescription deploymentDescription)
 			throws EpsException {
 
 		try {
-			log.debug("serviceDeployment {}", UtilsCs.asString(deploymentDescription));
+			LOG.debug("serviceDeployment {}", UtilsCs.asString(deploymentDescription));
 		} catch (JAXBException e) {
-			log.error("{}", e);
+			LOG.error("{}", e);
 		}
 
 		Response response = client.target(getBaseUri())
@@ -113,7 +113,7 @@ public class RsyblClient extends ServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		log.info(ln + "serviceDeployment '{}'. Response: '{}'", serviceId, msg);
+		LOG.info(ln + "serviceDeployment '{}'. Response: '{}'", serviceId, msg);
 	}
 
 	public void sendMetricsCompositionRules(String serviceId,
@@ -130,7 +130,7 @@ public class RsyblClient extends ServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		log.info(ln + "metricsCompositionRules '{}'. Response: '{}'", serviceId, msg);
+		LOG.info(ln + "metricsCompositionRules '{}'. Response: '{}'", serviceId, msg);
 	}
 
 	public void updateMetricsCompositionRules(String serviceId,
@@ -147,7 +147,7 @@ public class RsyblClient extends ServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		log.info(ln + "updateMetricsCompositionRules '{}'. Response: '{}'", serviceId, msg);
+		LOG.info(ln + "updateMetricsCompositionRules '{}'. Response: '{}'", serviceId, msg);
 	}
 
 	public void sendElasticityCapabilitiesEffects(String serviceId, String effectsJSON) throws EpsException {
@@ -162,7 +162,7 @@ public class RsyblClient extends ServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		log.info(ln + "elasticityCapabilitiesEffects '{}'. Response: '{}'", serviceId, msg);
+		LOG.info(ln + "elasticityCapabilitiesEffects '{}'. Response: '{}'", serviceId, msg);
 	}
 
 	public void updateElasticityCapabilitiesEffects(String serviceId, String effectsJSON) throws EpsException {
@@ -177,7 +177,7 @@ public class RsyblClient extends ServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		log.info(ln + "updateElasticityCapabilitiesEffects '{}'. Response: '{}'", serviceId, msg);
+		LOG.info(ln + "updateElasticityCapabilitiesEffects '{}'. Response: '{}'", serviceId, msg);
 	}
 
 	public void startControl(String serviceId) throws EpsException {
@@ -192,7 +192,7 @@ public class RsyblClient extends ServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		log.info(ln + "startControl '{}'. Response: '{}'", serviceId, msg);
+		LOG.info(ln + "startControl '{}'. Response: '{}'", serviceId, msg);
 	}
 
 	public void stopControl(String serviceId) throws EpsException {
@@ -207,13 +207,13 @@ public class RsyblClient extends ServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		log.info(ln + "stopControl '{}'. Response: '{}'", serviceId, msg);
+		LOG.info(ln + "stopControl '{}'. Response: '{}'", serviceId, msg);
 	}
 
 	public void updateServiceDescription(String serviceId, String cloudServiceXML)
 			throws EpsException {
 
-		log.debug("updateServiceDescription {}", cloudServiceXML);
+		LOG.debug("updateServiceDescription {}", cloudServiceXML);
 
 		Response response = client.target(getBaseUri())
 				.path(SERV_DESCRIPTION_PATH)
@@ -225,7 +225,7 @@ public class RsyblClient extends ServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		log.info(ln + "updateServiceDescription '{}'. Response: '{}'", serviceId, msg);
+		LOG.info(ln + "updateServiceDescription '{}'. Response: '{}'", serviceId, msg);
 	}
 
 	// /**
@@ -238,7 +238,7 @@ public class RsyblClient extends ServiceClient {
 	// public void updateElasticityRequirements(String serviceId, String cloudServiceXML)
 	// throws EpsException {
 	//
-	// log.debug("updateElasticityRequirements {}", cloudServiceXML);
+	// LOG.debug("updateElasticityRequirements {}", cloudServiceXML);
 	//
 	// Response response = client.target(getBaseUri())
 	// .path(REPLACE_REQUIREMENTS_PATH)
@@ -250,7 +250,7 @@ public class RsyblClient extends ServiceClient {
 	//
 	// String msg = response.readEntity(String.class);
 	//
-	// log.info(ln + "updateElasticityRequirements '{}'. Response: '{}'", serviceId, msg);
+	// LOG.info(ln + "updateElasticityRequirements '{}'. Response: '{}'", serviceId, msg);
 	// }
 
 	public List<String> listAllServices() throws EpsException {
@@ -264,7 +264,7 @@ public class RsyblClient extends ServiceClient {
 
 		String result = response.readEntity(String.class);
 
-		log.info(ln + "listAllServices . Response: '{}'", result);
+		LOG.info(ln + "listAllServices . Response: '{}'", result);
 
 		Arrays.asList(result.split(","));
 
@@ -283,7 +283,7 @@ public class RsyblClient extends ServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		log.info(ln + "updateElasticityRequirements '{}'. Response: '{}'", serviceId, msg);
+		LOG.info(ln + "updateElasticityRequirements '{}'. Response: '{}'", serviceId, msg);
 	}
 
 }

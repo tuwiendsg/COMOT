@@ -45,7 +45,7 @@ import at.ac.tuwien.dsg.mela.common.requirements.Requirements;
 
 public class MelaClient extends ServiceClient {
 
-	private static final Logger log = LoggerFactory.getLogger(MelaClient.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MelaClient.class);
 
 	protected static final String DEF_BASE_PATH = "http://127.0.0.1:8180/MELA/REST_WS";
 
@@ -75,9 +75,9 @@ public class MelaClient extends ServiceClient {
 	public void sendServiceDescription(MonitoredElement element) throws EpsException {
 
 		try {
-			log.debug("MonitoredElement: {}", UtilsCs.asString(element));
+			LOG.debug("MonitoredElement: {}", UtilsCs.asString(element));
 		} catch (JAXBException e) {
-			log.error("{}", e);
+			LOG.error("{}", e);
 		}
 
 		Response response = client.target(getBaseUri())
@@ -89,7 +89,7 @@ public class MelaClient extends ServiceClient {
 
 		String result = response.readEntity(String.class);
 
-		log.info(ln + "createServiceDescription. Response: '{}'", result);
+		LOG.info(ln + "createServiceDescription. Response: '{}'", result);
 
 	}
 
@@ -107,7 +107,7 @@ public class MelaClient extends ServiceClient {
 
 		MonitoredElement result = response.readEntity(MonitoredElement.class);
 
-		log.info(ln + "getServiceDescription '{}'. Response: '{}'", serviceId, result);
+		LOG.info(ln + "getServiceDescription '{}'. Response: '{}'", serviceId, result);
 
 		return result;
 	}
@@ -125,7 +125,7 @@ public class MelaClient extends ServiceClient {
 
 		String result = response.readEntity(String.class);
 
-		log.info(ln + "updateServiceDescription. Response: '{}'", result);
+		LOG.info(ln + "updateServiceDescription. Response: '{}'", result);
 
 	}
 
@@ -143,7 +143,7 @@ public class MelaClient extends ServiceClient {
 
 		String result = response.readEntity(String.class);
 
-		log.info(ln + "removeServiceDescription '{}'. Response: '{}'", serviceId, result);
+		LOG.info(ln + "removeServiceDescription '{}'. Response: '{}'", serviceId, result);
 
 	}
 
@@ -159,7 +159,7 @@ public class MelaClient extends ServiceClient {
 
 		String result = response.readEntity(String.class);
 
-		log.info(ln + "listAllServices . Response: '{}'", result);
+		LOG.info(ln + "listAllServices . Response: '{}'", result);
 
 		// extract IDs from JSON to list
 		List<String> list = new ArrayList<String>();
@@ -189,7 +189,7 @@ public class MelaClient extends ServiceClient {
 
 		String result = response.readEntity(String.class);
 
-		log.info(ln + "sendMetricsCompositionRules '{}'. Response: '{}'", serviceId, result);
+		LOG.info(ln + "sendMetricsCompositionRules '{}'. Response: '{}'", serviceId, result);
 
 	}
 
@@ -207,7 +207,7 @@ public class MelaClient extends ServiceClient {
 
 		CompositionRulesConfiguration result = response.readEntity(CompositionRulesConfiguration.class);
 
-		log.info(ln + "getMetricsCompositionRules '{}'. Response: '{}'", serviceId, result);
+		LOG.info(ln + "getMetricsCompositionRules '{}'. Response: '{}'", serviceId, result);
 
 		return result;
 	}
@@ -227,7 +227,7 @@ public class MelaClient extends ServiceClient {
 
 		String result = response.readEntity(String.class);
 
-		log.info(ln + "sendRequirements '{}'. Response: '{}'", serviceId, result);
+		LOG.info(ln + "sendRequirements '{}'. Response: '{}'", serviceId, result);
 
 	}
 
@@ -247,7 +247,7 @@ public class MelaClient extends ServiceClient {
 
 		MonitoredElementMonitoringSnapshot result = response.readEntity(MonitoredElementMonitoringSnapshot.class);
 
-		log.info(ln + "getMonitoringData '{}'. Response: '{}'", serviceId, result);
+		LOG.info(ln + "getMonitoringData '{}'. Response: '{}'", serviceId, result);
 
 		return result;
 	}
@@ -265,7 +265,7 @@ public class MelaClient extends ServiceClient {
 
 		MonitoredElementMonitoringSnapshot result = response.readEntity(MonitoredElementMonitoringSnapshot.class);
 
-		log.info(ln + "getMonitoringData '{}'. Response: '{}'", serviceId, result);
+		LOG.info(ln + "getMonitoringData '{}'. Response: '{}'", serviceId, result);
 
 		return result;
 	}
@@ -284,7 +284,7 @@ public class MelaClient extends ServiceClient {
 
 		MonitoredElementMonitoringSnapshots result = response.readEntity(MonitoredElementMonitoringSnapshots.class);
 
-		log.info(ln + "getAllAggregatedMonitoringData '{}'. Response: '{}'", serviceId, result);
+		LOG.info(ln + "getAllAggregatedMonitoringData '{}'. Response: '{}'", serviceId, result);
 
 		return result;
 	}
@@ -311,7 +311,7 @@ public class MelaClient extends ServiceClient {
 
 		MonitoredElementMonitoringSnapshots result = response.readEntity(MonitoredElementMonitoringSnapshots.class);
 
-		log.info(ln + "getAllAggregatedMonitoringDataInTimeInterval '{}'. Response: '{}'", serviceId, result);
+		LOG.info(ln + "getAllAggregatedMonitoringDataInTimeInterval '{}'. Response: '{}'", serviceId, result);
 
 		return result;
 	}
@@ -332,7 +332,7 @@ public class MelaClient extends ServiceClient {
 
 		MonitoredElementMonitoringSnapshots result = response.readEntity(MonitoredElementMonitoringSnapshots.class);
 
-		log.info(ln + "getLastXAggregatedMonitoringData '{}'. Response: '{}'", serviceId, result);
+		LOG.info(ln + "getLastXAggregatedMonitoringData '{}'. Response: '{}'", serviceId, result);
 
 		return result;
 	}
@@ -357,7 +357,7 @@ public class MelaClient extends ServiceClient {
 
 		String result = response.readEntity(String.class);
 
-		log.info(ln + "getAvailableMetrics '{}'. Response: '{}'", serviceId, result);
+		LOG.info(ln + "getAvailableMetrics '{}'. Response: '{}'", serviceId, result);
 
 		return result;
 	}

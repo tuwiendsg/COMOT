@@ -25,6 +25,8 @@ import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Binding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -47,6 +49,8 @@ import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 
 @Component
 public class Recording extends Processor {
+
+	private static final Logger LOG = LoggerFactory.getLogger(Recording.class);
 
 	public static final String CHANGE_TYPE_LIFECYCLE = "CHANGE_TYPE_LIFECYCLE";
 	public static final String CHANGE_TYPE_CUSTOM = "CHANGE_TYPE_CUSTOM";
@@ -82,7 +86,7 @@ public class Recording extends Processor {
 	@Override
 	public void onLifecycleEvent(StateMessage msg, String serviceId, String groupId,
 			Action action, String originId, CloudService service, Map<String, Transition> transitions)
-			throws JAXBException, IllegalArgumentException, IllegalAccessException {
+			throws JAXBException, IllegalAccessException {
 
 		LifeCycleEvent event = (LifeCycleEvent) msg.getEvent();
 
@@ -92,8 +96,6 @@ public class Recording extends Processor {
 		changeProperties.put(PROP_EVENT_TIME, event.getTime());
 
 		UtilsLc.removeProviderInfoExceptType(service);
-
-		// log.info(logId() + "onMessage {}", Utils.asJsonString(msg));
 
 		revisionApi.createOrUpdateRegion(service, serviceId, groupId, CHANGE_TYPE_LIFECYCLE, changeProperties);
 
@@ -120,7 +122,7 @@ public class Recording extends Processor {
 		if (revisionApi.verifyObject(serviceId, serviceId)) {
 			revisionApi.storeEvent(serviceId, groupId, CHANGE_TYPE_CUSTOM, changeProperties);
 		} else {
-			log.error("Custom event happened, but no managed region. {}", msg.getEvent());
+			LOG.error("Custom event happened, but no managed region. {}", msg.getEvent());
 		}
 	}
 
@@ -153,7 +155,7 @@ public class Recording extends Processor {
 		if (revisionApi.verifyObject(serviceId, serviceId)) {
 			revisionApi.storeEvent(serviceId, serviceId, type, changeProperties);
 		} else {
-			log.error("Exception event happened, but no managed region. {}", msg);
+			LOG.error("Exception event happened, but no managed region. {}", msg);
 		}
 
 	}

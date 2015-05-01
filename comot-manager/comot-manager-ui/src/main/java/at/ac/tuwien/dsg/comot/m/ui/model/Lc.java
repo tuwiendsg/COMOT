@@ -36,7 +36,7 @@ import at.ac.tuwien.dsg.comot.model.type.State;
 @XmlRootElement
 public class Lc {
 
-	private static final Logger log = LoggerFactory.getLogger(Lc.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Lc.class);
 
 	@XmlElement(name = "nodes")
 	List<LcState> states = new ArrayList<>();

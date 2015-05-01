@@ -43,7 +43,7 @@ import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescripti
 
 public class SalsaClient extends ServiceClient {
 
-	private final Logger log = LoggerFactory.getLogger(SalsaClient.class);
+	private final Logger LOG = LoggerFactory.getLogger(SalsaClient.class);
 
 	protected static final String DEF_BASE_PATH = "http://127.0.0.1:8380/salsa-engine/rest";
 
@@ -66,7 +66,7 @@ public class SalsaClient extends ServiceClient {
 
 	public String deploy(String toscaDescriptionXml) throws EpsException {
 
-		log.debug(ln + "Deploying cloud application: {}", toscaDescriptionXml);
+		LOG.debug(ln + "Deploying cloud application: {}", toscaDescriptionXml);
 
 		Response response = client.target(getBaseUri())
 				.path(DEPLOY_PATH)
@@ -77,7 +77,7 @@ public class SalsaClient extends ServiceClient {
 
 		String serviceId = response.readEntity(String.class);
 
-		log.debug(ln + "deployed service. Response: '{}'",
+		LOG.debug(ln + "deployed service. Response: '{}'",
 				serviceId);
 
 		return serviceId;
@@ -86,7 +86,7 @@ public class SalsaClient extends ServiceClient {
 
 	public void undeploy(String serviceId) throws EpsException {
 
-		log.trace(ln + "Undeploying service with serviceId '{}'", serviceId);
+		LOG.trace(ln + "Undeploying service with serviceId '{}'", serviceId);
 
 		Response response = client.target(getBaseUri())
 				.path(UNDEPLOY_PATH)
@@ -98,14 +98,14 @@ public class SalsaClient extends ServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		log.debug(ln + "undeployed '{}'. Response: '{}'", serviceId, msg);
+		LOG.debug(ln + "undeployed '{}'. Response: '{}'", serviceId, msg);
 
 	}
 
 	public void spawn(String serviceId, String topologyId, String nodeId, int instanceCount)
 			throws EpsException {
 
-		log.trace(ln +
+		LOG.trace(ln +
 				"Spawning additional instances (+{}) for serviceId={}, topologyId={}, nodeId={}",
 				instanceCount, serviceId, topologyId, nodeId);
 
@@ -122,7 +122,7 @@ public class SalsaClient extends ServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		log.debug(
+		LOG.debug(
 				name + "Spawned additional instances (+{}) for serviceId={}, topologyId={}, nodeId={}. Response: '{}'",
 				instanceCount, serviceId, topologyId, nodeId, msg);
 
@@ -130,7 +130,7 @@ public class SalsaClient extends ServiceClient {
 
 	public void destroy(String serviceId, String topologyId, String nodeId, int instanceId) throws EpsException {
 
-		log.trace(ln + "Destroying instance with id {} (service: {} topology: {} node: {})",
+		LOG.trace(ln + "Destroying instance with id {} (service: {} topology: {} node: {})",
 				instanceId, serviceId, topologyId, nodeId);
 
 		Response response = client.target(getBaseUri())
@@ -146,7 +146,7 @@ public class SalsaClient extends ServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		log.debug(ln + "Sestroyed instance with id {} (service={}, topology={}, node={}). Response: '{}'",
+		LOG.debug(ln + "Sestroyed instance with id {} (service={}, topology={}, node={}). Response: '{}'",
 				instanceId, serviceId, topologyId, nodeId, msg);
 
 	}
@@ -154,7 +154,7 @@ public class SalsaClient extends ServiceClient {
 	public CloudService getStatus(String serviceId)
 			throws EpsException, ComotException {
 
-		log.trace(ln + "Checking status for serviceId {}", serviceId);
+		LOG.trace(ln + "Checking status for serviceId {}", serviceId);
 
 		Response response = client.target(getBaseUri())
 				.path(STATUS_PATH)
@@ -172,7 +172,7 @@ public class SalsaClient extends ServiceClient {
 			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 			CloudService service = (CloudService) jaxbUnmarshaller.unmarshal(reader);
 
-			log.debug(ln + "Checked status for serviceId '{}'. Response: '{}'", serviceId, service);
+			LOG.debug(ln + "Checked status for serviceId '{}'. Response: '{}'", serviceId, service);
 
 			return service;
 
@@ -185,7 +185,7 @@ public class SalsaClient extends ServiceClient {
 	public Definitions getTosca(String serviceId)
 			throws EpsException, ComotException {
 
-		log.trace(ln + "Getting tosca for serviceId {}", serviceId);
+		LOG.trace(ln + "Getting tosca for serviceId {}", serviceId);
 
 		Response response = client.target(getBaseUri())
 				.path(TOSCA_PATH)
@@ -203,7 +203,7 @@ public class SalsaClient extends ServiceClient {
 			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 			Definitions service = (Definitions) jaxbUnmarshaller.unmarshal(reader);
 
-			log.debug(ln + "Tosca for serviceId '{}'. Response: '{}'", serviceId, service);
+			LOG.debug(ln + "Tosca for serviceId '{}'. Response: '{}'", serviceId, service);
 
 			return service;
 
@@ -223,7 +223,7 @@ public class SalsaClient extends ServiceClient {
 	@Deprecated
 	public DeploymentDescription getServiceDeploymentInfo(String serviceId) throws EpsException {
 
-		log.trace(ln + "Getting DeploymentInfo for serviceId {}", serviceId);
+		LOG.trace(ln + "Getting DeploymentInfo for serviceId {}", serviceId);
 
 		Response response = client.target(getBaseUri())
 				.path(DEPLOYMENT_INFO_PATH)
@@ -236,7 +236,7 @@ public class SalsaClient extends ServiceClient {
 
 		DeploymentDescription description = response.readEntity(DeploymentDescription.class);
 
-		log.debug(ln + "DeploymentInfo for serviceId '{}'. Response: '{}'", serviceId, description);
+		LOG.debug(ln + "DeploymentInfo for serviceId '{}'. Response: '{}'", serviceId, description);
 
 		return description;
 	}
@@ -244,7 +244,7 @@ public class SalsaClient extends ServiceClient {
 	@Deprecated
 	public String getServices() throws EpsException {
 
-		log.trace(ln + "Getting list of all services {}");
+		LOG.trace(ln + "Getting list of all services {}");
 
 		Response response = client.target(getBaseUri())
 				.path(SERVICES_LIST)
@@ -255,7 +255,7 @@ public class SalsaClient extends ServiceClient {
 
 		String msg = response.readEntity(String.class);
 
-		log.debug(ln + "List of all services. Response: '{}'", msg);
+		LOG.debug(ln + "List of all services. Response: '{}'", msg);
 
 		return msg;
 	}

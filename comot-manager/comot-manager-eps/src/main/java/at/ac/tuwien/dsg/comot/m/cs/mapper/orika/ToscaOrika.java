@@ -61,7 +61,7 @@ import at.ac.tuwien.dsg.comot.model.type.ResourceType;
 @Component
 public class ToscaOrika {
 
-	private static final Logger log = LoggerFactory.getLogger(ToscaOrika.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ToscaOrika.class);
 	public static final QName ATTRIBUTE_ID = new QName("id");
 
 	protected MapperFacade facade;
@@ -143,6 +143,8 @@ public class ToscaOrika {
 	class NodeMapper extends CustomMapper<ServiceUnit, TNodeTemplate> {
 		@Override
 		public void mapAtoB(ServiceUnit unit, TNodeTemplate node, MappingContext context) {
+
+			LOG.trace("{}", unit);
 
 			if (unit.getMaxInstances() == Integer.MAX_VALUE) {
 				node.setMaxInstances("unbounded");

@@ -50,7 +50,7 @@ import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 @Scope("prototype")
 public class ConverterToInternal {
 
-	protected static final Logger log = LoggerFactory.getLogger(ConverterToInternal.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(ConverterToInternal.class);
 
 	protected Map<String, InternalNode> nodes;
 	protected ManagedRegion region;

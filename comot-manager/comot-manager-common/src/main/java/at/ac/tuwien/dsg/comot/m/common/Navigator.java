@@ -41,7 +41,7 @@ import at.ac.tuwien.dsg.comot.model.type.OsuType;
 
 public class Navigator {
 
-	protected static final Logger log = LoggerFactory.getLogger(Navigator.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(Navigator.class);
 
 	protected CloudService service;
 	protected Map<String, Node> map = new HashMap<>();
@@ -99,7 +99,7 @@ public class Navigator {
 	public static boolean isTrueServiceUnit(ServiceUnit node, Set<ServiceUnit> potentialHosted) {
 
 		boolean result = false;
-		// log.info("aaaa "+OsuType.OS.toString());
+		// LOG.info("aaaa "+OsuType.OS.toString());
 
 		if (node.getOsuInstance().getOsu().getType().equals(OsuType.OS.toString()) ||
 				node.getOsuInstance().getOsu().getType().equals(OsuType.DOCKER.toString()) ||
@@ -113,7 +113,7 @@ public class Navigator {
 			}
 		}
 
-		log.debug("isServiceUnit(nodeId={} ): {}", node.getId(), result);
+		LOG.debug("isServiceUnit(nodeId={} ): {}", node.getId(), result);
 		return result;
 	}
 
@@ -159,7 +159,7 @@ public class Navigator {
 
 	public ServiceUnit getOsForServiceUnit(String id) {
 
-		log.trace("getOsForServiceUnit(id={} )", id);
+		LOG.trace("getOsForServiceUnit(id={} )", id);
 
 		ServiceUnit host = getHost(id);
 
@@ -178,10 +178,10 @@ public class Navigator {
 		ServiceUnit host = ((ServiceUnit) getUnit(id));
 
 		if (host == null || host.getHost() == null) {
-			log.warn("getHost(id={}): {}", id, null);
+			LOG.warn("getHost(id={}): {}", id, null);
 			return null;
 		} else {
-			log.debug("getHost(id={}): {}", id, host.getHost().getTo());
+			LOG.debug("getHost(id={}): {}", id, host.getHost().getTo());
 			return host.getHost().getTo();
 		}
 
@@ -212,7 +212,7 @@ public class Navigator {
 			}
 		}
 
-		log.debug("getParentTopologyFor(id={} ): {}", id, ((result == null) ? null : result.getId()));
+		LOG.debug("getParentTopologyFor(id={} ): {}", id, ((result == null) ? null : result.getId()));
 		return result;
 	}
 
@@ -237,14 +237,14 @@ public class Navigator {
 				result = (ServiceUnit) node.parent.entity;
 			}
 		}
-		log.debug("getNodeFor(id={}): {}", id, (result == null) ? null : result.getId());
+		LOG.debug("getNodeFor(id={}): {}", id, (result == null) ? null : result.getId());
 		return result;
 	}
 
 	public UnitInstance getInstance(String uniqueId) {
 		Node node = map.get(uniqueId);
 		if (node == null) {
-			log.error("getInstance(id={}): {} (There is no instance with such id)", uniqueId, null);
+			LOG.error("getInstance(id={}): {} (There is no instance with such id)", uniqueId, null);
 		} else {
 			if (node.entity instanceof UnitInstance) {
 				return (UnitInstance) node.entity;
@@ -257,7 +257,7 @@ public class Navigator {
 	public ServiceUnit getUnit(String id) {
 		Node node = map.get(id);
 		if (node == null) {
-			log.error("getNode(id={}): {} (There is no node with such id)", id, null);
+			LOG.error("getNode(id={}): {} (There is no node with such id)", id, null);
 		} else {
 			if (node.entity instanceof ServiceUnit) {
 				return (ServiceUnit) node.entity;

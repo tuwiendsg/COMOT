@@ -52,7 +52,7 @@ import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 @Scope("prototype")
 public class ConverterFromInternal {
 
-	protected static final Logger log = LoggerFactory.getLogger(ConverterFromInternal.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(ConverterFromInternal.class);
 
 	protected Map<String, Object> objects;
 	protected ManagedRegion region;
@@ -90,7 +90,7 @@ public class ConverterFromInternal {
 		Object object = createObjectWithProperties(clazz, fields, node.getProperties());
 		objects.put(node.getBusinessId(), object);
 
-		log.debug("created: {} {}", clazz, node.getBusinessId());
+		LOG.debug("created: {} {}", clazz, node.getBusinessId());
 
 		for (Field field : fields) {
 			Class<?> fc = field.getType();
@@ -147,7 +147,7 @@ public class ConverterFromInternal {
 
 			object = createObjectWithProperties(clazz, fields, rel.getProperties());
 
-			log.debug("created from rel: {} {}", clazz, rel.getType());
+			LOG.debug("created from rel: {} {}", clazz, rel.getType());
 
 			for (Field field : fields) {
 				if (field.isAnnotationPresent(EndNode.class)) {

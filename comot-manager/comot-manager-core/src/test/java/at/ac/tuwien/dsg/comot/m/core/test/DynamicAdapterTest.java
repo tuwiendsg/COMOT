@@ -24,7 +24,6 @@ import javax.xml.bind.JAXBException;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.amqp.AmqpException;
 
 import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
@@ -61,7 +60,7 @@ public class DynamicAdapterTest extends AbstractTest {
 	}
 
 	@Test
-	public void testDynamic() throws EpsException, AmqpException, JAXBException {
+	public void testDynamic() throws EpsException, JAXBException {
 
 		OfferedServiceUnit melaOsu = infoService.getOsu(Constants.RSYBL_SERVICE_DYNAMIC);
 

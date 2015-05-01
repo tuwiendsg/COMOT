@@ -63,7 +63,7 @@ import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public abstract class AbstractTest {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractTest.class);
 
 	@Autowired
 	protected ApplicationContext context;
@@ -164,9 +164,9 @@ public abstract class AbstractTest {
 		int i = 0;
 		while (change != null) {
 			i++;
-			log.debug("stateFROM: {}", change.getFrom());
-			log.debug("change: {}", change);
-			log.debug("stateTO: {}\n", change.getTo());
+			LOG.debug("stateFROM: {}", change.getFrom());
+			LOG.debug("change: {}", change);
+			LOG.debug("stateTO: {}\n", change.getTo());
 			change = change.getTo().getEnd();
 		}
 		return i;

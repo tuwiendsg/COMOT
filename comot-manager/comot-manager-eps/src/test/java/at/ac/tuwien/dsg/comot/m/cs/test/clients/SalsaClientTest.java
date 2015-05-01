@@ -29,6 +29,8 @@ import javax.xml.bind.JAXBException;
 import org.junit.Before;
 import org.junit.Test;
 import org.oasis.tosca.Definitions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityState;
@@ -42,6 +44,8 @@ import at.ac.tuwien.dsg.comot.m.cs.test.AbstractTest;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
 
 public class SalsaClientTest extends AbstractTest {
+
+	private static final Logger LOG = LoggerFactory.getLogger(SalsaClientTest.class);
 
 	public static final String SERVICE_ID = "example_deployOneVM";
 	public static final String TOPOLOGY_ID = "example_topology";
@@ -152,7 +156,7 @@ public class SalsaClientTest extends AbstractTest {
 		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService serviceInfo = salsa
 				.getStatus(SERVICE_ID);
 
-		log.info(UtilsCs.asString(serviceInfo));
+		LOG.info(UtilsCs.asString(serviceInfo));
 	}
 
 	@SuppressWarnings("deprecation")
@@ -160,14 +164,14 @@ public class SalsaClientTest extends AbstractTest {
 	public void testDeploymentDescription() throws EpsException, JAXBException {
 		DeploymentDescription descr = salsa.getServiceDeploymentInfo(SERVICE_ID);
 
-		log.info(UtilsCs.asString(descr));
+		LOG.info(UtilsCs.asString(descr));
 	}
 
 	@Test
 	public void testGetTosca() throws EpsException, JAXBException, ComotException {
 		Definitions def = salsa.getTosca(SERVICE_ID);
 
-		log.info(UtilsCs.asString(def));
+		LOG.info(UtilsCs.asString(def));
 	}
 
 	@Test
@@ -189,6 +193,6 @@ public class SalsaClientTest extends AbstractTest {
 	@Test
 	public void testGetAllServices() throws EpsException, JAXBException, ComotException {
 		String def = salsa.getServices();
-		log.info(def);
+		LOG.info(def);
 	}
 }

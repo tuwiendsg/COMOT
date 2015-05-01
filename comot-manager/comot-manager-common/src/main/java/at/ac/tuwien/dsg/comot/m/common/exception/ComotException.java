@@ -26,8 +26,12 @@ public class ComotException extends Exception {
 		super(message);
 	}
 
-	public ComotException(String message, Exception cause) {
+	public ComotException(String message, Throwable cause) {
 		super(message, cause);
+	}
+
+	public ComotException(Throwable cause) {
+		super(cause);
 	}
 
 }

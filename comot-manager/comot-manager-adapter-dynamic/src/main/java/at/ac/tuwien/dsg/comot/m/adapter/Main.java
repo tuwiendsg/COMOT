@@ -48,7 +48,7 @@ import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 
 public class Main {
 
-	private static final Logger log = LoggerFactory.getLogger(Main.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
 	public static final String SERVICE_INSTANCE_AS_PROPERTY = "service";
 	public static final String PROPERTIES_FILE = "./salsa.environment";
@@ -74,7 +74,7 @@ public class Main {
 				try {
 					infoPort = new Integer(cmd.getOptionValue("ip"));
 				} catch (NumberFormatException e) {
-					log.warn("infoPort must be a number");
+					LOG.warn("infoPort must be a number");
 					showHelp(options);
 				}
 
@@ -119,15 +119,15 @@ public class Main {
 					confirmCreation();
 
 				} else {
-					log.warn("No adapter type specified");
+					LOG.warn("No adapter type specified");
 					showHelp(options);
 				}
 			} else {
-				log.warn("Required parameters were not specified.");
+				LOG.warn("Required parameters were not specified.");
 				showHelp(options);
 			}
 		} catch (Exception e) {
-			log.error("{}", e);
+			LOG.error("{}", e);
 			showHelp(options);
 		}
 	}
@@ -161,22 +161,22 @@ public class Main {
 			prop.load(input);
 
 			serviceId = prop.getProperty(SERVICE_INSTANCE_AS_PROPERTY);
-			log.info("service={}", serviceId);
+			LOG.info("service={}", serviceId);
 
 		} catch (IOException e) {
-			log.error(" {}", e);
+			LOG.error(" {}", e);
 		} finally {
 			if (input != null) {
 				try {
 					input.close();
 				} catch (IOException e) {
-					log.error("{}", e);
+					LOG.error("{}", e);
 				}
 			}
 		}
 
 		if (serviceId == null) {
-			log.error("there is no property '{}'", SERVICE_INSTANCE_AS_PROPERTY);
+			LOG.error("there is no property '{}'", SERVICE_INSTANCE_AS_PROPERTY);
 			throw new IllegalArgumentException("there is no property " + SERVICE_INSTANCE_AS_PROPERTY);
 		}
 
@@ -200,7 +200,7 @@ public class Main {
 						+ Type.SERVICE,
 				Utils.asJsonString(event));
 
-		log.info("Success creating adapter '{}' of of service '{}'", participantId, serviceId);
+		LOG.info("Success creating adapter '{}' of of service '{}'", participantId, serviceId);
 	}
 
 }

@@ -24,6 +24,8 @@ import javax.xml.bind.JAXBException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.comot.m.common.Utils;
@@ -36,6 +38,8 @@ import at.ac.tuwien.dsg.comot.rsybl.CloudServiceXML;
 import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
 
 public class RsyblMappingTest extends AbstractTest {
+
+	private static final Logger LOG = LoggerFactory.getLogger(RsyblMappingTest.class);
 
 	@Autowired
 	protected RsyblOrika orika;
@@ -52,20 +56,20 @@ public class RsyblMappingTest extends AbstractTest {
 	@Test
 	public void mapperTest() throws JAXBException, ClassNotFoundException, IOException {
 
-		log.info("original {}", Utils.asXmlString(serviceForMapping));
+		LOG.info("original {}", Utils.asXmlString(serviceForMapping));
 
 		CloudServiceXML rsybl = mapper.extractRsybl(serviceForMapping);
-		log.info("rsybl {}", UtilsCs.asString(rsybl));
+		LOG.info("rsybl {}", UtilsCs.asString(rsybl));
 
 	}
 
 	@Test
 	public void orikaTest() throws JAXBException {
 
-		log.info("original {}", Utils.asXmlString(serviceForMapping));
+		LOG.info("original {}", Utils.asXmlString(serviceForMapping));
 
 		CloudServiceXML xml = orika.get().map(serviceForMapping, CloudServiceXML.class);
-		log.info("tosca1 {}", UtilsCs.asString(xml));
+		LOG.info("tosca1 {}", UtilsCs.asString(xml));
 
 	}
 

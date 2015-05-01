@@ -47,7 +47,7 @@ import com.rabbitmq.client.ShutdownSignalException;
 
 public class TestAgentAdapter {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(TestAgentAdapter.class);
 
 	private static final String QUEUE_LIFECYCLE = "TESTER_LIFECYCLE_QUEUE_";
 	private static final String QUEUE_CTUSOM = "TESTER_CUSTOM_QUEUE_";
@@ -85,7 +85,7 @@ public class TestAgentAdapter {
 	public void waitForLifeCycleEvent(Action action) throws JAXBException, ShutdownSignalException,
 			ConsumerCancelledException, InterruptedException {
 
-		log.info("waitForLifeCycleEvent(event={})", action);
+		LOG.info("waitForLifeCycleEvent(event={})", action);
 		while (true) {
 			QueueingConsumer.Delivery delivery = consumerLifecycle.nextDelivery();
 			ComotMessage cMsg = Utils.asObjectFromJson(new String(delivery.getBody()), ComotMessage.class);
@@ -110,7 +110,7 @@ public class TestAgentAdapter {
 	public void waitForCustomEvent(String event) throws JAXBException, ShutdownSignalException,
 			ConsumerCancelledException, InterruptedException {
 
-		log.info("waitForCustomEvent(event={})", event);
+		LOG.info("waitForCustomEvent(event={})", event);
 		while (true) {
 			QueueingConsumer.Delivery delivery = consumerLifecycle.nextDelivery();
 			ComotMessage cMsg = Utils.asObjectFromJson(new String(delivery.getBody()), ComotMessage.class);
@@ -136,7 +136,7 @@ public class TestAgentAdapter {
 	public void assertLifeCycleEvent(Action action) throws ShutdownSignalException, ConsumerCancelledException,
 			InterruptedException, JAXBException {
 
-		log.info("assertLifeCycleEvent(event={})", action);
+		LOG.info("assertLifeCycleEvent(event={})", action);
 		QueueingConsumer.Delivery delivery = consumerLifecycle.nextDelivery();
 		ComotMessage cMsg = Utils.asObjectFromJson(new String(delivery.getBody()), ComotMessage.class);
 
@@ -165,7 +165,7 @@ public class TestAgentAdapter {
 	public void assertCustomEvent(String event) throws ShutdownSignalException, ConsumerCancelledException,
 			InterruptedException, JAXBException {
 
-		log.info("assertCustomEvent(event={})", event);
+		LOG.info("assertCustomEvent(event={})", event);
 		QueueingConsumer.Delivery delivery = consumerLifecycle.nextDelivery();
 		ComotMessage cMsg = Utils.asObjectFromJson(new String(delivery.getBody()), ComotMessage.class);
 

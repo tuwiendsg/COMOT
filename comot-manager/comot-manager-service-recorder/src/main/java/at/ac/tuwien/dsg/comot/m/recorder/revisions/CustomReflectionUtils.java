@@ -31,7 +31,7 @@ import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 
 public class CustomReflectionUtils {
 
-	protected static final Logger log = LoggerFactory.getLogger(CustomReflectionUtils.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(CustomReflectionUtils.class);
 
 	public static List<Field> getInheritedNonStaticNonTransientNonNullFields(Object obj)
 			throws IllegalArgumentException, IllegalAccessException {

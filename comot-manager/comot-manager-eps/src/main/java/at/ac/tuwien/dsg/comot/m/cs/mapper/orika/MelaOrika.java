@@ -43,7 +43,7 @@ import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElement.Monitore
 @Component
 public class MelaOrika {
 
-	protected final Logger log = LoggerFactory.getLogger(MelaOrika.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MelaOrika.class);
 
 	protected MapperFacade facade;
 

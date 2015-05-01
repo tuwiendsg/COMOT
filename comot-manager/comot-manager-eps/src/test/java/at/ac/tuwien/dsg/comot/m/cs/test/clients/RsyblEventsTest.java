@@ -38,7 +38,7 @@ import at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.ActionPlanEvent
 
 public class RsyblEventsTest {
 
-	private final Logger log = LoggerFactory.getLogger(RsyblEventsTest.class);
+	private final Logger LOG = LoggerFactory.getLogger(RsyblEventsTest.class);
 
 	private String QUEUE_NAME = "events";
 	private ConnectionFactory factory;
@@ -49,7 +49,7 @@ public class RsyblEventsTest {
 	@Test
 	public void testProducer() throws JMSException {
 
-		// log.info(ActiveMQConnection.DEFAULT_BROKER_URL);
+		// LOG.info(ActiveMQConnection.DEFAULT_BROKER_URL);
 
 		factory = new ActiveMQConnectionFactory("tcp://128.130.172.191:61616");
 		// factory = new ActiveMQConnectionFactory("tcp://localhost:61616");
@@ -67,17 +67,17 @@ public class RsyblEventsTest {
 				try {
 					Object obj = ((ObjectMessage) message).getObject();
 
-					log.info("XXXXXXXXX {}", obj);
+					LOG.info("XXXXXXXXX {}", obj);
 
 					if (obj instanceof ActionPlanEvent) {
 						ActionPlanEvent event = (ActionPlanEvent) obj;
-						log.info("ActionPlanEvent serviceId={} type={} stage={} strategies={} constraints={}",
+						LOG.info("ActionPlanEvent serviceId={} type={} stage={} strategies={} constraints={}",
 								event.getServiceId(), event.getType(), event.getStage(), event.getStrategies(),
 								event.getConstraints());
 					}
 
 				} catch (JMSException e) {
-					log.error("{}", e);
+					LOG.error("{}", e);
 				}
 			}
 		};
@@ -85,7 +85,7 @@ public class RsyblEventsTest {
 		consumer.setMessageListener(stopListener);
 		connection.start();
 
-		log.info("sleeping");
+		LOG.info("sleeping");
 		UtilsTest.sleepSeconds(10);
 
 	}

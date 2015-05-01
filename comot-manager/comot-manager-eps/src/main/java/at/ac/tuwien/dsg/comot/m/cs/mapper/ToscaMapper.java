@@ -66,7 +66,7 @@ import at.ac.tuwien.dsg.comot.model.type.RelationshipType;
 @Component
 public class ToscaMapper {
 
-	protected final Logger log = LoggerFactory.getLogger(ToscaMapper.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ToscaMapper.class);
 
 	public static final String ART_REFERENCE_TYPE = "URL";
 	protected static final QName CAP_REQ_TYPE = ToscaConverters.toSalsaQName("variable");
@@ -86,7 +86,7 @@ public class ToscaMapper {
 		Definitions definition = mapper.get().map(cloudService, Definitions.class);
 		Navigator navigator = new Navigator(cloudService);
 
-		log.trace("Mapping by orica: {}", Utils.asXmlString(definition, SalsaMappingProperties.class));
+		LOG.trace("Mapping by orica: {}", Utils.asXmlString(definition, SalsaMappingProperties.class));
 
 		TArtifactTemplate tArtifact;
 		ArtifactReferences refs;
@@ -128,7 +128,7 @@ public class ToscaMapper {
 				// inject Relationships
 				for (TRelationshipTemplate oneRel : createTRelationships(navigator.getAllUnits())) {
 
-					log.trace("TRelationshipTemplate id={}, type={}, from={}, to={} ",
+					LOG.trace("TRelationshipTemplate id={}, type={}, from={}, to={} ",
 							oneRel.getId(), oneRel.getType(), oneRel.getSourceElement().getRef(), oneRel
 									.getTargetElement().getRef());
 
@@ -137,7 +137,7 @@ public class ToscaMapper {
 					targetTopoId = navigator.getParentTopologyFor(
 							((TEntityTemplate) oneRel.getTargetElement().getRef()).getId()).getId();
 
-					log.trace("Inserted relationship id={}, from={}, to={}", oneRel.getId(), sourceTopoId, targetTopoId);
+					LOG.trace("Inserted relationship id={}, from={}, to={}", oneRel.getId(), sourceTopoId, targetTopoId);
 
 					if (sourceTopoId.equals(topology.getId()) || targetTopoId.equals(topology.getId())) {
 						topology.getTopologyTemplate().getNodeTemplateOrRelationshipTemplate().add(oneRel);
@@ -180,7 +180,7 @@ public class ToscaMapper {
 			}
 		}
 
-		log.debug("Final mapping: {}", Utils.asXmlString(definition, SalsaMappingProperties.class));
+		LOG.debug("Final mapping: {}", Utils.asXmlString(definition, SalsaMappingProperties.class));
 
 		return definition;
 	}
@@ -192,7 +192,7 @@ public class ToscaMapper {
 		Map<String, ServiceUnit> capaReq = new HashMap<>();
 		CloudService service = maper.map(definition, CloudService.class);
 
-		// log.trace("Mapping by orika: {}", Utils.asJsonString(cloudService));
+		// LOG.trace("Mapping by orika: {}", Utils.asJsonString(cloudService));
 
 		// 1. run
 		for (TExtensibleElements element : definition.getServiceTemplateOrNodeTypeOrNodeTypeImplementation()) {
@@ -284,8 +284,6 @@ public class ToscaMapper {
 		for (ServiceUnit unit : navigator.getAllUnits()) {
 			unit.setElasticUnit(navigator.isTrueServiceUnit(unit.getId()));
 		}
-
-		// log.debug("Final mapping: {}", Utils.asJsonString(cloudService));
 
 		return service;
 	}

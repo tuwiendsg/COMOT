@@ -20,8 +20,6 @@ package at.ac.tuwien.dsg.comot.m.core.test;
 
 import org.junit.runner.RunWith;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
@@ -47,8 +45,6 @@ import at.ac.tuwien.dsg.comot.m.recorder.revisions.RevisionApi;
 @ActiveProfiles({ AppContextServrec.IMPERMANENT_NEO4J_DB, AppContextCore.INSERT_INIT_DATA })
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public abstract class AbstractTest {
-
-	protected final Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	protected ApplicationContext context;

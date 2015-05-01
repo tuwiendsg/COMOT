@@ -22,8 +22,7 @@ import java.io.UnsupportedEncodingException;
 
 import javax.xml.bind.JAXBException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.CharEncoding;
 import org.springframework.amqp.core.Message;
 
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
@@ -37,7 +36,9 @@ import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 
 public class UtilsLc {
 
-	private static final Logger log = LoggerFactory.getLogger(UtilsLc.class);
+	private UtilsLc() {
+
+	}
 
 	public static void removeProviderInfo(CloudService service) {
 		for (ServiceUnit unit : Navigator.getAllUnits(service)) {
@@ -60,15 +61,15 @@ public class UtilsLc {
 	}
 
 	public static ComotMessage comotMessage(Message message) throws UnsupportedEncodingException, JAXBException {
-		return Utils.asObjectFromJson(new String(message.getBody(), "UTF-8"), ComotMessage.class);
+		return Utils.asObjectFromJson(new String(message.getBody(), CharEncoding.UTF_8), ComotMessage.class);
 	}
 
 	public static StateMessage stateMessage(Message message) throws UnsupportedEncodingException, JAXBException {
-		return Utils.asObjectFromJson(new String(message.getBody(), "UTF-8"), StateMessage.class);
+		return Utils.asObjectFromJson(new String(message.getBody(), CharEncoding.UTF_8), StateMessage.class);
 	}
 
 	public static AbstractEvent abstractEvent(Message message) throws UnsupportedEncodingException, JAXBException {
-		return Utils.asObjectFromJson(new String(message.getBody(), "UTF-8"), AbstractEvent.class);
+		return Utils.asObjectFromJson(new String(message.getBody(), CharEncoding.UTF_8), AbstractEvent.class);
 	}
 
 }

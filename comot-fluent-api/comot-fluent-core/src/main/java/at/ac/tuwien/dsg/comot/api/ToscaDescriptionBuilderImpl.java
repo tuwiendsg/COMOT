@@ -29,7 +29,7 @@ import java.util.*;
 @Component
 public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
 
-    private static final Logger log = LoggerFactory.getLogger(ToscaDescriptionBuilderImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ToscaDescriptionBuilderImpl.class);
 
     public static final String DEFAULT_ARTIFACT_TYPE_NAMESPACE_URI = "https://github.com/tuwiendsg/SALSA";
 
@@ -47,8 +47,8 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
 
     @Override
     public TDefinitions buildToscaDefinitions(CloudService cloudService) throws ToscaDescriptionBuilderException {
-        if (log.isTraceEnabled()) {
-            log.trace("Building TOSCA definitions for application: {}", cloudService);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Building TOSCA definitions for application: {}", cloudService);
         }
 
         Definitions definitions = buildTDefinitions(cloudService);
@@ -147,14 +147,14 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
             marshaller.marshal(tDefinitions, writer);
             return writer.toString();
         } catch (JAXBException e) {
-            log.error(Markers.API, "Exception during marshalling of CloudService", e);
+            LOG.error(Markers.API, "Exception during marshalling of CloudService", e);
             throw new ToscaDescriptionBuilderException("CloudService '"
                     + application.getName() + "' could not be marshalled", e);
         } catch (SAXException e) {
-            log.error(Markers.API, "Cannot load TOSCA schema definition from " + toscaSchemaFilename, e);
+            LOG.error(Markers.API, "Cannot load TOSCA schema definition from " + toscaSchemaFilename, e);
             throw new ToscaDescriptionBuilderException("Unable to load TOSCA schema definition", e);
         } catch (IOException e) {
-            log.error("Cannot find TOSCA schema definition on classpath", e);
+            LOG.error("Cannot find TOSCA schema definition on classpath", e);
             throw new ToscaDescriptionBuilderException("Unable to find TOSCA schema defintion on classpath", e);
         }
     }
@@ -241,7 +241,7 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
                     .withSourceElement(new TRelationshipTemplate.SourceElement().withRef(source))
                     .withTargetElement(new TRelationshipTemplate.TargetElement().withRef(target));
         } else {
-            log.warn("Either source or target of EntityRelationship {} is not available: source: {} target: {}",
+            LOG.warn("Either source or target of EntityRelationship {} is not available: source: {} target: {}",
                     relationship, source, target);
 
             if (throwOnMissingRelationship) {
@@ -308,7 +308,7 @@ public class ToscaDescriptionBuilderImpl implements ToscaDescriptionBuilder {
                     BASHAction action = (BASHAction) abstractAction;
                     actions.put(entry.getKey().toString(), action.getCommand());
                 } else {
-                    log.error("Currently action type " + abstractAction.getClass().toString() + "is not supported");
+                    LOG.error("Currently action type " + abstractAction.getClass().toString() + "is not supported");
                 }
             }
 

@@ -25,6 +25,8 @@ import java.util.Map;
 
 import javax.annotation.PreDestroy;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Binding.DestinationType;
 import org.springframework.amqp.core.Message;
@@ -46,6 +48,8 @@ import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 @Component
 @Scope("prototype")
 public class PerInstanceQueueManager extends Manager {
+
+	private static final Logger LOG = LoggerFactory.getLogger(PerInstanceQueueManager.class);
 
 	@Autowired
 	protected InformationClient infoService;
@@ -114,7 +118,7 @@ public class PerInstanceQueueManager extends Manager {
 
 						startServiceInstanceListener(serviceId);
 
-						log.info("oooooooooooo {} {} ", serviceId, participantId);
+						LOG.info("oooooooooooo {} {} ", serviceId, participantId);
 
 						infoService.assignEps(serviceId, participantId);
 
@@ -129,7 +133,7 @@ public class PerInstanceQueueManager extends Manager {
 				}
 
 			} catch (Exception e) {
-				log.error("{}", e);
+				LOG.error("{}", e);
 			}
 		}
 	}
@@ -180,7 +184,7 @@ public class PerInstanceQueueManager extends Manager {
 			try {
 				removeInstanceListener(instanceId);
 			} catch (EpsException e) {
-				log.error("{}", e);
+				LOG.error("{}", e);
 			}
 		}
 

@@ -47,7 +47,7 @@ import at.ac.tuwien.dsg.comot.m.recorder.repo.RevisionRepo;
 @Component
 public class RevisionApi {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(RevisionApi.class);
 
 	@Autowired
 	private ApplicationContext context;
@@ -65,7 +65,7 @@ public class RevisionApi {
 			Map<String, Object> changeProperties) throws IllegalArgumentException, IllegalAccessException {
 
 		ManagedRegion region = context.getBean(ConverterToInternal.class).convertToGraph(obj);
-		log.debug("region '{}'count nodes: {}, rels: {}", regionId, region.getNodes().size(), region.getRelationships()
+		LOG.debug("region '{}'count nodes: {}, rels: {}", regionId, region.getNodes().size(), region.getRelationships()
 				.size());
 
 		versionManager.insertToDB(region, regionId, targetObjectId, changeType, changeProperties);
@@ -90,7 +90,7 @@ public class RevisionApi {
 		ConverterFromInternal converter = context.getBean(ConverterFromInternal.class);
 
 		Object obj = converter.convertToObject(region);
-		log.debug("getRevision(regionId={}, businessId={}, timestamp={}): {}", regionId, id, timestamp, obj);
+		LOG.debug("getRevision(regionId={}, businessId={}, timestamp={}): {}", regionId, id, timestamp, obj);
 
 		return obj;
 	}

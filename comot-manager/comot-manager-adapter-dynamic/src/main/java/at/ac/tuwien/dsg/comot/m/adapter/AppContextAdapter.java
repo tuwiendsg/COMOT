@@ -61,7 +61,7 @@ import at.ac.tuwien.dsg.comot.m.cs.connector.SalsaClient;
 @EnableAsync
 public class AppContextAdapter {
 
-	public static final Logger log = LoggerFactory.getLogger(AppContextAdapter.class);
+	public static final Logger LOG = LoggerFactory.getLogger(AppContextAdapter.class);
 
 	@Autowired
 	protected ApplicationContext context;
@@ -82,7 +82,7 @@ public class AppContextAdapter {
 		if (brokerHost == null) {
 			brokerHost = env.getProperty("uri.broker.host");
 		}
-		log.info("setting connection to message broker: {}", brokerHost);
+		LOG.info("setting connection to message broker: {}", brokerHost);
 
 		CachingConnectionFactory connectionFactory = new CachingConnectionFactory(brokerHost);
 		return connectionFactory;
@@ -110,7 +110,7 @@ public class AppContextAdapter {
 		if (infoHost != null && infoPort != null) {
 			uri = UriBuilder.fromUri(uri).host(infoHost).port(infoPort).build();
 		}
-		log.info("setting connection to information service: {}", uri);
+		LOG.info("setting connection to information service: {}", uri);
 
 		return new InformationClient(new InformationClientRest(uri));
 	}

@@ -30,7 +30,7 @@ import org.springframework.context.annotation.Profile;
 @Profile(AppContextServrec.IMPERMANENT_NEO4J_DB)
 public class AppContextServrecImpermanentDb {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(AppContextServrecImpermanentDb.class);
 
 	@Bean(destroyMethod = "shutdown")
 	public GraphDatabaseService graphDatabaseService() {

@@ -26,6 +26,9 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.Template;
@@ -34,6 +37,8 @@ import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
 import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 
 public class InformationClientRest extends ServiceClient {
+
+	private static final Logger LOG = LoggerFactory.getLogger(ServiceClient.class);
 
 	public InformationClientRest(URI baseUri) {
 		super("INFO_SERVICE", baseUri);
@@ -268,7 +273,7 @@ public class InformationClientRest extends ServiceClient {
 
 	public void assignEps(String serviceId, String osuInstanceId) throws EpsException {
 
-		log.info("assignEps({} {})", serviceId, osuInstanceId);
+		LOG.info("assignEps({} {})", serviceId, osuInstanceId);
 
 		Response response = client.target(baseUri)
 				.path(Constants.EPS_INSTANCE_ASSIGNMENT)

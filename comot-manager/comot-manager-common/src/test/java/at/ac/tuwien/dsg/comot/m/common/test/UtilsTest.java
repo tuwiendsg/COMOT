@@ -28,7 +28,7 @@ import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 
 public class UtilsTest {
 
-	private final static Logger log = LoggerFactory.getLogger(UtilsTest.class);
+	private final static Logger LOG = LoggerFactory.getLogger(UtilsTest.class);
 
 	public static final String TEST_FILE_BASE = "./../resources/test/";
 
@@ -37,18 +37,18 @@ public class UtilsTest {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
-				log.error("{}", e);
+				LOG.error("{}", e);
 			}
 		}
 	}
 
 	public static void sleepSeconds(int seconds) {
 		try {
-			log.debug("Waiting {} seconds", seconds);
+			LOG.debug("Waiting {} seconds", seconds);
 			Thread.sleep(seconds * 1000);
 
 		} catch (InterruptedException e) {
-			log.error("{}", e);
+			LOG.error("{}", e);
 		}
 	}
 

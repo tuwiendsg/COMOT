@@ -44,7 +44,7 @@ import at.ac.tuwien.dsg.mela.common.requirements.Requirements;
 
 public class MonitoringClientMela implements MonitoringClient {
 
-	private final Logger log = LoggerFactory.getLogger(MonitoringClientMela.class);
+	private final Logger LOG = LoggerFactory.getLogger(MonitoringClientMela.class);
 
 	protected MelaClient mela;
 	@Autowired
@@ -62,7 +62,7 @@ public class MonitoringClientMela implements MonitoringClient {
 			ComotException {
 
 		if (service == null) {
-			log.warn("startMonitoring(service=null )");
+			LOG.warn("startMonitoring(service=null )");
 			return;
 		}
 
@@ -149,7 +149,7 @@ public class MonitoringClientMela implements MonitoringClient {
 	@PreDestroy
 	public void cleanup() {
 		if (mela != null) {
-			log.info("closing mela client");
+			LOG.info("closing mela client");
 			mela.close();
 		}
 	}

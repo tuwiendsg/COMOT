@@ -25,17 +25,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Binding.DestinationType;
+import org.springframework.beans.BeansException;
 
 import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.enums.Action;
 import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessage;
 import at.ac.tuwien.dsg.comot.m.common.event.state.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.event.state.Transition;
+import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 
 public abstract class Processor {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(Processor.class);
 
 	protected Manager manager;
 
@@ -64,7 +66,7 @@ public abstract class Processor {
 
 	public abstract List<Binding> getBindings(String queueName, String instanceId);
 
-	public void start() throws Exception {
+	public void start() throws BeansException, ComotException {
 
 	}
 

@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 public class SingleQueueManager extends Manager {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(SingleQueueManager.class);
 
 	protected SimpleMessageListenerContainer container;
 
@@ -65,7 +65,7 @@ public class SingleQueueManager extends Manager {
 			admin.deleteQueue(queueName());
 		}
 
-		log.debug("cleaned '{}'", queueName());
+		LOG.debug("cleaned '{}'", queueName());
 	}
 
 	public String queueName() {
@@ -74,7 +74,6 @@ public class SingleQueueManager extends Manager {
 
 	@Override
 	public void removeInstanceListener(String instanceId) {
-		// TODO Auto-generated method stub
 
 	}
 

@@ -27,6 +27,8 @@ import javax.xml.bind.JAXBException;
 import org.junit.Before;
 import org.junit.Test;
 import org.oasis.tosca.Definitions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
@@ -41,6 +43,8 @@ import at.ac.tuwien.dsg.comot.model.type.State;
 import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
 
 public class RecorderTest extends AbstractTest {
+
+	private static final Logger LOG = LoggerFactory.getLogger(RecorderTest.class);
 
 	protected CloudService service;
 
@@ -121,8 +125,8 @@ public class RecorderTest extends AbstractTest {
 		// orchestrator.deployNew(UtilsCs.asString(def));
 		//
 		// ServiceEntity entity = serviceRepo.findOne(service.getId());
-		// log.info("entity: {}", entity);
-		// log.info("recordingManager: {}", recordingManager);
+		// LOG.info("entity: {}", entity);
+		// LOG.info("recordingManager: {}", recordingManager);
 		//
 		// recordingManager.addService(service.getId(), deployment, control, monitoring);
 		//
@@ -141,14 +145,14 @@ public class RecorderTest extends AbstractTest {
 		Definitions def = UtilsCs.loadTosca(UtilsTest.TEST_FILE_BASE + "tosca/tomcat.xml");
 		CloudService service = mapperTosca.createModel(def);
 
-		log.info("{}", Utils.asXmlString(service));
+		LOG.info("{}", Utils.asXmlString(service));
 
 		revisionApi.createOrUpdateRegion(service, service.getId(), service.getId(), "init", null);
 
 		Object oResult = revisionApi.getRevision(service.getId(), "deployWar",
 				Long.MAX_VALUE);
-		log.info("oResult {}", oResult);
-		log.info("oResult XML {}", Utils.asXmlString(oResult));
+		LOG.info("oResult {}", oResult);
+		LOG.info("oResult XML {}", Utils.asXmlString(oResult));
 
 		UtilsTest.sleepInfinit();
 	}

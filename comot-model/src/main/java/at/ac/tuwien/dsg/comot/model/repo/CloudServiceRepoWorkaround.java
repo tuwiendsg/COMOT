@@ -16,7 +16,7 @@ import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 @Component
 public class CloudServiceRepoWorkaround {
 
-	protected static final Logger log = LoggerFactory.getLogger(CloudServiceRepoWorkaround.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(CloudServiceRepoWorkaround.class);
 
 	@Autowired
 	protected CloudServiceRepo csRepo;

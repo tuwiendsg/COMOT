@@ -29,7 +29,7 @@ import org.springframework.core.env.Environment;
 @Profile(AppContextCore.INSERT_INIT_DATA)
 public class AppContextCoreInsertData {
 
-	public static final Logger log = LoggerFactory.getLogger(AppContextCoreInsertData.class);
+	public static final Logger LOG = LoggerFactory.getLogger(AppContextCoreInsertData.class);
 
 	@javax.annotation.Resource
 	public Environment env;

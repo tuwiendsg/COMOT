@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.comot.m.common.Constants;
@@ -40,6 +42,8 @@ import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
 
 public class EvalTest extends AbstractTest {
+
+	private static final Logger LOG = LoggerFactory.getLogger(EvalTest.class);
 
 	protected String templateId = "HelloElasticity";
 
@@ -92,7 +96,7 @@ public class EvalTest extends AbstractTest {
 			agent.waitForLifeCycleEvent(Action.DEPLOYED);
 		}
 
-		log.info("FINISHED");
+		LOG.info("FINISHED");
 
 		results(services);
 
@@ -116,7 +120,7 @@ public class EvalTest extends AbstractTest {
 			agent.waitForCustomEvent(EpsEvent.EPS_DYNAMIC_CREATED.toString());
 		}
 
-		log.info("ALL SALSAS CREATED");
+		LOG.info("ALL SALSAS CREATED");
 
 		List<String> services = new ArrayList<>();
 		List<OsuInstance> salsas = infoService.getEpsInstances(InformationClient.DYNAMIC);
@@ -151,7 +155,7 @@ public class EvalTest extends AbstractTest {
 		// agent.waitForLifeCycleEvent(Action.DEPLOYED);
 		// }
 
-		log.info("FINISHED");
+		LOG.info("FINISHED");
 
 		results(services);
 
@@ -180,15 +184,15 @@ public class EvalTest extends AbstractTest {
 					totalSum = totalSum + line.getLength();
 					totalNr++;
 				}
-				log.info(line.toString());
+				LOG.info(line.toString());
 			}
 
 			eventTimeSum = eventTimeSum + testBean.computeDuration(services.get(i));
 			eventTimeNr++;
 		}
 
-		log.info("STAGING: {}", stagingSum / stagingNr);
-		log.info("TOTAL: {}", totalSum / totalNr);
-		log.info("AVG eventTime: {} ", eventTimeSum / eventTimeNr);
+		LOG.info("STAGING: {}", stagingSum / stagingNr);
+		LOG.info("TOTAL: {}", totalSum / totalNr);
+		LOG.info("AVG eventTime: {} ", eventTimeSum / eventTimeNr);
 	}
 }

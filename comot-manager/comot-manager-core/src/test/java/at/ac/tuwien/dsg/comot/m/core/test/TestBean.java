@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class TestBean {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(TestBean.class);
 
 	@Autowired
 	protected GraphDatabaseService db;

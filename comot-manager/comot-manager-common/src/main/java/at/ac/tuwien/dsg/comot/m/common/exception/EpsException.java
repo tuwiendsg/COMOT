@@ -24,7 +24,7 @@ package at.ac.tuwien.dsg.comot.m.common.exception;
  * @author Juraj
  *
  */
-public class EpsException extends Exception {
+public class EpsException extends ComotException {
 
 	private static final long serialVersionUID = 7350286958469243223L;
 

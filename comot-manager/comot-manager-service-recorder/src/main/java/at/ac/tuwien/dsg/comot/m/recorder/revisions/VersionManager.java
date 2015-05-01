@@ -47,7 +47,7 @@ import at.ac.tuwien.dsg.comot.m.recorder.repo.RevisionRepo;
 @Component
 public class VersionManager {
 
-	protected static final Logger log = LoggerFactory.getLogger(VersionManager.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(VersionManager.class);
 
 	@Autowired
 	private ApplicationContext context;
@@ -153,7 +153,7 @@ public class VersionManager {
 			if (currentState == null || update) {
 				modified = true;
 
-				log.debug("node modified state: {}", node);
+				LOG.debug("node modified state: {}", node);
 
 				stateNode = neo.createNode(node.getProperties(), node.getLablesForStateNode());
 
@@ -176,7 +176,7 @@ public class VersionManager {
 					rel.getType());
 			update = repo.needUpdateRelationship(oldRel, rel);
 
-			log.debug("relationship old: {}, update: {} - {}", oldRel, update, rel);
+			LOG.debug("relationship old: {}, update: {} - {}", oldRel, update, rel);
 
 			if (oldRel == null || update) {
 				modified = true;
@@ -248,7 +248,7 @@ public class VersionManager {
 				internalNode.setLabel(label.name());
 			}
 
-			log.debug("node from DB: {}", internalNode);
+			LOG.debug("node from DB: {}", internalNode);
 			nodes.put(connectedNode.getId(), internalNode);
 
 			// set start node of region
@@ -270,7 +270,7 @@ public class VersionManager {
 				startNode.addRelationship(internalRel);
 				region.addRelationship(internalRel);
 
-				log.debug("outgoing rel from DB: {} ", internalRel);
+				LOG.debug("outgoing rel from DB: {} ", internalRel);
 			}
 		}
 

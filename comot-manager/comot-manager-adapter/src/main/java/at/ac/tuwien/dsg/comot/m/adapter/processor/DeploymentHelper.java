@@ -29,7 +29,6 @@ import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.AmqpException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
@@ -56,7 +55,7 @@ import at.ac.tuwien.dsg.comot.model.type.State;
 @Scope("prototype")
 public class DeploymentHelper {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(DeploymentHelper.class);
 
 	public static long REFRESH_INTERVAL = 1000;
 
@@ -102,23 +101,21 @@ public class DeploymentHelper {
 					}
 
 				} catch (ComotException e) {
-					log.warn(e.getMessage());
+					LOG.warn("{}", e);
 				}
 
 			} while (notAllRunning);
-			log.info("stopped checking");
+			LOG.info("stopped checking");
 		} catch (Exception e) {
-			log.error("{}", e);
+			LOG.error("{}", e);
 		}
 
 	}
 
 	@Async
-	public Future<Object> monitoringStatusUntilInterupted(String serviceId, CloudService service)
-			throws EpsException,
-			ComotException, IOException, JAXBException, InterruptedException, ClassNotFoundException {
+	public Future<Object> monitoringStatusUntilInterupted(String serviceId, CloudService service) {
 
-		log.info("monitoringStatusUntilInterupted(instanceId={})", serviceId);
+		LOG.info("monitoringStatusUntilInterupted(instanceId={})", serviceId);
 
 		try {
 
@@ -153,20 +150,20 @@ public class DeploymentHelper {
 					}
 
 				} catch (ComotException e) {
-					log.warn(e.getMessage());
+					LOG.warn("{}", e);
 				}
 			} while (true);
 		} catch (InterruptedException e) {
-			log.info("Task interrupted as expected");
+			LOG.info("Task interrupted as expected");
 		} catch (Exception e) {
-			log.error("{}", e);
+			LOG.error("{}", e);
 		}
 		return null;
 
 	}
 
 	protected Map<String, String> oneInteration(Memory memory, String serviceId, CloudService service)
-			throws EpsException, ComotException, InterruptedException, AmqpException, JAXBException {
+			throws ComotException, InterruptedException, JAXBException {
 
 		Map<String, String> currentStates = new HashMap<>();
 		CloudService serviceReturned;
@@ -181,7 +178,7 @@ public class DeploymentHelper {
 		serviceReturned.setId(serviceId);
 		serviceReturned.setName(serviceId);
 
-		log.trace("currentStates: {}", currentStates);
+		LOG.trace("currentStates: {}", currentStates);
 
 		for (String uInstId : currentStates.keySet()) {
 
@@ -198,8 +195,7 @@ public class DeploymentHelper {
 
 	protected void evaluateChangeOfOneUnitInstance(
 			String serviceId, String uInstId, String stateNew, State lcStateNew,
-			CloudService serviceReturned, Memory memory)
-			throws AmqpException, JAXBException {
+			CloudService serviceReturned, Memory memory) throws JAXBException {
 
 		Action action;
 		State lcStateOld;
@@ -217,7 +213,7 @@ public class DeploymentHelper {
 			lcStateOld = State.INIT;
 		}
 
-		log.info("{} old {}={}, new: {}={}", uInstId, memory.oldSalas(uInstId), lcStateOld, stateNew,
+		LOG.info("{} old {}={}, new: {}={}", uInstId, memory.oldSalas(uInstId), lcStateOld, stateNew,
 				lcStateNew);
 
 		// check if also the translated Life-cycle state have changed
@@ -243,13 +239,13 @@ public class DeploymentHelper {
 					// } else if (lcStateOld == State.UNDEPLOYING && lcStateNew == State.FINAL) {
 					// action = Action.UNDEPLOYED;
 				} else {
-					log.error("invalid transitions {} -> {}", lcStateOld, lcStateNew);
+					LOG.error("invalid transitions {} -> {}", lcStateOld, lcStateNew);
 					return;
 				}
 
 				Navigator nav = new Navigator(serviceReturned);
 
-				log.info("creating ModifyingLifeCycleEvent for: {}, navigator: {}", uInstId, nav);
+				LOG.info("creating ModifyingLifeCycleEvent for: {}, navigator: {}", uInstId, nav);
 
 				manager.sendLifeCycle(Type.INSTANCE,
 						new LifeCycleEventModifying(serviceId, uInstId, action, adapterId,
@@ -287,8 +283,8 @@ public class DeploymentHelper {
 					oldStatesLc.put(uInstId, temp);
 				}
 			}
-			log.trace("oldStates {}", oldStates);
-			log.trace("oldStatesLc {}", oldStatesLc);
+			LOG.trace("oldStates {}", oldStates);
+			LOG.trace("oldStatesLc {}", oldStatesLc);
 		}
 
 		public boolean contains(String uInstId) {

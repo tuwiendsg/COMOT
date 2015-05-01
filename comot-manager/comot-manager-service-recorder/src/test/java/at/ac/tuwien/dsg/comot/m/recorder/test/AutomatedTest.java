@@ -30,6 +30,8 @@ import java.util.Map;
 import javax.xml.bind.JAXBException;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.unitils.reflectionassert.ReflectionComparatorMode;
 
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
@@ -45,6 +47,8 @@ import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 import at.ac.tuwien.dsg.comot.test.model.examples.STemplates;
 
 public class AutomatedTest extends AbstractTest {
+
+	private static final Logger LOG = LoggerFactory.getLogger(AutomatedTest.class);
 
 	protected CloudService service;
 
@@ -236,7 +240,7 @@ public class AutomatedTest extends AbstractTest {
 
 		List<ManagedObject> list = revisionApi.getManagedObjects(STemplates.serviceId);
 		assertEquals(6, list.size());
-		log.info("{}", list);
+		LOG.info("{}", list);
 
 	}
 
@@ -287,8 +291,8 @@ public class AutomatedTest extends AbstractTest {
 			if (change.getType().equals(typeEvent)) {
 				found = true;
 
-				log.info(Utils.asXmlString(change));
-				log.info(Utils.asJsonString(change));
+				LOG.info(Utils.asXmlString(change));
+				LOG.info(Utils.asJsonString(change));
 
 				assertEquals(changeProperties.get(prop1), change.getPropertiesMap().get(prop1));
 				assertEquals(changeProperties.get(prop2), change.getPropertiesMap().get(prop2));

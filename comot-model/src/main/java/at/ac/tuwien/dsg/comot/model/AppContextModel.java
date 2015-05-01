@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AppContextModel extends Neo4jConfiguration {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	protected final Logger LOG = LoggerFactory.getLogger(getClass());
 
 	public AppContextModel() {
 		setBasePackage("at.ac.tuwien.dsg.comot");

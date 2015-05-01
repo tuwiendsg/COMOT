@@ -25,8 +25,11 @@ import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.Binding;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -43,14 +46,16 @@ import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessage;
 import at.ac.tuwien.dsg.comot.m.common.event.state.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.event.state.Transition;
+import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
 import at.ac.tuwien.dsg.comot.model.provider.Resource;
 
-
 @Component
 public class EpsBuilder extends Processor {
+
+	private static final Logger LOG = LoggerFactory.getLogger(EpsBuilder.class);
 
 	@Autowired
 	protected ApplicationContext context;
@@ -58,7 +63,7 @@ public class EpsBuilder extends Processor {
 	protected InformationClient infoService;
 
 	@Override
-	public void start() throws Exception {
+	public void start() throws BeansException, ComotException {
 
 		infoService.deleteAll();
 		context.getBean(InitData.class).setUpTestData();
@@ -87,11 +92,11 @@ public class EpsBuilder extends Processor {
 
 					String epsId = infoService.createOsuInstance(osu.getId());
 					EpsAdapterStatic adapter = (EpsAdapterStatic) context.getBean(clazz);
-					adapter.start(epsId, ip, new Integer(port));
+					adapter.start(epsId, ip, Integer.valueOf(port));
 
 				}
 			} catch (Exception e) {
-				log.error("{}", e);
+				LOG.error("{}", e);
 			}
 		}
 	}
@@ -104,7 +109,7 @@ public class EpsBuilder extends Processor {
 		bindings.add(bindingCustom(queueName, "*.*." + EpsEvent.EPS_DYNAMIC_REMOVED + "." + Type.SERVICE));
 		bindings.add(bindingCustom(queueName, "*.*." + EpsEvent.EPS_SUPPORT_ASSIGNED + "." + Type.SERVICE));
 		bindings.add(bindingLifeCycle(queueName, "*.*.*.*." + Action.CREATED + "." + Type.SERVICE + ".#"));
-		bindings.add(bindingLifeCycle(queueName, "*.*.*.*." + Action.UNDEPLOYED + "."+Type.SERVICE+".#"));
+		bindings.add(bindingLifeCycle(queueName, "*.*.*.*." + Action.UNDEPLOYED + "." + Type.SERVICE + ".#"));
 
 		return bindings;
 	}
@@ -133,7 +138,7 @@ public class EpsBuilder extends Processor {
 	@Override
 	public void onCustomEvent(StateMessage msg, String serviceId, String groupId,
 			String event, String epsId, String origin, String optionalMessage) throws ClassNotFoundException,
-			AmqpException, JAXBException, EpsException {
+			JAXBException, EpsException {
 
 		EpsEvent action = EpsEvent.valueOf(event);
 
@@ -157,7 +162,6 @@ public class EpsBuilder extends Processor {
 
 	@Override
 	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String originId) throws Exception {
-		// TODO Auto-generated method stub
 
 	}
 

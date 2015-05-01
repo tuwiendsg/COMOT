@@ -42,7 +42,7 @@ public class SalsaConnector {
 
     private DefaultSalsaClient defaultSalsaClient;
 
-    private static final Logger log = LoggerFactory.getLogger(SalsaConnector.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SalsaConnector.class);
 
     {
         defaultSalsaClient = new DefaultSalsaClient();
@@ -54,8 +54,8 @@ public class SalsaConnector {
     public DeploymentDescription getServiceDeploymentInfo(String serviceId) {
         DeploymentDescription deploymentInfo = null;
 
-        if (log.isDebugEnabled()) {
-            log.debug(Markers.CLIENT, "Getting deployment information for serviceId {}", serviceId);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(Markers.CLIENT, "Getting deployment information for serviceId {}", serviceId);
         }
 
         SalsaResponse response = defaultSalsaClient.getServiceDeploymentInfo(serviceId);
@@ -69,7 +69,7 @@ public class SalsaConnector {
                 deploymentInfo = (DeploymentDescription) object;
             }
         } catch (JAXBException e) {
-            log.error(e.getStackTrace().toString());
+            LOG.error(e.getStackTrace().toString());
         }
 
         return deploymentInfo;
@@ -78,8 +78,8 @@ public class SalsaConnector {
     public CloudService getStatus(String serviceId) {
         CloudService deploymentInfo = null;
 
-        if (log.isDebugEnabled()) {
-            log.debug(Markers.CLIENT, "Getting deployment information for serviceId {}", serviceId);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(Markers.CLIENT, "Getting deployment information for serviceId {}", serviceId);
         }
 
         SalsaResponse response = defaultSalsaClient.status(serviceId);
@@ -93,7 +93,7 @@ public class SalsaConnector {
                 deploymentInfo = (CloudService) object;
             }
         } catch (JAXBException e) {
-            log.error(e.getStackTrace().toString());
+            LOG.error(e.getStackTrace().toString());
         }
 
         return deploymentInfo;
@@ -120,9 +120,9 @@ public class SalsaConnector {
 
             try {
                 Thread.sleep(5000);
-                log.warn("Waiting until service " + serviceID + " is running");
+                LOG.warn("Waiting until service " + serviceID + " is running");
             } catch (InterruptedException ex) {
-                log.error(ex.getMessage(), ex);
+                LOG.error(ex.getMessage(), ex);
             }
         } while (!allRunning);
     }
@@ -157,7 +157,7 @@ public class SalsaConnector {
                         String line = "";
                         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
                         while ((line = reader.readLine()) != null) {
-                            log.error(line);
+                            LOG.error(line);
                         }
                     }
                 }
@@ -168,13 +168,13 @@ public class SalsaConnector {
                     if (stream != null) {
                         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
                         while ((line = reader.readLine()) != null) {
-                            log.warn(line);
+                            LOG.warn(line);
                         }
                     }
                 }
 
             } catch (IOException ex) {
-                log.error(ex.getMessage(), ex);
+                LOG.error(ex.getMessage(), ex);
             }
         }
 

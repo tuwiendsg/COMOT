@@ -31,6 +31,8 @@ import javax.xml.bind.JAXBException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.comot.m.common.Utils;
@@ -45,6 +47,8 @@ import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitorin
 import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitoringSnapshots;
 
 public class MelaClientTest extends AbstractTest {
+
+	private static final Logger LOG = LoggerFactory.getLogger(MelaClientTest.class);
 
 	public static final String SERVICE_ID = "example_executableOnVM";// "example_executableOnVM"; //comot_tomcat_id
 	public static final String TOPOLOGY_ID = "example_topology";
@@ -96,7 +100,7 @@ public class MelaClientTest extends AbstractTest {
 	public void testAutomated() throws EpsException, InterruptedException, JAXBException, IOException,
 			URISyntaxException {
 
-		log.info(Utils.asXmlString(eService));
+		LOG.info(Utils.asXmlString(eService));
 
 		// service description
 		testStartMonitoring();
@@ -119,12 +123,12 @@ public class MelaClientTest extends AbstractTest {
 
 	@Test
 	public void testStartMonitoring() throws EpsException, JAXBException {
-		log.info(Utils.asXmlString(eService));
+		LOG.info(Utils.asXmlString(eService));
 
 		mela.sendServiceDescription(eService);
 
 		MonitoredElement returned = mela.getServiceDescription(SERVICE_ID);
-		log.info("getServiceDescription " + Utils.asXmlString(returned));
+		LOG.info("getServiceDescription " + Utils.asXmlString(returned));
 		assertEquals(eService.getId(), returned.getId());
 	}
 
@@ -135,25 +139,25 @@ public class MelaClientTest extends AbstractTest {
 
 		data = mela.getMonitoringData(SERVICE_ID);
 		assertNotNull(data);
-		log.info("getMonitoringData(SERVICE_ID) \n" + Utils.asXmlString(data));
+		LOG.info("getMonitoringData(SERVICE_ID) \n" + Utils.asXmlString(data));
 
 		data = mela.getMonitoringData(SERVICE_ID, eVM);
 		assertNotNull(data);
-		log.info("getMonitoringData(SERVICE_ID, eVM) \n" + Utils.asXmlString(data));
+		LOG.info("getMonitoringData(SERVICE_ID, eVM) \n" + Utils.asXmlString(data));
 
 		MonitoredElementMonitoringSnapshots dataMultiple = mela.getAllAggregatedMonitoringData(SERVICE_ID);
 		assertNotNull(dataMultiple);
 		assertTrue(0 < dataMultiple.getChildren().size());
-		log.info("getAllAggregatedMonitoringData \n" + Utils.asXmlString(dataMultiple));
+		LOG.info("getAllAggregatedMonitoringData \n" + Utils.asXmlString(dataMultiple));
 
 		// dataMultiple = mela.getAllAggregatedMonitoringDataInTimeInterval(SERVICE_ID, startTimestamp, endTimestamp);
 		// assertNotNull(dataMultiple);
-		// log.info("getAllAggregatedMonitoringDataInTimeInterval \n" + Utils.xmlObjToString(dataMultiple));
+		// LOG.info("getAllAggregatedMonitoringDataInTimeInterval \n" + Utils.xmlObjToString(dataMultiple));
 
 		dataMultiple = mela.getLastXAggregatedMonitoringData(SERVICE_ID, 5);
 		assertNotNull(dataMultiple);
 		assertTrue(0 < dataMultiple.getChildren().size());
-		log.info("getLastXAggregatedMonitoringData \n" + Utils.asXmlString(dataMultiple));
+		LOG.info("getLastXAggregatedMonitoringData \n" + Utils.asXmlString(dataMultiple));
 	}
 
 	@Test
@@ -170,7 +174,7 @@ public class MelaClientTest extends AbstractTest {
 		mela.updateServiceDescription(SERVICE_ID, eService);
 
 		MonitoredElement returned = mela.getServiceDescription(SERVICE_ID);
-		log.info("updated  " + Utils.asXmlString(returned));
+		LOG.info("updated  " + Utils.asXmlString(returned));
 		assertEquals(2, returned.getContainedElements().size());
 
 		// revert update
@@ -178,21 +182,21 @@ public class MelaClientTest extends AbstractTest {
 		mela.updateServiceDescription(SERVICE_ID, eService);
 
 		returned = mela.getServiceDescription(SERVICE_ID);
-		log.info("reverted  " + Utils.asXmlString(returned));
+		LOG.info("reverted  " + Utils.asXmlString(returned));
 	}
 
 	@Test
 	public void updateMCR() throws EpsException, InterruptedException, JAXBException, IOException {
 
 		CompositionRulesConfiguration mcr = mela.getMetricsCompositionRules(SERVICE_ID);
-		log.info("old MCR \n" + Utils.asXmlString(mcr));
+		LOG.info("old MCR \n" + Utils.asXmlString(mcr));
 		assertNotNull(mcr);
 
 		mela.sendMetricsCompositionRules(SERVICE_ID,
 				UtilsCs.loadMetricCompositionRules(SERVICE_ID, "./../resources/test/mela/defCompositionRules.xml"));
 
 		mcr = mela.getMetricsCompositionRules(SERVICE_ID);
-		log.info("new MCR \n" + Utils.asXmlString(mcr));
+		LOG.info("new MCR \n" + Utils.asXmlString(mcr));
 		assertNotNull(mcr);
 
 	}

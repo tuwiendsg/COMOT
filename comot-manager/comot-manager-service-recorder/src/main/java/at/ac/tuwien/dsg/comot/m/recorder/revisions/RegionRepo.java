@@ -50,7 +50,7 @@ import at.ac.tuwien.dsg.comot.m.recorder.model.RelTypes;
 @Scope("prototype")
 public class RegionRepo {
 
-	protected static final Logger log = LoggerFactory.getLogger(RegionRepo.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(RegionRepo.class);
 
 	@Autowired
 	protected GraphDatabaseService db;
@@ -188,7 +188,7 @@ public class RegionRepo {
 	@Transactional
 	public Node getRegion() {
 
-		// log.info("txxxx name {}", TransactionSynchronizationManager.getCurrentTransactionName());
+		// LOG.info("txxxx name {}", TransactionSynchronizationManager.getCurrentTransactionName());
 
 		for (Node node : db.findNodesByLabelAndProperty(DynamicLabel.label(ManagedRegion.LABEL_REGION),
 				ManagedRegion.PROP_ID,
@@ -248,7 +248,7 @@ public class RegionRepo {
 				+ id
 				+ "'})-[rel_col * {to: 9223372036854775807}]->(m:_IDENTITY) UNWIND rel_col as rel return DISTINCT rel as dist_rel";
 
-		// log.info(query);
+		// LOG.info(query);
 
 		ExecutionResult result = engine.execute(query);
 		Iterator<Relationship> iter = result.columnAs("dist_rel");
@@ -286,7 +286,7 @@ public class RegionRepo {
 				throw new RuntimeException("getIdentityNode( id=" + id + ", region=" + regionId
 						+ ") returned multiple nodes! ");
 			} else {
-				log.trace("getIdentityNode(regionId={}, id={}): {}", regionId, id, node);
+				LOG.trace("getIdentityNode(regionId={}, id={}): {}", regionId, id, node);
 				return node;
 			}
 		} else {
@@ -308,7 +308,7 @@ public class RegionRepo {
 				+ " match (m)-[rel]->() where rel.to <= " + to + " AND rel.to >= " + from
 				+ " return distinct rel.to as time";
 
-		log.info("getAllChangeIdsThatInfluencedIdentityNode(id={}, from={}, to={}) {} ", id, from, to, query);
+		LOG.info("getAllChangeIdsThatInfluencedIdentityNode(id={}, from={}, to={}) {} ", id, from, to, query);
 
 		Iterator<Long> iter = engine.execute(query).columnAs("time");
 		List<Long> list = new ArrayList<>();

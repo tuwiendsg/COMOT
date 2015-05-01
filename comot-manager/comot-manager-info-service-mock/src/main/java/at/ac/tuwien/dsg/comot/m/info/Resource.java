@@ -55,7 +55,7 @@ import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 @Path("/")
 public class Resource {
 
-	private static final Logger log = LoggerFactory.getLogger(Resource.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Resource.class);
 
 	@Autowired
 	protected ApplicationContext context;
@@ -220,7 +220,7 @@ public class Resource {
 		synchronized (sync) {
 			result = infoServ.getOsusInstances();
 
-			log.info("getOsuInstances() {}", result);
+			LOG.info("getOsuInstances() {}", result);
 		}
 		final GenericEntity<List<OsuInstance>> list = new GenericEntity<List<OsuInstance>>(result) {
 		};

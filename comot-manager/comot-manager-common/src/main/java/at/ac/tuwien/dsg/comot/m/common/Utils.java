@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 
 public class Utils {
 
-	protected static final Logger log = LoggerFactory.getLogger(Utils.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(Utils.class);
 
 	@SuppressWarnings("unchecked")
 	public static <T> T asObjectFromXml(String str, Class<T> clazz, Class<?>... otherClazz) throws JAXBException,
@@ -82,7 +82,7 @@ public class Utils {
 		try {
 			return asXmlString(obj, clazz);
 		} catch (JAXBException e) {
-			log.error("Fail to marshall to XML", e);
+			LOG.error("Fail to marshall to XML", e);
 			return null;
 		}
 	}

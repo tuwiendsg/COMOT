@@ -55,7 +55,7 @@ import at.ac.tuwien.dsg.comot.m.recorder.revisions.RevisionApi;
 @Path("/recordings/{serviceId}")
 public class RevisionResource {
 
-	private static final Logger log = LoggerFactory.getLogger(RevisionResource.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RevisionResource.class);
 
 	@Autowired
 	protected RevisionApi revisionApi;
@@ -117,7 +117,7 @@ public class RevisionResource {
 			@PathParam("timestamp") Long timestamp) throws InstantiationException, IllegalAccessException,
 			IllegalArgumentException, ClassNotFoundException, RecorderException {
 
-		log.info("getRevision(serviceId={}, objectId={}, timestamp={})", serviceId, objectId, timestamp);
+		LOG.info("getRevision(serviceId={}, objectId={}, timestamp={})", serviceId, objectId, timestamp);
 
 		if (!revisionApi.verifyObject(serviceId, objectId)) {
 			throw new ComotIllegalArgumentException("For service " + serviceId + " there is no managed object "

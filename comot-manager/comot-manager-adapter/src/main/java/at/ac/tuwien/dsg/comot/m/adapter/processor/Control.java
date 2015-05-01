@@ -28,6 +28,8 @@ import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Binding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -58,6 +60,8 @@ import at.ac.tuwien.dsg.mela.common.configuration.metricComposition.CompositionR
 @Component
 @Scope("prototype")
 public class Control extends Processor implements ControlEventsListener {
+
+	private static final Logger LOG = LoggerFactory.getLogger(Control.class);
 
 	public static final Long TIMEOUT = 5000L;
 
@@ -136,7 +140,7 @@ public class Control extends Processor implements ControlEventsListener {
 
 		} else if (action == Action.KILL) {
 
-			log.info("managed: {}, controlled: {}", isManaged(serviceId), isControlled(serviceId));
+			LOG.info("managed: {}, controlled: {}", isManaged(serviceId), isControlled(serviceId));
 
 			removeManaged(serviceId);
 		}
@@ -246,8 +250,8 @@ public class Control extends Processor implements ControlEventsListener {
 			try {
 				optionalMsg = Utils.asJsonString(event);
 			} catch (Exception e) {
-				log.error("Failed to marshall message: {}", event.getClass());
-				log.error("{}", e);
+				LOG.error("Failed to marshall message: {}", event.getClass());
+				LOG.error("{}", e);
 				throw e;
 			}
 
@@ -289,15 +293,15 @@ public class Control extends Processor implements ControlEventsListener {
 						customEventName, null, optionalMsg));
 			}
 
-			log.info("sending custom event with optional message: {}", optionalMsg);
+			LOG.info("sending custom event with optional message: {}", optionalMsg);
 
 		} catch (Exception e) {
 			try {
 				manager.sendException(serviceId, e);
 			} catch (Exception e1) {
-				log.error("{}", e1);
+				LOG.error("{}", e1);
 			}
-			log.error("{}", e);
+			LOG.error("{}", e);
 		}
 	}
 }

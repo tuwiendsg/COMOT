@@ -34,7 +34,8 @@ import at.ac.tuwien.dsg.comot.m.common.Constants;
 import at.ac.tuwien.dsg.comot.m.common.InformationClient;
 import at.ac.tuwien.dsg.comot.m.common.enums.Action;
 import at.ac.tuwien.dsg.comot.m.common.enums.ComotEvent;
-import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
+import at.ac.tuwien.dsg.comot.m.common.exception.ComotAdapterException;
+import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.core.adapter.ControlAdapterStatic;
 import at.ac.tuwien.dsg.comot.m.core.adapter.DeploymentAdapterStatic;
 import at.ac.tuwien.dsg.comot.m.core.adapter.MonitoringAdapterStatic;
@@ -51,8 +52,8 @@ import at.ac.tuwien.dsg.comot.model.type.OsuType;
 
 @Component
 public class InitData {
-	
-	private static final Logger log = LoggerFactory.getLogger(InitData.class);
+
+	private static final Logger LOG = LoggerFactory.getLogger(InitData.class);
 
 	@Autowired
 	protected InformationClient infoService;
@@ -61,13 +62,20 @@ public class InitData {
 	@javax.annotation.Resource
 	public Environment env;
 
-	public void setUpTestData() throws URISyntaxException, EpsException, JAXBException, IOException {
+	public void setUpTestData() throws ComotException {
 
 		String fileBase = env.getProperty("dir.files");
 
-		URI deploymentUri = new URI(env.getProperty("uri.deployemnt"));
-		URI monitoringUri = new URI(env.getProperty("uri.monitoring"));
-		URI controllerUri = new URI(env.getProperty("uri.controller"));
+		URI deploymentUri;
+		URI monitoringUri;
+		URI controllerUri;
+		try {
+			deploymentUri = new URI(env.getProperty("uri.deployemnt"));
+			monitoringUri = new URI(env.getProperty("uri.monitoring"));
+			controllerUri = new URI(env.getProperty("uri.controller"));
+		} catch (URISyntaxException e1) {
+			throw new ComotAdapterException(e1);
+		}
 
 		// SALSA
 
@@ -157,7 +165,7 @@ public class InitData {
 			infoService.addOsu(monitoringDynamic);
 
 		} catch (JAXBException | IOException e) {
-			log.error("{}", e);
+			LOG.error("{}", e);
 		}
 
 		// DYNAMIC EPS RSYBL
@@ -184,7 +192,7 @@ public class InitData {
 			infoService.addOsu(rsyblDynamic);
 
 		} catch (JAXBException | IOException e) {
-			log.error("{}", e);
+			LOG.error("{}", e);
 		}
 
 		// DYNAMIC EPS SALSA
@@ -201,14 +209,14 @@ public class InitData {
 			infoService.addOsu(salsaDynamic);
 
 		} catch (JAXBException | IOException e) {
-			log.error("{}", e);
+			LOG.error("{}", e);
 		}
 
 		try {
 			infoService.createTemplate(mapperTosca.createModel(UtilsCs
 					.loadTosca(fileBase + "init/HelloElasticity.xml")));
 		} catch (JAXBException | IOException e) {
-			log.error("{}", e);
+			LOG.error("{}", e);
 		}
 	}
 

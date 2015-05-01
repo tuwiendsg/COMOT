@@ -26,7 +26,7 @@ public class CloudService extends ServiceEntity {
 	@XmlElement(name = "Topology")
 	protected Set<ServiceTopology> serviceTopologies = new HashSet<>();
 	
-	protected Set<OsuInstance> support = new HashSet<>();;
+	protected Set<OsuInstance> support = new HashSet<>();
 
 	public CloudService() {
 	}

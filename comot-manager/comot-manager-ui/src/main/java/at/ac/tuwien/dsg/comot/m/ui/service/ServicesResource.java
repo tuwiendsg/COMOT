@@ -85,7 +85,7 @@ import at.ac.tuwien.dsg.comot.model.type.State;
 @Path("/manager")
 public class ServicesResource {
 
-	private static final Logger log = LoggerFactory.getLogger(ServicesResource.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ServicesResource.class);
 
 	// public static final String TOSCA_FILE = "./TOSCA-v1.0.xsd";
 
@@ -105,7 +105,7 @@ public class ServicesResource {
 
 	@PostConstruct
 	public void startUp() {
-		log.info("REST resource created");
+		LOG.info("REST resource created");
 	}
 
 	@POST
@@ -244,7 +244,7 @@ public class ServicesResource {
 			String optionalInput) throws EpsException, ComotException, ClassNotFoundException, IOException,
 			JAXBException {
 
-		// log.info(">>>{}<<<", optionalInput);
+		// LOG.info(">>>{}<<<", optionalInput);
 
 		coordinator.triggerCustomEvent(serviceId, epsId, eventName, optionalInput);
 		return Response.ok().build();
@@ -255,7 +255,6 @@ public class ServicesResource {
 	@Path("/services/{serviceId}")
 	public Response updateService(@PathParam("serviceId") String serviceId, Definitions def) {
 
-		// TODO
 		return null;
 	}
 

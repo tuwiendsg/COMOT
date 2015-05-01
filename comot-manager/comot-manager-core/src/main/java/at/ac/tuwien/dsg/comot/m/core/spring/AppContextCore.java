@@ -62,7 +62,7 @@ import at.ac.tuwien.dsg.comot.m.recorder.AppContextServrec;
 @EnableAsync
 public class AppContextCore {
 
-	public static final Logger log = LoggerFactory.getLogger(AppContextCore.class);
+	public static final Logger LOG = LoggerFactory.getLogger(AppContextCore.class);
 
 	public static final String INSERT_INIT_DATA = "INSERT_INIT_DATA";
 

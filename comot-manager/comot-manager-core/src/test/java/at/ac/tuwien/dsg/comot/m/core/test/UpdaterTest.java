@@ -26,6 +26,8 @@ import javax.xml.bind.JAXBException;
 
 import org.junit.Test;
 import org.oasis.tosca.Definitions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
@@ -39,6 +41,8 @@ import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceUnit;
 
 public class UpdaterTest extends AbstractTest {
+
+	private static final Logger LOG = LoggerFactory.getLogger(UpdaterTest.class);
 
 	@Autowired
 	public Engine engine;
@@ -55,7 +59,7 @@ public class UpdaterTest extends AbstractTest {
 		CloudService serviceOld = mapperTosca.createModel(def);
 		CloudService serviceNew = (CloudService) Utils.deepCopy(serviceOld);
 
-		log.info("service {}", Utils.asXmlString(serviceOld));
+		LOG.info("service {}", Utils.asXmlString(serviceOld));
 
 		Navigator nav = new Navigator(serviceNew);
 		Set<ServiceUnit> forceUpdate = new HashSet<>();

@@ -29,7 +29,6 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,10 +53,8 @@ import at.ac.tuwien.dsg.csdg.outputProcessing.eventsNotification.IEvent;
 @Component
 public class ElasticityAnalyzis {
 
-	private static final Logger log = LoggerFactory.getLogger(ElasticityAnalyzis.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ElasticityAnalyzis.class);
 
-	@Autowired
-	private ApplicationContext context;
 	@Autowired
 	protected GraphDatabaseService db;
 	@Autowired
@@ -74,15 +71,6 @@ public class ElasticityAnalyzis {
 	protected RevisionApi revisionApi;
 
 	@Transactional
-	public void bbbb() {
-
-		for (Change change : changeRepo.getAllChangesInRange("HelloElasticity_1", 0L, Long.MAX_VALUE)) {
-			log.info("{}", change);
-		}
-
-	}
-
-	@Transactional
 	public List<ElasticPlanReport> doOneService(String serviceId) throws JAXBException,
 			InstantiationException, IllegalAccessException, IllegalArgumentException, ClassNotFoundException,
 			RecorderException {
@@ -97,12 +85,12 @@ public class ElasticityAnalyzis {
 			change = iterator.next();
 			eventType = Recording.extractEventName(change);
 
-			log.info(eventType + " " + ComotEvent.rsyblActionPlan(IEvent.Stage.START));
+			LOG.info(eventType + " " + ComotEvent.rsyblActionPlan(IEvent.Stage.START));
 
 			// ACTION PLAN
 			if (eventType.equals(ComotEvent.rsyblActionPlan(IEvent.Stage.START))) {
 
-				ActionPlanEvent ap = extractActionPlan(change);
+				ActionPlanEvent ap = extractEvent(change, ActionPlanEvent.class);
 				ElasticPlanReport actionPlan = new ElasticPlanReport(ap, Recording.extractEventTime(change),
 						change.getTimestamp());
 				list.add(actionPlan);
@@ -111,14 +99,12 @@ public class ElasticityAnalyzis {
 					directive = (SyblDirective) revisionApi.getRevision(serviceId, one.getId(), change.getTimestamp());
 
 					one.setId(directive.getDirective());
-					// actionPlan.addDirective(directive);
 				}
 
 				for (Strategy one : ap.getStrategies()) {
 					directive = (SyblDirective) revisionApi.getRevision(serviceId, one.getId(), change.getTimestamp());
 
 					one.setId(directive.getDirective());
-					// actionPlan.addDirective(directive);
 				}
 
 				while (iterator.hasNext()) {
@@ -133,12 +119,13 @@ public class ElasticityAnalyzis {
 						break;
 
 					} else if (eventType.startsWith(ComotEvent.rsyblCustomPrefix())) {
-						actionPlan.addCustomEvent(extractCustom(change), Recording.extractEventTime(change));
+						actionPlan.addCustomEvent(extractEvent(change, CustomEvent.class),
+								Recording.extractEventTime(change));
 
 						// ACTION
 					} else if (eventType.equals(ComotEvent.rsyblAction(IEvent.Stage.START))) {
 
-						ActionReport action = new ActionReport(extractAction(change),
+						ActionReport action = new ActionReport(extractEvent(change, ActionEvent.class),
 								Recording.extractEventTime(change));
 						actionPlan.addActionEvent(action);
 
@@ -154,7 +141,7 @@ public class ElasticityAnalyzis {
 								break;
 
 							} else if (eventType.startsWith(ComotEvent.rsyblCustomPrefix())) {
-								action.addCustomEvent(extractCustom(change), change.getTimestamp());
+								action.addCustomEvent(extractEvent(change, CustomEvent.class), change.getTimestamp());
 
 							} else if (eventType.equals(Action.DEPLOYED.toString())
 									|| eventType.equals(Action.UNDEPLOYED.toString())) {
@@ -171,15 +158,7 @@ public class ElasticityAnalyzis {
 		return list;
 	}
 
-	public static ActionPlanEvent extractActionPlan(Change change) throws JAXBException {
-		return Utils.asObjectFromJson(change.getProperty(Recording.PROP_MSG).toString(), ActionPlanEvent.class);
-	}
-
-	public static ActionEvent extractAction(Change change) throws JAXBException {
-		return Utils.asObjectFromJson(change.getProperty(Recording.PROP_MSG).toString(), ActionEvent.class);
-	}
-
-	public static CustomEvent extractCustom(Change change) throws JAXBException {
-		return Utils.asObjectFromJson(change.getProperty(Recording.PROP_MSG).toString(), CustomEvent.class);
+	public static <C> C extractEvent(Change change, Class<C> clazz) throws JAXBException {
+		return Utils.asObjectFromJson(change.getProperty(Recording.PROP_MSG).toString(), clazz);
 	}
 }

@@ -37,7 +37,7 @@ import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class DefinitionsContextResolver implements ContextResolver<JAXBContext> {
 
-	protected static final Logger log = LoggerFactory.getLogger(DefinitionsContextResolver.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(DefinitionsContextResolver.class);
 
 	private JAXBContext jc;
 
@@ -52,7 +52,7 @@ public class DefinitionsContextResolver implements ContextResolver<JAXBContext> 
 	@Override
 	public JAXBContext getContext(Class<?> clazz) {
 		if (Definitions.class == clazz) {
-			log.debug("Custom JAXB for org.oasis.tosca.Definitions JAX-RS works");
+			LOG.debug("Custom JAXB for org.oasis.tosca.Definitions JAX-RS works");
 			return jc;
 		}
 		return null;

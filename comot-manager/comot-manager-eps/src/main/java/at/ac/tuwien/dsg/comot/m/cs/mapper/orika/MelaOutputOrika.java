@@ -45,7 +45,7 @@ import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitorin
 @Component
 public class MelaOutputOrika {
 
-	protected final Logger log = LoggerFactory.getLogger(MelaOutputOrika.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MelaOutputOrika.class);
 
 	protected MapperFacade facade;
 

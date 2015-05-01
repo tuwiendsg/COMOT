@@ -37,7 +37,7 @@ import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 
 public class ProcessorListener implements MessageListener {
 
-	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(ProcessorListener.class);
 
 	protected Processor processor;
 
@@ -57,8 +57,8 @@ public class ProcessorListener implements MessageListener {
 			} catch (Exception e) {
 
 				String body = new String(message.getBody(), "UTF-8");
-				log.error("Failed to unmarshall message: {}", body);
-				log.error("{}", e);
+				LOG.error("Failed to unmarshall message: {}", body);
+				LOG.error("{}", e);
 				throw e;
 			}
 
@@ -76,7 +76,7 @@ public class ProcessorListener implements MessageListener {
 					CloudService service = msg.getService();
 					Map<String, Transition> transitions = msg.getTransitions();
 
-					log.info(processor.logId()
+					LOG.info(processor.logId()
 							+ "onLifecycleEvent: service={}, group={}, action={}, origin={}",
 							serviceId, groupId, action, origin);
 
@@ -91,7 +91,7 @@ public class ProcessorListener implements MessageListener {
 					String eventName = event.getCustomEvent();
 					String epsId = event.getEpsId();
 
-					log.info(processor.logId()
+					LOG.info(processor.logId()
 							+ "onCustomEvent: service={}, group={}, epsId={}, event={}, origin={}",
 							serviceId, groupId, epsId, eventName, origin);
 
@@ -105,7 +105,7 @@ public class ProcessorListener implements MessageListener {
 				serviceId = msg.getServiceId();
 				String originId = msg.getOrigin();
 
-				log.info(processor.logId() + "onExceptionEvent: {}", msg);
+				LOG.info(processor.logId() + "onExceptionEvent: {}", msg);
 
 				processor.onExceptionEvent(msg, serviceId, originId);
 			}
@@ -114,9 +114,9 @@ public class ProcessorListener implements MessageListener {
 			try {
 				processor.getManager().sendException(serviceId, e);
 			} catch (Exception e1) {
-				log.error("{}", e1);
+				LOG.error("{}", e1);
 			}
-			log.error("{}", e);
+			LOG.error("{}", e);
 		}
 
 	}

@@ -45,7 +45,7 @@ import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 
 public class DeploymentClientSalsa implements DeploymentClient {
 
-	private final Logger log = LoggerFactory.getLogger(DeploymentClientSalsa.class);
+	private final Logger LOG = LoggerFactory.getLogger(DeploymentClientSalsa.class);
 
 	protected SalsaClient salsa;
 	@Autowired
@@ -64,7 +64,7 @@ public class DeploymentClientSalsa implements DeploymentClient {
 		String toscaDescriptionXml;
 
 		if (service == null) {
-			log.warn("deploy(service=null )");
+			LOG.warn("deploy(service=null )");
 			return null;
 		}
 
@@ -159,7 +159,7 @@ public class DeploymentClientSalsa implements DeploymentClient {
 
 		at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService service = salsa.getStatus(serviceId);
 
-		log.info("Service {} is in state={}", serviceId, service.getState());
+		LOG.info("Service {} is in state={}", serviceId, service.getState());
 
 		if (service.getState().equals(SalsaEntityState.DEPLOYED)) {
 			running = true;
@@ -202,7 +202,7 @@ public class DeploymentClientSalsa implements DeploymentClient {
 	@PreDestroy
 	public void cleanup() {
 		if (salsa != null) {
-			log.info("closing salsa client");
+			LOG.info("closing salsa client");
 			salsa.close();
 		}
 	}

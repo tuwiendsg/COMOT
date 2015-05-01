@@ -32,7 +32,7 @@ import at.ac.tuwien.dsg.mela.common.monitoringConcepts.MonitoredElementMonitorin
 @Component
 public class MelaOutputMapper {
 
-	protected final Logger log = LoggerFactory.getLogger(MelaOutputMapper.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MelaOutputMapper.class);
 
 	@Autowired
 	protected MelaOutputOrika mapper;
@@ -40,8 +40,6 @@ public class MelaOutputMapper {
 	public ElementMonitoring extractOutput(MonitoredElementMonitoringSnapshot snapshot) throws JAXBException {
 
 		ElementMonitoring root = mapper.get().map(snapshot, ElementMonitoring.class);
-
-		// log.debug("Final mapping: {}", Utils.asJsonString(root));
 
 		return root;
 	}

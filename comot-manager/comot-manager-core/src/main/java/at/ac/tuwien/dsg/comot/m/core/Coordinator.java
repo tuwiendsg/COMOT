@@ -24,6 +24,7 @@
 package at.ac.tuwien.dsg.comot.m.core;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.UUID;
 
 import javax.xml.bind.JAXBException;
@@ -31,8 +32,8 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
@@ -52,6 +53,7 @@ import at.ac.tuwien.dsg.comot.m.common.event.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEventModifying;
 import at.ac.tuwien.dsg.comot.m.common.event.state.ComotMessage;
+import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
@@ -61,7 +63,7 @@ import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
 @Component
 public class Coordinator {
 
-	private static final Logger log = LoggerFactory.getLogger(Coordinator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Coordinator.class);
 
 	public static final String USER_ID = "Some_User";
 	public static final long TIMEOUT = 30000;
@@ -85,7 +87,7 @@ public class Coordinator {
 	public String createService(CloudService service) throws Exception {
 
 		String serviceId = infoService.createService(service);
-		log.info("serviceId {}", serviceId);
+		LOG.info("serviceId {}", serviceId);
 		sendLifeCycleWaitForId(new LifeCycleEventModifying(serviceId, serviceId, Action.CREATED, null, service));
 
 		return serviceId;
@@ -131,7 +133,7 @@ public class Coordinator {
 	public void assignSupportingOsu(String serviceId, String osuInstanceId)
 			throws IOException, JAXBException {
 
-		log.info("coord assign {} {}", serviceId, osuInstanceId);
+		LOG.info("coord assign {} {}", serviceId, osuInstanceId);
 
 		sendCustom(Type.SERVICE,
 				new CustomEvent(serviceId, serviceId, EpsEvent.EPS_SUPPORT_REQUESTED.toString(), osuInstanceId, null));
@@ -145,19 +147,19 @@ public class Coordinator {
 						osuInstanceId, null));
 	}
 
-	public String createDynamicService(String epsId) throws AmqpException, JAXBException, EpsException {
+	public String createDynamicService(String epsId) throws JAXBException, EpsException {
 
 		String serviceId = infoService.createOsuInstance(epsId);
 
 		sendCustom(Type.SERVICE,
 				new CustomEvent(null, null, EpsEvent.EPS_DYNAMIC_REQUESTED.toString(), null, serviceId));
 
-		log.info("coord {}", serviceId);
+		LOG.info("coord {}", serviceId);
 
 		return serviceId;
 	}
 
-	public void removeDynamicService(String epsId, String epsInstanceId) throws AmqpException, JAXBException,
+	public void removeDynamicService(String epsId, String epsInstanceId) throws JAXBException,
 			EpsException {
 
 		OsuInstance osuInatance = infoService.getOsuInstance(epsInstanceId);
@@ -174,7 +176,7 @@ public class Coordinator {
 			String serviceId,
 			String epsId,
 			String eventId,
-			String optionalInput) throws AmqpException, JAXBException {
+			String optionalInput) throws JAXBException {
 
 		if (StringUtils.isBlank(eventId)) {
 			return;
@@ -184,7 +186,8 @@ public class Coordinator {
 
 	}
 
-	protected void sendLifeCycleWaitForId(final LifeCycleEvent event) throws Exception {
+	protected void sendLifeCycleWaitForId(final LifeCycleEvent event) throws BeansException, URISyntaxException,
+			ComotException, InterruptedException, JAXBException {
 
 		final String evantId = event.getEventId();
 
@@ -198,14 +201,14 @@ public class Coordinator {
 					if (exception) {
 						signal.result = false;
 					} else {
-						log.info("OK");
+						LOG.info("OK");
 						signal.result = true;
 					}
 				}
 			}
 
 			@Override
-			public void sendInternal() throws AmqpException, JAXBException {
+			public void sendInternal() throws JAXBException {
 				coordinator.sendLifeCycle(Type.SERVICE, event);
 			}
 		};
@@ -217,12 +220,12 @@ public class Coordinator {
 
 	}
 
-	protected void sendLifeCycle(Type targetLevel, LifeCycleEvent event) throws AmqpException, JAXBException {
+	protected void sendLifeCycle(Type targetLevel, LifeCycleEvent event) throws JAXBException {
 
 		String bindingKey = event.getServiceId() + "." + LifeCycleEvent.class.getSimpleName() + "." + event.getAction()
 				+ "." + targetLevel;
 
-		// log.info(logId() +"SEND key={}", targetLevel);
+		// LOG.info(logId() +"SEND key={}", targetLevel);
 
 		event.setOrigin(USER_ID);
 		event.setTime(System.currentTimeMillis());
@@ -230,12 +233,12 @@ public class Coordinator {
 		amqp.convertAndSend(Constants.EXCHANGE_REQUESTS, bindingKey, Utils.asJsonString(event));
 	}
 
-	protected void sendCustom(Type targetLevel, CustomEvent event) throws AmqpException, JAXBException {
+	protected void sendCustom(Type targetLevel, CustomEvent event) throws JAXBException {
 
 		String bindingKey = event.getServiceId() + "." + CustomEvent.class.getSimpleName() + "."
 				+ event.getCustomEvent() + "." + targetLevel;
 
-		// log.info(logId() +"SEND key={}", targetLevel);
+		// LOG.info(logId() +"SEND key={}", targetLevel);
 		event.setOrigin(USER_ID);
 		event.setTime(System.currentTimeMillis());
 

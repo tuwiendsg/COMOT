@@ -26,7 +26,7 @@ import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceEntity;
 
 public class Modifier {
 
-	protected static final Logger log = LoggerFactory.getLogger(Modifier.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Modifier.class);
 
 	public static void replaceSyblDirectives(CloudService from, CloudService to) {
 

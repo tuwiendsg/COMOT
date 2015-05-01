@@ -41,7 +41,7 @@ import at.ac.tuwien.dsg.mela.common.requirements.Requirements;
 
 public class UtilsCs {
 
-	protected static final Logger log = LoggerFactory.getLogger(UtilsCs.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(UtilsCs.class);
 
 	protected static ObjectFactory factoryRsybl = new ObjectFactory();
 
@@ -56,7 +56,7 @@ public class UtilsCs {
 		try {
 			jaxbContext = JAXBContext.newInstance(ArrayUtils.addAll(CONTEXT_TOSCA, CONTEXT_SALSA));
 		} catch (JAXBException e) {
-			log.error("Failed to create JAXB context", e);
+			LOG.error("Failed to create JAXB context", e);
 		}
 	}
 

@@ -30,27 +30,14 @@ import at.ac.tuwien.dsg.comot.rsybl.CloudServiceXML;
 @Component
 public class RsyblMapper {
 
-	protected final Logger log = LoggerFactory.getLogger(RsyblMapper.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RsyblMapper.class);
 
 	@Autowired
 	protected RsyblOrika mapper;
 
 	public CloudServiceXML extractRsybl(CloudService cloudService) {
 
-		// cloudService = (CloudService) UtilsMapper.deepCopy(cloudService);
-		// Navigator navigator = new Navigator(cloudService);
-
-		// TODO check with Georgiana if SW units should really be removed
-		// ignore SOFTWARE nodes
-		// for (StackNode unit : navigator.getAllNodes()) {
-		// if (unit.getType().equals(SwType.SOFTWARE)) {
-		// navigator.getParentTopology(unit.getId()).getServiceUnits().remove(unit);
-		// }
-		// }
-
 		CloudServiceXML serviceXml = mapper.get().map(cloudService, CloudServiceXML.class);
-
-		// log.trace("Final mapping: {}", );
 
 		return serviceXml;
 	}
