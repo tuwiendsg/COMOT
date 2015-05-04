@@ -57,14 +57,14 @@ public class DeployIoTComponent {
                         .withBaseImage("7ac2cc53-2301-40d7-a030-910d72f552ff") // this image include docker, faster spin up
                 //                        .addSoftwarePackage("ganglia-monitor")
                 //                        .addSoftwarePackage("gmetad")
-                ).withMaxColocatedInstances(1);
+                );
 
         DockerUnit gatewayDocker = DockerUnit("gatewayDocker")
                 .providedBy(DockerDefault())
                 .deployedBy(DockerFileArtifact("dockerFileArtifact", salsaRepo + "Dockerfile-UB"),
                         MiscArtifact("starter.sh", salsaRepo + "starter_ubuntu.sh"),
                         MiscArtifact("achieveArtifact", salsaRepo + "rtGovOps-agents.tar.gz"))
-                .withMaxColocatedInstances(1);
+                ;
 
         ServiceUnit sensorUnit = SingleSoftwareUnit("sensorUnit")
                 .requires(Requirement.Variable("brokerIp_Requirement"))

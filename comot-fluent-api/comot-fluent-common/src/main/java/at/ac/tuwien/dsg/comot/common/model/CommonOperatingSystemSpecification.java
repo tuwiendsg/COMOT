@@ -22,49 +22,104 @@ public final class CommonOperatingSystemSpecification {
 //900015360 w1.xlarge
     public static OperatingSystemSpecification DockerDefault() {
         return new OperatingSystemSpecification("DockerDefault_" + UUID.randomUUID())
-                .withProvider("localhost")	// salsa ignore it
-                .withInstanceType("000000512") 
-                .withBaseImage("8f1428ac-f239-42e0-ab35-137f6e234101"); 
+                .withProvider("localhost") // salsa ignore it
+                .withInstanceType("000000512")
+                .withBaseImage("a82e054f-4f01-49f9-bc4c-77a98045739c");
     }
-    
+
     public static OperatingSystemSpecification LocalDocker() {
         return new OperatingSystemSpecification("LocalDocker_" + UUID.randomUUID())
                 .withProvider("localhost");
     }
+
     public static OperatingSystemSpecification OpenstackTiny() {
         return new OperatingSystemSpecification("OpenstackTiny" + UUID.randomUUID())
                 .withProvider("dsg@openstack")
                 .withInstanceType("000000512") //.withInstanceType("m1.small")
-                .withBaseImage("8f1428ac-f239-42e0-ab35-137f6e234101"); //.withBaseImage("ami-00000163");
+                .withBaseImage("a82e054f-4f01-49f9-bc4c-77a98045739c"); //.withBaseImage("ami-00000163");
     }
 
     public static OperatingSystemSpecification OpenstackMicro() {
         return new OperatingSystemSpecification("OpenstackMicro" + UUID.randomUUID())
                 .withProvider("dsg@openstack")
                 .withInstanceType("000000960") //.withInstanceType("m1.small")
-                .withBaseImage("8f1428ac-f239-42e0-ab35-137f6e234101"); //.withBaseImage("ami-00000163");
+                .withBaseImage("a82e054f-4f01-49f9-bc4c-77a98045739c"); //.withBaseImage("ami-00000163");
     }
 
     public static OperatingSystemSpecification OpenstackSmall() {
         return new OperatingSystemSpecification("OpenstackSmall" + UUID.randomUUID())
                 .withProvider("dsg@openstack")
                 .withInstanceType("000001920") //.withInstanceType("m1.small")
-                .withBaseImage("8f1428ac-f239-42e0-ab35-137f6e234101"); //.withBaseImage("ami-00000163");
+                .withBaseImage("a82e054f-4f01-49f9-bc4c-77a98045739c"); //.withBaseImage("ami-00000163");
     }
 
     public static OperatingSystemSpecification OpenstackMedium() {
         return new OperatingSystemSpecification("OpenstackMedium" + UUID.randomUUID())
                 .withProvider("dsg@openstack")
                 .withInstanceType("000003750")
-                .withBaseImage("8f1428ac-f239-42e0-ab35-137f6e234101"); // todo set correct base image for medium
+                .withBaseImage("a82e054f-4f01-49f9-bc4c-77a98045739c");
     }
-    
-    
-       public static OperatingSystemSpecification FlexiantSmall() {
+
+    public static OperatingSystemSpecification OpenstackM2Medium() {
+        return new OperatingSystemSpecification("OpenstackM2Medium" + UUID.randomUUID())
+                .withProvider("dsg@openstack")
+                .withInstanceType("000003750")
+                .withBaseImage("a82e054f-4f01-49f9-bc4c-77a98045739c");
+    }
+
+    public static OperatingSystemSpecification OpenstackM1Large() {
+        return new OperatingSystemSpecification("OpenstackM1Large" + UUID.randomUUID())
+                .withProvider("dsg@openstack")
+                .withInstanceType("000007680")
+                .withBaseImage("a82e054f-4f01-49f9-bc4c-77a98045739c");
+    }
+
+    public static OperatingSystemSpecification OpenstackW1Tiny() {
+        return new OperatingSystemSpecification("OpenstackW1Tiny" + UUID.randomUUID())
+                .withProvider("dsg@openstack")
+                .withInstanceType("900000960")
+                .withBaseImage("a82e054f-4f01-49f9-bc4c-77a98045739c");
+    }
+
+    public static OperatingSystemSpecification OpenstackW1Small() {
+        return new OperatingSystemSpecification("OpenstackW1Small" + UUID.randomUUID())
+                .withProvider("dsg@openstack")
+                .withInstanceType("900001920")
+                .withBaseImage("a82e054f-4f01-49f9-bc4c-77a98045739c");
+    }
+
+    public static OperatingSystemSpecification OpenstackW1Medium() {
+        return new OperatingSystemSpecification("OpenstackW1Medium" + UUID.randomUUID())
+                .withProvider("dsg@openstack")
+                .withInstanceType("900003750")
+                .withBaseImage("a82e054f-4f01-49f9-bc4c-77a98045739c");
+    }
+
+    public static OperatingSystemSpecification OpenstackW1Large() {
+        return new OperatingSystemSpecification("OpenstackW1Large" + UUID.randomUUID())
+                .withProvider("dsg@openstack")
+                .withInstanceType("900007680")
+                .withBaseImage("a82e054f-4f01-49f9-bc4c-77a98045739c");
+    }
+
+    public static OperatingSystemSpecification OpenstackW1XLarge() {
+        return new OperatingSystemSpecification("OpenstackW1XLarge" + UUID.randomUUID())
+                .withProvider("dsg@openstack")
+                .withInstanceType("900015360")
+                .withBaseImage("a82e054f-4f01-49f9-bc4c-77a98045739c");
+    }
+
+
+    public static OperatingSystemSpecification FlexiantMicro() {
         return new OperatingSystemSpecification("FlexiantSmall" + UUID.randomUUID())
                 .withProvider("celar@flexiant")
-                .withInstanceType("1/2048") 
-                .withBaseImage("229b0223-0ab0-3a28-80f1-38f93309447e");  
+                .withInstanceType("1/512");
+    }
+
+    public static OperatingSystemSpecification FlexiantSmall() {
+        return new OperatingSystemSpecification("FlexiantSmall" + UUID.randomUUID())
+                .withProvider("celar@flexiant")
+                .withInstanceType("1/1024");
     }
 
 }

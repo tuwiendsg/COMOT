@@ -40,56 +40,38 @@ public class ElasticIoTPlatformCost {
         //need to specify details of VM and operating system to deploy the software servide units on
         OperatingSystemUnit dataControllerVM = OperatingSystemUnit("DataControllerUnitVM")
                 .providedBy(OpenstackSmall()
-                        .addSoftwarePackage("openjdk-7-jre")
-                        .addSoftwarePackage("ganglia-monitor")
-                        .addSoftwarePackage("gmetad")
+                        .withBaseImage("a82e054f-4f01-49f9-bc4c-77a98045739c")
                 );
 
         OperatingSystemUnit dataNodeVM = OperatingSystemUnit("DataNodeUnitVM")
                 .providedBy(OpenstackMicro()
-                        .addSoftwarePackage("openjdk-7-jre")
-                        .addSoftwarePackage("ganglia-monitor")
-                        .addSoftwarePackage("gmetad")
+                        .withBaseImage("a82e054f-4f01-49f9-bc4c-77a98045739c")
                 );
 
         //finally, we define Vm types for event processing
         OperatingSystemUnit loadbalancerVM = OperatingSystemUnit("LoadBalancerUnitVM")
                 .providedBy(OpenstackSmall()
-                        .addSoftwarePackage("openjdk-7-jre")
-                        .addSoftwarePackage("ganglia-monitor")
-                        .addSoftwarePackage("gmetad")
+                        .withBaseImage("a82e054f-4f01-49f9-bc4c-77a98045739c")
                 );
 
         OperatingSystemUnit eventProcessingVM = OperatingSystemUnit("EventProcessingUnitVM")
                 .providedBy(OpenstackSmall()
-                        .withBaseImage("be6ae07b-7deb-4926-bfd7-b11afe228d6a")
-                        .addSoftwarePackage("openjdk-7-jre")
-                        .addSoftwarePackage("ganglia-monitor")
-                        .addSoftwarePackage("gmetad")
+                        .withBaseImage("a82e054f-4f01-49f9-bc4c-77a98045739c")
                 );
 
         OperatingSystemUnit localProcessingVM = OperatingSystemUnit("LocalProcessingUnitVM")
                 .providedBy(OpenstackSmall()
-                        .withBaseImage("be6ae07b-7deb-4926-bfd7-b11afe228d6a")
-                        .addSoftwarePackage("openjdk-7-jre")
-                        .addSoftwarePackage("ganglia-monitor")
-                        .addSoftwarePackage("gmetad")
-                ).andMinInstances(2);
+                        .withBaseImage("a82e054f-4f01-49f9-bc4c-77a98045739c")
+                );
 
         OperatingSystemUnit mqttQueueVM = OperatingSystemUnit("MqttQueueVM")
                 .providedBy(OpenstackSmall()
-                        .withBaseImage("17ffd200-315f-4ba8-9e77-c294efc772bd")
-                        .addSoftwarePackage("openjdk-7-jre")
-                        .addSoftwarePackage("ganglia-monitor")
-                        .addSoftwarePackage("gmetad")
+                        .withBaseImage("a82e054f-4f01-49f9-bc4c-77a98045739c")
                 );
 
         OperatingSystemUnit momVM = OperatingSystemUnit("MoMVM")
                 .providedBy(OpenstackSmall()
-                        .withBaseImage("be6ae07b-7deb-4926-bfd7-b11afe228d6a")
-                        .addSoftwarePackage("openjdk-7-jre")
-                        .addSoftwarePackage("ganglia-monitor")
-                        .addSoftwarePackage("gmetad")
+                        .withBaseImage("a82e054f-4f01-49f9-bc4c-77a98045739c")
                 );
 
         //start with Data End, and first with Data Controller
@@ -346,7 +328,10 @@ public class ElasticIoTPlatformCost {
         //to find scaling actions, one must assume some effects for each action, to understand
         //if it makes sense or not to execute the action
 //                .withDefaultActionEffects();
-        COMOTOrchestrator orchestrator = new COMOTOrchestrator();
+        COMOTOrchestrator orchestrator = new COMOTOrchestrator()
+                .withIP("128.130.172.215")
+                .withSalsaPort(8380)
+                .withRsyblPort(8280);
 
         orchestrator.deployAndControl(serviceTemplate);
     }

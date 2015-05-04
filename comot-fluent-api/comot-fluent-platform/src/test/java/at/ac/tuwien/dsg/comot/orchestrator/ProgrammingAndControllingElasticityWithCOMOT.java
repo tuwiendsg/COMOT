@@ -343,11 +343,11 @@ public class ProgrammingAndControllingElasticityWithCOMOT {
                 // as we have horizontally scalable distributed systems (one service unit can have more instances)
                 //metrics must be aggregated among VMs
                 .withDefaultMetrics();
-                //to find scaling actions, one must assume some effects for each action, to understand
+        //to find scaling actions, one must assume some effects for each action, to understand
         //if it makes sense or not to execute the action
 //                .withDefaultActionEffects();
- COMOTOrchestrator orchestrator = new COMOTOrchestrator();
-;
-orchestrator.deployAndControl(serviceTemplate);
+        COMOTOrchestrator orchestrator = new COMOTOrchestrator();
+        ;
+        orchestrator.deployAndControl(serviceTemplate);
     }
 }

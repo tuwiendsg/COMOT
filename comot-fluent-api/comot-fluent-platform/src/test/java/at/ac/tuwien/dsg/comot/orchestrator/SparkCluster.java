@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package at.ac.tuwien.dsg.cloudcom.demoproject;
+package at.ac.tuwien.dsg.comot.orchestrator;
 
 import static at.ac.tuwien.dsg.comot.common.model.ArtifactTemplate.SingleScriptArtifact;
 import static at.ac.tuwien.dsg.comot.common.model.BASHAction.BASHAction;

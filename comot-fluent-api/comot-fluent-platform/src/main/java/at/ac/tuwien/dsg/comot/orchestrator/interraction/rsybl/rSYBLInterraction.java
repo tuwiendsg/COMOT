@@ -63,7 +63,7 @@ import org.slf4j.LoggerFactory;
  */
 public class rSYBLInterraction {
 
-    private static final Logger LOG = LoggerFactory.getLogger(rSYBLInterraction.class);
+    private static final Logger log = LoggerFactory.getLogger(rSYBLInterraction.class);
 
     private String rSYBL_BASE_IP = "128.130.172.214";
     private Integer rSYBL_BASE_PORT = 8081;
@@ -85,7 +85,7 @@ public class rSYBLInterraction {
                 EntityUtils.consume(httpResponse.getEntity());
 
             } catch (IOException ex) {
-                LOG.error(ex.getMessage(), ex);
+                log.error(ex.getMessage(), ex);
             }
         }
         {
@@ -99,9 +99,9 @@ public class rSYBLInterraction {
 
                 StringWriter sw = new StringWriter();
 
-                LOG.info("Sending deployment description to rSYBL");
+                log.info("Sending deployment description to rSYBL");
                 marshaller.marshal(deploymentDescription, sw);
-                LOG.info(sw.toString());
+                log.info(sw.toString());
 
                 URI putDeploymentStructureURL = UriBuilder.fromPath(rSYBL_BASE_URL + "/" + serviceTemplate.getId() + "/deployment").build();
                 HttpPut putDeployment = new HttpPut(putDeploymentStructureURL);
@@ -113,7 +113,7 @@ public class rSYBLInterraction {
 
                 putDeployment.setEntity(entity);
 
-                LOG.info("Executing request " + putDeployment.getRequestLine());
+                log.info("Executing request " + putDeployment.getRequestLine());
                 HttpResponse response = httpClient.execute(endpoint, putDeployment);
                 HttpEntity resEntity = response.getEntity();
 
@@ -128,7 +128,7 @@ public class rSYBLInterraction {
                 }
 
             } catch (Exception e) {
-                LOG.error(e.getMessage(), e);
+                log.error(e.getMessage(), e);
             }
 
         }
@@ -143,9 +143,9 @@ public class rSYBLInterraction {
                 Marshaller marshaller = jAXBContext.createMarshaller();
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
                 StringWriter sw = new StringWriter();
-                LOG.info("Sending service description description to rSYBL");
+                log.info("Sending service description description to rSYBL");
                 marshaller.marshal(cloudServiceXML, sw);
-                LOG.info(sw.toString());
+                log.info(sw.toString());
 
                 URI putDeploymentStructureURL = UriBuilder.fromPath(rSYBL_BASE_URL + "/" + serviceTemplate.getId() + "/description").build();
                 HttpPut putDeployment = new HttpPut(putDeploymentStructureURL);
@@ -157,7 +157,7 @@ public class rSYBLInterraction {
 
                 putDeployment.setEntity(entity);
 
-                LOG.info("Executing request " + putDeployment.getRequestLine());
+                log.info("Executing request " + putDeployment.getRequestLine());
                 HttpResponse response = httpClient.execute(endpoint, putDeployment);
                 HttpEntity resEntity = response.getEntity();
 
@@ -172,7 +172,7 @@ public class rSYBLInterraction {
                 }
 
             } catch (Exception e) {
-                LOG.error(e.getMessage(), e);
+                log.error(e.getMessage(), e);
             }
 
         }
@@ -187,9 +187,9 @@ public class rSYBLInterraction {
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
                 StringWriter sw = new StringWriter();
-                LOG.info("Sending  updated composition rules");
+                log.info("Sending  updated composition rules");
                 marshaller.marshal(compositionRulesConfiguration, sw);
-                LOG.info(sw.toString());
+                log.info(sw.toString());
 
                 URI putDeploymentStructureURL = UriBuilder.fromPath(rSYBL_BASE_URL + "/" + serviceTemplate.getId() + "/compositionRules").build();
                 HttpPut putDeployment = new HttpPut(putDeploymentStructureURL);
@@ -201,7 +201,7 @@ public class rSYBLInterraction {
 
                 putDeployment.setEntity(entity);
 
-                LOG.info("Executing request " + putDeployment.getRequestLine());
+                log.info("Executing request " + putDeployment.getRequestLine());
                 HttpResponse response = httpClient.execute(endpoint, putDeployment);
                 HttpEntity resEntity = response.getEntity();
 
@@ -216,7 +216,7 @@ public class rSYBLInterraction {
                 }
 
             } catch (Exception e) {
-                LOG.error(e.getMessage(), e);
+                log.error(e.getMessage(), e);
             }
 
         }
@@ -238,8 +238,8 @@ public class rSYBLInterraction {
 
                 putDeployment.setEntity(entity);
 
-                LOG.info("Send updated Effects");
-                LOG.info(effectsJSON);
+                log.info("Send updated Effects");
+                log.info(effectsJSON);
 
                 HttpResponse response = httpClient.execute(endpoint, putDeployment);
 
@@ -256,7 +256,7 @@ public class rSYBLInterraction {
                 }
 
             } catch (Exception e) {
-                LOG.error(e.getMessage(), e);
+                log.error(e.getMessage(), e);
             }
 
         }
@@ -271,7 +271,47 @@ public class rSYBLInterraction {
                 EntityUtils.consume(httpResponse.getEntity());
 
             } catch (IOException ex) {
-                LOG.error(ex.getMessage(), ex);
+                log.error(ex.getMessage(), ex);
+            }
+        }
+
+    }
+
+    public void startControl(CloudService serviceTemplate) {
+
+        HttpHost endpoint = new HttpHost(rSYBL_BASE_IP, rSYBL_BASE_PORT);
+
+        {
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            URI prepareConfigURI = UriBuilder.fromPath(rSYBL_BASE_URL + "/" + serviceTemplate.getId() + "/startControl").build();
+            HttpPut prepareConfig = new HttpPut(prepareConfigURI);
+
+            try {
+                HttpResponse httpResponse = httpClient.execute(endpoint, prepareConfig);
+                EntityUtils.consume(httpResponse.getEntity());
+
+            } catch (IOException ex) {
+                log.error(ex.getMessage(), ex);
+            }
+        }
+
+    }
+    
+    public void stopControl(CloudService serviceTemplate) {
+
+        HttpHost endpoint = new HttpHost(rSYBL_BASE_IP, rSYBL_BASE_PORT);
+
+        {
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            URI prepareConfigURI = UriBuilder.fromPath(rSYBL_BASE_URL + "/" + serviceTemplate.getId() + "/stopControl").build();
+            HttpPut prepareConfig = new HttpPut(prepareConfigURI);
+
+            try {
+                HttpResponse httpResponse = httpClient.execute(endpoint, prepareConfig);
+                EntityUtils.consume(httpResponse.getEntity());
+
+            } catch (IOException ex) {
+                log.error(ex.getMessage(), ex);
             }
         }
 
@@ -292,9 +332,9 @@ public class rSYBLInterraction {
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
                 StringWriter sw = new StringWriter();
-                LOG.info("Sending  updated composition rules");
+                log.info("Sending  updated composition rules");
                 marshaller.marshal(compositionRulesConfiguration, sw);
-                LOG.info(sw.toString());
+                log.info(sw.toString());
 
                 URI putDeploymentStructureURL = UriBuilder.fromPath(rSYBL_BASE_URL + "/" + serviceTemplate.getId() + "/compositionRules").build();
                 HttpPost putDeployment = new HttpPost(putDeploymentStructureURL);
@@ -306,7 +346,7 @@ public class rSYBLInterraction {
 
                 putDeployment.setEntity(entity);
 
-                LOG.info("Executing request " + putDeployment.getRequestLine());
+                log.info("Executing request " + putDeployment.getRequestLine());
                 HttpResponse response = httpClient.execute(endpoint, putDeployment);
                 HttpEntity resEntity = response.getEntity();
 
@@ -321,7 +361,7 @@ public class rSYBLInterraction {
                 }
 
             } catch (Exception e) {
-                LOG.error(e.getMessage(), e);
+                log.error(e.getMessage(), e);
             }
 
         }
@@ -341,8 +381,8 @@ public class rSYBLInterraction {
 
                 putDeployment.setEntity(entity);
 
-                LOG.info("Send updated Effects");
-                LOG.info(effectsJSON);
+                log.info("Send updated Effects");
+                log.info(effectsJSON);
 
                 HttpResponse response = httpClient.execute(endpoint, putDeployment);
 
@@ -359,7 +399,7 @@ public class rSYBLInterraction {
                 }
 
             } catch (Exception e) {
-                LOG.error(e.getMessage(), e);
+                log.error(e.getMessage(), e);
             }
 
         }
@@ -374,9 +414,9 @@ public class rSYBLInterraction {
                 Marshaller marshaller = jAXBContext.createMarshaller();
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
                 StringWriter sw = new StringWriter();
-                LOG.info("Sending updated service description to rSYBL");
+                log.info("Sending updated service description to rSYBL");
                 marshaller.marshal(cloudServiceXML, sw);
-                LOG.info(sw.toString());
+                log.info(sw.toString());
 
                 URI putDeploymentStructureURL = UriBuilder.fromPath(rSYBL_BASE_URL + "/" + serviceTemplate.getId() + "/elasticityRequirements").build();
                 HttpPost putDeployment = new HttpPost(putDeploymentStructureURL);
@@ -388,7 +428,7 @@ public class rSYBLInterraction {
 
                 putDeployment.setEntity(entity);
 
-                LOG.info("Executing request " + putDeployment.getRequestLine());
+                log.info("Executing request " + putDeployment.getRequestLine());
                 HttpResponse response = httpClient.execute(endpoint, putDeployment);
                 HttpEntity resEntity = response.getEntity();
 
@@ -403,7 +443,7 @@ public class rSYBLInterraction {
                 }
 
             } catch (Exception e) {
-                LOG.error(e.getMessage(), e);
+                log.error(e.getMessage(), e);
             }
 
         }
@@ -420,7 +460,7 @@ public class rSYBLInterraction {
 //            compositionRulesConfiguration = (CompositionRulesConfiguration) object;
 //
 //        } catch (JAXBException e) {
-//            LOG.error(e.getStackTrace().toString());
+//            log.error(e.getStackTrace().toString());
 //        } catch (FileNotFoundException ex) {
 //            java.util.logging.Logger.getLogger(rSYBLInterraction.class.getName()).log(Level.SEVERE, null, ex);
 //        }
@@ -438,7 +478,7 @@ public class rSYBLInterraction {
             compositionRulesConfiguration = (CompositionRulesConfiguration) object;
 
         } catch (JAXBException e) {
-            LOG.error(e.getStackTrace().toString());
+            log.error(e.getStackTrace().toString());
         } catch (FileNotFoundException ex) {
             java.util.logging.Logger.getLogger(rSYBLInterraction.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -523,7 +563,7 @@ public class rSYBLInterraction {
                 if (fromUnit != null && toUnit != null) {
 //                    toFromRelationships.put(fromUnit.getId(), toUnit.getId());
                 } else {
-                    LOG.warn("Relationship " + entityRelationship + " has no capabilities/requirements");
+                    log.warn("Relationship " + entityRelationship + " has no capabilities/requirements");
                 }
             }
         }
@@ -842,3 +882,4 @@ public class rSYBLInterraction {
     }
 
 }
+

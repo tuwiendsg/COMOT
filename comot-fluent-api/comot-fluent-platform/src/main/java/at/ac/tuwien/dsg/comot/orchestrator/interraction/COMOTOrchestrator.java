@@ -88,6 +88,45 @@ public class COMOTOrchestrator {
 
     }
 
+    public void deployAndMonitor(CloudService serviceTemplate) {
+
+        defaultSalsaClient.deploy(serviceTemplate);
+        salsaInterraction.waitUntilRunning(serviceTemplate.getId());
+
+        DeploymentDescription deploymentDescription = salsaInterraction.getServiceDeploymentInfo(serviceTemplate.getId());
+
+        sYBLInterraction.sendInitialConfigToRSYBL(serviceTemplate, deploymentDescription,
+                sYBLInterraction.loadMetricCompositionRules(serviceTemplate.getId(), serviceTemplate.getMetricCompositonRulesFile()),
+                sYBLInterraction.capabilitiesToJSON(serviceTemplate));
+
+        sYBLInterraction.stopControl(serviceTemplate);
+
+    }
+
+    public void controlExisting(CloudService serviceTemplate) {
+
+        salsaInterraction.waitUntilRunning(serviceTemplate.getId());
+        DeploymentDescription deploymentDescription = salsaInterraction.getServiceDeploymentInfo(serviceTemplate.getId());
+
+        sYBLInterraction.sendInitialConfigToRSYBL(serviceTemplate, deploymentDescription,
+                sYBLInterraction.loadMetricCompositionRules(serviceTemplate.getId(), serviceTemplate.getMetricCompositonRulesFile()),
+                sYBLInterraction.capabilitiesToJSON(serviceTemplate));
+
+    }
+
+    public void monitorExisting(CloudService serviceTemplate) {
+
+        salsaInterraction.waitUntilRunning(serviceTemplate.getId());
+        DeploymentDescription deploymentDescription = salsaInterraction.getServiceDeploymentInfo(serviceTemplate.getId());
+
+        sYBLInterraction.sendInitialConfigToRSYBL(serviceTemplate, deploymentDescription,
+                sYBLInterraction.loadMetricCompositionRules(serviceTemplate.getId(), serviceTemplate.getMetricCompositonRulesFile()),
+                sYBLInterraction.capabilitiesToJSON(serviceTemplate));
+
+        sYBLInterraction.stopControl(serviceTemplate);
+
+    }
+
     public void deploy(CloudService serviceTemplate) {
 
         defaultSalsaClient.deploy(serviceTemplate);
@@ -102,17 +141,6 @@ public class COMOTOrchestrator {
                 sYBLInterraction.loadMetricCompositionRules(serviceTemplate.getId(), serviceTemplate.getMetricCompositonRulesFile()),
                 sYBLInterraction.capabilitiesToJSON(serviceTemplate)
         );
-
-    }
-
-    public void controlExisting(CloudService serviceTemplate) {
-
-        salsaInterraction.waitUntilRunning(serviceTemplate.getId());
-        DeploymentDescription deploymentDescription = salsaInterraction.getServiceDeploymentInfo(serviceTemplate.getId());
-
-        sYBLInterraction.sendInitialConfigToRSYBL(serviceTemplate, deploymentDescription,
-                sYBLInterraction.loadMetricCompositionRules(serviceTemplate.getId(), serviceTemplate.getMetricCompositonRulesFile()),
-                sYBLInterraction.capabilitiesToJSON(serviceTemplate));
 
     }
 

@@ -4,13 +4,7 @@
     
     <MetricsCompositionRules>
         
-        <CompositionRule TargetMonitoredElementLevel="SERVICE_UNIT">
-            <TargetMonitoredElementID>LocalProcessingUnit</TargetMonitoredElementID>
-            <ResultingMetric type="RESOURCE" measurementUnit="#" name="bufferSize"/>
-            <Operation MetricSourceMonitoredElementLevel="VM" type="SUM">
-                <ReferenceMetric type="RESOURCE" name="bufferSize"/>
-            </Operation>
-        </CompositionRule>
+      
         <CompositionRule TargetMonitoredElementLevel="SERVICE_UNIT">
             <ResultingMetric type="RESOURCE" measurementUnit="#" name="avgPendingRequests"/>
             <Operation MetricSourceMonitoredElementLevel="VM" type="AVG">
@@ -36,6 +30,14 @@
             <ResultingMetric type="RESOURCE" measurementUnit="ms" name="totalProcessingTime"/>
             <Operation MetricSourceMonitoredElementLevel="VM" type="AVG">
                 <ReferenceMetric type="RESOURCE" name="totalProcessingTime"/>
+            </Operation>
+        </CompositionRule>
+        
+          <CompositionRule TargetMonitoredElementLevel="SERVICE_UNIT">
+            <TargetMonitoredElementID>LocalProcessingUnit</TargetMonitoredElementID>
+            <ResultingMetric type="RESOURCE" measurementUnit="#" name="bufferSize"/>
+            <Operation MetricSourceMonitoredElementLevel="VM" type="SUM">
+                <ReferenceMetric type="RESOURCE" name="bufferSize"/>
             </Operation>
         </CompositionRule>
         

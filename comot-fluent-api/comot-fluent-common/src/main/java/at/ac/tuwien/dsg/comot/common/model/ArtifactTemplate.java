@@ -56,39 +56,46 @@ public class ArtifactTemplate extends AbstractCloudEntity {
 //    public static ArtifactTemplate ScriptArtifactTemplate(String id) {
 //        return new ArtifactTemplate(id).ofType(ArtifactType.RunOnceScript);
 //    }
-
     public static ArtifactTemplate SingleScriptArtifact(String scriptUri) {
         return new ArtifactTemplate().ofType(ArtifactType.RunOnceScript)
                 .consistsOf(ArtifactReference.ArtifactReference(scriptUri).locatedAt(scriptUri));
     }
+
     public static ArtifactTemplate SingleScriptArtifact(String id, String scriptUri) {
         return new ArtifactTemplate(id).ofType(ArtifactType.RunOnceScript)
                 .consistsOf(ArtifactReference.ArtifactReference(scriptUri).locatedAt(scriptUri));
     }
-    
+
     public static ArtifactTemplate WarArtifact(String warUri) {
         return new ArtifactTemplate().ofType(ArtifactType.WarArtifact)
                 .consistsOf(ArtifactReference.ArtifactReference(warUri).locatedAt(warUri));
     }
+
     public static ArtifactTemplate WarArtifact(String id, String warUri) {
         return new ArtifactTemplate(id).ofType(ArtifactType.WarArtifact)
                 .consistsOf(ArtifactReference.ArtifactReference(warUri).locatedAt(warUri));
     }
-    
+
     public static ArtifactTemplate ServiceArtifact(String scriptUri) {
         return new ArtifactTemplate().ofType(ArtifactType.RunContinuousScript)
                 .consistsOf(ArtifactReference.ArtifactReference(scriptUri).locatedAt(scriptUri));
     }
+
     public static ArtifactTemplate ServiceArtifact(String id, String scriptUri) {
         return new ArtifactTemplate(id).ofType(ArtifactType.RunContinuousScript)
                 .consistsOf(ArtifactReference.ArtifactReference(scriptUri).locatedAt(scriptUri));
     }
-    
+
     public static ArtifactTemplate MiscArtifact(String id, String artifactURI) {
         return new ArtifactTemplate(id).ofType(ArtifactType.MiscArtifact)
                 .consistsOf(ArtifactReference.ArtifactReference(artifactURI).locatedAt(artifactURI));
     }
-    
+
+    public static ArtifactTemplate MiscArtifact(String artifactURI) {
+        return new ArtifactTemplate().ofType(ArtifactType.MiscArtifact)
+                .consistsOf(ArtifactReference.ArtifactReference(artifactURI).locatedAt(artifactURI));
+    }
+
     public static ArtifactTemplate DockerFileArtifact(String id, String dockerFileURI) {
         return new ArtifactTemplate(id).ofType(ArtifactType.DockerFile)
                 .consistsOf(ArtifactReference.ArtifactReference(dockerFileURI).locatedAt(dockerFileURI));

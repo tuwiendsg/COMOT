@@ -38,7 +38,7 @@ public class ServiceUnit extends AbstractServiceDescriptionEntity {
         }
     }
 
-    protected ServiceUnit(String id) {
+    public ServiceUnit(String id) {
         super(id);
     }
 
