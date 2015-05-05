@@ -42,19 +42,18 @@ public class SparkCluster {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        
-        createSparkCluster("SparkCluster");
-   
+
+        createSparkCluster("SparkClusterJun");
+
     }
-    
-    private static void createSparkCluster(String cloudServiceName){
-        
 
-        String salsaRepo = "http://128.130.172.215/salsa/upload/files/jun/artifact_sh/";
+    private static void createSparkCluster(String cloudServiceName) {
 
-    
+        String salsaRepo = "http://128.130.172.215/salsa/upload/files/Spark/";
+
         OperatingSystemUnit sparkMasterVM = OperatingSystemUnit("SparkMasterVM")
                 .providedBy(OpenstackSmall()
+                        .withBaseImage("a82e054f-4f01-49f9-bc4c-77a98045739c")
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
                         .addSoftwarePackage("gmetad")
@@ -62,24 +61,20 @@ public class SparkCluster {
 
         OperatingSystemUnit sparkWorkerVM = OperatingSystemUnit("SparkWorkerVM1")
                 .providedBy(OpenstackSmall()
+                        .withBaseImage("a82e054f-4f01-49f9-bc4c-77a98045739c")
                         .addSoftwarePackage("openjdk-7-jre")
                         .addSoftwarePackage("ganglia-monitor")
                         .addSoftwarePackage("gmetad")
                 );
-        
-        
 
         ServiceUnit sparkMasterUnit = SingleSoftwareUnit("SparkMasterUnit")
-                .deployedBy(SingleScriptArtifact("sparkMasterArtifact", salsaRepo + "spark_master.sh"))
+                .deployedBy(SingleScriptArtifact(salsaRepo + "deploySparkMaster.sh"))
                 .exposes(Capability.Variable("SparkMaster_IP_information"));
 
-
         ServiceUnit sparkWorkerUnit = SingleSoftwareUnit("SparkWorkerUnit1")
-                .deployedBy(SingleScriptArtifact("sparkWorkerArtifact", salsaRepo + "spark_worker.sh"))
+                .deployedBy(SingleScriptArtifact(salsaRepo + "deploySparkWorker.sh"))
                 .requires(Requirement.Variable("SparkMaster_IP_Req").withName("requiringMasterIP")
                 );
-        
-        
 
         ServiceTopology sparkTopology = ServiceTopology("SparkTopology")
                 .withServiceUnits(sparkWorkerUnit, sparkMasterUnit //add also OS units to topology
@@ -89,35 +84,27 @@ public class SparkCluster {
         CloudService serviceTemplate = ServiceTemplate(cloudServiceName)
                 .consistsOfTopologies(sparkTopology)
                 .andRelationships(
-
                         ConnectToRelation("SparkMasterUnitToSparkWorkerUnit")
                         .from(sparkMasterUnit.getContext().get("SparkMaster_IP_information"))
                         .to(sparkWorkerUnit.getContext().get("SparkMaster_IP_Req")) //specify which software unit goes to which VM
                         ,
-                        
-                      
                         HostedOnRelation("sparkMasterUnitToVM")
                         .from(sparkMasterUnit)
                         .to(sparkMasterVM),
                         HostedOnRelation("sparkWorker1ToVM")
                         .from(sparkWorkerUnit)
                         .to(sparkWorkerVM)
-               
-                        
                 )
-
                 .withDefaultMetrics();
 
         COMOTOrchestrator orchestrator = new COMOTOrchestrator()
-
                 .withSalsaIP("128.130.172.215")
                 .withSalsaPort(8380)
                 .withRsyblIP("128.130.172.215")
                 .withRsyblPort(8280);
-        
 
-        orchestrator.deployAndControl(serviceTemplate);
-        
+        orchestrator.controlExisting(serviceTemplate);
+
     }
-    
+
 }
