@@ -109,12 +109,26 @@ public abstract class AbstractServiceDescriptionEntity extends AbstractCloudEnti
     }
 
     public AbstractServiceDescriptionEntity constrainedBy(Constraint... constraints) {
-        this.constraints.addAll(Arrays.asList(constraints));
+        Set<Constraint> con = new HashSet<Constraint>();
+        con.addAll(Arrays.asList(constraints));
+        for (Constraint c : this.constraints){
+           if (!con.contains(c)){
+              con.add(c);
+           }
+        }
+        this.constraints=con;
         return this;
     }
 
     public AbstractServiceDescriptionEntity controlledBy(Strategy... strategies) {
-        this.strategies.addAll(Arrays.asList(strategies));
+        Set<Strategy> str = new HashSet<Strategy>();
+        str.addAll(Arrays.asList(strategies));
+        for (Strategy s : this.strategies){
+           if (!str.contains(s)){
+              str.add(s);
+           }
+        }
+        this.strategies=str;
         return this;
     }
 

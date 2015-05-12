@@ -1,11 +1,14 @@
 package at.ac.tuwien.dsg.comot.common.model;
 
+import com.google.common.collect.ComparisonChain;
+import java.util.Objects;
+
 /**
  * @author omoser
  */
 //TODO: one constraint should be able to take more operators
 //Example: metric a AND metric B OR metric c
-public class Constraint extends AbstractCloudEntity implements Renderable {
+public class Constraint extends AbstractCloudEntity implements Renderable,Comparable<Constraint> {
 
     private Metric metric;
 
@@ -211,34 +214,16 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Constraint)) {
-            return false;
-        }
+                return ((o instanceof Constraint) && (id.equalsIgnoreCase(((Constraint) o).id)));
 
-        Constraint that = (Constraint) o;
-
-        if (metric != that.metric) {
-            return false;
-        }
-        if (operator != that.operator) {
-            return false;
-        }
-        if (value != null ? !value.equals(that.value) : that.value != null) {
-            return false;
-        }
-
-        return true;
     }
 
     @Override
     public int hashCode() {
         int result = metric != null ? metric.hashCode() : 0;
-        result = 31 * result + (operator != null ? operator.hashCode() : 0);
-        result = 31 * result + (value != null ? value.hashCode() : 0);
+        result = 67 * result + Objects.hashCode(this.id);
         return result;
+
     }
 
     public String render() {
@@ -252,5 +237,15 @@ public class Constraint extends AbstractCloudEntity implements Renderable {
                 + ", operator=" + operator
                 + ", operator='" + value + '\''
                 + "} " + super.toString();
+    }
+    
+   
+
+
+    @Override
+    public int compareTo(Constraint o) {
+    return ComparisonChain.start()
+         .compare(id, o.id)
+            .result();
     }
 }

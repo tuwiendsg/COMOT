@@ -1,6 +1,7 @@
 package at.ac.tuwien.dsg.comot.common.model;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.ComparisonChain;
 
 import java.util.*;
 
@@ -10,7 +11,7 @@ import static java.lang.String.format;
  * Created by omoser on 3/1/14. todo atm only AND or OR constraints are
  * supported
  */
-public class Strategy extends AbstractCloudEntity implements Renderable {
+public class Strategy extends AbstractCloudEntity implements Renderable,Comparable<Strategy> {
 
     private ElasticityCapability capability;
 
@@ -134,5 +135,24 @@ public class Strategy extends AbstractCloudEntity implements Renderable {
                 .append(" : ")
                 .append(capability)
                 .toString();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        return ((object instanceof Strategy) && (id.equalsIgnoreCase(((Strategy) object).id)));
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 67 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public int compareTo(Strategy o) {
+    return ComparisonChain.start()
+         .compare(id, o.id)
+            .result();
     }
 }
