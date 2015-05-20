@@ -143,6 +143,16 @@ public class COMOTOrchestrator {
         );
 
     }
+    public void pauseControl(CloudService serviceTemplate){
+        sYBLInterraction.stopControl(serviceTemplate);
+    }
+    public void resumeControl(CloudService serviceTemplate){
+           DeploymentDescription deploymentDescription = salsaInterraction.getServiceDeploymentInfo(serviceTemplate.getId());
+
+        sYBLInterraction.sendInitialConfigToRSYBL(serviceTemplate, deploymentDescription,
+                sYBLInterraction.loadMetricCompositionRules(serviceTemplate.getId(), serviceTemplate.getMetricCompositonRulesFile()),
+                sYBLInterraction.capabilitiesToJSON(serviceTemplate));
+    }
 
     public void getSalsaStatus(CloudService serviceTemplate) {
 
