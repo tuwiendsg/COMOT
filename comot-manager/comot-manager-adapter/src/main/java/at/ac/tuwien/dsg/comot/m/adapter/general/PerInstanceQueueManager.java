@@ -74,7 +74,7 @@ public class PerInstanceQueueManager extends Manager {
 
 		admin.declareBinding(new Binding(queueNameAssignment(), DestinationType.QUEUE,
 				Constants.EXCHANGE_CUSTOM_EVENT,
-				"*.*." + EpsEvent.EPS_SUPPORT_REMOVED + "." + Type.SERVICE, null));
+				"*." + participantId + "." + EpsEvent.EPS_SUPPORT_REMOVED + "." + Type.SERVICE, null));
 
 		container = new SimpleMessageListenerContainer();
 		container.setConnectionFactory(connectionFactory);
@@ -117,9 +117,6 @@ public class PerInstanceQueueManager extends Manager {
 					if (!containers.containsKey(serviceId)) {
 
 						startServiceInstanceListener(serviceId);
-
-						LOG.info("oooooooooooo {} {} ", serviceId, participantId);
-
 						infoService.assignEps(serviceId, participantId);
 
 						sendCustom(
@@ -144,10 +141,10 @@ public class PerInstanceQueueManager extends Manager {
 
 			infoService.removeEpsAssignment(serviceId, participantId);
 
-			SimpleMessageListenerContainer container = containers.get(serviceId);
-			if (container != null) {
-				container.stop();
-				container.shutdown();
+			SimpleMessageListenerContainer serviceContainer = containers.get(serviceId);
+			if (serviceContainer != null) {
+				serviceContainer.stop();
+				serviceContainer.shutdown();
 			}
 
 			if (admin != null) {

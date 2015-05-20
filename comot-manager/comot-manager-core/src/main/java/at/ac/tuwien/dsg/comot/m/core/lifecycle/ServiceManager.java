@@ -336,7 +336,7 @@ public class ServiceManager {
 			if (temp.getCurrentState() == State.FINAL) {
 				if (temp.getId().equals(serviceId)) {
 					clean();
-					
+
 				} else {
 					temp.getParent().removeMemberNested(temp.getId());
 				}

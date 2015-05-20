@@ -68,7 +68,7 @@ public class Monitoring extends Processor {
 		bindings.add(bindingLifeCycle(queueName,
 				instanceId + ".TRUE.*." + State.PASSIVE + ".#"));
 		bindings.add(bindingLifeCycle(queueName,
-				"*.*.*.*." + Action.KILL + ".#"));
+				"*.*.*.*." + Action.TERMINATE + ".#"));
 
 		bindings.add(bindingCustom(queueName,
 				instanceId + "." + getId() + ".*.SERVICE"));
@@ -107,7 +107,7 @@ public class Monitoring extends Processor {
 				monitoring.stopMonitoring(serviceId);
 			}
 
-		} else if (action == Action.KILL && monitoring.isMonitored(serviceId)) {
+		} else if (action == Action.TERMINATE && monitoring.isMonitored(serviceId)) {
 
 			monitoring.stopMonitoring(serviceId);
 		}

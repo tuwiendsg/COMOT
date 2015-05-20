@@ -43,7 +43,7 @@ import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescripti
 
 public class SalsaClient extends ServiceClient {
 
-	private final Logger LOG = LoggerFactory.getLogger(SalsaClient.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SalsaClient.class);
 
 	protected static final String DEF_BASE_PATH = "http://127.0.0.1:8380/salsa-engine/rest";
 
@@ -151,8 +151,7 @@ public class SalsaClient extends ServiceClient {
 
 	}
 
-	public CloudService getStatus(String serviceId)
-			throws EpsException, ComotException {
+	public CloudService getStatus(String serviceId) throws ComotException {
 
 		LOG.trace(ln + "Checking status for serviceId {}", serviceId);
 
@@ -182,8 +181,7 @@ public class SalsaClient extends ServiceClient {
 
 	}
 
-	public Definitions getTosca(String serviceId)
-			throws EpsException, ComotException {
+	public Definitions getTosca(String serviceId) throws ComotException {
 
 		LOG.trace(ln + "Getting tosca for serviceId {}", serviceId);
 
@@ -229,7 +227,6 @@ public class SalsaClient extends ServiceClient {
 				.path(DEPLOYMENT_INFO_PATH)
 				.resolveTemplate("serviceId", serviceId)
 				.request(MediaType.TEXT_XML)
-				// .header("Accept", MediaType.TEXT_XML)
 				.get();
 
 		processResponseStatus(response);
@@ -241,7 +238,6 @@ public class SalsaClient extends ServiceClient {
 		return description;
 	}
 
-	@Deprecated
 	public String getServices() throws EpsException {
 
 		LOG.trace(ln + "Getting list of all services {}");

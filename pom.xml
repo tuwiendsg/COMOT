@@ -203,6 +203,11 @@
 
 	<repositories>
 		<repository>
+			<id>infosys-maven</id>
+			<name>infosys-maven-releases</name>
+			<url>http://repo.infosys.tuwien.ac.at/artifactory/comot</url>
+		</repository>
+		<repository>
 			<id>neo4j</id>
 			<name>Neo4j</name>
 			<url>http://m2.neo4j.org/</url>

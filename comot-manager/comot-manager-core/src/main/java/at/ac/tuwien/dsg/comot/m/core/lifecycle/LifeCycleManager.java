@@ -41,7 +41,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.adapter.UtilsLc;
@@ -136,7 +135,7 @@ public class LifeCycleManager {
 					if (Action.CREATED == event.getAction()) {
 						createInstanceManager(serviceId, event);
 					}
-					
+
 				} else if (abEvent instanceof CustomEvent) {
 					CustomEvent event = (CustomEvent) abEvent;
 
@@ -170,7 +169,7 @@ public class LifeCycleManager {
 
 	}
 
-	//@Async
+	// @Async
 	protected void removeInstanceManager(String serviceId) {
 		managers.remove(serviceId);
 

@@ -31,9 +31,9 @@
 }(function($, notify, exports) {
 
 	var base = "rest/";
-	var services = base + "manager/services/";
-	var templates = base + "manager/templates/";
-	var eps = base + "manager/eps/";
+	var services = base + "services/";
+	var templates = base + "templates/";
+	var eps = base + "eps/";
 	var recordings = base + "recordings/";
 	var instances = "/instances/";
 
@@ -162,7 +162,9 @@
 
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "POST";
-		request.url = templates + templateId + "/services";
+		request.url = services + "template";
+		request.data = templateId;
+		request.contentType = "text/plain";
 		return $.ajax(request);
 	}
 
@@ -309,7 +311,7 @@
 		request.type = "GET";
 		request.dataType = "json";
 		request.data = {
-			type : "DYNAMIC"
+			type : "USER_MANAGED"
 		};
 		request.url = eps;
 		return $.ajax(request);
@@ -330,7 +332,7 @@
 		request.type = "GET";
 		request.dataType = "json";
 		request.data = {
-			type : "DYNAMIC"
+			type : "USER_MANAGED"
 		};
 		request.url = eps + "instances";
 		return $.ajax(request);

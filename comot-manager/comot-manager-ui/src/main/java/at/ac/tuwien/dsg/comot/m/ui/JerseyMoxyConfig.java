@@ -21,8 +21,10 @@ package at.ac.tuwien.dsg.comot.m.ui;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.spring.scope.RequestContextFilter;
 
+import at.ac.tuwien.dsg.comot.m.ui.service.EpsResource;
 import at.ac.tuwien.dsg.comot.m.ui.service.RevisionResource;
 import at.ac.tuwien.dsg.comot.m.ui.service.ServicesResource;
+import at.ac.tuwien.dsg.comot.m.ui.service.TemplatesResource;
 
 /**
  * https://jersey.java.net/documentation/latest/media.html#json.moxy
@@ -36,6 +38,8 @@ public class JerseyMoxyConfig extends ResourceConfig {
 		// REST RESOURCES
 		register(ServicesResource.class);
 		register(RevisionResource.class);
+		register(EpsResource.class);
+		register(TemplatesResource.class);
 		// CONFIGURATION
 		register(RequestContextFilter.class);
 		register(DefinitionsContextResolver.class);

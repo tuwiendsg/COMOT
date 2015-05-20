@@ -62,7 +62,7 @@ public class RevisionApi {
 
 	@Transactional
 	public void createOrUpdateRegion(Object obj, String regionId, String targetObjectId, String changeType,
-			Map<String, Object> changeProperties) throws IllegalArgumentException, IllegalAccessException {
+			Map<String, Object> changeProperties) throws IllegalAccessException {
 
 		ManagedRegion region = context.getBean(ConverterToInternal.class).convertToGraph(obj);
 		LOG.debug("region '{}'count nodes: {}, rels: {}", regionId, region.getNodes().size(), region.getRelationships()
@@ -79,7 +79,7 @@ public class RevisionApi {
 
 	@Transactional
 	public Object getRevision(String regionId, String id, Long timestamp) throws InstantiationException,
-			IllegalAccessException, IllegalArgumentException, ClassNotFoundException, RecorderException {
+			IllegalAccessException, ClassNotFoundException, RecorderException {
 
 		ManagedRegion region = versionManager.extractFromDB(regionId, id, timestamp);
 
@@ -145,7 +145,7 @@ public class RevisionApi {
 			}
 		}
 
-		return (changes.size() > 0) ? changes.get(0) : null;
+		return (changes.isEmpty()) ? null : changes.get(0);
 	}
 
 	@Transactional

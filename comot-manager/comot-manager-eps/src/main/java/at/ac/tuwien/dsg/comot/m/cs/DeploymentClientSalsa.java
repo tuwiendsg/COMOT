@@ -45,7 +45,7 @@ import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 
 public class DeploymentClientSalsa implements DeploymentClient {
 
-	private final Logger LOG = LoggerFactory.getLogger(DeploymentClientSalsa.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DeploymentClientSalsa.class);
 
 	protected SalsaClient salsa;
 	@Autowired

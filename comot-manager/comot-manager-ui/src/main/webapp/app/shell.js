@@ -34,7 +34,7 @@ define(function(require) {
 				nav : false
 			}, {
 				route : 'eps',
-				title : 'Dynamic EPS',
+				title : 'User-managed EPS',
 				moduleId : 'eps',
 				nav : true
 			}, {

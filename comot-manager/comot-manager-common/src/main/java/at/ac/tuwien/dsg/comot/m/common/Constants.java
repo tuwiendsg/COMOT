@@ -54,9 +54,15 @@ public class Constants {
 	public static final String SALSA_SERVICE_STATIC = "SALSA_SERVICE";
 	public static final String MELA_SERVICE_STATIC = "MELA_SERVICE";
 	public static final String RSYBL_SERVICE_STATIC = "RSYBL_SERVICE";
-	public static final String MELA_SERVICE_DYNAMIC = "MELA_SERVICE_DYNAMIC";
-	public static final String RSYBL_SERVICE_DYNAMIC = "RSYBL_SERVICE_DYNAMIC";
-	public static final String SALSA_SERVICE_DYNAMIC = "SALSA_SERVICE_DYNAMIC";
+	public static final String MELA_SERVICE_DYNAMIC = "MELA_SERVICE_USER_MANAGED";
+	public static final String RSYBL_SERVICE_DYNAMIC = "RSYBL_SERVICE_USER_MANAGED";
+	public static final String SALSA_SERVICE_DYNAMIC = "SALSA_SERVICE_USER_MANAGED";
+
+	public static final String ROLE_DEPLOYER = "Deployer";
+	public static final String ROLE_MAINTENANCE = "Maintenance";
+	public static final String ROLE_CONTROLLER = "Controller";
+	public static final String ROLE_MANAGER = "Manager";
+	public static final String ROLE_OBSERVER = "Observer";
 
 	public static final String RECORDER = "RECORDER";
 	public static final String EPS_BUILDER = "EPS_BUILDER";

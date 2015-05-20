@@ -52,7 +52,7 @@ public class LifeCycle {
 
 		LOG.trace("executeAction(parentState={}, currentState={}, action={} )", parentState, currentState, action);
 
-		if (action == Action.ERROR || action == Action.KILL) {
+		if (action == Action.ERROR || action == Action.TERMINATE) {
 			return State.ERROR;
 		}
 

@@ -19,6 +19,7 @@
 package at.ac.tuwien.dsg.comot.m.recorder.revisions;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -50,12 +51,12 @@ import at.ac.tuwien.dsg.comot.recorder.BusinessId;
 @Scope("prototype")
 public class ConverterToInternal {
 
-	protected static final Logger LOG = LoggerFactory.getLogger(ConverterToInternal.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ConverterToInternal.class);
 
 	protected Map<String, InternalNode> nodes;
 	protected ManagedRegion region;
 
-	public ManagedRegion convertToGraph(Object obj) throws IllegalArgumentException, IllegalAccessException {
+	public ManagedRegion convertToGraph(Object obj) throws IllegalAccessException {
 
 		region = new ManagedRegion();
 		nodes = new HashMap<>();
@@ -65,7 +66,7 @@ public class ConverterToInternal {
 		return region;
 	}
 
-	protected InternalNode createNode(Object obj) throws IllegalArgumentException, IllegalAccessException {
+	protected InternalNode createNode(Object obj) throws IllegalAccessException {
 
 		Class<?> clazz = obj.getClass();
 
@@ -91,7 +92,7 @@ public class ConverterToInternal {
 	}
 
 	protected Set<InternalRel> createAllRelationships(InternalNode node, Object obj, List<Field> fields)
-			throws IllegalArgumentException, IllegalAccessException {
+			throws IllegalAccessException {
 
 		Set<InternalRel> relSet = new HashSet<>();
 
@@ -107,7 +108,7 @@ public class ConverterToInternal {
 			} else if (field.get(obj) instanceof Set) {
 				Set<?> set = (Set<?>) field.get(obj);
 
-				if (CustomReflectionUtils.isPrimitiveOrWrapper(CustomReflectionUtils.classOfSet(field))) {
+				if (CustomReflectionUtils.isPrimitiveOrWrapper(CustomReflectionUtils.classOfCollection(field))) {
 					continue;
 				}
 
@@ -121,8 +122,7 @@ public class ConverterToInternal {
 	}
 
 	protected InternalRel createRelationship(InternalNode from, String relName, Object obj)
-			throws IllegalArgumentException,
-			IllegalAccessException {
+			throws IllegalAccessException {
 
 		Map<String, Object> properties = new HashMap<>();
 		Object toObject = null;
@@ -165,8 +165,7 @@ public class ConverterToInternal {
 		return rel;
 	}
 
-	protected static String extractBusinessId(Object obj, List<Field> fields) throws IllegalArgumentException,
-			IllegalAccessException {
+	protected static String extractBusinessId(Object obj, List<Field> fields) throws IllegalAccessException {
 		for (Field field : fields) {
 			if (field.isAnnotationPresent(BusinessId.class)) {
 				return field.get(obj).toString();
@@ -176,8 +175,7 @@ public class ConverterToInternal {
 	}
 
 	public static Map<String, Object> extractProperties(Object obj, List<Field> fields)
-			throws IllegalArgumentException,
-			IllegalAccessException {
+			throws IllegalAccessException {
 
 		Map<String, Object> properties = new HashMap<>();
 
@@ -207,14 +205,17 @@ public class ConverterToInternal {
 
 				// collection of primitives
 			} else if (field.get(obj) instanceof Set) {
-				if (CustomReflectionUtils.isPrimitiveOrWrapper(CustomReflectionUtils.classOfSet(field))) {
+				if (CustomReflectionUtils.isPrimitiveOrWrapper(CustomReflectionUtils.classOfCollection(field))) {
 
-					Set<?> collection = (Set<?>) field.get(obj);
-					int i = 0;
+					Collection<?> collection = (Collection<?>) field.get(obj);
+					properties
+							.put(field.getName(), toArray(collection, CustomReflectionUtils.classOfCollection(field)));
+					// int i = 0;
 
-					for (Object oneOfCollection : collection) {
-						properties.put(field.getName() + "-" + i++, oneOfCollection);
-					}
+					// for (Object oneOfCollection : collection) {
+					// properties.put(field.getName() + "-" + i++, oneOfCollection);
+					// }
+
 				}
 			}
 
@@ -223,8 +224,12 @@ public class ConverterToInternal {
 		return properties;
 	}
 
-	protected void detectDynamicPropertiesClass(Object obj, List<Field> fields) throws IllegalArgumentException,
-			IllegalAccessException {
+	@SuppressWarnings("unchecked")
+	public static <T> T[] toArray(Collection list, Class<T> k) {
+		return (T[]) list.toArray((T[]) java.lang.reflect.Array.newInstance(k, list.size()));
+	}
+
+	protected void detectDynamicPropertiesClass(Object obj, List<Field> fields) throws IllegalAccessException {
 
 		for (Field field : fields) {
 			Class<?> clazz = field.getType();

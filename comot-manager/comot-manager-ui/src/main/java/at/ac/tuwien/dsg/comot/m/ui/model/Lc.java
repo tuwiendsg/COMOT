@@ -26,17 +26,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import at.ac.tuwien.dsg.comot.m.common.enums.Action;
 import at.ac.tuwien.dsg.comot.model.type.State;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public class Lc {
-
-	private static final Logger LOG = LoggerFactory.getLogger(Lc.class);
 
 	@XmlElement(name = "nodes")
 	List<LcState> states = new ArrayList<>();
@@ -51,14 +46,13 @@ public class Lc {
 		transitions.add(new LcTransition(action.toString(), stateNr(state), stateNr(nextState)));
 	}
 
-	protected int stateNr(State state) {
+	protected Integer stateNr(State state) {
 		for (int i = 0; i < states.size(); i++) {
 			if (states.get(i).getName().equals(state)) {
 				return i;
 			}
 		}
-
-		throw new RuntimeException("error");
+		return null;
 	}
 
 	public List<LcState> getStates() {

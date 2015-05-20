@@ -127,7 +127,7 @@ public class Coordinator {
 
 	public void kill(String serviceId) throws Exception {
 
-		sendLifeCycleWaitForId(new LifeCycleEvent(serviceId, serviceId, Action.KILL));
+		sendLifeCycleWaitForId(new LifeCycleEvent(serviceId, serviceId, Action.TERMINATE));
 	}
 
 	public void assignSupportingOsu(String serviceId, String osuInstanceId)
@@ -195,15 +195,8 @@ public class Coordinator {
 			@Override
 			public void process(AbstractEvent event, boolean exception, ComotMessage msg) {
 				if (event.getEventId().equals(evantId)) {
-
 					response = msg;
-
-					if (exception) {
-						signal.result = false;
-					} else {
-						LOG.info("OK");
-						signal.result = true;
-					}
+					signal.result = !exception;
 				}
 			}
 
