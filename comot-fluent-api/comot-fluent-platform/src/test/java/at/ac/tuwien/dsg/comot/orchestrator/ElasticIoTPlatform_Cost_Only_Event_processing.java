@@ -41,7 +41,7 @@ public class ElasticIoTPlatform_Cost_Only_Event_processing {
     public static void main(String[] args) {
         //specify service units in terms of software
 
-        String salsaRepo = "http://109.231.121.57/EventProcessingNoDB/";
+        String salsaRepo = "http://128.130.172.215/salsa/upload/files/ElasticIoTNoDB";
 
         //finally, we define Vm types for event processing
         final ServiceUnit loadbalancerVM = OperatingSystemUnit("LoadBalancerUnitVM")
@@ -50,8 +50,8 @@ public class ElasticIoTPlatform_Cost_Only_Event_processing {
                         //                        .addSoftwarePackage("ganglia-monitor")
                         //                        .addSoftwarePackage("gmetad")
                                         )
-//                        ;
-                        .andReference("EventProcessingTopology_COMMON/LoadBalancerUnitVM");
+                        ;
+//                        .andReference("EventProcessingTopology_COMMON/LoadBalancerUnitVM");
 
         final ServiceUnit eventProcessingVM = OperatingSystemUnit("EventProcessingUnitVM")
                 .providedBy(FlexiantMicro()
@@ -87,18 +87,18 @@ public class ElasticIoTPlatform_Cost_Only_Event_processing {
                 .exposes(Capability.Variable("A"))
                 .deployedBy(SingleScriptArtifact("deployLoadBalancerArtifact", salsaRepo + "deployLoadBalancer.sh"))
                 .withMaxColocatedInstances(1)
-                //                ;
-                .andReference("EventProcessingTopology_COMMON/LoadBalancerUnit");
+                                ;
+//                .andReference("EventProcessingTopology_COMMON/LoadBalancerUnit");
 
         final ServiceTopology eventProcessingTopology = ServiceTopology("EventProcessingTopology")
                 .withServiceUnits(loadbalancerUnit, eventProcessingUnit //add vm types to topology
                         , loadbalancerVM, eventProcessingVM
                 );
 
-        final COMOTOrchestrator orchestrator = new COMOTOrchestrator().withSalsaIP("109.231.121.57").withSalsaPort(8380).withRsyblIP("128.130.172.215").withRsyblPort(8280);
+        final COMOTOrchestrator orchestrator = new COMOTOrchestrator().withSalsaIP("128.130.172.215").withSalsaPort(8380).withRsyblIP("128.130.172.215").withRsyblPort(8280);
 
 //          String[] strategies = new String[]{"STRATEGY_LAST_ADDED", "STRATEGY_FIRST_ADDED", "STRATEGY_MELA_COST_RECOMMENDATION_LIFETIME", "STRATEGY_MELA_COST_RECOMMENDATION_EFFICIENCY"};
-        String[] strategies = new String[]{"AA"};
+        String[] strategies = new String[]{"TST"};
 
 //        List<Thread> threads = new ArrayList<>();
         for (final String strategy : strategies) {

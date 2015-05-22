@@ -130,11 +130,22 @@ public class Strategy extends AbstractCloudEntity implements Renderable,Comparab
                     format("%s %s %s %s", metric.getName(), operator, constraint.getValue(), metric.getUnit())
             );
         }
+        builder.append(Joiner.on(" AND ").join(constraintsToRender))
+                .append(" : ");
 
-        return builder.append(Joiner.on(" AND ").join(constraintsToRender))
-                .append(" : ")
-                .append(capability)
-                .toString();
+        if (capability.getPrimitiveOperations().isEmpty()) {
+            String actions = "";
+            for (String primitive : capability.getPrimitiveOperations()) {
+                actions += primitive + ",";
+            }
+            actions = actions.substring(0, actions.length() - 1);
+            builder.append(actions);
+        }else{
+             builder.append(capability.type);
+        }
+        
+        return builder.toString();
+        
     }
 
     @Override

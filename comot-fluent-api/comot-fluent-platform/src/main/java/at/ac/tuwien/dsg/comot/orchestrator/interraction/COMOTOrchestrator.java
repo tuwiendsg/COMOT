@@ -130,8 +130,8 @@ public class COMOTOrchestrator {
     public void deploy(CloudService serviceTemplate) {
 
         defaultSalsaClient.deploy(serviceTemplate);
-        salsaInterraction.waitUntilRunning(serviceTemplate.getId());
-        DeploymentDescription deploymentDescription = salsaInterraction.getServiceDeploymentInfo(serviceTemplate.getId());
+        //salsaInterraction.waitUntilRunning(serviceTemplate.getId());
+        //DeploymentDescription deploymentDescription = salsaInterraction.getServiceDeploymentInfo(serviceTemplate.getId());
 
     }
 
