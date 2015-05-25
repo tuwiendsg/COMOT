@@ -38,7 +38,7 @@ import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotLifecycleException;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 
-public class CoordinatorAdapter extends Processor {
+public abstract class CoordinatorAdapter extends Processor {
 
 	protected String serviceId;
 	protected Coordinator coordinator;
@@ -86,9 +86,9 @@ public class CoordinatorAdapter extends Processor {
 
 	}
 
-	public void process(AbstractEvent event, boolean exception, ComotMessage msg) {
+	public abstract void process(AbstractEvent event, boolean exception, ComotMessage msg);
 
-	}
+	public abstract void sendInternal() throws JAXBException;
 
 	public void send() throws ComotException, InterruptedException, JAXBException,
 			ComotLifecycleException {
@@ -114,17 +114,11 @@ public class CoordinatorAdapter extends Processor {
 
 	}
 
-	public void sendInternal() throws JAXBException {
-
-	}
-
 	protected void clean() {
 		manager.clean();
 	}
 
 	public class Signal {
-
 		public Boolean result = null;
-
 	}
 }

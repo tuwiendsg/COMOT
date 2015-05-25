@@ -47,7 +47,7 @@ import at.ac.tuwien.dsg.comot.m.recorder.repo.RevisionRepo;
 @Component
 public class VersionManager {
 
-	protected static final Logger LOG = LoggerFactory.getLogger(VersionManager.class);
+	private static final Logger LOG = LoggerFactory.getLogger(VersionManager.class);
 
 	@Autowired
 	private ApplicationContext context;

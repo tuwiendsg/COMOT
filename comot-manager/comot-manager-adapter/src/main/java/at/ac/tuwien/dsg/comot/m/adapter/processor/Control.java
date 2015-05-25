@@ -95,7 +95,7 @@ public class Control extends Processor implements ControlEventsListener {
 		bindings.add(bindingLifeCycle(queueName,
 				"*.*.*.*." + Action.STOP_CONTROLLER + ".#"));
 		bindings.add(bindingLifeCycle(queueName,
-				"*.*.*.*." + Action.KILL + ".#"));
+				"*.*.*.*." + Action.TERMINATE + ".#"));
 
 		bindings.add(bindingCustom(queueName,
 				instanceId + "." + getId() + ".*.SERVICE"));
@@ -138,7 +138,7 @@ public class Control extends Processor implements ControlEventsListener {
 
 			manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, serviceId, action));
 
-		} else if (action == Action.KILL) {
+		} else if (action == Action.TERMINATE) {
 
 			LOG.info("managed: {}, controlled: {}", isManaged(serviceId), isControlled(serviceId));
 

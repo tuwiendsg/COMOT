@@ -6,6 +6,7 @@
 package at.ac.tuwien.dsg.comot.model.provider;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -56,57 +57,42 @@ public class OfferedServiceUnit extends Entity implements HasUniqueId, Serializa
 
 	@XmlAttribute(name = "osuType")
 	protected String type;
-
-	@Indexed
-	private String category;
-	@Indexed
-	private String subcategory;
+	protected Set<String> tags = new HashSet<>();
 
 	@RelatedTo(direction = Direction.OUTGOING)
 	@Fetch
-	Set<Resource> resources;
+	Set<Resource> resources = new HashSet<>();
 
 	@RelatedTo(direction = Direction.OUTGOING)
 	@Fetch
-	Set<Quality> qualities;
+	Set<Quality> qualities = new HashSet<>();
 
 	@RelatedTo(direction = Direction.OUTGOING)
 	@Fetch
-	Set<CostFunction> costFunctions;
+	Set<CostFunction> costFunctions = new HashSet<>();
 
 	@RelatedTo(direction = Direction.OUTGOING)
 	@Fetch
 	@XmlElementWrapper(name = "PrimitiveOperations")
 	@XmlElement(name = "Operation")
-	Set<PrimitiveOperation> primitiveOperations;
+	Set<PrimitiveOperation> primitiveOperations = new HashSet<>();
 
 	protected Template serviceTemplate;
-	
-	{
-		// id = UUID.randomUUID().toString();
-		resources = new HashSet<>();
-		qualities = new HashSet<>();
-		costFunctions = new HashSet<>();
-		primitiveOperations = new HashSet<>();
-                type=OsuType.IaaS.toString();
-
-	}
 
 	public OfferedServiceUnit() {
 	}
 
-	public OfferedServiceUnit(String name, String providerID) {
+	public OfferedServiceUnit(String id, String name, String type) {
 		super(name);
-		this.providerID = providerID;
+		this.id = id;
+		this.type = type;
 	}
 
-	public OfferedServiceUnit(String name, String providerID, String category, String subCategory) {
+	public OfferedServiceUnit(String id, String name, String type, String[] tags) {
 		super(name);
-		this.providerID = providerID;
-		this.category = category;
-		this.subcategory = subCategory;
-		this.id = providerID + "." + name;
-		System.out.println("Constructing OSU. add to provider: " + this.providerID);
+		this.id = id;
+		this.type = type;
+		this.tags = new HashSet<String>(Arrays.asList(tags));
 	}
 
 	public OfferedServiceUnit hasResource(Resource resource) {
@@ -134,26 +120,18 @@ public class OfferedServiceUnit extends Entity implements HasUniqueId, Serializa
 		return providerID;
 	}
 
-	public String getCategory() {
-		return category;
-	}
-
-	public String getSubcategory() {
-		return subcategory;
-	}
-
 	public Set<Resource> getResources() {
 		return resources;
 	}
-        
-        public Resource getResourceByID(String id){
-            for(Resource rs: this.resources){
-                if (rs.getId().equals(id)){
-                    return rs;
-                }
-            }
-            return null;
-        }
+
+	public Resource getResourceByID(String id) {
+		for (Resource rs : this.resources) {
+			if (rs.getId().equals(id)) {
+				return rs;
+			}
+		}
+		return null;
+	}
 
 	public Set<Quality> getQualities() {
 		return qualities;
@@ -174,8 +152,8 @@ public class OfferedServiceUnit extends Entity implements HasUniqueId, Serializa
 	public void setType(String type) {
 		this.type = type;
 	}
-        
-        public void setTypeByEnum(OsuType type) {
+
+	public void setTypeByEnum(OsuType type) {
 		this.type = type.toString();
 	}
 
@@ -190,14 +168,6 @@ public class OfferedServiceUnit extends Entity implements HasUniqueId, Serializa
 
 	public void setProviderID(String providerID) {
 		this.providerID = providerID;
-	}
-
-	public void setCategory(String category) {
-		this.category = category;
-	}
-
-	public void setSubcategory(String subcategory) {
-		this.subcategory = subcategory;
 	}
 
 	public void setResources(Set<Resource> resources) {
@@ -223,8 +193,13 @@ public class OfferedServiceUnit extends Entity implements HasUniqueId, Serializa
 	public void setServiceTemplate(Template serviceTemplate) {
 		this.serviceTemplate = serviceTemplate;
 	}
-	
-	
-	
+
+	public Set<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(Set<String> tags) {
+		this.tags = tags;
+	}
 
 }

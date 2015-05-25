@@ -18,13 +18,12 @@
 	<context-param>
 		<param-name>spring.profiles.default</param-name>
 		<param-value>EMBEDDED_NEO4J_DB,CONFIGURABLE</param-value>
-		<!-- EMBEDDED_NEO4J_DB,IMPERMANENT_NEO4J_DB;PRECONFIGURED,CONFIGURABLE  -->
+		<!-- EMBEDDED_NEO4J_DB,IMPERMANENT_NEO4J_DB;PRECONFIGURED,CONFIGURABLE -->
 	</context-param>
 
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
-
 
 	<!-- JAX-RS -->
 	<servlet>
@@ -34,8 +33,29 @@
 			<param-name>javax.ws.rs.Application</param-name>
 			<param-value>at.ac.tuwien.dsg.comot.m.ui.JerseyMoxyConfig</param-value>
 		</init-param>
+		<init-param>
+			<param-name>jersey.config.server.provider.packages</param-name>
+			<param-value>
+            com.wordnik.swagger.jaxrs.listing,
+            at.ac.tuwien.dsg.comot.m.ui.service</param-value>
+		</init-param>
 		<load-on-startup>1</load-on-startup>
 		<async-supported>true</async-supported>
+	</servlet>
+	
+	<!-- swagger -->
+	<servlet>
+		<servlet-name>Jersey2Config</servlet-name>
+		<servlet-class>com.wordnik.swagger.jersey.config.JerseyJaxrsConfig</servlet-class>
+		<init-param>
+			<param-name>api.version</param-name>
+			<param-value>1.0.0</param-value>
+		</init-param>
+		<init-param>
+			<param-name>swagger.api.basepath</param-name>
+			<param-value>http://localhost:8380/comot/rest</param-value>
+		</init-param>
+		<load-on-startup>2</load-on-startup>
 	</servlet>
 
 	<servlet-mapping>

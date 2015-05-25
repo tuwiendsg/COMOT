@@ -43,8 +43,8 @@ public class InformationClient {
 	public static final String NON_EPS = "NON_EPS";
 	public static final String EPS = "EPS";
 	public static final String ALL = "ALL";
-	public static final String STATIC = "STATIC";
-	public static final String DYNAMIC = "DYNAMIC";
+	public static final String EXTERNAL = "EXTERNAL";
+	public static final String USER_MANAGED = "USER_MANAGED";
 
 	protected InformationClientRest client;
 
@@ -259,7 +259,7 @@ public class InformationClient {
 
 		if (ALL.equals(type)) {
 
-		} else if (STATIC.equals(type)) {
+		} else if (EXTERNAL.equals(type)) {
 			for (Iterator<OsuInstance> iterator = allEpsInstances.iterator(); iterator.hasNext();) {
 				OsuInstance osu = iterator.next();
 				if (InformationClient.isDynamicEps(osu.getOsu())) {
@@ -267,7 +267,7 @@ public class InformationClient {
 				}
 			}
 
-		} else if (DYNAMIC.equals(type)) {
+		} else if (USER_MANAGED.equals(type)) {
 			for (Iterator<OsuInstance> iterator = allEpsInstances.iterator(); iterator.hasNext();) {
 				OsuInstance osu = iterator.next();
 				if (!InformationClient.isDynamicEps(osu.getOsu())) {

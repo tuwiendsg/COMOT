@@ -37,7 +37,7 @@ import at.ac.tuwien.dsg.comot.m.cs.UtilsCs;
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 public class DefinitionsContextResolver implements ContextResolver<JAXBContext> {
 
-	protected static final Logger LOG = LoggerFactory.getLogger(DefinitionsContextResolver.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DefinitionsContextResolver.class);
 
 	private JAXBContext jc;
 

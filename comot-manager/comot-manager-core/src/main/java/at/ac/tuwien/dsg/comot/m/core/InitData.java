@@ -79,9 +79,9 @@ public class InitData {
 
 		// SALSA
 
-		OfferedServiceUnit deployment = new OfferedServiceUnit();
-		deployment.setId(Constants.SALSA_SERVICE_STATIC);
-		deployment.setType(OsuType.EPS.toString());
+		OfferedServiceUnit deployment = new OfferedServiceUnit(
+				Constants.SALSA_SERVICE_STATIC, Constants.SALSA_SERVICE_STATIC, OsuType.EPS.toString(),
+				new String[] { Constants.ROLE_DEPLOYER });
 		deployment.hasResource(new Resource(DeploymentAdapterStatic.class.getCanonicalName(),
 				new ResourceOrQualityType(Constants.ADAPTER_CLASS)));
 		deployment.hasResource(new Resource(deploymentUri.getHost(),
@@ -93,10 +93,9 @@ public class InitData {
 				new ResourceOrQualityType(Constants.VIEW)));
 
 		// MELA
-		// TODO use metrics
-		OfferedServiceUnit monitoring = new OfferedServiceUnit();
-		monitoring.setId(Constants.MELA_SERVICE_STATIC);
-		monitoring.setType(OsuType.EPS.toString());
+		OfferedServiceUnit monitoring = new OfferedServiceUnit(
+				Constants.MELA_SERVICE_STATIC, Constants.MELA_SERVICE_STATIC, OsuType.EPS.toString(),
+				new String[] { Constants.ROLE_OBSERVER });
 		monitoring.hasResource(new Resource(MonitoringAdapterStatic.class.getCanonicalName(),
 				new ResourceOrQualityType(Constants.ADAPTER_CLASS)));
 		monitoring.hasResource(new Resource(monitoringUri.getHost(), new ResourceOrQualityType(
@@ -116,9 +115,9 @@ public class InitData {
 
 		// RSYBL
 
-		OfferedServiceUnit control = new OfferedServiceUnit();
-		control.setId(Constants.RSYBL_SERVICE_STATIC);
-		control.setType(OsuType.EPS.toString());
+		OfferedServiceUnit control = new OfferedServiceUnit(
+				Constants.RSYBL_SERVICE_STATIC, Constants.RSYBL_SERVICE_STATIC, OsuType.EPS.toString(),
+				new String[] { Constants.ROLE_CONTROLLER });
 		control.hasResource(new Resource(ControlAdapterStatic.class.getCanonicalName(), new ResourceOrQualityType(
 				Constants.ADAPTER_CLASS)));
 		control.hasResource(new Resource(controllerUri.getHost(), new ResourceOrQualityType(Constants.IP)));
@@ -132,7 +131,7 @@ public class InitData {
 				new ComotLifecycleEvent("Stop controller", Action.STOP_CONTROLLER.toString()));
 
 		control.hasPrimitiveOperation(
-				new ComotCustomEvent("Set Metric Composition Rules", ComotEvent.SET_MCR.toString(), true));
+				new ComotCustomEvent("Set Control Metrics", ComotEvent.SET_MCR.toString(), true));
 		control.hasPrimitiveOperation(
 				new ComotCustomEvent("Start controller", ComotEvent.RSYBL_START.toString(), false));
 		control.hasPrimitiveOperation(
@@ -149,9 +148,9 @@ public class InitData {
 			CloudService melaService = mapperTosca.createModel(UtilsCs
 					.loadTosca(fileBase + "adapterMela/mela_tosca_with_adapter_from_salsa.xml"));
 
-			OfferedServiceUnit monitoringDynamic = new OfferedServiceUnit();
-			monitoringDynamic.setId(Constants.MELA_SERVICE_DYNAMIC);
-			monitoringDynamic.setType(OsuType.EPS.toString());
+			OfferedServiceUnit monitoringDynamic = new OfferedServiceUnit(
+					Constants.MELA_SERVICE_DYNAMIC, Constants.MELA_SERVICE_DYNAMIC, OsuType.EPS.toString(),
+					new String[] { Constants.ROLE_OBSERVER });
 
 			monitoringDynamic.hasPrimitiveOperation(
 					new ComotCustomEvent("Set Metric Composition Rules", ComotEvent.SET_MCR.toString(), true));
@@ -173,9 +172,9 @@ public class InitData {
 			CloudService rsyblService = mapperTosca.createModel(UtilsCs
 					.loadTosca(fileBase + "adapterRsybl/rsybl_mela_with_adapter_tosca.xml"));
 
-			OfferedServiceUnit rsyblDynamic = new OfferedServiceUnit();
-			rsyblDynamic.setId(Constants.RSYBL_SERVICE_DYNAMIC);
-			rsyblDynamic.setType(OsuType.EPS.toString());
+			OfferedServiceUnit rsyblDynamic = new OfferedServiceUnit(
+					Constants.RSYBL_SERVICE_DYNAMIC, Constants.RSYBL_SERVICE_DYNAMIC, OsuType.EPS.toString(),
+					new String[] { Constants.ROLE_CONTROLLER });
 
 			rsyblDynamic.hasPrimitiveOperation(
 					new ComotLifecycleEvent("Stop controller", Action.STOP_CONTROLLER.toString()));
@@ -200,9 +199,9 @@ public class InitData {
 			CloudService salsaService = mapperTosca.createModel(UtilsCs
 					.loadTosca(fileBase + "adapterSalsa/salsa_tosca.xml"));
 
-			OfferedServiceUnit salsaDynamic = new OfferedServiceUnit();
-			salsaDynamic.setId(Constants.SALSA_SERVICE_DYNAMIC);
-			salsaDynamic.setType(OsuType.EPS.toString());
+			OfferedServiceUnit salsaDynamic = new OfferedServiceUnit(
+					Constants.SALSA_SERVICE_DYNAMIC, Constants.SALSA_SERVICE_DYNAMIC, OsuType.EPS.toString(),
+					new String[] { Constants.ROLE_DEPLOYER });
 
 			salsaDynamic.setServiceTemplate(new Template(salsaService.getId(), salsaService));
 

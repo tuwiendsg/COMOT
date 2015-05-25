@@ -28,10 +28,10 @@ public class EpsException extends ComotException {
 
 	private static final long serialVersionUID = 7350286958469243223L;
 
-	protected int code;
-	protected String msg;
-	protected String componentName;
-	protected boolean clientError;
+	protected final int code;
+	protected final String msg;
+	protected final String componentName;
+	protected final boolean clientError;
 
 	public EpsException(int code, String msg, String componentName) {
 		super("HTTP code=" + code + ", message='" + msg + "'");
@@ -42,15 +42,9 @@ public class EpsException extends ComotException {
 
 		if (code / 100 == 4) {
 			clientError = true;
+		} else {
+			clientError = false;
 		}
-	}
-
-	public EpsException(String message) {
-		super(message);
-	}
-
-	public EpsException(String message, Exception cause) {
-		super(message, cause);
 	}
 
 	public int getCode() {

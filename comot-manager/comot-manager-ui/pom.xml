@@ -14,8 +14,13 @@
 	</parent>
 
 	<dependencies>
-
-		<!-- TODO consider using Swagger for documentation of REST API https://helloreverb.com/developers/swagger -->
+	 
+		<dependency>
+			<groupId>com.wordnik</groupId>
+			<artifactId>swagger-jersey2-jaxrs</artifactId>
+			<version>1.5.3-M1</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-moxy</artifactId>
@@ -23,6 +28,12 @@
 		<dependency>
 			<groupId>org.glassfish.jersey.ext</groupId>
 			<artifactId>jersey-spring3</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>jersey-container-servlet-core</artifactId>
+					<groupId>org.glassfish.jersey.containers</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
@@ -32,6 +43,12 @@
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-servlet</artifactId>
 			<version>2.16</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>jersey-container-servlet-core</artifactId>
+					<groupId>org.glassfish.jersey.containers</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -124,4 +141,13 @@
 			</plugin>
 		</plugins>
 	</build>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.glassfish.jersey.containers</groupId>
+				<artifactId>jersey-container-servlet-core</artifactId>
+				<version>2.15</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>

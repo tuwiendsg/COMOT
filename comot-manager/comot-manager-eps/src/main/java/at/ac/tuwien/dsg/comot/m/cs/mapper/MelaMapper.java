@@ -167,7 +167,7 @@ public class MelaMapper {
 		for (BinaryRestrictionsConjunction binaryRestrictions : rConstraint.getToEnforce().getBinaryRestriction()) {
 			for (BinaryRestriction binaryRestriction : binaryRestrictions.getBinaryRestrictions()) {
 
-				ArrayList<String> targetedEls = new ArrayList<String>();
+				List<String> targetedEls = new ArrayList<String>();
 				targetedEls.add(servicePart.getId());
 
 				List<Condition> conditions = new ArrayList<Condition>();

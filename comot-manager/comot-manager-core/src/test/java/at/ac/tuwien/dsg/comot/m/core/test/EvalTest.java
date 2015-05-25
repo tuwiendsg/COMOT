@@ -123,7 +123,7 @@ public class EvalTest extends AbstractTest {
 		LOG.info("ALL SALSAS CREATED");
 
 		List<String> services = new ArrayList<>();
-		List<OsuInstance> salsas = infoService.getEpsInstances(InformationClient.DYNAMIC);
+		List<OsuInstance> salsas = infoService.getEpsInstances(InformationClient.USER_MANAGED);
 
 		UtilsTest.sleepSeconds(300);
 

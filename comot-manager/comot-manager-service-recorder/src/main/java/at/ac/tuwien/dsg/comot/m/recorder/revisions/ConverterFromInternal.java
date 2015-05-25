@@ -112,12 +112,12 @@ public class ConverterFromInternal {
 				// Set relationship
 			} else if (fc.equals(Set.class)) {
 
-				if (CustomReflectionUtils.isPrimitiveOrWrapper(CustomReflectionUtils.classOfSet(field))) {
+				if (CustomReflectionUtils.isPrimitiveOrWrapper(CustomReflectionUtils.classOfCollection(field))) {
 					continue;
 				}
 
 				Set<Object> relSet = new HashSet<>();
-				Class<?> setClass = CustomReflectionUtils.classOfSet(field);
+				Class<?> setClass = CustomReflectionUtils.classOfCollection(field);
 
 				for (InternalRel rel : node.getRelationships()) {
 					if (rel.getType().equals(field.getName())) {
@@ -222,7 +222,7 @@ public class ConverterFromInternal {
 
 				// collection of primitives
 			} else if (field.get(obj) instanceof Set) {
-				if (CustomReflectionUtils.isPrimitiveOrWrapper(CustomReflectionUtils.classOfSet(field))) {
+				if (CustomReflectionUtils.isPrimitiveOrWrapper(CustomReflectionUtils.classOfCollection(field))) {
 
 					Set<Object> set = new HashSet<>();
 

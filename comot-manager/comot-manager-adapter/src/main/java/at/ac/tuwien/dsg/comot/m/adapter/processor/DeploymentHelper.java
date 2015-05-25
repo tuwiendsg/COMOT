@@ -150,12 +150,14 @@ public class DeploymentHelper {
 					}
 
 				} catch (ComotException e) {
+					// TODO send exception to recorder
 					LOG.warn("{}", e);
 				}
 			} while (true);
 		} catch (InterruptedException e) {
 			LOG.info("Task interrupted as expected");
 		} catch (Exception e) {
+			// TODO send exception to recorder
 			LOG.error("{}", e);
 		}
 		return null;
@@ -234,10 +236,6 @@ public class DeploymentHelper {
 					action = Action.DEPLOYMENT_STARTED;
 				} else if (lcStateOld == State.DEPLOYING && lcStateNew == State.RUNNING) {
 					action = Action.DEPLOYED;
-					// } else if (lcStateOld == State.RUNNING && lcStateNew == State.UNDEPLOYING) {
-					// action = Action.UNDEPLOYMENT_STARTED;
-					// } else if (lcStateOld == State.UNDEPLOYING && lcStateNew == State.FINAL) {
-					// action = Action.UNDEPLOYED;
 				} else {
 					LOG.error("invalid transitions {} -> {}", lcStateOld, lcStateNew);
 					return;

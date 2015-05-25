@@ -42,5 +42,5 @@ public enum Action {
 	START_MAINTENANCE,
 	MOVED,
 	UPDATED,
-	KILL;
+	TERMINATE;
 }

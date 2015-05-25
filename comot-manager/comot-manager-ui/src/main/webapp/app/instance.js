@@ -17,7 +17,7 @@
  * the License.
  *******************************************************************************/
 define(function(require) {
-	var app = require('durandal/app'), ko = require('knockout'), http = require('plugins/http'), d3 = require('d3'), JsonHuman = require('json_human'), comot = require('comot_client'), $ = require("jquery"), bootstrap = require('bootstrap'), router = require('plugins/router');
+	var app = require('durandal/app'), ko = require('knockout'), http = require('plugins/http'), d3 = require('d3'), utils = require('comot_utils') , JsonHuman = require('json_human'), comot = require('comot_client'), $ = require("jquery"), bootstrap = require('bootstrap'), router = require('plugins/router');
 
 	var notify = require('notify');
 
@@ -37,6 +37,9 @@ define(function(require) {
 		service : ko.observable(),
 		isEpsService : ko.observable(true),
 		// functions
+		toDate : function (asLong){
+			return utils.longToDateString(asLong);
+		},
 		startInstance : startInstance,
 		stopInstance : stopInstance,
 		killInstance : killInstance,

@@ -27,9 +27,7 @@ import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.Binding;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -63,7 +61,7 @@ public class EpsBuilder extends Processor {
 	protected InformationClient infoService;
 
 	@Override
-	public void start() throws BeansException, ComotException {
+	public void start() throws ComotException {
 
 		infoService.deleteAll();
 		context.getBean(InitData.class).setUpTestData();
@@ -117,7 +115,7 @@ public class EpsBuilder extends Processor {
 	@Override
 	public void onLifecycleEvent(StateMessage msg, String serviceId, String groupId,
 			Action action, String optionalMessage, CloudService service, Map<String, Transition> transitions)
-			throws ClassNotFoundException, IOException, AmqpException, JAXBException, EpsException {
+			throws ClassNotFoundException, IOException, JAXBException, EpsException {
 
 		if (infoService.isServiceOfDynamicEps(serviceId)) {
 
@@ -144,9 +142,9 @@ public class EpsBuilder extends Processor {
 
 		if (action == EpsEvent.EPS_DYNAMIC_REQUESTED && !origin.equals(getId())) {
 
-			serviceId = infoService.getOsuInstance(optionalMessage).getService().getId();
+			String newServiceId = infoService.getOsuInstance(optionalMessage).getService().getId();
 
-			manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, serviceId, Action.CREATED));
+			manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(newServiceId, newServiceId, Action.CREATED));
 
 		} else if (action == EpsEvent.EPS_SUPPORT_ASSIGNED && infoService.isServiceOfDynamicEps(serviceId)) {
 
@@ -162,7 +160,7 @@ public class EpsBuilder extends Processor {
 
 	@Override
 	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String originId) throws Exception {
-
+		// not needed
 	}
 
 }

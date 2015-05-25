@@ -48,11 +48,16 @@ import at.ac.tuwien.dsg.comot.m.recorder.model.Change;
 import at.ac.tuwien.dsg.comot.m.recorder.out.ManagedObject;
 import at.ac.tuwien.dsg.comot.m.recorder.revisions.RevisionApi;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+
 // WADL http://localhost:8380/comot/rest/application.wadl
 @Service
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Path("/recordings/{serviceId}")
+@Api(value = "/recordings", description = "Lifecycle recorder")
 public class RevisionResource {
 
 	private static final Logger LOG = LoggerFactory.getLogger(RevisionResource.class);
@@ -67,10 +72,15 @@ public class RevisionResource {
 	@GET
 	@Path("/analytics/unitInstanceDeploymentEvents")
 	@Consumes(MediaType.WILDCARD)
+	@ApiOperation(
+			value = "Get deployment times of unit instances",
+			notes = "Returns multiple entries for each instance of all service units. An entry is associated to either a certain stage of the deployment or summarizes the entire deployment.",
+			response = ResultLine.class,
+			responseContainer = "List")
 	public Response getUnitInstanceDeploymentEvents(
-			@PathParam("serviceId") String serviceId
-			) throws InstantiationException, IllegalAccessException, IllegalArgumentException, ClassNotFoundException,
-					RecorderException {
+			@ApiParam(value = "ID of the cloud service", required = true) @PathParam("serviceId") String serviceId)
+			throws InstantiationException, IllegalAccessException, IllegalArgumentException, ClassNotFoundException,
+			RecorderException {
 
 		List<ResultLine> results = analyticEngine.deploymentEvents(serviceId);
 
@@ -82,10 +92,15 @@ public class RevisionResource {
 	@GET
 	@Path("/analytics/elasticActions")
 	@Consumes(MediaType.WILDCARD)
+	@ApiOperation(
+			value = "Get elastic changes and their effects",
+			notes = "One entry summarizes all actions performed and effected service unit instances",
+			response = ElasticPlanReport.class,
+			responseContainer = "List")
 	public Response getElasticActions(
-			@PathParam("serviceId") String serviceId
-			) throws InstantiationException, IllegalAccessException, IllegalArgumentException, ClassNotFoundException,
-					JAXBException, RecorderException {
+			@ApiParam(value = "ID of the cloud service", required = true) @PathParam("serviceId") String serviceId)
+			throws InstantiationException, IllegalAccessException, IllegalArgumentException, ClassNotFoundException,
+			JAXBException, RecorderException {
 
 		List<ElasticPlanReport> results = elAnalysis.doOneService(serviceId);
 
@@ -97,25 +112,32 @@ public class RevisionResource {
 	@GET
 	@Path("/objects")
 	@Consumes(MediaType.WILDCARD)
+	@ApiOperation(
+			value = "Get all versioned parts of the cloud service",
+			response = ManagedObject.class,
+			responseContainer = "List")
 	public Response getManagedObjects(
-			@PathParam("serviceId") String instanceId
-			) {
+			@ApiParam(value = "ID of the cloud service", required = true) @PathParam("serviceId") String instanceId) {
 
 		List<ManagedObject> objects = revisionApi.getManagedObjects(instanceId);
 		final GenericEntity<List<ManagedObject>> list = new GenericEntity<List<ManagedObject>>(objects) {
 		};
-		// JaxbList<String> entity = new JaxbList<String>(ids);
+
 		return Response.ok(list).build();
 	}
 
 	@GET
 	@Path("/objects/{objectId}/{timestamp}")
 	@Consumes(MediaType.WILDCARD)
+	@ApiOperation(
+			value = "Get a version of the object valid at certain time",
+			notes = "Cloud service is managed as an object composed from other nested complex objects. This operation allows to retrieve a state of the cloud service or of any of its parts.")
 	public Response getRecording(
-			@PathParam("serviceId") String serviceId,
-			@PathParam("objectId") String objectId,
-			@PathParam("timestamp") Long timestamp) throws InstantiationException, IllegalAccessException,
-			IllegalArgumentException, ClassNotFoundException, RecorderException {
+			@ApiParam(value = "ID of the cloud service", required = true) @PathParam("serviceId") String serviceId,
+			@ApiParam(value = "ID of the managed object", required = true) @PathParam("objectId") String objectId,
+			@ApiParam(value = "Point in time, for which to retrieve the state", required = true) @PathParam("timestamp") Long timestamp)
+			throws InstantiationException, IllegalAccessException, IllegalArgumentException, ClassNotFoundException,
+			RecorderException {
 
 		LOG.info("getRevision(serviceId={}, objectId={}, timestamp={})", serviceId, objectId, timestamp);
 
@@ -137,11 +159,15 @@ public class RevisionResource {
 	@GET
 	@Path("/events")
 	@Consumes(MediaType.WILDCARD)
+	@ApiOperation(
+			value = "Get events in a range",
+			response = Change.class,
+			responseContainer = "List")
 	public Response getAllEventsInRange(
-			@PathParam("serviceId") String serviceId,
-			@DefaultValue("0") @QueryParam("from") Long from,
-			@DefaultValue("9223372036854775807") @QueryParam("to") Long to) // def Long.MAX_VALUE
-	{
+			@ApiParam(value = "ID of the cloud service", required = true) @PathParam("serviceId") String serviceId,
+			@ApiParam(value = "Lower bound", required = false) @DefaultValue("0") @QueryParam("from") Long from,
+			@ApiParam(value = "Upper bound", required = false) @DefaultValue("9223372036854775807") @QueryParam("to") Long to) { // def
+		// Long.MAX_VALUE
 
 		Change change = revisionApi.getAllChanges(serviceId, from, to);
 
@@ -159,12 +185,16 @@ public class RevisionResource {
 	@GET
 	@Path("/objects/{objectId}/events")
 	@Consumes(MediaType.WILDCARD)
+	@ApiOperation(
+			value = "Get events in range that effected the object",
+			response = Change.class,
+			responseContainer = "List")
 	public Response getEvents(
-			@PathParam("serviceId") String serviceId,
-			@PathParam("objectId") String objectId,
-			@DefaultValue("0") @QueryParam("from") Long from,
-			@DefaultValue("9223372036854775807") @QueryParam("to") Long to) // def Long.MAX_VALUE
-	{
+			@ApiParam(value = "ID of the cloud service", required = true) @PathParam("serviceId") String serviceId,
+			@ApiParam(value = "ID of the managed object", required = true) @PathParam("objectId") String objectId,
+			@ApiParam(value = "Lower bound", required = true) @DefaultValue("0") @QueryParam("from") Long from,
+			@ApiParam(value = "Upper bound", required = true) @DefaultValue("9223372036854775807") @QueryParam("to") Long to) { // def
+		// Long.MAX_VALUE
 
 		if (!revisionApi.verifyObject(serviceId, objectId)) {
 			throw new ComotIllegalArgumentException("For service " + serviceId + " there is no managed object "
