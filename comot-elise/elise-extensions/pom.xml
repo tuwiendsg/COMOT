@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>at.ac.tuwien.dsg.comot.elise</groupId>
+    <artifactId>elise-extensions</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
+
+    <name>elise-extensions</name>
+    <url>http://maven.apache.org</url>
+    
+    <parent>
+        <groupId>at.ac.tuwien.dsg.comot.elise</groupId>
+        <artifactId>ELISE</artifactId>
+        <version>1.0</version>
+    </parent>
+    
+    <dependencies>
+<!--        <dependency>
+            <groupId>at.ac.tuwien.dsg.comot.elise</groupId>
+            <artifactId>elise-collector</artifactId>
+            <version>1.0</version>
+        </dependency>-->
+    </dependencies>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+	
+    <modules>
+        <module>elise-collector-openstack</module>
+        <module>elise-collector-flexiant</module>
+        <module>elise-collector-openstack-VM</module>
+        <module>elise-collector-salsa</module>  
+	<module>elise-collector-govops</module>
+        <module>elise-collector-staticinfo</module>
+        <module>elise-collector-rSYBL</module>
+    </modules>
+
+</project>

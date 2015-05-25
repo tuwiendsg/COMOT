@@ -20,8 +20,7 @@
         </dependency>
         <dependency>
             <artifactId>comot-model</artifactId>
-            <groupId>at.ac.tuwien.dsg.comot</groupId>
-            <version>1.0</version>
+            <groupId>at.ac.tuwien.dsg.comot</groupId>                   
         </dependency>
     </dependencies>
 </project>

@@ -5,7 +5,7 @@
  */
 package at.ac.tuwien.dsg.comot.elise.service.neo4jAccess;
 
-import at.ac.tuwien.dsg.comot.model.provider.Provider;
+import at.ac.tuwien.dsg.comot.model.elasticunit.provider.Provider;
 import java.util.Set;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.GraphRepository;
@@ -18,12 +18,15 @@ import org.springframework.data.repository.query.Param;
 public interface ProviderRepository extends GraphRepository<Provider> {
 
     @Query("match (n:Provider) return n")
-    Set<Provider> listProviders();  
-    
+    Set<Provider> listProviders();
+
     @Query("match (n:Provider) where n.uniqueID={uniqueID} return n")
     Provider findByUniqueID(@Param(value = "uniqueID") String uniqueID);
 
     @Query("match (n:Provider) where n.name={name} return n")
     Provider findByName(@Param(value = "name") String name);
+
+    @Query("match (n:Provider)-[*]->x where n.id={providerId} WITH x MATCH x-[r]-() delete x,r")
+    public void deleteProviderCompletelyByID(@Param("providerId") String paramString);
 
 }

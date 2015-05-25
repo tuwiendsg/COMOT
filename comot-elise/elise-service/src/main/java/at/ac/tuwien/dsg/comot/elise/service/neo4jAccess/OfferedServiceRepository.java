@@ -1,29 +1,29 @@
 package at.ac.tuwien.dsg.comot.elise.service.neo4jAccess;
 
-import at.ac.tuwien.dsg.comot.model.provider.MetricValue;
-import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
-import at.ac.tuwien.dsg.comot.model.provider.Resource;
-import at.ac.tuwien.dsg.comot.model.provider.ResourceOrQualityType;
+import at.ac.tuwien.dsg.comot.model.elasticunit.generic.FeatureType;
+import at.ac.tuwien.dsg.comot.model.elasticunit.generic.MetricValue;
+import at.ac.tuwien.dsg.comot.model.elasticunit.generic.GenericServiceUnit;
+import at.ac.tuwien.dsg.comot.model.elasticunit.provider.Resource;
 import java.util.Set;
 
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.GraphRepository;
 import org.springframework.data.repository.query.Param;
 
-public interface OfferedServiceRepository extends GraphRepository<OfferedServiceUnit> {
+public interface OfferedServiceRepository extends GraphRepository<GenericServiceUnit> {
 //, RelationshipOperationsRepository<OfferedServiceUnit> {
         
         @Query("match (n:OfferedServiceUnit) return n")
-	Set<OfferedServiceUnit> listServiceUnit();
+	Set<GenericServiceUnit> listServiceUnit();
 	
 	@Query("match (n:OfferedServiceUnit) where n.name={name} return n")
-	Set<OfferedServiceUnit> findByName(@Param(value = "name") String name);
+	Set<GenericServiceUnit> findByName(@Param(value = "name") String name);
         
         @Query("match (n:OfferedServiceUnit) where n.id={id} return n")
-	OfferedServiceUnit findByUniqueID(@Param(value = "id") String id);
+	GenericServiceUnit findByUniqueID(@Param(value = "id") String id);
 	
         @Query("match (p:Provider)-->(n:OfferedServiceUnit) where p.id={providerID} return n")
-        Set<OfferedServiceUnit> findByProviderID(@Param(value = "providerID") String providerID);
+        Set<GenericServiceUnit> findByProviderID(@Param(value = "providerID") String providerID);
         
         @Query("match (s:OfferedServiceUnit)-->(r:Resource)-->(t:ResourceOrQualityType) where s.id={serviceID} and t.id={resourceTypeID} return r")
         Set<Resource> findResourceOfOfferedServiceUnitByType(@Param(value = "serviceID") String serviceID, @Param(value = "resourceTypeID") String resourceTypeID);
@@ -34,11 +34,11 @@ public interface OfferedServiceRepository extends GraphRepository<OfferedService
         @Query("match (r:Resource)-[hasMetric]->(mv:MetricValue) where r.id={resourceID} return mv")
         Set<MetricValue> getResourceMetricDetails(String resourceID);
         
-        @Query("match (n:OfferedServiceUnit)-->(m)-->(t:ResourceOrQualityType) where n.id={serviceUniqueID} return distinct t")
-        Set<ResourceOrQualityType> findResourceOrQualityTypes(@Param(value = "serviceUniqueID") String serviceUniqueID);
+        @Query("match (n:OfferedServiceUnit)-->(m)-->(t:FeatureType) where n.id={serviceUniqueID} return distinct t")
+        Set<FeatureType> findResourceOrQualityTypes(@Param(value = "serviceUniqueID") String serviceUniqueID);
         
 	@Query("match (n:OfferedServiceUnit) where n.subcategory={subcategory} return n")
-	Set<OfferedServiceUnit> findBySubcategory(@Param(value = "subcategory") String subcategory);   
+	Set<GenericServiceUnit> findBySubcategory(@Param(value = "subcategory") String subcategory);   
         	
 	@Query("match (n) optional match (n)-[r]-() delete n,r")
 	void cleanDataBase();

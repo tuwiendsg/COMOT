@@ -7,13 +7,8 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>elise-collector</artifactId>
-  <version>1.0</version>
   <build>
     <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.2</version>
-      </plugin>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
         <version>2.3</version>
@@ -24,15 +19,16 @@
               <goal>shade</goal>
             </goals>
             <configuration>
+              <artifactSet>
+                <excludes>
+                  <exclude>org.springframework*:*</exclude>
+                  <exclude>org.neo4j:*</exclude>
+                  <exclude>org.aspectj:*</exclude>
+                </excludes>
+              </artifactSet>
               <transformers>
                 <transformer>
                   <mainClass>at.ac.tuwien.dsg.comot.elise.collector.main.Main</mainClass>
-                </transformer>
-                <transformer>
-                  <resource>META-INF/spring.handlers</resource>
-                </transformer>
-                <transformer>
-                  <resource>META-INF/spring.schemas</resource>
                 </transformer>
                 <transformer>
                   <resource>META-INF/services/com.sun.tools.xjc.Plugin</resource>

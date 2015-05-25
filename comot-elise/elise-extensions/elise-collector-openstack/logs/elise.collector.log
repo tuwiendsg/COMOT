@@ -1,0 +1,31 @@
+2015-05-15 11:41:08,690 DEBUG [main] (PropertiesManager.java:30) - Configuration file not found: /home/hungld/workspace/COMOT/comot-elise/elise-extensions/elise-collector-openstack/elise.conf. Return a black properties.
+2015-05-15 11:41:08,694 DEBUG [main] (PropertiesManager.java:44) - Trying to get parameter: name in the configuration file:/home/hungld/workspace/COMOT/comot-elise/elise-extensions/elise-collector-openstack/elise.conf, value: null
+2015-05-15 11:41:08,697 DEBUG [main] (DataCollectorConfiguration.java:44) - There is no value for key: name. Generating one...
+2015-05-15 11:41:08,697 DEBUG [main] (DataCollectorConfiguration.java:64) - Generated: name=unknown
+2015-05-15 11:41:08,698 DEBUG [main] (PropertiesManager.java:30) - Configuration file not found: /home/hungld/workspace/COMOT/comot-elise/elise-extensions/elise-collector-openstack/elise.conf. Return a black properties.
+2015-05-15 11:41:08,698 DEBUG [main] (PropertiesManager.java:55) - Trying to save parameter: name=unknown, in the configuration file:/home/hungld/workspace/COMOT/comot-elise/elise-extensions/elise-collector-openstack/elise.conf
+2015-05-15 11:41:08,705 DEBUG [main] (PropertiesManager.java:44) - Trying to get parameter: ELISE_IP in the configuration file:/home/hungld/workspace/COMOT/comot-elise/elise-extensions/elise-collector-openstack/elise.conf, value: null
+2015-05-15 11:41:08,705 DEBUG [main] (DataCollectorConfiguration.java:44) - There is no value for key: ELISE_IP. Generating one...
+2015-05-15 11:41:08,707 DEBUG [main] (DataCollectorConfiguration.java:64) - Generated: ELISE_IP=localhost
+2015-05-15 11:41:08,708 DEBUG [main] (PropertiesManager.java:55) - Trying to save parameter: ELISE_IP=localhost, in the configuration file:/home/hungld/workspace/COMOT/comot-elise/elise-extensions/elise-collector-openstack/elise.conf
+2015-05-15 11:41:08,712 DEBUG [main] (PropertiesManager.java:44) - Trying to get parameter: ELISE_PORT in the configuration file:/home/hungld/workspace/COMOT/comot-elise/elise-extensions/elise-collector-openstack/elise.conf, value: null
+2015-05-15 11:41:08,713 DEBUG [main] (DataCollectorConfiguration.java:44) - There is no value for key: ELISE_PORT. Generating one...
+2015-05-15 11:41:08,713 DEBUG [main] (DataCollectorConfiguration.java:64) - Generated: ELISE_PORT=8480
+2015-05-15 11:41:08,714 DEBUG [main] (PropertiesManager.java:55) - Trying to save parameter: ELISE_PORT=8480, in the configuration file:/home/hungld/workspace/COMOT/comot-elise/elise-extensions/elise-collector-openstack/elise.conf
+2015-05-15 11:41:08,715 DEBUG [main] (PropertiesManager.java:44) - Trying to get parameter: collectorID in the configuration file:/home/hungld/workspace/COMOT/comot-elise/elise-extensions/elise-collector-openstack/elise.conf, value: null
+2015-05-15 11:41:08,716 DEBUG [main] (DataCollectorConfiguration.java:44) - There is no value for key: collectorID. Generating one...
+2015-05-15 11:41:08,737 DEBUG [main] (DataCollectorConfiguration.java:64) - Generated: collectorID=76ff8524-eef5-4947-9d21-e9cca4b8fadd
+2015-05-15 11:41:08,737 DEBUG [main] (PropertiesManager.java:55) - Trying to save parameter: collectorID=76ff8524-eef5-4947-9d21-e9cca4b8fadd, in the configuration file:/home/hungld/workspace/COMOT/comot-elise/elise-extensions/elise-collector-openstack/elise.conf
+2015-05-15 11:41:08,738 DEBUG [main] (GenericCollector.java:57) - Generic collector read (elise.conf): endpoint = http://localhost:8480/elise-service/rest
+2015-05-15 11:41:08,739 DEBUG [main] (GenericCollector.java:58) - Generic collector read (elise.conf): name = unknown
+2015-05-15 11:41:08,739 DEBUG [main] (GenericCollector.java:59) - Generic collector read (elise.conf): collectorID = 76ff8524-eef5-4947-9d21-e9cca4b8fadd
+2015-05-15 11:41:08,739 DEBUG [main] (GenericCollector.java:90) - Registering the collector: 76ff8524-eef5-4947-9d21-e9cca4b8fadd
+2015-05-15 11:41:08,740 DEBUG [main] (PropertiesManager.java:44) - Trying to get parameter: ELISE_PORT in the configuration file:/home/hungld/workspace/COMOT/comot-elise/elise-extensions/elise-collector-openstack/elise.conf, value: null
+2015-05-15 11:41:08,740 DEBUG [main] (DataCollectorConfiguration.java:44) - There is no value for key: ELISE_PORT. Generating one...
+2015-05-15 11:41:08,741 DEBUG [main] (DataCollectorConfiguration.java:64) - Generated: ELISE_PORT=8480
+2015-05-15 11:41:08,741 DEBUG [main] (PropertiesManager.java:55) - Trying to save parameter: ELISE_PORT=8480, in the configuration file:/home/hungld/workspace/COMOT/comot-elise/elise-extensions/elise-collector-openstack/elise.conf
+2015-05-15 11:41:08,742 DEBUG [main] (GenericCollector.java:91) - REST endpoint: http://localhost:8480/elise-service/rest
+2015-05-15 11:41:08,742 DEBUG [main] (PropertiesManager.java:44) - Trying to get parameter: ELISE_PORT in the configuration file:/home/hungld/workspace/COMOT/comot-elise/elise-extensions/elise-collector-openstack/elise.conf, value: null
+2015-05-15 11:41:08,743 DEBUG [main] (DataCollectorConfiguration.java:44) - There is no value for key: ELISE_PORT. Generating one...
+2015-05-15 11:41:08,743 DEBUG [main] (DataCollectorConfiguration.java:64) - Generated: ELISE_PORT=8480
+2015-05-15 11:41:08,743 DEBUG [main] (PropertiesManager.java:55) - Trying to save parameter: ELISE_PORT=8480, in the configuration file:/home/hungld/workspace/COMOT/comot-elise/elise-extensions/elise-collector-openstack/elise.conf

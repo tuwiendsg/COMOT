@@ -9,22 +9,118 @@
 
     <name>ELISE</name>
     <url>http://maven.apache.org</url>
+    
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+        <spring.version>4.0.4.RELEASE</spring.version>
+        <spring.neo4j.version>3.2.1.RELEASE</spring.neo4j.version>
+        <slf4j.version>1.7.5</slf4j.version>
+        <cxf.version>3.0.3</cxf.version>
+        <java.version>1.7</java.version>
     </properties>
 	
     <modules>
         <module>elise-common</module>
         <module>elise-service</module>
         <module>elise-collector</module>
-        <module>elise-extension</module>
+   <!--     <module>elise-extensions</module> -->
+        
     </modules>
-    <dependencies>
-        <dependency>
-            <groupId>at.ac.tuwien.dsg.comot</groupId>
-            <artifactId>comot-model</artifactId>
-            <version>1.0</version>
-        </dependency>
-    </dependencies>
+    
+    
+    <dependencyManagement>
+        <dependencies>
+            <!-- COMOT -->
+            <dependency>
+                <artifactId>comot-model</artifactId>
+                <groupId>at.ac.tuwien.dsg.comot</groupId>
+                <version>1.0</version>            
+            </dependency>
+            
+            <!-- CXF -->
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-transports-http</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
+            <dependency> 
+                <groupId>org.apache.cxf</groupId> 
+                <artifactId>cxf-rt-rs-client</artifactId> 
+                <version>${cxf.version}</version> 
+            </dependency> 
+            
+            <!-- Spring -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            
+            
+            
+            <!-- SLF4J dependencies -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+                
+        
+            <!-- Neo4j Spring data-->
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-neo4j</artifactId>
+                <version>${spring.neo4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>5.1.3.Final</version>
+            </dependency>
+        
+      
+
+            <!-- JACKSON -->
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-jaxrs</artifactId>
+                <version>1.9.13</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-core-asl</artifactId>
+                <version>1.9.13</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-xc</artifactId>
+                <version>1.9.13</version>
+            </dependency> 
+                
+        </dependencies>
+        
+    </dependencyManagement>
 </project>
