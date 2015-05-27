@@ -1,6 +1,0 @@
-curl http://localhost:8481/elise-service/rest/manager/health
-
-curl http://localhost:8481/elise-service/rest/communication/count
-curl http://localhost:8481/elise-service/rest/communication/queryUnitInstance
-
-curl http://localhost:8481/elise-service/rest/unitinstance
