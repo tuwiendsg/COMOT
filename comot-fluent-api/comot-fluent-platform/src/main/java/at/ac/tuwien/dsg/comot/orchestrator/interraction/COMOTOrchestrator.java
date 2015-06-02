@@ -46,9 +46,7 @@ public class COMOTOrchestrator {
 
     public COMOTOrchestrator withIP(String ip) {
         defaultSalsaClient.getConfiguration().setHost(ip);
-        defaultSalsaClient.getConfiguration().setPort(8080);
         sYBLInterraction.setIp(ip);
-        sYBLInterraction.setPort(8280);
         return this;
 
     }

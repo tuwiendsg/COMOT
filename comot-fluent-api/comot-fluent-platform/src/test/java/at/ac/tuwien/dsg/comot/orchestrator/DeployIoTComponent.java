@@ -63,8 +63,7 @@ public class DeployIoTComponent {
                 .providedBy(DockerDefault())
                 .deployedBy(DockerFileArtifact("dockerFileArtifact", salsaRepo + "Dockerfile-UB"),
                         MiscArtifact("starter.sh", salsaRepo + "starter_ubuntu.sh"),
-                        MiscArtifact("achieveArtifact", salsaRepo + "rtGovOps-agents.tar.gz"))
-                ;
+                        MiscArtifact("achieveArtifact", salsaRepo + "rtGovOps-agents.tar.gz"));
 
         ServiceUnit sensorUnit = SingleSoftwareUnit("sensorUnit")
                 .requires(Requirement.Variable("brokerIp_Requirement"))
@@ -102,12 +101,9 @@ public class DeployIoTComponent {
         COMOTOrchestrator orchestrator = new COMOTOrchestrator()
                 //we have SALSA as cloud management tool
                 //curently deployed separately
-                .withSalsaIP("128.130.172.215")
-                .withSalsaPort(8380)
-                //ifwe have rSYBL elasticity control service and MELA 
-                //deployed separately
-                .withRsyblIP("128.130.172.215")
-                .withRsyblPort(8280);
+                .withSalsaIP("localhost")
+
+                ;
 
         orchestrator.deploy(serviceTemplate);
     }

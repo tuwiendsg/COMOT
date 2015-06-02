@@ -133,7 +133,7 @@ public class Strategy extends AbstractCloudEntity implements Renderable,Comparab
         builder.append(Joiner.on(" AND ").join(constraintsToRender))
                 .append(" : ");
 
-        if (capability.getPrimitiveOperations().isEmpty()) {
+        if (!capability.getPrimitiveOperations().isEmpty()) {
             String actions = "";
             for (String primitive : capability.getPrimitiveOperations()) {
                 actions += primitive + ",";
