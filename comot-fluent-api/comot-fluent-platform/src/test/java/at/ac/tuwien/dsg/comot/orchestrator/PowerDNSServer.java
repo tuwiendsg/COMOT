@@ -26,7 +26,7 @@ public class PowerDNSServer {
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
-		String salsaRepo = "http://128.130.172.215/salsa/upload/files/TMP/comot-messaging/";
+		String salsaRepo = "http://128.130.172.215/repository/files/comot-messaging";
 
         //need to specify details of VM and operating system to deploy the software servide units on
         OperatingSystemUnit powerDnsServerVM = OperatingSystemUnit("PowerDnsVM")
@@ -35,7 +35,7 @@ public class PowerDNSServer {
                 );
 		
 		ServiceUnit powerDnsServerUnit = SoftwareNode.SingleSoftwareUnit("PowerDnsUnit")
-				.deployedBy(ArtifactTemplate.SingleScriptArtifact("deployPowerDnsServerArtifact", salsaRepo+"deployPowerDnsServer.sh"));
+				.deployedBy(ArtifactTemplate.SingleScriptArtifact("deployPowerDnsServerArtifact", salsaRepo+"/deployPowerDnsServer.sh"));
 		
 		ServiceTopology powerDnsTopology = ServiceTopology.ServiceTopology("PowerDnsServerTopology")
 				.withServiceUnits(powerDnsServerUnit, powerDnsServerVM);

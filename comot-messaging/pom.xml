@@ -8,4 +8,15 @@
     </parent>
     <artifactId>comot-messaging</artifactId>
     <packaging>jar</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>com.rabbitmq</groupId>
+            <artifactId>amqp-client</artifactId>
+            <version>3.4.4</version>
+            <type>jar</type>
+        </dependency>
+    </dependencies>
+    <properties>
+		<java.version>1.8</java.version>
+	</properties>
 </project>

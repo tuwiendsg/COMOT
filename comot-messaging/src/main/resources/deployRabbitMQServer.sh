@@ -1,3 +1,5 @@
+#!/bin/bash
+
 workingDir=/tmp
 logFile=$workingDir/deploayRabbitMQServer.log
 
@@ -18,5 +20,7 @@ if [ $? -ne 0 ]; then
 	echo "Could not extract rabbitMQ!" >> $logFile
 	exit
 fi
+
+echo "PDNSIP:$PowerDnsIpReq" >> $logFile
 
 $workingDir/rabbitmq_server-3.5.3/sbin/rabbitmq-server -detached >> $logFile

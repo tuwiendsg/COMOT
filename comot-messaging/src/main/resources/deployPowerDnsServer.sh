@@ -1,8 +1,11 @@
+#!/bin/bash
+
 workingDir=/tmp
 logFile=$workingDir/deploayPowerDnsServer.log
 pdnsConf=/etc/powerdns/pdns.conf
 ipAddrStarting=10
 dbPath=/etc/powerdns/powerdns.sqlite
+comotPlatformPath=http://128.130.172.215/repository/files/comot-messaging
 
 mkdir $workingDir
 
@@ -23,7 +26,9 @@ sed -i 's/# experimental-api-key=/experimental-api-key=rabbitMqDns/' $pdnsConf
 sed -i 's/# webserver=no/webserver=yes/' $pdnsConf
 sed -i "s/# webserver-address=127.0.0.1/webserver-address=$myIp/" $pdnsConf
 
-cp http://128.130.172.215/salsa/upload/files/TMP/comot-messaging/powerdns.sqlite $dbPath 
-echo $myIp > http://128.130.172.215/salsa/upload/files/TMP/comot-messaging/dns/myIp
+cp $comotPlatformPath/powerdns.sqlite $dbPath 
+
+PowerDnsIp=$myIp
+export PowerDnsIp
 
 /etc/init.d/pdns start
