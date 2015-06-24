@@ -23,8 +23,9 @@ public interface Message {
 	/**
 	 * Sets the content of the message.
 	 * @param content - The message content.
+	 * @return - This object for function aggregation.
 	 */
-	void setMessage(byte[] content);
+	Message setMessage(byte[] content);
 	/**
 	 * Returns the content of the message.
 	 * @return - The message content.
@@ -34,8 +35,12 @@ public interface Message {
 	 * Adds a type to the message.
 	 * This will allow you to send the message to one or more different queues depending on the set types.
 	 * If no type is set this message will be send to all queues.
+	 * 
+	 * The behavior of this is at the moment orientated after the RabbitMQ topic
+	 * exchange mechanism and could slightly change in the near future.
+	 * 
 	 * @param type - The message type.
-	 * @return 
+	 * @return - This object for function aggregation.
 	 */
 	Message withType(String type);
 }

@@ -57,32 +57,13 @@ public class RabbitMQServer {
 		
 		ServiceUnit rabbitServerUnit = SoftwareNode.SingleSoftwareUnit("RabbitServerUnit")
 				.deployedBy(ArtifactTemplate.SingleScriptArtifact("deployRabbitMQServerArtifact", salsaRepo+"/deployRabbitMQServer.sh"))
-				.requires(Requirement.Variable("PowerDnsIpReq"));
+				.requires(Requirement.Variable("PowerDnsIpReq").withName("PowerDnsIp"));
 		
 		ServiceTopology powerDnsTopology = ServiceTopology.ServiceTopology("PowerDnsServerTopology")
 				.withServiceUnits(powerDnsServerUnit, powerDnsServerVM);
 		
 		ServiceTopology rabbitTopology = ServiceTopology.ServiceTopology("RabbitServerTopology")
 				.withServiceUnits(rabbitServerUnit, rabbitServerVM);
-		
-		/*CloudService powerDnsService = CloudService.ServiceTemplate("PowerDnsServerService")
-				.consistsOfTopologies(powerDnsTopology)
-				.andRelationships(
-						EntityRelationship.HostedOnRelation("powerDnsServerToVM")
-						.from(powerDnsServerUnit)
-						.to(powerDnsServerVM)
-				)
-				
-				.withDefaultMetrics();
-		
-		CloudService rabbitService = CloudService.ServiceTemplate("RabbitServerService")
-				.consistsOfTopologies(rabbitTopology)
-				.andRelationships(
-						EntityRelationship.HostedOnRelation("rabbitServerToVM")
-						.from(rabbitServerUnit)
-						.to(rabbitServerVM)
-				)
-				.withDefaultMetrics();*/
 		
 		CloudService service = CloudService.ServiceTemplate("RabbitServerService")
 				.consistsOfTopologies(rabbitTopology)

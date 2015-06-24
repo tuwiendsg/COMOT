@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2015 Svetoslav Videnov <s.videnov@dsg.tuwien.ac.at>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,18 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package at.ac.tuwien.dsg.comot.messaging.api;
+package at.ac.tuwien.dsg.comot.messaging.rabbitMq;
 
-import java.util.EventListener;
+import java.io.IOException;
 
 /**
- * 
+ *
  * @author Svetoslav Videnov <s.videnov@dsg.tuwien.ac.at>
  */
-public interface MessageReceivedListener extends EventListener {
-	/**
-	 * Gets fired when a message has been received by the consumer.
-	 * @param message - The received message.
-	 */
-	void messageRecived(Message message);
+public class SendingChannel extends ARabbitChannel {
+	
+	public SendingChannel() {
+		try {
+			this.setUp();
+		} catch (IOException ex) {
+			throw new IllegalStateException(ex);
+		}
+	}
+	
+	public void sendMessage(String type, byte[] bytes) throws IOException {
+		this.channel.basicPublish(ARabbitChannel.EXCHANGE_NAME, type, null, bytes);
+	}
 }

@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2015 Svetoslav Videnov <s.videnov@dsg.tuwien.ac.at>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,54 +16,51 @@
 package at.ac.tuwien.dsg.comot.messaging.rabbitMq;
 
 import at.ac.tuwien.dsg.comot.messaging.api.Message;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.StringJoiner;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
 /**
- * 
+ *
  * @author Svetoslav Videnov <s.videnov@dsg.tuwien.ac.at>
  */
-public class RabbitMqMessage extends TypeHandler<RabbitMqMessage> implements Message {
+public class TypeHandler<T extends TypeHandler<T>> {
 	
-	private byte[] content;
-
-	@Override
-	public RabbitMqMessage setMessage(byte[] content) {
-		this.content = content;
-		return this;
+	private List<String> types = new ArrayList<>();
+	
+	public synchronized T withType(String type) {
+		this.types.add(type);
+		return (T)this;
 	}
-
-	@Override
-	public byte[] getMessage() {
-		return content;
+	
+	public List<String> getTypes() {
+		return Collections.unmodifiableList(this.types);
 	}
 	
 	@Override
 	public boolean equals(Object o) {
-		
 		if(o == null) {
 			return false;
 		}
 		
-		if(!(o instanceof RabbitMqMessage)){
+		if(!(o instanceof TypeHandler)) {
 			return false;
 		}
 		
-		RabbitMqMessage msg = (RabbitMqMessage)o;
+		TypeHandler typeHandle = (TypeHandler)o;
 		
 		return new EqualsBuilder()
-				.appendSuper(super.equals(msg))
-				.append(content, msg.content)
+				.append(types.toArray(), typeHandle.types.toArray())
 				.isEquals();
 	}
 
 	@Override
 	public int hashCode() {
-		int hash = super.hashCode();
-		hash = 37 * hash + Arrays.hashCode(this.content);
+		int hash = 3;
+		hash = 89 * hash + Objects.hashCode(this.types);
 		return hash;
 	}
 }

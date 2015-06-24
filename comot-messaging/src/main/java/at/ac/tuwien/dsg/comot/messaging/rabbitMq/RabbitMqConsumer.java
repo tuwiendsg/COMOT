@@ -18,45 +18,87 @@ package at.ac.tuwien.dsg.comot.messaging.rabbitMq;
 import at.ac.tuwien.dsg.comot.messaging.api.Consumer;
 import at.ac.tuwien.dsg.comot.messaging.api.Message;
 import at.ac.tuwien.dsg.comot.messaging.api.MessageReceivedListener;
+import com.rabbitmq.client.QueueingConsumer;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import javax.swing.event.EventListenerList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author Svetoslav Videnov <s.videnov@dsg.tuwien.ac.at>
  */
-public class RabbitMqConsumer extends ARabbitChannel implements Consumer {
-	
+public class RabbitMqConsumer implements Consumer, Runnable {
+
 	private List<MessageReceivedListener> messageListeners;
-	
+	private ExecutorService threadPool;
+	//private TypeHandler typeHandler;
+
+	private ReceivingChannel channel = new ReceivingChannel();
+
+	private static Logger logger = LoggerFactory.getLogger(RabbitMqConsumer.class);
+
 	public RabbitMqConsumer() {
-		
+		this.messageListeners = new ArrayList<>();
+		this.threadPool = Executors.newFixedThreadPool(1);
+		this.channel = new ReceivingChannel();
+	}
+	
+	@Override
+	public RabbitMqConsumer withType(String type) {
+		this.channel.bindType(type);
+		return this;
 	}
 
 	@Override
-	public Message getMessage() throws IOException {
-		this.setUp();
-		String queueName = channel.queueDeclare().getQueue();
-		channel.queueBind(queueName, ARabbitChannel.EXCHANGE_NAME, );
+	public Message getMessage() {
+
+		try {
+			QueueingConsumer.Delivery delivery = this.channel.getDelivery();
+			RabbitMqMessage msg = new RabbitMqMessage();
+			msg.setMessage(delivery.getBody());
+			
+			msg.withType(delivery.getEnvelope().getRoutingKey());
+
+			return msg;
+		} catch (InterruptedException ex) {
+			logger.error("Exception was catched in RabbitMqConsumer!", ex);
+			return null;
+		}
 	}
 
 	@Override
-	public void addMessageReceivedListener(MessageReceivedListener listener) {
+	public synchronized void addMessageReceivedListener(MessageReceivedListener listener) {
 		this.messageListeners.add(listener);
+		
+		if(this.messageListeners.size() == 1) {
+			this.threadPool.execute(this);
+		}
 	}
 
 	@Override
-	public void removeMessageReceivedListener(MessageReceivedListener listener) {
+	public synchronized void removeMessageReceivedListener(MessageReceivedListener listener) {
 		this.messageListeners.remove(listener);
 	}
-	
-	private void fireMessageReceived(Message msg) {
-		this.messageListeners.stream().forEach(listener -> {listener.messageRecived(msg);});
+
+	private synchronized void fireMessageReceived(Message msg) {
+		this.messageListeners.stream().forEach(listener -> {
+			listener.messageRecived(msg);
+		});
 	}
 
 	@Override
-	public Consumer withType(String type) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	public void run() {
+		while (!this.messageListeners.isEmpty()) {
+			Message msg = this.getMessage();
+			
+			if(msg != null) {
+				this.fireMessageReceived(msg);
+			}
+		}
 	}
 }

@@ -15,12 +15,41 @@
  */
 package at.ac.tuwien.dsg.comot.messaging.rabbitMq;
 
+import at.ac.tuwien.dsg.comot.messaging.api.Message;
 import at.ac.tuwien.dsg.comot.messaging.api.Producer;
+import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author Svetoslav Videnov <s.videnov@dsg.tuwien.ac.at>
  */
 public class RabbitMqProducer implements Producer {
-	
+
+	private static Logger logger = LoggerFactory.getLogger(RabbitMqProducer.class);
+
+	private SendingChannel channel = new SendingChannel();
+
+	@Override
+	public void sendMessage(Message message) {
+		if (!(message instanceof RabbitMqMessage)) {
+			throw new IllegalArgumentException("Message is not a RabbitMqMessage!");
+		}
+
+		RabbitMqMessage msg = (RabbitMqMessage) message;
+
+		msg.getTypes().stream().forEach(type -> {
+			try {
+					//todo: maybe make message serializable and send complete message instead of only body
+				//this would allow us to have all types on the receiving side!!
+				//use jackson?
+				this.channel.sendMessage(type, msg.getMessage());
+			} catch (IOException ex) {
+				logger.error(String.format("Error while sending message to %s queue!", type), ex);
+			}
+		});
+
+	}
+
 }

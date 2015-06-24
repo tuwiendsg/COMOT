@@ -20,5 +20,9 @@ package at.ac.tuwien.dsg.comot.messaging.api;
  * @author Svetoslav Videnov <s.videnov@dsg.tuwien.ac.at>
  */
 public interface Producer {
+	/**
+	 * Sends the message to the queue specified by the message types.
+	 * @param message - The message to send.
+	 */
 	public void sendMessage(Message message);
 }

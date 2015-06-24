@@ -19,28 +19,38 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import java.io.IOException;
+import java.util.Properties;
 
 /**
- * 
+ *
  * @author Svetoslav Videnov <s.videnov@dsg.tuwien.ac.at>
  */
 public abstract class ARabbitChannel {
+
 	protected static final String EXCHANGE_NAME = "comot";
 	protected ConnectionFactory factory;
 	protected Connection connection;
 	protected Channel channel;
-	private boolean setUp = false;
-	
+	protected boolean setUp = false;
+
+	protected Properties properties;
+
 	protected void setUp() throws IOException {
-		if(setUp) {
+		if (setUp) {
 			return;
 		}
-		
+
+		this.properties = new Properties();
+		this.properties.load(this.getClass().getClassLoader().getResourceAsStream("application.properties"));
+		String host = properties.getProperty("rabbitMqServerIp");
+
 		factory = new ConnectionFactory();
-        factory.setHost("localhost");
-        connection = factory.newConnection();
-        channel = connection.createChannel();
+		factory.setHost(host);
+		connection = factory.newConnection();
+		channel = connection.createChannel();
 		channel.exchangeDeclare(EXCHANGE_NAME, "topic");
 		this.setUp = true;
 	}
+
+	
 }
