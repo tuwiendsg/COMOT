@@ -76,10 +76,12 @@ public class RabbitMqIT {
 		msgs[0] = msg;
 		msgs[1] = msg2;
 		
+		Message[] actual = new Message[2];
+		
 		MessageReceivedListener listener = new MessageReceivedListener() {
 			@Override
 			public void messageRecived(Message message) {
-				Assert.assertEquals(message, msgs[hits]);
+				actual[hits] = message;
 				testDone = true;
 				hits++;
 			}
@@ -91,15 +93,39 @@ public class RabbitMqIT {
 		
 		consumer.withType("myTest");
 		
-		
-		
 		producer.sendMessage(msg2);
 		
 		while(hits < 2) {
 			Thread.sleep(100);
 		}
 		
+		Assert.assertEquals(actual[0], msgs[0]);
+		Assert.assertEquals(actual[1], msgs[1]);
+		
+		
+		
 		consumer.removeMessageReceivedListener(listener);
+	}
+	
+	@Test
+	public void produceToMultipleConsumers() throws Exception {
+		byte[] expected = "This is a test message!".getBytes();
+		String expectedTypes = "myMsg";
+		
+		Producer producer = ComotMessagingFactory.getRabbitMqProducer();
+		Consumer consumer = ComotMessagingFactory.getRabbitMqConsumer();
+		consumer.withType(expectedTypes);
+		
+		Consumer consumer2 = ComotMessagingFactory.getRabbitMqConsumer();
+		consumer2.withType("myTest");
+		
+		Message msg = ComotMessagingFactory.getRabbitMqMessage();
+		msg.setMessage(expected).withType("myMsg").withType("myTest");
+		
+		producer.sendMessage(msg);
+		
+		Assert.assertEquals(consumer.getMessage(), msg);
+		Assert.assertEquals(consumer2.getMessage(), msg);
 	}
 	
 }

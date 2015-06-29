@@ -15,6 +15,7 @@
  */
 package at.ac.tuwien.dsg.comot.messaging.rabbitMq;
 
+import at.ac.tuwien.dsg.comot.messaging.rabbitMq.channel.SendingChannel;
 import at.ac.tuwien.dsg.comot.messaging.api.Message;
 import at.ac.tuwien.dsg.comot.messaging.api.Producer;
 import java.io.IOException;
@@ -29,7 +30,11 @@ public class RabbitMqProducer implements Producer {
 
 	private static Logger logger = LoggerFactory.getLogger(RabbitMqProducer.class);
 
-	private SendingChannel channel = new SendingChannel();
+	private SendingChannel channel;
+	
+	public RabbitMqProducer() {
+		this.channel = new SendingChannel();
+	}
 
 	@Override
 	public void sendMessage(Message message) {
@@ -40,16 +45,8 @@ public class RabbitMqProducer implements Producer {
 		RabbitMqMessage msg = (RabbitMqMessage) message;
 
 		msg.getTypes().stream().forEach(type -> {
-			try {
-					//todo: maybe make message serializable and send complete message instead of only body
-				//this would allow us to have all types on the receiving side!!
-				//use jackson?
-				this.channel.sendMessage(type, msg.getMessage());
-			} catch (IOException ex) {
-				logger.error(String.format("Error while sending message to %s queue!", type), ex);
-			}
+			this.channel.sendMessage(type, msg);
 		});
-
 	}
 
 }

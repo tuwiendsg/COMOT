@@ -15,16 +15,14 @@
  */
 package at.ac.tuwien.dsg.comot.messaging.rabbitMq;
 
+import at.ac.tuwien.dsg.comot.messaging.rabbitMq.channel.ReceivingChannel;
 import at.ac.tuwien.dsg.comot.messaging.api.Consumer;
 import at.ac.tuwien.dsg.comot.messaging.api.Message;
 import at.ac.tuwien.dsg.comot.messaging.api.MessageReceivedListener;
-import com.rabbitmq.client.QueueingConsumer;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,22 +30,17 @@ import org.slf4j.LoggerFactory;
  *
  * @author Svetoslav Videnov <s.videnov@dsg.tuwien.ac.at>
  */
-public class RabbitMqConsumer implements Consumer, Runnable {
-
+public class RabbitMqConsumer implements Consumer, Runnable {	
 	private List<MessageReceivedListener> messageListeners;
 	private ExecutorService threadPool;
-	//private TypeHandler typeHandler;
-
-	private ReceivingChannel channel = new ReceivingChannel();
-
-	private static Logger logger = LoggerFactory.getLogger(RabbitMqConsumer.class);
+	private ReceivingChannel channel;
 
 	public RabbitMqConsumer() {
 		this.messageListeners = new ArrayList<>();
 		this.threadPool = Executors.newFixedThreadPool(1);
 		this.channel = new ReceivingChannel();
 	}
-	
+
 	@Override
 	public RabbitMqConsumer withType(String type) {
 		this.channel.bindType(type);
@@ -56,26 +49,14 @@ public class RabbitMqConsumer implements Consumer, Runnable {
 
 	@Override
 	public Message getMessage() {
-
-		try {
-			QueueingConsumer.Delivery delivery = this.channel.getDelivery();
-			RabbitMqMessage msg = new RabbitMqMessage();
-			msg.setMessage(delivery.getBody());
-			
-			msg.withType(delivery.getEnvelope().getRoutingKey());
-
-			return msg;
-		} catch (InterruptedException ex) {
-			logger.error("Exception was catched in RabbitMqConsumer!", ex);
-			return null;
-		}
+		return this.channel.getDelivery();
 	}
 
 	@Override
 	public synchronized void addMessageReceivedListener(MessageReceivedListener listener) {
 		this.messageListeners.add(listener);
-		
-		if(this.messageListeners.size() == 1) {
+
+		if (this.messageListeners.size() == 1) {
 			this.threadPool.execute(this);
 		}
 	}
@@ -95,8 +76,8 @@ public class RabbitMqConsumer implements Consumer, Runnable {
 	public void run() {
 		while (!this.messageListeners.isEmpty()) {
 			Message msg = this.getMessage();
-			
-			if(msg != null) {
+
+			if (msg != null) {
 				this.fireMessageReceived(msg);
 			}
 		}

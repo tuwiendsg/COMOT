@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package at.ac.tuwien.dsg.comot.messaging.rabbitMq;
+package at.ac.tuwien.dsg.comot.messaging.rabbitMq.channel;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -31,26 +31,22 @@ public abstract class ARabbitChannel {
 	protected ConnectionFactory factory;
 	protected Connection connection;
 	protected Channel channel;
-	protected boolean setUp = false;
 
 	protected Properties properties;
 
-	protected void setUp() throws IOException {
-		if (setUp) {
-			return;
+	public ARabbitChannel() {
+		try {
+			this.properties = new Properties();
+			this.properties.load(this.getClass().getClassLoader().getResourceAsStream("application.properties"));
+			String host = properties.getProperty("rabbitMqServerIp");
+			
+			factory = new ConnectionFactory();
+			factory.setHost(host);
+			connection = factory.newConnection();
+			channel = connection.createChannel();
+			channel.exchangeDeclare(EXCHANGE_NAME, "topic");
+		} catch (IOException ex) {
+			throw new IllegalStateException(ex);
 		}
-
-		this.properties = new Properties();
-		this.properties.load(this.getClass().getClassLoader().getResourceAsStream("application.properties"));
-		String host = properties.getProperty("rabbitMqServerIp");
-
-		factory = new ConnectionFactory();
-		factory.setHost(host);
-		connection = factory.newConnection();
-		channel = connection.createChannel();
-		channel.exchangeDeclare(EXCHANGE_NAME, "topic");
-		this.setUp = true;
-	}
-
-	
+	}	
 }

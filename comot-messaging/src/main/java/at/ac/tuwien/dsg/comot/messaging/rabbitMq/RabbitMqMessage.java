@@ -16,17 +16,15 @@
 package at.ac.tuwien.dsg.comot.messaging.rabbitMq;
 
 import at.ac.tuwien.dsg.comot.messaging.api.Message;
+import java.io.Serializable;
 import java.util.Arrays;
-import java.util.List;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
 /**
  * 
  * @author Svetoslav Videnov <s.videnov@dsg.tuwien.ac.at>
  */
-public class RabbitMqMessage extends TypeHandler<RabbitMqMessage> implements Message {
+public class RabbitMqMessage extends TypeHandler<RabbitMqMessage> implements Message, Serializable {
 	
 	private byte[] content;
 

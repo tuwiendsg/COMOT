@@ -16,6 +16,7 @@
 package at.ac.tuwien.dsg.comot.messaging.rabbitMq;
 
 import at.ac.tuwien.dsg.comot.messaging.api.Message;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +28,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
  *
  * @author Svetoslav Videnov <s.videnov@dsg.tuwien.ac.at>
  */
-public class TypeHandler<T extends TypeHandler<T>> {
+public class TypeHandler<T extends TypeHandler<T>> implements Serializable {
 	
 	private List<String> types = new ArrayList<>();
 	
