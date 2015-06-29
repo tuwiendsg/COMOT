@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2015 Svetoslav Videnov <s.videnov@dsg.tuwien.ac.at>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,40 +16,29 @@
 package at.ac.tuwien.dsg.comot.messaging.rabbitMq.channel;
 
 import at.ac.tuwien.dsg.comot.messaging.rabbitMq.discovery.ADiscovery;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import java.io.IOException;
-import java.util.Properties;
+import at.ac.tuwien.dsg.comot.messaging.rabbitMq.discovery.PropertyBasedDiscovery;
 
 /**
  *
  * @author Svetoslav Videnov <s.videnov@dsg.tuwien.ac.at>
  */
-public abstract class ARabbitChannel {
-
-	protected static final String EXCHANGE_NAME = "comot";
-	protected ConnectionFactory factory;
-	protected Connection connection;
-	protected Channel channel;
-
-	protected ADiscovery discovery;	
+public abstract class ChannelFactory {
 	
-	public void init() {
-		try {			
-			factory = new ConnectionFactory();
-			factory.setHost(this.discovery.discoverHost());
-			connection = factory.newConnection();
-			channel = connection.createChannel();
-			channel.exchangeDeclare(EXCHANGE_NAME, "topic");
-		} catch (IOException ex) {
-			throw new IllegalStateException(ex);
-		}
-	}
-
-	public void setDiscovery(ADiscovery discovery) {
-		this.discovery = discovery;
+	protected static ADiscovery getDefaultDiscovery() {
+		return new PropertyBasedDiscovery();
 	}
 	
+	public static ReceivingChannel getReceivingChannel() {
+		ReceivingChannel channel = new ReceivingChannel();
+		channel.setDiscovery(getDefaultDiscovery());
+		channel.init();
+		return channel;
+	}
 	
+	public static SendingChannel getSendingChannel() {
+		SendingChannel channel = new SendingChannel();
+		channel.setDiscovery(getDefaultDiscovery());
+		channel.init();
+		return channel;
+	}
 }

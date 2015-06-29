@@ -36,9 +36,10 @@ public class ReceivingChannel extends ARabbitChannel {
 
 	private String queueName;
 	QueueingConsumer consumer;
-
-	public ReceivingChannel() {
-		super();
+	
+	@Override
+	public void init() {
+		super.init();
 		try {
 			this.queueName = channel.queueDeclare().getQueue();
 			this.consumer = new QueueingConsumer(channel);

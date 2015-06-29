@@ -30,9 +30,6 @@ public class SendingChannel extends ARabbitChannel {
 	
 	private static Logger logger = LoggerFactory.getLogger(SendingChannel.class);
 
-	public SendingChannel() {
-	}
-
 	public void sendMessage(String type, RabbitMqMessage msg) {
 		ObjectOutputStream out = null;
 		try {
