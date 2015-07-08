@@ -38,17 +38,17 @@ public class RabbitMQServer {
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
-        String salsaRepo = "http://128.130.172.215/repository/files/comot-messaging";
+        String salsaRepo = "http://128.130.172.215/iCOMOTTutorial/files/comot-messaging";
 
 		OperatingSystemUnit powerDnsServerVM = OperatingSystemUnit("PowerDnsVM")
                 .providedBy(OpenstackSmall()
-                        .withBaseImage("a82e054f-4f01-49f9-bc4c-77a98045739c")
+                        .withBaseImage("04a15006-b09e-461e-a992-efcb9f0f9c47")
                 );
 		
         //need to specify details of VM and operating system to deploy the software servide units on
         OperatingSystemUnit rabbitServerVM = OperatingSystemUnit("RabbitMQServerVM")
                 .providedBy(OpenstackSmall()
-                        .withBaseImage("a82e054f-4f01-49f9-bc4c-77a98045739c")
+                        .withBaseImage("88be3072-5c89-473a-9d22-b72f2f818cff")
                 );
 		
 		ServiceUnit powerDnsServerUnit = SoftwareNode.SingleSoftwareUnit("PowerDnsUnit")
@@ -83,7 +83,7 @@ public class RabbitMQServer {
 		
 		COMOTOrchestrator orchestrator = new COMOTOrchestrator()
 				.withIP("128.130.172.215")
-                .withSalsaPort(8380);
+                .withSalsaPort(8080);
 		
 		orchestrator.deploy(service);
 	}
