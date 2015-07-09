@@ -75,7 +75,7 @@ if [[ $serverCount -gt 0 ]]; then
   loopDone=1
   count=0
 
-  while [[$loopDone -ne 0 -a $count -lt $serverCount]]; do
+  while (($loopDone != 0 && $count < $serverCount)); do
     echo "Trying to cluster to ${rabbitServers[$count]}!" >> $logFile
     sudo rabbitmqctl join_cluster rabbit@${rabbitServers[$count]} >> $logFile
     loopDone=$?

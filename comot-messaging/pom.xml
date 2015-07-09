@@ -21,6 +21,18 @@
             <version>6.8.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>at.ac.tuwien.dsg.comot</groupId>
+            <artifactId>comot-fluent-common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>at.ac.tuwien.dsg.comot</groupId>
+            <artifactId>comot-fluent-platform</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
     <properties>
 		<java.version>1.8</java.version>
