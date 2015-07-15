@@ -151,7 +151,7 @@ public class TimeAnalyzis {
 						length,
 						(name.equals(Action.DEPLOYMENT_STARTED.toString()) ? "ALLOCATING" : name));
 
-				LOG.info(line.toString());
+				LOG.debug(line.toString());
 
 				resultsList.add(line);
 
@@ -163,7 +163,7 @@ public class TimeAnalyzis {
 					sum,
 					"SUM");
 
-			LOG.info(line.toString());
+			LOG.debug(line.toString());
 
 			resultsList.add(line);
 		}

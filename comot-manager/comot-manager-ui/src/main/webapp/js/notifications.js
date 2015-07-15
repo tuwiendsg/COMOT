@@ -47,11 +47,11 @@
 		new PNotify(opts);
 	}
 	
-	exports.info = function(text) {
+	exports.warning = function(text) {
 		var opts = notifyCore();
-		opts.title = "Info";
+		opts.title = "Warning";
 		opts.text = text;
-		opts.type = "info";
+		opts.type = "warning";
 		new PNotify(opts);
 	}
 

@@ -4,7 +4,7 @@
 	<artifactId>comot-manager-eps</artifactId>
 	<packaging>jar</packaging>
 	<name>COMOT Manager Elastic Platform Services Clients </name>
-	<description>Clients to elastic platform services through REST</description>
+	<description>Adapters for the Elastic Platform Services (EPS) SALSA, MELA, rSYBL. Include mapping from the information model.</description>
 	<parent>
 		<groupId>at.ac.tuwien.dsg.comot</groupId>
 		<artifactId>comot-manager</artifactId>
@@ -36,6 +36,10 @@
 			<version>5.11.1</version>
 		</dependency>
 
+		<dependency>
+			<groupId>at.ac.tuwien.dsg.comot</groupId>
+			<artifactId>comot-manager-adapter</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-tosca</artifactId>

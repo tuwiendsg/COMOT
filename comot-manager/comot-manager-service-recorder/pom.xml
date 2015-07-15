@@ -4,6 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>comot-manager-service-recorder</artifactId>
 	<name>COMOT Manager CloudService Recorder</name>
+	<description>Recorder of service's state and events. Actually independent from the domain model.</description>
 
 	<parent>
 		<artifactId>comot-manager</artifactId>
@@ -108,12 +109,5 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-
-	<build>
-		<plugins>
-
-		</plugins>
-	</build>
 
 </project>

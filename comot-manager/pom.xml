@@ -17,6 +17,7 @@
 
 	<properties>
 		<jersey.version>2.15</jersey.version> <!-- fails with versions 2.16, 2.17 -->
+		<tomcat.version>7.0.62</tomcat.version>
 	</properties>
 
 	<modules>
@@ -38,7 +39,6 @@
 				<artifactId>amqp-client</artifactId>
 				<version>3.4.4</version>
 			</dependency>
-
 			<dependency>
 				<groupId>com.googlecode.concurrentlinkedhashmap</groupId>
 				<artifactId>concurrentlinkedhashmap-lru</artifactId>
@@ -60,7 +60,11 @@
 				<artifactId>jersey-media-multipart</artifactId>
 				<version>${jersey.version}</version>
 			</dependency>
-
+			<dependency>
+				<groupId>org.glassfish.jersey.containers</groupId>
+				<artifactId>jersey-container-servlet-core</artifactId>
+				<version>${jersey.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>org.glassfish.jersey.media</groupId>
 				<artifactId>jersey-media-moxy</artifactId>
@@ -222,7 +226,9 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<skipTests>true</skipTests>
+					<excludes>
+						<exclude>**/*Manual*.java</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 		</plugins>

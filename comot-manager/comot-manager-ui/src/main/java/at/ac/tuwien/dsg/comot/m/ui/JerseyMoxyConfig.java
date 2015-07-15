@@ -18,6 +18,7 @@
  *******************************************************************************/
 package at.ac.tuwien.dsg.comot.m.ui;
 
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.spring.scope.RequestContextFilter;
 
@@ -43,7 +44,8 @@ public class JerseyMoxyConfig extends ResourceConfig {
 		// CONFIGURATION
 		register(RequestContextFilter.class);
 		register(DefinitionsContextResolver.class);
-		// register(ToscaValidatingReader.class);
 		register(ComotExceptionMapper.class);
+		register(MultiPartFeature.class);
+		// register(ToscaValidatingReader.class);
 	}
 }

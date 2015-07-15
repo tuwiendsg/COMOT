@@ -41,7 +41,7 @@ import at.ac.tuwien.dsg.comot.model.type.OsuType;
 
 public class Navigator {
 
-	protected static final Logger LOG = LoggerFactory.getLogger(Navigator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Navigator.class);
 
 	protected CloudService service;
 	protected Map<String, Node> map = new HashMap<>();

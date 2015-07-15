@@ -45,12 +45,12 @@
 				<b>Average deployment time of Unit Instance - Custom grouping</b>
 			</div>
 			<div class="panel-body">
-				<h5>Select one or multiple types:</h5>
+				<h5>Select one types:</h5>
 				<!-- ko foreach: types -->
 				<button type="button" class="btn btn-default btn-sm"
 					data-bind="click: $parent.switchType, text: name, css: { active: selected }"></button>
 				<!-- /ko -->
-				<h5>Select one or multiple Service Units:</h5>
+				<h5>Select one Service Units:</h5>
 				<!-- ko foreach: units -->
 				<button type="button" class="btn btn-default btn-sm"
 					data-bind="click: $parent.switchUnit, text: name, css: { active: selected }"></button>
@@ -88,7 +88,7 @@
 					<div id="output2"></div>
 				</div>
 				<div class="col-md-12">
-					<h4>Individual instances through time</h4>
+					<h4>Deployment of Unit Instances through time</h4>
 					<div id="output3"></div>
 				</div>
 

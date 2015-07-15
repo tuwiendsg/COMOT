@@ -13,12 +13,12 @@
 	</context-param>
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>at.ac.tuwien.dsg.comot.m.ui.AppContextUi</param-value>
+		<param-value>at.ac.tuwien.dsg.comot.m.ui.spring.AppContextUi</param-value>
 	</context-param>
 	<context-param>
 		<param-name>spring.profiles.default</param-name>
-		<param-value>EMBEDDED_NEO4J_DB,CONFIGURABLE</param-value>
-		<!-- EMBEDDED_NEO4J_DB,IMPERMANENT_NEO4J_DB;PRECONFIGURED,CONFIGURABLE -->
+		<param-value>EMBEDDED_NEO4J_DB,INSERT_INIT_DATA</param-value>
+		<!-- all possible profiles: EMBEDDED_NEO4J_DB,IMPERMANENT_NEO4J_DB;INSERT_INIT_DATA -->
 	</context-param>
 
 	<listener>
@@ -53,7 +53,7 @@
 		</init-param>
 		<init-param>
 			<param-name>swagger.api.basepath</param-name>
-			<param-value>http://localhost:8380/comot/rest</param-value>
+			<param-value>http://localhost:8580/comot/rest</param-value>
 		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>

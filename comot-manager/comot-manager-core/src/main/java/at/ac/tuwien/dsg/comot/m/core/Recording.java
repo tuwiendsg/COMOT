@@ -18,27 +18,22 @@
  *******************************************************************************/
 package at.ac.tuwien.dsg.comot.m.core;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.Binding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.adapter.UtilsLc;
+import at.ac.tuwien.dsg.comot.m.adapter.general.Bindings;
 import at.ac.tuwien.dsg.comot.m.adapter.general.Processor;
 import at.ac.tuwien.dsg.comot.m.common.enums.Action;
 import at.ac.tuwien.dsg.comot.m.common.event.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessage;
 import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessageLifeCycle;
-import at.ac.tuwien.dsg.comot.m.common.event.state.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.event.state.Transition;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.m.recorder.model.Change;
@@ -73,25 +68,20 @@ public class Recording extends Processor {
 	protected RevisionApi revisionApi;
 
 	@Override
-	public List<Binding> getBindings(String queueName, String instanceId) {
-		List<Binding> bindings = new ArrayList<>();
+	public Bindings getBindings(String notUsed) {
 
-		bindings.add(bindingLifeCycle(queueName, "#"));
-		bindings.add(bindingCustom(queueName, "#"));
-		bindings.add(bindingException(queueName, "#"));
-
-		return bindings;
+		return new Bindings()
+				.addLifecycle("#")
+				.addCustom("#")
+				.addException("#");
 	}
 
 	@Override
-	public void onLifecycleEvent(StateMessage msg, String serviceId, String groupId,
-			Action action, String originId, CloudService service, Map<String, Transition> transitions)
-			throws JAXBException, IllegalAccessException {
-
-		LifeCycleEvent event = (LifeCycleEvent) msg.getEvent();
+	public void onLifecycleEvent(String serviceId, String groupId, Action action, CloudService service,
+			Map<String, Transition> transitions, LifeCycleEvent event) throws Exception {
 
 		Map<String, Object> changeProperties = new HashMap<>();
-		changeProperties.put(PROP_ORIGIN, originId);
+		changeProperties.put(PROP_ORIGIN, event.getOrigin());
 		changeProperties.put(PROP_EVENT_NAME, action.toString());
 		changeProperties.put(PROP_EVENT_TIME, event.getTime());
 
@@ -102,15 +92,17 @@ public class Recording extends Processor {
 	}
 
 	@Override
-	public void onCustomEvent(StateMessage msg, String serviceId, String groupId,
-			String event, String epsId, String originId, String optionalMessage) {
+	public void onCustomEvent(String serviceId, String groupId, String eventName, String epsId, String optionalMessage,
+			Map<String, Transition> transitions, CustomEvent event) throws Exception {
 
-		CustomEvent eventMsg = (CustomEvent) msg.getEvent();
+		if (serviceId == null) {
+			return;
+		}
 
 		Map<String, Object> changeProperties = new HashMap<>();
-		changeProperties.put(PROP_ORIGIN, originId);
-		changeProperties.put(PROP_EVENT_NAME, event);
-		changeProperties.put(PROP_EVENT_TIME, eventMsg.getTime());
+		changeProperties.put(PROP_ORIGIN, event.getOrigin());
+		changeProperties.put(PROP_EVENT_NAME, eventName);
+		changeProperties.put(PROP_EVENT_TIME, event.getTime());
 
 		if (epsId != null) {
 			changeProperties.put(PROP_EPS_ID, epsId);
@@ -122,16 +114,16 @@ public class Recording extends Processor {
 		if (revisionApi.verifyObject(serviceId, serviceId)) {
 			revisionApi.storeEvent(serviceId, groupId, CHANGE_TYPE_CUSTOM, changeProperties);
 		} else {
-			LOG.error("Custom event happened, but no managed region. {}", msg.getEvent());
+			LOG.error("Custom event happened, but no managed region. {}", event);
 		}
 	}
 
 	@Override
-	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String originId) throws Exception {
+	public void onExceptionEvent(ExceptionMessage msg) throws Exception {
 
 		String type;
 		Map<String, Object> changeProperties = new HashMap<>();
-		changeProperties.put(PROP_ORIGIN, originId);
+		changeProperties.put(PROP_ORIGIN, msg.getOrigin());
 		changeProperties.put(PROP_EVENT_TIME, msg.getTime());
 		changeProperties.put(PROP_EVENT_NAME, msg.getType());
 		changeProperties.put(PROP_EXCEPTION_TYPE, msg.getType());
@@ -152,8 +144,8 @@ public class Recording extends Processor {
 			type = CHANGE_TYPE_EXCEPTION;
 		}
 
-		if (revisionApi.verifyObject(serviceId, serviceId)) {
-			revisionApi.storeEvent(serviceId, serviceId, type, changeProperties);
+		if (revisionApi.verifyObject(msg.getServiceId(), msg.getServiceId())) {
+			revisionApi.storeEvent(msg.getServiceId(), msg.getServiceId(), type, changeProperties);
 		} else {
 			LOG.error("Exception event happened, but no managed region. {}", msg);
 		}

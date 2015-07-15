@@ -124,8 +124,8 @@ public class Group implements Serializable {
 
 		if (members.isEmpty()) {
 			if (LifeCycleFactory.getLifeCycle(type).executeAction(parent.getCurrentState(), currentState, action) == null) {
-				return "ROOT: Action '" + action + "' is not allowed in state '" + currentState + "' patentState '"
-						+ parent.getCurrentState() + "'. GroupId=" + id + " , type=" + type;
+				return "ROOT: Action '" + action + "' is not allowed in state '" + currentState + "', parentState '"
+						+ parent.getCurrentState() + "' of " + type + " " + id;
 			} else {
 				return null;
 			}

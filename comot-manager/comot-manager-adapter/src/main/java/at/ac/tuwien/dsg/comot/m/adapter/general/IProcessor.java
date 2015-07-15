@@ -18,29 +18,38 @@
  *******************************************************************************/
 package at.ac.tuwien.dsg.comot.m.adapter.general;
 
-import java.util.List;
+import java.util.Map;
 
-import org.springframework.amqp.core.Binding;
-
+import at.ac.tuwien.dsg.comot.m.common.enums.Action;
+import at.ac.tuwien.dsg.comot.m.common.event.CustomEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessage;
-import at.ac.tuwien.dsg.comot.m.common.event.state.StateMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.state.Transition;
+import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 
 public interface IProcessor {
 
-	public void setDispatcher(IDispatcher dispatcher);
+	void init(IManager manager, String participantId);
 
-	public List<Binding> getBindings(
-			String queueName, String serviceId);
+	Bindings getBindings(String serviceId);
 
-	public void start(String participantId) throws Exception;
+	void onLifecycleEvent(
+			String serviceId,
+			String groupId,
+			Action action,
+			CloudService service,
+			Map<String, Transition> transitions,
+			LifeCycleEvent event) throws Exception;
 
-	public void onLifecycleEvent(
-			StateMessage msg) throws Exception;
+	void onCustomEvent(
+			String serviceId,
+			String groupId,
+			String eventName,
+			String epsId,
+			String optionalMessage,
+			Map<String, Transition> transitions,
+			CustomEvent event) throws Exception;
 
-	public void onCustomEvent(
-			StateMessage msg) throws Exception;
-
-	public void onExceptionEvent(
-			ExceptionMessage msg) throws Exception;
+	void onExceptionEvent(ExceptionMessage msg) throws Exception;
 
 }

@@ -45,12 +45,14 @@ public class ExceptionMessage extends ComotMessage {
 	protected String message;
 	@XmlElement
 	protected String details;
+	@XmlElement
+	protected String eventCauseId;
 
 	public ExceptionMessage() {
 
 	}
 
-	public ExceptionMessage(String serviceId, String origin, Long time, Exception exception) {
+	public ExceptionMessage(String serviceId, String origin, Long time, String eventCauseId, Exception exception) {
 		super();
 
 		Throwable root = ExceptionUtils.getRootCause(exception);
@@ -74,9 +76,11 @@ public class ExceptionMessage extends ComotMessage {
 		this.details = details;
 		this.serviceId = serviceId;
 		this.time = time;
+		this.eventCauseId = eventCauseId;
 	}
 
-	public ExceptionMessage(String serviceId, String origin, Long time, String type, String message, String details) {
+	public ExceptionMessage(String serviceId, String origin, Long time, String type, String message, String details,
+			String eventCauseId) {
 		super();
 		this.serviceId = serviceId;
 		this.origin = origin;
@@ -84,13 +88,7 @@ public class ExceptionMessage extends ComotMessage {
 		this.type = type;
 		this.message = message;
 		this.details = details;
-	}
-
-	public ExceptionMessage(String serviceId, String origin) {
-		super();
-		this.serviceId = serviceId;
-		this.origin = origin;
-		this.time = System.currentTimeMillis();
+		this.eventCauseId = eventCauseId;
 	}
 
 	public String getType() {
@@ -139,6 +137,14 @@ public class ExceptionMessage extends ComotMessage {
 
 	public void setDetails(String details) {
 		this.details = details;
+	}
+
+	public String getEventCauseId() {
+		return eventCauseId;
+	}
+
+	public void setEventCauseId(String eventCauseId) {
+		this.eventCauseId = eventCauseId;
 	}
 
 	@Override

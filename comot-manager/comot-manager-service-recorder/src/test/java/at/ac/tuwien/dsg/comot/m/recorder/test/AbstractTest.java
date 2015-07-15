@@ -44,7 +44,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
-import at.ac.tuwien.dsg.comot.m.common.test.UtilsTest;
+import at.ac.tuwien.dsg.comot.m.common.test.UtilsT;
 import at.ac.tuwien.dsg.comot.m.cs.AppContextEps;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.m.recorder.AppContextServrec;
@@ -107,7 +107,7 @@ public abstract class AbstractTest {
 		updatedService.setName("UPDATED");
 
 		ServiceTopology topo = updatedService.getServiceTopologiesList().get(0);
-		ServiceUnit unit = UtilsTest.getServiceUnit(updatedService, STemplates.swNodeId);
+		ServiceUnit unit = UtilsT.getServiceUnit(updatedService, STemplates.swNodeId);
 
 		// remove relationship -> update timestamp
 		topo.getServiceUnits().remove(unit);
@@ -139,7 +139,7 @@ public abstract class AbstractTest {
 
 		ServiceTopology topo1 = finalService.getServiceTopologiesList().get(0);
 		ServiceTopology topo2 = finalService.getServiceTopologiesList().get(1);
-		ServiceUnit unit2 = UtilsTest.getServiceUnit(finalService, STemplates.swNodeId2);
+		ServiceUnit unit2 = UtilsT.getServiceUnit(finalService, STemplates.swNodeId2);
 
 		// remove relationship -> update timestamp
 		topo1.getServiceUnits().remove(unit2);

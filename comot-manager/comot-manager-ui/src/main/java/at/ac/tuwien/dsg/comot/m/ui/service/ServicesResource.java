@@ -52,10 +52,10 @@ import org.springframework.stereotype.Service;
 
 import at.ac.tuwien.dsg.comot.m.adapter.general.Manager;
 import at.ac.tuwien.dsg.comot.m.adapter.general.SingleQueueManager;
-import at.ac.tuwien.dsg.comot.m.common.InformationClient;
+import at.ac.tuwien.dsg.comot.m.common.InfoClient;
+import at.ac.tuwien.dsg.comot.m.common.InfoServiceUtils;
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.enums.Type;
-import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
 import at.ac.tuwien.dsg.comot.m.core.Coordinator;
@@ -98,7 +98,7 @@ public class ServicesResource {
 	@Autowired
 	protected Coordinator coordinator;
 	@Autowired
-	protected InformationClient infoServ;
+	protected InfoClient infoServ;
 
 	@javax.annotation.Resource
 	public Environment env;
@@ -205,7 +205,7 @@ public class ServicesResource {
 	public Response assignSupportingEps(
 			@ApiParam(value = "ID of the cloud service", required = true) @PathParam("serviceId") String serviceId,
 			@ApiParam(value = "ID of the EPS", required = true) @PathParam("epsId") String epsId)
-			throws ComotException, ClassNotFoundException, IOException, JAXBException {
+			throws Exception {
 
 		coordinator.assignSupportingOsu(serviceId, epsId);
 		return Response.ok().build();
@@ -218,7 +218,7 @@ public class ServicesResource {
 	public Response removeSupportingEps(
 			@ApiParam(value = "ID of the cloud service", required = true) @PathParam("serviceId") String serviceId,
 			@ApiParam(value = "ID of the EPS", required = true) @PathParam("epsId") String epsId)
-			throws ComotException, ClassNotFoundException, IOException, JAXBException {
+			throws Exception {
 
 		coordinator.removeAssignmentOfSupportingOsu(serviceId, epsId);
 		return Response.ok().build();
@@ -235,13 +235,12 @@ public class ServicesResource {
 			@ApiParam(value = "ID of the EPS", required = true) @PathParam("epsId") String epsId,
 			@ApiParam(value = "Name of the custom event", required = true) @PathParam("eventName") String eventName,
 			@ApiParam(value = "Optional message", required = false) String optionalInput)
-			throws ComotException, ClassNotFoundException, IOException, JAXBException {
+			throws Exception {
 
 		coordinator.triggerCustomEvent(serviceId, epsId, eventName, optionalInput);
 		return Response.ok().build();
 	}
 
-	// update structure / requirements for monitoring / SYBL directives
 	@PUT
 	@Path("/{serviceId}")
 	@ApiOperation(
@@ -356,8 +355,8 @@ public class ServicesResource {
 			response = CloudService.class,
 			responseContainer = "List")
 	public Response getServices(
-			@ApiParam(value = "Type of services to filter", required = false, allowableValues = InformationClient.ALL
-					+ ", " + InformationClient.NON_EPS + ", " + InformationClient.EPS) @DefaultValue(InformationClient.NON_EPS) @QueryParam("type") String type)
+			@ApiParam(value = "Type of services to filter", required = false, allowableValues = InfoClient.ALL
+					+ ", " + InfoClient.NON_EPS + ", " + InfoClient.EPS) @DefaultValue(InfoClient.NON_EPS) @QueryParam("type") String type)
 			throws ClassNotFoundException, IOException, EpsException {
 
 		type = type.toUpperCase();
@@ -366,14 +365,14 @@ public class ServicesResource {
 
 		Set<String> dynamicEpsServices = new HashSet<String>();
 		for (OsuInstance osuInstance : infoServ.getOsuInstances()) {
-			if (InformationClient.isDynamicEps(osuInstance.getOsu())) {
+			if (InfoServiceUtils.isDynamicEps(osuInstance.getOsu())) {
 				dynamicEpsServices.add(osuInstance.getService().getId());
 			}
 		}
 
-		if (InformationClient.ALL.equals(type)) {
+		if (InfoClient.ALL.equals(type)) {
 
-		} else if (InformationClient.EPS.equals(type)) {
+		} else if (InfoClient.EPS.equals(type)) {
 
 			for (Iterator<CloudService> iterator = allServices.iterator(); iterator.hasNext();) {
 				CloudService service = iterator.next();
@@ -382,7 +381,7 @@ public class ServicesResource {
 				}
 			}
 
-		} else if (InformationClient.NON_EPS.equals(type)) {
+		} else if (InfoClient.NON_EPS.equals(type)) {
 
 			for (Iterator<CloudService> iterator = allServices.iterator(); iterator.hasNext();) {
 				CloudService service = iterator.next();

@@ -35,8 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.enums.Action;
-import at.ac.tuwien.dsg.comot.m.common.enums.ComotEvent;
 import at.ac.tuwien.dsg.comot.m.core.Recording;
+import at.ac.tuwien.dsg.comot.m.cs.adapter.ComotEvent;
 import at.ac.tuwien.dsg.comot.m.recorder.RecorderException;
 import at.ac.tuwien.dsg.comot.m.recorder.model.Change;
 import at.ac.tuwien.dsg.comot.m.recorder.repo.ChangeRepo;
@@ -84,8 +84,6 @@ public class ElasticityAnalyzis {
 				.hasNext();) {
 			change = iterator.next();
 			eventType = Recording.extractEventName(change);
-
-			LOG.info(eventType + " " + ComotEvent.rsyblActionPlan(IEvent.Stage.START));
 
 			// ACTION PLAN
 			if (eventType.equals(ComotEvent.rsyblActionPlan(IEvent.Stage.START))) {

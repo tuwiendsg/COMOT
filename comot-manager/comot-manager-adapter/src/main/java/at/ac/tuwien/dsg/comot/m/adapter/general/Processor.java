@@ -18,82 +18,24 @@
  *******************************************************************************/
 package at.ac.tuwien.dsg.comot.m.adapter.general;
 
-import java.util.List;
-import java.util.Map;
+public abstract class Processor implements IProcessor {
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.Binding.DestinationType;
+	protected IManager manager;
+	protected String participantId;
 
-import at.ac.tuwien.dsg.comot.m.common.Constants;
-import at.ac.tuwien.dsg.comot.m.common.enums.Action;
-import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessage;
-import at.ac.tuwien.dsg.comot.m.common.event.state.StateMessage;
-import at.ac.tuwien.dsg.comot.m.common.event.state.Transition;
-import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
-
-public abstract class Processor {
-
-	protected Manager manager;
-
-	public void setManager(Manager manager) {
-		this.manager = manager;
-	}
-
-	public Manager getManager() {
-		return manager;
-	}
-
-	public Binding bindingLifeCycle(String queueName, String key) {
-		return new Binding(queueName, DestinationType.QUEUE, Constants.EXCHANGE_LIFE_CYCLE,
-				key, null);
-	}
-
-	public Binding bindingCustom(String queueName, String key) {
-		return new Binding(queueName, DestinationType.QUEUE, Constants.EXCHANGE_CUSTOM_EVENT,
-				key, null);
-	}
-
-	public Binding bindingException(String queueName, String key) {
-		return new Binding(queueName, DestinationType.QUEUE, Constants.EXCHANGE_EXCEPTIONS,
-				key, null);
-	}
-
-	public abstract List<Binding> getBindings(String queueName, String instanceId);
-
-	public void start() throws ComotException {
+	@Override
+	public void init(IManager dispatcher, String participantId) {
+		this.manager = dispatcher;
+		this.participantId = participantId;
 
 	}
-
-	public abstract void onLifecycleEvent(
-			StateMessage msg,
-			String serviceId,
-			String groupId,
-			Action action,
-			String originId,
-			CloudService service,
-			Map<String, Transition> transitions) throws Exception;
-
-	public abstract void onCustomEvent(
-			StateMessage msg,
-			String serviceId,
-			String groupId,
-			String event,
-			String epsId,
-			String originId,
-			String optionalMessage) throws Exception;
-
-	public abstract void onExceptionEvent(
-			ExceptionMessage msg,
-			String serviceId,
-			String originId) throws Exception;
 
 	public String logId() {
 		return manager.logId();
 	}
 
 	public String getId() {
-		return manager.getId();
+		return participantId;
 	}
 
 }

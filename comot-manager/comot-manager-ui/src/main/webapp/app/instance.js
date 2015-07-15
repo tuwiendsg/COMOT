@@ -1,23 +1,20 @@
-/*******************************************************************************
+/***********************************************************************************************************************
  * Copyright 2014 Technische Universitat Wien (TUW), Distributed Systems Group E184
- *
- * This work was partially supported by the European Commission in terms of the
- * CELAR FP7 project (FP7-ICT-2011-8 \#317790)
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * This work was partially supported by the European Commission in terms of the CELAR FP7 project (FP7-ICT-2011-8
+ * \#317790)
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- *******************************************************************************/
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ **********************************************************************************************************************/
 define(function(require) {
-	var app = require('durandal/app'), ko = require('knockout'), http = require('plugins/http'), d3 = require('d3'), utils = require('comot_utils') , JsonHuman = require('json_human'), comot = require('comot_client'), $ = require("jquery"), bootstrap = require('bootstrap'), router = require('plugins/router');
+	var app = require('durandal/app'), ko = require('knockout'), http = require('plugins/http'), d3 = require('d3'), utils = require('comot_utils'), JsonHuman = require('json_human'), comot = require('comot_client'), $ = require("jquery"), bootstrap = require('bootstrap'), router = require('plugins/router');
 
 	var notify = require('notify');
 
@@ -37,7 +34,7 @@ define(function(require) {
 		service : ko.observable(),
 		isEpsService : ko.observable(true),
 		// functions
-		toDate : function (asLong){
+		toDate : function(asLong) {
 			return utils.longToDateString(asLong);
 		},
 		startInstance : startInstance,
@@ -57,11 +54,12 @@ define(function(require) {
 		// life-cycle
 		deactivate : function() {
 			if (typeof source.close === 'function') {
+				console.log("Closing SSE connection");
 				source.close();
 			}
 		},
 		activate : function(serviceId) {
-			
+
 			model.isEpsService(true);
 			model.events.removeAll();
 			model.selectedEpsServices.removeAll();
@@ -81,7 +79,7 @@ define(function(require) {
 		},
 		attached : function() {
 
-			comot.getEpsInstancesAll(function(epses) {
+			comot.getEpsInstancesActive(function(epses) {
 				processEpsesInstances(epses);
 				model.allEpsServices(epses);
 
@@ -155,54 +153,70 @@ define(function(require) {
 
 	function startInstance() {
 
-		comot.startService(model.serviceId(), function(data) {
-		});
+		var serviceId = model.serviceId();
+
+		comot.startService(serviceId, "Started the service '" + serviceId + "'.", "Failed to start the service '"
+				+ serviceId + "'.");
 	}
 
 	function stopInstance() {
 
-		comot.stopService(model.serviceId(), function(data) {
-		});
+		var serviceId = model.serviceId();
+
+		comot.stopService(model.serviceId(), "Stopped the service '" + serviceId + "'.", "Failed to stop the service '"
+				+ serviceId + "'.");
 	}
 
 	function killInstance() {
 
-		comot.killService(model.serviceId(), function(data) {
-		});
+		var serviceId = model.serviceId();
+
+		comot.killService(model.serviceId(), "Terminated the service '" + serviceId + "'.",
+				"Failed to terminate the service '" + serviceId + "'.");
 	}
 
 	function assignEps(eps) {
 
+		var serviceId = model.serviceId();
+
 		comot.assignSupportingEps(model.serviceId(), eps.id, function(data) {
 			model.allEpsServices.remove(eps)
 			model.selectedEpsServices.push(eps);
-		});
+			notify.success("Assigned the EPS '" + eps.id + "' to support the service '" + serviceId + "'.");
+		}, "Failed to assign the EPS '" + eps.id + "' to support the service '" + serviceId + "'.");
 	}
 
 	function removeEps(eps) {
 		var epsId = eps.id;
+		var serviceId = model.serviceId();
 
-		comot.removeSupportingEps(model.serviceId(), epsId, function(data) {
+		comot.removeSupportingEps(serviceId, epsId, function(data) {
 			model.allEpsServices.push(eps)
 			model.selectedEpsServices.remove(eps);
-		});
+			notify.success("Removed the assignment of the EPS '" + eps.id + "' to support the service '" + serviceId
+					+ "'.");
+		}, "Failed to remove the assignment of the EPS '" + eps.id + "' to support the service '" + serviceId + "'.");
 	}
 
 	function triggerCustomEvent(epsId, eventName, optionalInput) {
+
+		var serviceId = model.serviceId();
 
 		if (typeof optionalInput === 'undefined') {
 			optionalInput = "";
 		}
 
-		comot.triggerCustomEvent(model.serviceId(), epsId, eventName, optionalInput, function(data) {
-
-		});
+		comot.triggerCustomEvent(serviceId, epsId, eventName, optionalInput, "Triggered the custom action '"
+				+ eventName + "' of the EPS '" + epsId + "'", "Failed to trigger the custom action '" + eventName
+				+ "' of the EPS '" + epsId + "'");
 	}
 
 	function reconfigureElasticity() {
 
-		comot.reconfigureElasticity(model.serviceId(), model.service(), "Elasticity reconfigured",
-				"Failed to reconfigure elasticity");
+		var serviceId = model.serviceId();
+
+		comot.reconfigureElasticity(serviceId, model.service(), "Elasticity the service '" + serviceId + "' reconfigured.",
+				"Failed to reconfigure the elasticity the service '" + serviceId + "'.");
 	}
 
 	function registerForEvents(path, events) {
@@ -236,7 +250,7 @@ define(function(require) {
 
 		return source;
 	}
-
+	
 	function processTransitionsToMap(transitions) {
 
 		var tMap = [];
@@ -364,7 +378,7 @@ function showEvent(events, event) {
 		lifecycle = true;
 	}
 
-	if (events().length == 6) {
+	if (events().length == 7) {
 		events.shift();
 	}
 
@@ -405,11 +419,6 @@ function createLifecycle(graph, divId, lastState, currentState) {
 	}).style("stroke-width", function(d) {
 		return Math.sqrt(d.value);
 	}).attr("marker-end", function(d) {
-		// if (d.name === lastAction) {
-		// return "url(#normal)";
-		// } else {
-		// return "url(#normal)";
-		// }
 		return "url(#normal)";
 	});
 
