@@ -23,10 +23,13 @@ import javax.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.Binding.DestinationType;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import at.ac.tuwien.dsg.comot.m.common.Constants;
 
 @Component
 @Scope("prototype")
@@ -44,22 +47,35 @@ public class SingleQueueManager extends Manager {
 		container.setConnectionFactory(connectionFactory);
 		container.setQueueNames(queueName());
 
-		for (Binding binding : processor.getBindings(queueName(), null)) {
-			admin.declareBinding(binding);
+		String queueName = queueName();
+		Bindings bindings = processor.getBindings(null);
+
+		for (String routingKey : bindings.getLifecycle()) {
+			admin.declareBinding(
+					new Binding(queueName, DestinationType.QUEUE, Constants.EXCHANGE_LIFE_CYCLE, routingKey, null));
 		}
 
-		container.setMessageListener(new ProcessorListener(processor));
+		for (String routingKey : bindings.getCustom()) {
+			admin.declareBinding(
+					new Binding(queueName, DestinationType.QUEUE, Constants.EXCHANGE_CUSTOM_EVENT, routingKey, null));
+		}
+
+		for (String routingKey : bindings.getException()) {
+			admin.declareBinding(
+					new Binding(queueName, DestinationType.QUEUE, Constants.EXCHANGE_EXCEPTIONS, routingKey, null));
+		}
+
+		container.setMessageListener(new ProcessorListener(processor, this));
 		container.start();
 	}
 
 	@PreDestroy
-	public void clean() {
+	public void stop() {
 
 		if (container != null) {
 			container.stop();
 			container.shutdown();
 		}
-		// TODO clean processor?
 
 		if (admin != null) {
 			admin.deleteQueue(queueName());
@@ -70,11 +86,6 @@ public class SingleQueueManager extends Manager {
 
 	public String queueName() {
 		return ADAPTER_QUEUE + participantId;
-	}
-
-	@Override
-	public void removeInstanceListener(String instanceId) {
-
 	}
 
 }

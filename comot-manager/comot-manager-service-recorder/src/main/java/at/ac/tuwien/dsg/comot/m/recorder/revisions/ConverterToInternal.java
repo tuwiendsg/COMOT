@@ -210,12 +210,6 @@ public class ConverterToInternal {
 					Collection<?> collection = (Collection<?>) field.get(obj);
 					properties
 							.put(field.getName(), toArray(collection, CustomReflectionUtils.classOfCollection(field)));
-					// int i = 0;
-
-					// for (Object oneOfCollection : collection) {
-					// properties.put(field.getName() + "-" + i++, oneOfCollection);
-					// }
-
 				}
 			}
 

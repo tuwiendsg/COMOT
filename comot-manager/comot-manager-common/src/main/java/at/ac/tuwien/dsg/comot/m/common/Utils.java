@@ -169,4 +169,5 @@ public class Utils {
 	public static InputStream loadFileFromClassPath(String path) throws IOException {
 		return ClassLoader.getSystemResourceAsStream(path);
 	}
+
 }

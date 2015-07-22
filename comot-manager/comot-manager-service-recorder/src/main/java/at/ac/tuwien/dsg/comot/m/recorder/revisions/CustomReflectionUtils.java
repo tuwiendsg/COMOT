@@ -33,8 +33,7 @@ public class CustomReflectionUtils {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CustomReflectionUtils.class);
 
-	public static List<Field> getInheritedNonStaticNonTransientNonNullFields(Object obj)
-			throws IllegalArgumentException, IllegalAccessException {
+	public static List<Field> getInheritedNonStaticNonTransientNonNullFields(Object obj) throws IllegalAccessException {
 		List<Field> list = new ArrayList<>();
 
 		for (Field field : getInheritedNonStaticNonTransientFields(obj.getClass())) {
@@ -49,8 +48,7 @@ public class CustomReflectionUtils {
 		return list;
 	}
 
-	public static List<Field> getInheritedNonStaticNonTransientFields(Class<?> clazz)
-			throws IllegalArgumentException, IllegalAccessException {
+	public static List<Field> getInheritedNonStaticNonTransientFields(Class<?> clazz) {
 
 		List<Field> list = new ArrayList<>();
 
@@ -78,13 +76,10 @@ public class CustomReflectionUtils {
 
 	public static boolean isPrimitiveOrWrapper(Class<?> clazz) {
 
-		if (clazz.equals(Byte.class) || clazz.equals(Short.class) || clazz.equals(Integer.class)
+		return clazz.equals(Byte.class) || clazz.equals(Short.class) || clazz.equals(Integer.class)
 				|| clazz.equals(Long.class) || clazz.equals(Float.class) || clazz.equals(Double.class)
-				|| clazz.equals(Character.class) || clazz.equals(String.class) || clazz.isPrimitive()) {
-			return true;
-		} else {
-			return false;
-		}
+				|| clazz.equals(Boolean.class) || clazz.equals(Character.class) || clazz.equals(String.class)
+				|| clazz.isPrimitive();
 	}
 
 	public static Class<?> classOfCollection(Field field) {

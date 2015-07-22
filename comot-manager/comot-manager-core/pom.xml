@@ -4,6 +4,7 @@
 	<artifactId>comot-manager-core</artifactId>
 	<packaging>jar</packaging>
 	<name>COMOT Manager Core</name>
+	<description>Lifecycle manager, EPS Builder adapter and analysis, User-interaction adapter core</description>
 	<parent>
 		<groupId>at.ac.tuwien.dsg.comot</groupId>
 		<artifactId>comot-manager</artifactId>
@@ -12,6 +13,12 @@
 	</parent>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.jcraft</groupId>
+			<artifactId>jsch</artifactId>
+			<version>0.1.52</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.amqp</groupId>
 			<artifactId>spring-rabbit</artifactId>
@@ -44,25 +51,16 @@
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-manager-adapter</artifactId>
 		</dependency>
-<!-- 
+		<!-- <dependency> <groupId>org.neo4j.app</groupId> <artifactId>neo4j-server</artifactId> <scope>test</scope> </dependency> 
+			<dependency> <groupId>org.neo4j.app</groupId> <artifactId>neo4j-server</artifactId> <classifier>static-web</classifier> <scope>test</scope> 
+			</dependency> <dependency> <groupId>org.neo4j</groupId> <artifactId>neo4j-kernel</artifactId> <type>test-jar</type> <scope>test</scope> 
+			</dependency> -->
+
 		<dependency>
-			<groupId>org.neo4j.app</groupId>
-			<artifactId>neo4j-server</artifactId>
+			<groupId>at.ac.tuwien.dsg.comot</groupId>
+			<artifactId>comot-manager-info-service-mock</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.neo4j.app</groupId>
-			<artifactId>neo4j-server</artifactId>
-			<classifier>static-web</classifier>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.neo4j</groupId>
-			<artifactId>neo4j-kernel</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		-->
 		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-manager-common</artifactId>
@@ -73,6 +71,31 @@
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-model</artifactId>
 			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-catalina</artifactId>
+			<version>${tomcat.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-jasper</artifactId>
+			<version>${tomcat.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-jasper</artifactId>
+			<version>${tomcat.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-logging-juli</artifactId>
+			<version>${tomcat.version}</version>
 			<scope>test</scope>
 		</dependency>
 

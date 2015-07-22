@@ -4,7 +4,7 @@
 	      http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	version="3.0">
 
-	<display-name>info-mock</display-name>
+	<display-name>infoServiceMock</display-name>
 
 	<!-- SPRING -->
 	<context-param>

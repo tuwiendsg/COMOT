@@ -1,21 +1,18 @@
-/*******************************************************************************
+/***********************************************************************************************************************
  * Copyright 2014 Technische Universitat Wien (TUW), Distributed Systems Group E184
- *
- * This work was partially supported by the European Commission in terms of the
- * CELAR FP7 project (FP7-ICT-2011-8 \#317790)
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * This work was partially supported by the European Commission in terms of the CELAR FP7 project (FP7-ICT-2011-8
+ * \#317790)
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- *******************************************************************************/
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ **********************************************************************************************************************/
 (function(factory) {
 	// require stuff taken from here
 	// https://github.com/SteveSanderson/knockout.mapping/blob/master/build/output/knockout.mapping-latest.debug.js
@@ -61,13 +58,29 @@
 		// ERROR
 		if (isFunction(onError)) {
 			core.error = onError;
+
 		} else if (onError === null || typeof onError === 'undefined') {
 			core.error = function(request, status, error) {
-				console.log("status: " + request.status + "(" + request.statusText + "), " + errorBody(request.responseText));
+
+				if (request.status == 422) {
+					notify.warning(request.responseText);
+				} else {
+					notify.error("Failed. \n Reason: " + request.status + " - " + request.statusText + ", "
+							+ request.responseText);
+				}
 			}
 		} else if (typeof onError === 'string') {
 			core.error = function(request, status, error) {
-				notify.error(onError);
+
+				if (request.responseText === "") {
+					notify.error(onError);
+				} else {
+					if (request.status == 422) {
+						notify.warning(onError + "\n Reason: " + request.responseText);
+					} else {
+						notify.error(onError + "\n Reason: " + request.responseText);
+					}
+				}
 			}
 		}
 
@@ -91,33 +104,6 @@
 		return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
 	}
 
-	function errorBody(responseText) {
-		var msg = "";
-
-		try {
-			var obj = $.parseJSON(responseText)
-			
-				if (typeof obj.origin !== 'undefined') {
-				msg = msg + "component: " + obj.origin
-			}
-			if (typeof obj.message !== 'undefined') {
-				if (msg !== "") {
-					msg = msg + "\n";
-				}
-				msg = msg + "message: " + obj.message
-			}
-			
-			return msg;
-			
-		} catch (e) {
-			return responseText;
-		}
-	}
-
-	exports.errorBody = function(error) {
-		return errorBody(error);
-	}
-
 	// API
 
 	exports.createTemplateTosca = function(tosca, onSuccess, onError) {
@@ -129,7 +115,7 @@
 		request.contentType = "application/xml";
 		return $.ajax(request);
 	}
-	
+
 	exports.removeTemplate = function(templateId, onSuccess, onError) {
 
 		var request = getRequestCore(onSuccess, onError);
@@ -188,7 +174,7 @@
 
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "PUT";
-		request.url = services + serviceId + "/kill";
+		request.url = services + serviceId + "/terminate";
 		return $.ajax(request);
 	}
 
@@ -226,10 +212,13 @@
 		return $.ajax(request);
 	}
 
-	exports.createDynamicEps = function(epsId, onSuccess, onError) {
+	exports.createDynamicEps = function(epsId, formData, onSuccess, onError) {
 
 		var request = getRequestCore(onSuccess, onError);
-		request.type = "PUT";
+		request.type = "POST";
+		request.data = formData;
+		request.contentType = false; // "multipart/form-data";
+		request.processData = false;
 		request.url = eps + epsId + "/instances";
 		return $.ajax(request);
 	}
@@ -317,11 +306,14 @@
 		return $.ajax(request);
 	}
 
-	exports.getEpsInstancesAll = function(onSuccess, onError) {
+	exports.getEpsInstancesActive = function(onSuccess, onError) {
 
 		var request = getRequestCore(onSuccess, onError);
 		request.type = "GET";
 		request.dataType = "json"
+		request.data = {
+			type : "ACTIVE"
+		};
 		request.url = eps + "instances";
 		return $.ajax(request);
 	}

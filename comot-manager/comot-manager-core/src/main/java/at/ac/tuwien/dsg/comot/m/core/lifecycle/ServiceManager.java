@@ -42,7 +42,7 @@ import org.springframework.stereotype.Component;
 
 import at.ac.tuwien.dsg.comot.m.adapter.UtilsLc;
 import at.ac.tuwien.dsg.comot.m.common.Constants;
-import at.ac.tuwien.dsg.comot.m.common.InformationClient;
+import at.ac.tuwien.dsg.comot.m.common.InfoClient;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.enums.Action;
 import at.ac.tuwien.dsg.comot.m.common.enums.Type;
@@ -83,7 +83,7 @@ public class ServiceManager {
 	@Autowired
 	protected LifeCycleManager parentManager;
 	@Autowired
-	protected InformationClient infoService;
+	protected InfoClient infoService;
 	@Autowired
 	protected GroupManager groupManager;
 
@@ -118,7 +118,7 @@ public class ServiceManager {
 		try {
 			executeLifeCycleEvent(event);
 		} catch (ComotException e) {
-			sendException(e);
+			sendException(event.getEventId(), e);
 		}
 
 		container.start();
@@ -130,8 +130,12 @@ public class ServiceManager {
 		@Override
 		public void onMessage(Message message) {
 
+			String eventCauseId = null;
+
 			try {
+
 				AbstractEvent event = UtilsLc.abstractEvent(message);
+				eventCauseId = event.getEventId();
 
 				LOG.info(logId() + " processing: {}", event);
 
@@ -147,10 +151,10 @@ public class ServiceManager {
 
 			} catch (Exception e) {
 				try {
-					sendException(e);
-					LOG.error("{}", e);
+					sendException(eventCauseId, e);
+					LOG.error("", e);
 				} catch (JAXBException e1) {
-					LOG.error("{}", e1);
+					LOG.error("", e1);
 				}
 			}
 		}
@@ -302,21 +306,21 @@ public class ServiceManager {
 		}
 	}
 
-	public void sendLifeCycleEvent(CloudService service, LifeCycleEvent event) throws ClassNotFoundException,
-			IOException, EpsException, JAXBException {
+	public void sendLifeCycleEvent(CloudService service, LifeCycleEvent event)
+			throws ClassNotFoundException, IOException, EpsException, JAXBException {
 
 		String groupId = event.getGroupId();
 		Action action = event.getAction();
+		String targetLevel = groupManager.getGroup(groupId).getType().toString();
 
 		Map<String, Transition> transitions = groupManager.extractTransitions(event);
 
 		State currentState = transitions.get(serviceId).getCurrentState();
 		State previousState = transitions.get(serviceId).getLastState();
-
 		String change = Boolean.toString(transitions.get(serviceId).isFresh()).toUpperCase();
 
-		String bindingKey = serviceId + "." + change + "." + previousState + "." + currentState + "." + action
-				+ "." + groupManager.getGroup(groupId).getType() + "." + event.getOrigin();
+		String bindingKey = serviceId + "." + action + "." + targetLevel + "." + change + "." + previousState + "."
+				+ currentState + "." + event.getOrigin();
 
 		// clean service
 		if (service == null) {
@@ -345,10 +349,11 @@ public class ServiceManager {
 
 	}
 
-	public void executeCustomEvent(CustomEvent event) throws JAXBException, ClassNotFoundException,
-			IOException, ComotException, EpsException {
+	public void executeCustomEvent(CustomEvent event)
+			throws JAXBException, ClassNotFoundException, IOException, ComotException, EpsException {
 
 		String groupId = event.getGroupId();
+		String targetLevel = groupManager.getGroup(groupId).getType().toString();
 
 		if (!groupManager.containsGroup(groupId)) {
 			throw new ComotException("The entity '" + groupId + "' of service instance '" + serviceId
@@ -356,8 +361,7 @@ public class ServiceManager {
 		}
 
 		// create binding
-		String bindingKey = serviceId + "." + event.getEpsId() + "." + event.getCustomEvent() + "."
-				+ groupManager.getGroup(groupId).getType();
+		String bindingKey = serviceId + "." + event.getCustomEvent() + "." + targetLevel + "." + event.getEpsId();
 
 		CloudService service = infoService.getService(serviceId);
 
@@ -366,7 +370,7 @@ public class ServiceManager {
 
 	}
 
-	protected void sendException(Exception e) throws JAXBException {
+	protected void sendException(String eventCauseId, Exception e) throws JAXBException {
 
 		ExceptionMessage msg;
 
@@ -376,7 +380,7 @@ public class ServiceManager {
 			msg = new ExceptionMessageLifeCycle(serviceId, serviceId, System.currentTimeMillis(),
 					ComotLifecycleException.class.getSimpleName(), lcs.getMessage(), null, lcs.getEvent());
 		} else {
-			msg = new ExceptionMessage(serviceId, serviceId, System.currentTimeMillis(), e);
+			msg = new ExceptionMessage(serviceId, serviceId, System.currentTimeMillis(), eventCauseId, e);
 		}
 
 		send(Constants.EXCHANGE_EXCEPTIONS, serviceId + "." + serviceId, msg);

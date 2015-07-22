@@ -18,37 +18,31 @@
  *******************************************************************************/
 package at.ac.tuwien.dsg.comot.m.core;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-
-import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.Binding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import at.ac.tuwien.dsg.comot.m.adapter.general.Bindings;
 import at.ac.tuwien.dsg.comot.m.adapter.general.Processor;
-import at.ac.tuwien.dsg.comot.m.common.Constants;
-import at.ac.tuwien.dsg.comot.m.common.EpsAdapterStatic;
-import at.ac.tuwien.dsg.comot.m.common.InformationClient;
+import at.ac.tuwien.dsg.comot.m.common.ConfigConstants;
+import at.ac.tuwien.dsg.comot.m.common.InfoClient;
 import at.ac.tuwien.dsg.comot.m.common.enums.Action;
 import at.ac.tuwien.dsg.comot.m.common.enums.EpsEvent;
 import at.ac.tuwien.dsg.comot.m.common.enums.Type;
 import at.ac.tuwien.dsg.comot.m.common.event.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessage;
-import at.ac.tuwien.dsg.comot.m.common.event.state.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.event.state.Transition;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
+import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
-import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
-import at.ac.tuwien.dsg.comot.model.provider.Resource;
+import at.ac.tuwien.dsg.comot.model.provider.OsuInstance;
+import at.ac.tuwien.dsg.comot.model.type.State;
 
 @Component
 public class EpsBuilder extends Processor {
@@ -57,109 +51,93 @@ public class EpsBuilder extends Processor {
 
 	@Autowired
 	protected ApplicationContext context;
+	@javax.annotation.Resource
+	public Environment env;
 	@Autowired
-	protected InformationClient infoService;
+	protected InfoClient infoService;
 
 	@Override
-	public void start() throws ComotException {
+	public Bindings getBindings(String instanceId) {
 
-		infoService.deleteAll();
-		context.getBean(InitData.class).setUpTestData();
+		return new Bindings()
+				.addLifecycle("*." + Action.CREATED + "." + Type.SERVICE + ".#")
+				.addLifecycle("*." + Action.REMOVED + "." + Type.SERVICE + ".#")
+				.addLifecycle("*.*.*.TRUE.*." + State.PASSIVE + ".#")
 
-		// create static EPSes
-		for (OfferedServiceUnit osu : infoService.getOsus()) {
-			try {
-
-				if (osu.getServiceTemplate() == null) {
-
-					Class<?> clazz = null;
-					String ip = null;
-					String port = null;
-
-					for (Resource res : osu.getResources()) {
-						if (res.getType().getName().equals(Constants.ADAPTER_CLASS)) {
-							clazz = Class.forName(res.getName());
-
-						} else if (res.getType().getName().equals(Constants.IP)) {
-							ip = res.getName();
-
-						} else if (res.getType().getName().equals(Constants.PORT)) {
-							port = res.getName();
-						}
-					}
-
-					String epsId = infoService.createOsuInstance(osu.getId());
-					EpsAdapterStatic adapter = (EpsAdapterStatic) context.getBean(clazz);
-					adapter.start(epsId, ip, Integer.valueOf(port));
-
-				}
-			} catch (Exception e) {
-				LOG.error("{}", e);
-			}
-		}
+				.addCustom("*." + EpsEvent.EPS_DYNAMIC_REQUESTED + ".*.*")
+				.addCustom("*." + EpsEvent.EPS_DYNAMIC_REMOVED + "." + Type.SERVICE + ".*")
+				.addCustom("*." + EpsEvent.EPS_SUPPORT_ASSIGNED + "." + Type.SERVICE + ".*");
 	}
 
 	@Override
-	public List<Binding> getBindings(String queueName, String instanceId) {
-		List<Binding> bindings = new ArrayList<>();
-
-		bindings.add(bindingCustom(queueName, "*.*." + EpsEvent.EPS_DYNAMIC_REQUESTED + "." + Type.SERVICE));
-		bindings.add(bindingCustom(queueName, "*.*." + EpsEvent.EPS_DYNAMIC_REMOVED + "." + Type.SERVICE));
-		bindings.add(bindingCustom(queueName, "*.*." + EpsEvent.EPS_SUPPORT_ASSIGNED + "." + Type.SERVICE));
-		bindings.add(bindingLifeCycle(queueName, "*.*.*.*." + Action.CREATED + "." + Type.SERVICE + ".#"));
-		bindings.add(bindingLifeCycle(queueName, "*.*.*.*." + Action.UNDEPLOYED + "." + Type.SERVICE + ".#"));
-
-		return bindings;
-	}
-
-	@Override
-	public void onLifecycleEvent(StateMessage msg, String serviceId, String groupId,
-			Action action, String optionalMessage, CloudService service, Map<String, Transition> transitions)
-			throws ClassNotFoundException, IOException, JAXBException, EpsException {
+	public void onLifecycleEvent(String serviceId, String groupId, Action action, CloudService service,
+			Map<String, Transition> transitions, LifeCycleEvent event) throws Exception {
 
 		if (infoService.isServiceOfDynamicEps(serviceId)) {
 
 			if (action == Action.CREATED) {
-				String staticDeplId = infoService.instanceIdOfStaticEps(Constants.SALSA_SERVICE_STATIC);
 
-				manager.sendCustom(Type.SERVICE, new CustomEvent(serviceId, serviceId,
-						EpsEvent.EPS_SUPPORT_REQUESTED.toString(), staticDeplId, null));
+				String deploymentName = env.getProperty(ConfigConstants.DEPL_CENTRAL);
+
+				if (deploymentName == null) {
+					throw new ComotException("No central deployment EPS configured.");
+				}
+
+				String staticDeplId = infoService.instanceIdOfStaticEps(deploymentName);
+
+				manager.sendCustomEvent(serviceId, serviceId, EpsEvent.EPS_SUPPORT_REQUESTED.toString(), staticDeplId,
+						null);
 
 			} else if (action == Action.UNDEPLOYED) {
 
-				manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, serviceId, Action.REMOVED));
+				infoService.removeOsuInatance(infoService.getOsuInstanceByServiceId(serviceId).getId());
+
+				manager.sendLifeCycleEvent(serviceId, serviceId, Action.REMOVED);
 
 			}
 		}
 	}
 
 	@Override
-	public void onCustomEvent(StateMessage msg, String serviceId, String groupId,
-			String event, String epsId, String origin, String optionalMessage) throws ClassNotFoundException,
-			JAXBException, EpsException {
+	public void onCustomEvent(String serviceId, String groupId, String eventName, String epsId, String optionalMessage,
+			Map<String, Transition> transitions, CustomEvent event) throws Exception {
 
-		EpsEvent action = EpsEvent.valueOf(event);
+		EpsEvent action = EpsEvent.valueOf(eventName);
 
-		if (action == EpsEvent.EPS_DYNAMIC_REQUESTED && !origin.equals(getId())) {
+		if (action == EpsEvent.EPS_DYNAMIC_REQUESTED && !event.getOrigin().equals(getId())) {
 
 			String newServiceId = infoService.getOsuInstance(optionalMessage).getService().getId();
 
-			manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(newServiceId, newServiceId, Action.CREATED));
+			manager.sendLifeCycleEvent(newServiceId, newServiceId, Action.CREATED);
 
 		} else if (action == EpsEvent.EPS_SUPPORT_ASSIGNED && infoService.isServiceOfDynamicEps(serviceId)) {
 
-			manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, serviceId, Action.START));
+			manager.sendLifeCycleEvent(serviceId, serviceId, Action.START);
 
 		} else if (action == EpsEvent.EPS_DYNAMIC_REMOVED) {
 
-			manager.sendLifeCycle(Type.SERVICE, new LifeCycleEvent(serviceId, serviceId, Action.STOP));
+			boolean supporting = false;
+
+			for (CloudService service : infoService.getServices()) {
+				for (OsuInstance inst : service.getSupport()) {
+					if (inst.getId().equals(optionalMessage)) {
+						supporting = true;
+					}
+				}
+			}
+
+			if (supporting) {
+				throw new ComotIllegalArgumentException("The EPS instance '" + optionalMessage
+						+ "' can not be removed, if it is assigned to a cloud service.");
+			} else {
+				manager.sendLifeCycleEvent(serviceId, serviceId, Action.TERMINATE);
+			}
 
 		}
-
 	}
 
 	@Override
-	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String originId) throws Exception {
+	public void onExceptionEvent(ExceptionMessage msg) throws Exception {
 		// not needed
 	}
 

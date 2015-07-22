@@ -28,6 +28,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 
+import at.ac.tuwien.dsg.comot.m.common.ConfigConstants;
+
 @Configuration
 @Profile(AppContextServrec.EMBEDDED_NEO4J_DB)
 public class AppContextServrecEmbeddedDb {
@@ -39,8 +41,8 @@ public class AppContextServrecEmbeddedDb {
 
 	@Bean(destroyMethod = "shutdown")
 	public GraphDatabaseService graphDatabaseService() {
-		GraphDatabaseService db = new GraphDatabaseFactory().newEmbeddedDatabase(env
-				.getProperty("recorder.neo4j.embedded"));
+		GraphDatabaseService db = new GraphDatabaseFactory().newEmbeddedDatabase(
+				env.getProperty(ConfigConstants.RECORDER));
 		LOG.info("Neo4jDB: {}", db);
 		return db;
 	}

@@ -4,6 +4,7 @@
 	<artifactId>comot-manager-adapter-dynamic</artifactId>
 	<packaging>jar</packaging>
 	<name>COMOT Manager EPS Adapter Dynamic</name>
+	<description>Executable wrapper for the Dynamic (User-managed) EPSs</description>
 	<parent>
 		<groupId>at.ac.tuwien.dsg.comot</groupId>
 		<artifactId>comot-manager</artifactId>
@@ -20,6 +21,10 @@
 		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-manager-adapter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>at.ac.tuwien.dsg.comot</groupId>
+			<artifactId>comot-manager-eps</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -40,7 +45,7 @@
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs> -->
-					 <descriptor>src/assembly/dep.xml</descriptor>
+					 <descriptor>../resources/assembly-dep.xml</descriptor>
 				</configuration>
 				<executions>
 					<execution>

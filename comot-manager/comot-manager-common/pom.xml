@@ -4,7 +4,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>comot-manager-common</artifactId>
 	<name>COMOT Manager Common</name>
-
+	<description>Events/Messages for communication, common interfaces, utility classes, exceptions</description>
+	
 	<parent>
 		<artifactId>comot-manager</artifactId>
 		<groupId>at.ac.tuwien.dsg.comot</groupId>
@@ -12,12 +13,13 @@
 		<version>0.2</version>
 	</parent>
 
+
 	<dependencies>
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-moxy</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-model</artifactId>
@@ -30,9 +32,7 @@
 			<groupId>at.ac.tuwien.rSYBL.control-service</groupId>
 			<artifactId>rSYBL-cloud-application-dependency-graph</artifactId>
 		</dependency>
-		
 	</dependencies>
-
 
 	<build>
 		<plugins>

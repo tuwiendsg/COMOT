@@ -4,6 +4,7 @@
 	<artifactId>comot-manager-info-service-mock</artifactId>
 	<packaging>war</packaging>
 	<name>COMOT Manager Information Service Mock</name>
+	<description>Temporary substitution of an information service. Build as an executable jar with embedded Tomcat.</description>
 
 	<parent>
 		<groupId>at.ac.tuwien.dsg.comot</groupId>
@@ -40,7 +41,6 @@
 			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
-
 	</dependencies>
 
 	<build>
@@ -60,9 +60,31 @@
 				</executions>
 				<configuration>
 					<finalName>infoServiceMock.jar</finalName>
-					<port>8080</port> <!-- port does not apply on generated jar, default: 8080 -->
+					<port>8480</port> <!-- port does not apply on generated jar, default: 8080. Run with -httpPort 8480 -->
 					<path>/info</path>
 				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<id>copy-linux-script</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/src/main/scripts</directory>
+									<include>info-daemon.sh</include>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

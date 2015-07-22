@@ -46,11 +46,9 @@ import org.springframework.stereotype.Component;
 import at.ac.tuwien.dsg.comot.m.adapter.UtilsLc;
 import at.ac.tuwien.dsg.comot.m.adapter.general.SingleQueueManager;
 import at.ac.tuwien.dsg.comot.m.common.Constants;
-import at.ac.tuwien.dsg.comot.m.common.InformationClient;
+import at.ac.tuwien.dsg.comot.m.common.InfoClient;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.enums.Action;
-import at.ac.tuwien.dsg.comot.m.common.enums.EpsEvent;
-import at.ac.tuwien.dsg.comot.m.common.enums.Type;
 import at.ac.tuwien.dsg.comot.m.common.event.AbstractEvent;
 import at.ac.tuwien.dsg.comot.m.common.event.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
@@ -80,7 +78,7 @@ public class LifeCycleManager {
 	protected SimpleMessageListenerContainer container;
 
 	@Autowired
-	protected InformationClient infoService;
+	protected InfoClient infoService;
 
 	protected Map<String, ServiceManager> managers = Collections
 			.synchronizedMap(new HashMap<String, ServiceManager>());
@@ -104,9 +102,9 @@ public class LifeCycleManager {
 		container.setMessageListener(new CustomListener());
 
 		admin.declareBinding(new Binding(MANAGER_QUEUE, DestinationType.QUEUE, Constants.EXCHANGE_REQUESTS,
-				"*." + LifeCycleEvent.class.getSimpleName() + "." + Action.CREATED + "." + Type.SERVICE, null));
+				"*." + LifeCycleEvent.class.getSimpleName() + "." + Action.CREATED + ".*", null));
 		admin.declareBinding(new Binding(MANAGER_QUEUE, DestinationType.QUEUE, Constants.EXCHANGE_REQUESTS,
-				"*." + CustomEvent.class.getSimpleName() + "." + EpsEvent.EPS_DYNAMIC_REQUESTED + ".*", null));
+				null + "." + CustomEvent.class.getSimpleName() + ".*." + null, null));
 
 		container.start();
 
@@ -132,21 +130,20 @@ public class LifeCycleManager {
 
 					LifeCycleEvent event = (LifeCycleEvent) abEvent;
 
-					if (Action.CREATED == event.getAction()) {
+					if (Action.CREATED == event.getAction() &&
+							serviceId != null && serviceId.equals(abEvent.getGroupId())) {
 						createInstanceManager(serviceId, event);
 					}
 
 				} else if (abEvent instanceof CustomEvent) {
 					CustomEvent event = (CustomEvent) abEvent;
 
-					if (event.getCustomEvent().equals(EpsEvent.EPS_DYNAMIC_REQUESTED.toString())) {
+					String bindingKey = null + "." + event.getCustomEvent() + "." + null + "." + event.getEpsId();
 
-						String bindingKey = event.getServiceId() + "." + event.getEpsId() + "."
-								+ event.getCustomEvent() + "." + Type.SERVICE;
+					LOG.info("STAT-EVENT exchange={} key={}", Constants.EXCHANGE_CUSTOM_EVENT, bindingKey);
 
-						amqp.convertAndSend(Constants.EXCHANGE_CUSTOM_EVENT, bindingKey,
-								Utils.asJsonString(new StateMessage(event, null, null)));
-					}
+					amqp.convertAndSend(Constants.EXCHANGE_CUSTOM_EVENT, bindingKey,
+							Utils.asJsonString(new StateMessage(event, null, null)));
 				}
 
 			} catch (JAXBException | ClassNotFoundException | IOException | EpsException e) {
@@ -180,6 +177,11 @@ public class LifeCycleManager {
 	}
 
 	public State getCurrentStateService(String serviceId) {
+
+		if (!managers.containsKey(serviceId)) {
+			return null;
+		}
+
 		return managers.get(serviceId).getCurrentStateService();
 
 	}

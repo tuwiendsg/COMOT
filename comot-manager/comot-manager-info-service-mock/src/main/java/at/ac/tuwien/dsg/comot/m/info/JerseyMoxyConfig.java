@@ -34,7 +34,6 @@ public class JerseyMoxyConfig extends ResourceConfig {
 		register(Resource.class);
 		// CONFIGURATION
 		register(RequestContextFilter.class);
-
-		register(ComotExceptionMapper.class);
+		register(InfoExceptionMapper.class);
 	}
 }

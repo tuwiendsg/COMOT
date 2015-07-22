@@ -57,6 +57,7 @@ public abstract class AbstractEvent implements Serializable {
 		this.groupId = groupId;
 		this.origin = origin;
 		this.time = time;
+		this.correlationId = UUID.randomUUID().toString();
 	}
 
 	// GENERATED

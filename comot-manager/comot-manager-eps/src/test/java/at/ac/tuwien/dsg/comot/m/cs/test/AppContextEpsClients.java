@@ -30,6 +30,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
+import at.ac.tuwien.dsg.comot.m.common.ConfigConstants;
 import at.ac.tuwien.dsg.comot.m.common.eps.ControlClient;
 import at.ac.tuwien.dsg.comot.m.common.eps.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.eps.MonitoringClient;
@@ -57,17 +58,17 @@ public class AppContextEpsClients {
 
 	@Bean
 	public SalsaClient salsaClient() throws URISyntaxException {
-		return new SalsaClient(new URI(env.getProperty("uri.deployemnt")));
+		return new SalsaClient(new URI(env.getProperty(ConfigConstants.URI_DEPLOYEMENT)));
 	}
 
 	@Bean
 	public MelaClient melaClient() throws URISyntaxException {
-		return new MelaClient(new URI(env.getProperty("uri.monitoring")));
+		return new MelaClient(new URI(env.getProperty(ConfigConstants.URI_MONITORING)));
 	}
 
 	@Bean
 	public RsyblClient rsyblClient() throws URISyntaxException {
-		return new RsyblClient(new URI(env.getProperty("uri.controller")));
+		return new RsyblClient(new URI(env.getProperty(ConfigConstants.URI_CONTROLLER)));
 	}
 
 	@Bean

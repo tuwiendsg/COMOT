@@ -95,7 +95,7 @@ public class DeploymentMapper {
 		return description;
 	}
 
-	public Map<String, String> extractStates(String csInstanceId,
+	public Map<String, String> extractStates(String serviceId,
 			at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.CloudService serviceState) {
 
 		Map<String, String> map = new HashMap<>();
@@ -105,7 +105,7 @@ public class DeploymentMapper {
 			for (at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.ServiceUnit unit : topology.getComponents()) {
 				for (ServiceInstance instance : unit.getInstancesList()) {
 					map.put(
-							IdResolver.uniqueInstance(csInstanceId, unit.getId(), instance.getInstanceId()),
+							IdResolver.uniqueInstance(serviceId, unit.getId(), instance.getInstanceId()),
 							instance.getState().toString());
 				}
 			}

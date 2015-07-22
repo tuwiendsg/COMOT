@@ -30,21 +30,14 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.PosixParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import at.ac.tuwien.dsg.comot.m.adapter.general.EpsAdapterManager;
 import at.ac.tuwien.dsg.comot.m.adapter.general.Manager;
-import at.ac.tuwien.dsg.comot.m.adapter.general.PerInstanceQueueManager;
-import at.ac.tuwien.dsg.comot.m.adapter.processor.Control;
-import at.ac.tuwien.dsg.comot.m.adapter.processor.Deployment;
-import at.ac.tuwien.dsg.comot.m.adapter.processor.Monitoring;
-import at.ac.tuwien.dsg.comot.m.common.Constants;
-import at.ac.tuwien.dsg.comot.m.common.InformationClient;
-import at.ac.tuwien.dsg.comot.m.common.Utils;
-import at.ac.tuwien.dsg.comot.m.common.enums.EpsEvent;
-import at.ac.tuwien.dsg.comot.m.common.enums.Type;
-import at.ac.tuwien.dsg.comot.m.common.event.CustomEvent;
-import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
+import at.ac.tuwien.dsg.comot.m.common.InfoClient;
+import at.ac.tuwien.dsg.comot.m.cs.adapter.processor.Control;
+import at.ac.tuwien.dsg.comot.m.cs.adapter.processor.Deployment;
+import at.ac.tuwien.dsg.comot.m.cs.adapter.processor.Monitoring;
 
 public class Main {
 
@@ -53,11 +46,7 @@ public class Main {
 	public static final String SERVICE_INSTANCE_AS_PROPERTY = "service";
 	public static final String PROPERTIES_FILE = "./salsa.environment";
 
-	// private static String templateId;
-	private static String serviceId;
-	private static String participantId;
 	private static AnnotationConfigApplicationContext context;
-	private static InformationClient info;
 
 	public static void main(String[] args) {
 
@@ -83,7 +72,6 @@ public class Main {
 				AppContextAdapter.setInfoPort(infoPort);
 
 				context = new AnnotationConfigApplicationContext(AppContextAdapter.class);
-				info = context.getBean(InformationClient.class);
 
 				Runtime.getRuntime().addShutdownHook(new Thread() {
 					public void run() {
@@ -95,10 +83,10 @@ public class Main {
 
 				if (cmd.hasOption("m") || cmd.hasOption("r") || cmd.hasOption("s")) {
 
-					Manager manager = context.getBean(PerInstanceQueueManager.class);
-
-					setServiceInstanceId();
-					setParticipantId();
+					Manager manager = context.getBean(EpsAdapterManager.class);
+					String serviceId = getServiceInstanceId();
+					String participantId = context.getBean(InfoClient.class)
+							.getOsuInstanceByServiceId(serviceId).getId();
 
 					if (cmd.hasOption("m")) {
 
@@ -115,8 +103,6 @@ public class Main {
 						Deployment processor = context.getBean(Deployment.class);
 						manager.start(participantId, processor);
 					}
-
-					confirmCreation();
 
 				} else {
 					LOG.warn("No adapter type specified");
@@ -151,11 +137,11 @@ public class Main {
 		throw new IllegalArgumentException();
 	}
 
-	private static void setServiceInstanceId() {
+	private static String getServiceInstanceId() {
 
-		InputStream input = null;
-		try {
-			input = new FileInputStream(PROPERTIES_FILE);
+		String serviceId = null;
+
+		try (InputStream input = new FileInputStream(PROPERTIES_FILE)) {
 
 			Properties prop = new Properties();
 			prop.load(input);
@@ -165,14 +151,6 @@ public class Main {
 
 		} catch (IOException e) {
 			LOG.error(" {}", e);
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-				} catch (IOException e) {
-					LOG.error("{}", e);
-				}
-			}
 		}
 
 		if (serviceId == null) {
@@ -180,27 +158,8 @@ public class Main {
 			throw new IllegalArgumentException("there is no property " + SERVICE_INSTANCE_AS_PROPERTY);
 		}
 
-	}
+		return serviceId;
 
-	public static void setParticipantId() throws EpsException {
-
-		participantId = info.getOsuInstanceByServiceId(serviceId).getId();
-
-	}
-
-	public static void confirmCreation() throws Exception {
-
-		RabbitTemplate amqp = context.getBean(RabbitTemplate.class);
-
-		CustomEvent event = new CustomEvent(serviceId, serviceId, EpsEvent.EPS_DYNAMIC_CREATED.toString(),
-				participantId, System.currentTimeMillis(), null, null);
-
-		amqp.convertAndSend(Constants.EXCHANGE_REQUESTS,
-				serviceId + "." + event.getClass().getSimpleName() + "." + EpsEvent.EPS_DYNAMIC_CREATED + "."
-						+ Type.SERVICE,
-				Utils.asJsonString(event));
-
-		LOG.info("Success creating adapter '{}' of of service '{}'", participantId, serviceId);
 	}
 
 }

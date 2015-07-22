@@ -87,7 +87,7 @@ public class STemplates {
 		osuOs.hasResource(new Resource("8f1428ac-f239-42e0-ab35-137f6e234101", new ResourceOrQualityType("baseImage")));
 		osuOs.hasResource(new Resource("openjdk-7-jre", new ResourceOrQualityType("packages")));
 
-		Resource url = new Resource(UUID.randomUUID().toString(),
+		Resource url = new Resource(
 				"http://128.130.172.215/salsa/upload/files/DaasService/deployCassandraSeed.sh",
 				new ResourceOrQualityType(ResourceOrQualityType.ART_REFERENCE_TYPE));
 		Resource war = new Resource("deployWar", new ResourceOrQualityType("war"));
@@ -107,10 +107,12 @@ public class STemplates {
 		// UNITs
 		ServiceUnit unitOs = new ServiceUnit(osNodeId, "Test os", 1, 2);
 		unitOs.setOsuInstance(new OsuInstance(osuInstanceId(osNodeId), osuOs));
-
+		unitOs.setElasticUnit(false);
+		
 		ServiceUnit unitSw = new ServiceUnit(swNodeId, "Test node unit", 2, 5);
 		unitSw.setOsuInstance(new OsuInstance(osuInstanceId(swNodeId), osuSw));
-
+		unitSw.setElasticUnit(true);
+		
 		unitSw.addDirective(new SyblDirective("ST1", DirectiveType.STRATEGY,
 				"ST1: STRATEGY CASE cpuUsage < 40 % : scalein"));
 		unitSw.addDirective(new SyblDirective("Co2", DirectiveType.CONSTRAINT,
@@ -118,7 +120,8 @@ public class STemplates {
 
 		ServiceUnit unitSw2 = new ServiceUnit(swNodeId2, "Test node unit 2", 2, 5);
 		unitSw2.setOsuInstance(new OsuInstance(osuInstanceId(swNodeId2), osuSw2));
-
+		unitSw2.setElasticUnit(true);
+		
 		// HOST ON
 		HostOnRel hostOn1 = new HostOnRel("hostOn1ID", unitSw, unitOs);
 		unitSw.setHost(hostOn1);

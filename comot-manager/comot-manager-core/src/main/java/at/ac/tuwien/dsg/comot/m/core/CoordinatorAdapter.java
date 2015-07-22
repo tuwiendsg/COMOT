@@ -18,23 +18,24 @@
  *******************************************************************************/
 package at.ac.tuwien.dsg.comot.m.core;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
-import javax.xml.bind.JAXBException;
+import org.springframework.context.ApplicationContext;
 
-import org.springframework.amqp.core.Binding;
-
+import at.ac.tuwien.dsg.comot.m.adapter.general.Bindings;
+import at.ac.tuwien.dsg.comot.m.adapter.general.Manager;
 import at.ac.tuwien.dsg.comot.m.adapter.general.Processor;
+import at.ac.tuwien.dsg.comot.m.adapter.general.SingleQueueManager;
 import at.ac.tuwien.dsg.comot.m.common.enums.Action;
 import at.ac.tuwien.dsg.comot.m.common.event.AbstractEvent;
-import at.ac.tuwien.dsg.comot.m.common.event.state.ComotMessage;
+import at.ac.tuwien.dsg.comot.m.common.event.CustomEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
 import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessage;
 import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessageLifeCycle;
-import at.ac.tuwien.dsg.comot.m.common.event.state.StateMessage;
 import at.ac.tuwien.dsg.comot.m.common.event.state.Transition;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
+import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotLifecycleException;
 import at.ac.tuwien.dsg.comot.model.devel.structure.CloudService;
 
@@ -43,57 +44,71 @@ public abstract class CoordinatorAdapter extends Processor {
 	protected String serviceId;
 	protected Coordinator coordinator;
 	protected Signal signal;
-	protected ComotMessage response;
+	protected Exception exception;
+	protected AbstractEvent event;
 
 	@Override
-	public List<Binding> getBindings(String queueName, String notUsed) {
+	public Bindings getBindings(String notUsed) {
 
-		List<Binding> bindings = new ArrayList<>();
-
-		bindings.add(bindingLifeCycle(queueName, serviceId + ".#"));
-		bindings.add(bindingCustom(queueName, serviceId + ".#"));
-		bindings.add(bindingException(queueName, serviceId + ".#"));
-
-		return bindings;
+		return new Bindings()
+				.addLifecycle(serviceId + ".#")
+				.addCustom(serviceId + ".#")
+				.addException(serviceId + ".#");
 	}
 
-	public CoordinatorAdapter(String serviceId, Coordinator coordinator) {
+	public CoordinatorAdapter(AbstractEvent event, Coordinator coordinator, ApplicationContext context)
+			throws Exception {
 		super();
-		this.serviceId = serviceId;
+		this.serviceId = event.getServiceId();
 		this.signal = new Signal();
 		this.coordinator = coordinator;
+		this.event = event;
+
+		Manager manager = context.getBean(SingleQueueManager.class);
+		manager.start("C_" + UUID.randomUUID().toString(), this);
+
 	}
 
 	@Override
-	public void onLifecycleEvent(StateMessage msg, String serviceId, String groupId, Action action,
-			String originId, CloudService service, Map<String, Transition> transitions) throws Exception {
-		process(msg.getEvent(), false, msg);
+	public void onLifecycleEvent(String serviceId, String groupId, Action action, CloudService service,
+			Map<String, Transition> transitions, LifeCycleEvent event) throws Exception {
+		process(event, false);
 	}
 
 	@Override
-	public void onCustomEvent(StateMessage msg, String serviceId, String groupId, String event,
-			String epsId, String originId, String optionalMessage) throws Exception {
-		process(msg.getEvent(), false, msg);
+	public void onCustomEvent(String serviceId, String groupId, String eventName, String epsId, String optionalMessage,
+			Map<String, Transition> transitions, CustomEvent event) throws Exception {
+		process(event, false);
 	}
 
 	@Override
-	public void onExceptionEvent(ExceptionMessage msg, String serviceId, String originId)
-			throws Exception {
+	public void onExceptionEvent(ExceptionMessage msg) throws Exception {
 
-		if (msg instanceof ExceptionMessageLifeCycle) {
-			process(((ExceptionMessageLifeCycle) msg).getEvent(), true, msg);
+		if (event.getEventId().equals(msg.getEventCauseId())) {
+
+			if (ComotIllegalArgumentException.class.getName().equals(msg.getType())) {
+				exception = new ComotIllegalArgumentException(msg.getMessage());
+
+			} else if (msg instanceof ExceptionMessageLifeCycle) {
+				exception = new ComotLifecycleException(((ExceptionMessageLifeCycle) msg).getMessage());
+
+			} else {
+				exception = new Exception(msg.getMessage());
+			}
+
+			signal.result = false;
 		}
-
 	}
 
-	public abstract void process(AbstractEvent event, boolean exception, ComotMessage msg);
+	public abstract void process(AbstractEvent event, boolean exception);
 
-	public abstract void sendInternal() throws JAXBException;
+	public void send() throws Exception {
 
-	public void send() throws ComotException, InterruptedException, JAXBException,
-			ComotLifecycleException {
-
-		sendInternal();
+		if (event instanceof LifeCycleEvent) {
+			coordinator.sendLifeCycle((LifeCycleEvent) event);
+		} else {
+			coordinator.sendCustom((CustomEvent) event);
+		}
 
 		long count = 0;
 
@@ -102,20 +117,20 @@ public abstract class CoordinatorAdapter extends Processor {
 			count = count + 100;
 		}
 
-		manager.clean();
+		manager.stop();
 
 		if (signal.result == null) {
 			throw new ComotException("Timeout waiting for event");
 		} else if (signal.result) {
 			return;
 		} else {
-			throw new ComotLifecycleException(((ExceptionMessageLifeCycle) response).getMessage());
+			throw exception;
 		}
 
 	}
 
 	protected void clean() {
-		manager.clean();
+		manager.stop();
 	}
 
 	public class Signal {

@@ -30,7 +30,6 @@ import javax.ws.rs.ext.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.ac.tuwien.dsg.comot.m.common.ApiError;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotLifecycleException;
@@ -51,49 +50,50 @@ public class ComotExceptionMapper implements ExceptionMapper<Exception> {
 
 		if (e instanceof WebApplicationException) {
 			WebApplicationException we = (WebApplicationException) e;
-			LOG.warn("REST interface exception", e);
+			LOG.info("REST interface exception", e);
 			return Response
 					.status(we.getResponse().getStatus())
-					.entity(resolve(req, new ApiError()))
 					.build();
 
 		} else if (e.getClass().equals(ComotIllegalArgumentException.class)) {
-			LOG.warn("Wrong user input: {}", e.getMessage());
-			return Response.status(404).entity(resolve(req, new ApiError(e.getMessage()))).build();
+			LOG.info("Wrong user input: {}", e.getMessage());
+			return Response.status(422).entity(resolve(e.getMessage(), null)).build();
+
+		} else if (e.getClass().equals(ComotLifecycleException.class)) {
+			LOG.info("Lifecycle exception: {}", e.getMessage());
+			return Response.status(422).entity(resolve(e.getMessage(), null)).build();
 
 		} else if (e.getClass().equals(EpsException.class)) {
 			EpsException ce = (EpsException) e;
 
 			if (ce.isClientError()) {
-				LOG.warn("Core service CLIENT ERROR", e);
+				LOG.warn("Core service CLIENT ERROR {}", e);
 			} else {
-				LOG.warn("Core service SERVER ERROR", e);
+				LOG.warn("Core service SERVER ERROR {}", e);
 			}
-			return Response.status(ce.getCode()).entity(resolve(req, new ApiError(ce.getMsg(), ce.getComponentName())))
+			return Response.status(ce.getCode()).entity(resolve(e.getMessage(), ce.getComponentName()))
 					.build();
 
 		} else if (e.getClass().equals(ComotException.class)) {
-			LOG.error("Something bad happened: {}", e);
-			return Response.serverError().entity(resolve(req, new ApiError())).build();
-
-		} else if (e.getClass().equals(ComotLifecycleException.class)) {
-			LOG.warn("Lifecycle exception: {}", e.getMessage());
-			return Response.status(404).entity(resolve(req, new ApiError(e.getMessage()))).build();
+			LOG.error("{}", e);
+			return Response.serverError().entity(resolve(e.getMessage(), null)).build();
 
 		} else {
-			LOG.error("Wut? {}", e);
-			return Response.serverError().entity(resolve(req, new ApiError())).build();
+			LOG.error("{}", e);
+			return Response.serverError().entity(resolve(e.getMessage(), null)).build();
 		}
 	}
 
-	private Object resolve(HttpServletRequest req, ApiError error) {
+	private String resolve(String message, String origin) {
 
-		String accept = req.getHeader("Accept");
+		String msg = "";
 
-		if (accept.equalsIgnoreCase("text/plain") || accept.equals("*/*")) {
-			return error.toString();
-		} else {
-			return error;
+		if (message != null) {
+			msg += message;
 		}
+		if (origin != null) {
+			msg += " [source: " + origin + "]";
+		}
+		return msg;
 	}
 }

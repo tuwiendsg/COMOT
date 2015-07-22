@@ -50,8 +50,11 @@ define(function(require) {
 	function newServiceFromTemplate(template) {
 
 		comot.createServiceFromTemplate(template.id, function(data) {
+			
 			refreshServices();
-		})
+			notify.success("Service '" + data + "' created.");
+			
+		}, "Failed to create a new service from the template '"+template.id+"'.")
 	}
 
 	function newService(form) {
@@ -62,15 +65,11 @@ define(function(require) {
 		}
 
 		comot.createServiceTosca(tosca.value, function(data) {
-			notify.success("Service " + data + " created");
+			
+			notify.success("Service '" + data + "' created.");
 			refreshServices();
-		}, function(request, status, error) {
-			if (request.responseText === "") {
-				notify.error("Failed to create service.");
-			} else {
-				notify.error(request.responseText);
-			}
-		});
+			
+		}, "Failed to create the service.");
 	}
 
 	function newTemplate(form) {
@@ -81,25 +80,21 @@ define(function(require) {
 		}
 
 		comot.createTemplateTosca(toscaTemplate.value, function(data) {
-			notify.success("Template " + data + " created");
+			
+			notify.success("Template " + data + " created.");
 			refreshTemplates();
-		}, function(request, status, error) {
-			if (request.responseText === "") {
-				notify.error("Failed to create template.");
-			} else {
-				notify.error(request.responseText);
-			}
-		});
+			
+		}, "Failed to create the template.");
 	}
 
 	function removeService(service) {
 
-		comot.removeService(service.id, function() {
-
+		comot.removeService(service.id, function(){
+			
 			notify.success("Service " + service.id + " removed.");
 			model.services.remove(service);
-
-		}, "Failed to remove service " + service.id);
+			
+		}, "Failed to remove the service '"+service.id+"'.");
 
 	}
 

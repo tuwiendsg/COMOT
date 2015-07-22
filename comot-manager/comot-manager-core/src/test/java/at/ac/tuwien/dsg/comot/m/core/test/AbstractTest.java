@@ -18,6 +18,10 @@
  *******************************************************************************/
 package at.ac.tuwien.dsg.comot.m.core.test;
 
+import javax.annotation.Resource;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,27 +33,28 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import at.ac.tuwien.dsg.comot.m.common.InformationClient;
+import at.ac.tuwien.dsg.comot.m.common.InfoClient;
 import at.ac.tuwien.dsg.comot.m.common.eps.ControlClient;
 import at.ac.tuwien.dsg.comot.m.common.eps.DeploymentClient;
 import at.ac.tuwien.dsg.comot.m.common.eps.MonitoringClient;
 import at.ac.tuwien.dsg.comot.m.core.Coordinator;
 import at.ac.tuwien.dsg.comot.m.core.lifecycle.LifeCycleManager;
 import at.ac.tuwien.dsg.comot.m.core.spring.AppContextCore;
+import at.ac.tuwien.dsg.comot.m.core.test.utils.EmbeddedTomcat;
 import at.ac.tuwien.dsg.comot.m.cs.mapper.ToscaMapper;
 import at.ac.tuwien.dsg.comot.m.recorder.AppContextServrec;
 import at.ac.tuwien.dsg.comot.m.recorder.revisions.RevisionApi;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { AppContextCore.class, AppContextTest.class })
+@ContextConfiguration(classes = { AppContextCore.class, AppContextT.class })
 @ActiveProfiles({ AppContextServrec.IMPERMANENT_NEO4J_DB, AppContextCore.INSERT_INIT_DATA })
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public abstract class AbstractTest {
 
 	@Autowired
 	protected ApplicationContext context;
-	@Autowired
-	protected Environment env;
+	@Resource
+	public Environment env;
 	@Autowired
 	protected GraphDatabaseService db;
 	@Autowired
@@ -60,7 +65,7 @@ public abstract class AbstractTest {
 	@Autowired
 	protected Coordinator coordinator;
 	@Autowired
-	protected InformationClient infoService;
+	protected InfoClient infoService;
 	@Autowired
 	protected RevisionApi revisionApi;
 
@@ -70,5 +75,19 @@ public abstract class AbstractTest {
 	protected ControlClient control;
 	@Autowired
 	protected MonitoringClient monitoring;
+
+	protected static EmbeddedTomcat tomcat;
+
+	@BeforeClass
+	public static void setUpClass() {
+		tomcat = new EmbeddedTomcat();
+		tomcat.start(8480);
+		tomcat.deploy("info", "../comot-manager-info-service-mock/src/main/webapp");
+	}
+
+	@AfterClass
+	public static void cleanClass() {
+		tomcat.stop();
+	}
 
 }

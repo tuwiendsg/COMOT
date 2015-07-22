@@ -18,6 +18,11 @@
  *******************************************************************************/
 package at.ac.tuwien.dsg.comot.m.adapter.general;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
@@ -25,20 +30,22 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import at.ac.tuwien.dsg.comot.m.common.Constants;
+import at.ac.tuwien.dsg.comot.m.common.MngPath;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
-import at.ac.tuwien.dsg.comot.m.common.enums.Type;
+import at.ac.tuwien.dsg.comot.m.common.enums.Action;
 import at.ac.tuwien.dsg.comot.m.common.event.CustomEvent;
 import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEvent;
+import at.ac.tuwien.dsg.comot.m.common.event.LifeCycleEventModifying;
 import at.ac.tuwien.dsg.comot.m.common.event.state.ExceptionMessage;
-import at.ac.tuwien.dsg.comot.m.common.exception.ComotException;
-import at.ac.tuwien.dsg.comot.m.common.exception.EpsException;
+import at.ac.tuwien.dsg.comot.model.devel.structure.ServiceEntity;
+import at.ac.tuwien.dsg.comot.model.provider.OfferedServiceUnit;
+import at.ac.tuwien.dsg.comot.model.runtime.UnitInstance;
 
-public abstract class Manager {
+public abstract class Manager implements IManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Manager.class);
 
@@ -55,15 +62,27 @@ public abstract class Manager {
 	protected RabbitTemplate amqp;
 
 	protected String participantId;
-	protected Processor processor;
+	protected IProcessor processor;
 
-	public void start(String participantId, Processor processor) throws BeansException, ComotException {
+	public void startStandalone(String baseUri, OfferedServiceUnit eps, IProcessor processor) throws Exception {
+
+		Client client = ClientBuilder.newClient();
+
+		Response response = client.target(baseUri)
+				.path(MngPath.EPS_EXTERNAL)
+				.request(MediaType.WILDCARD)
+				.post(Entity.xml(eps));
+		String epsInstanceId = response.readEntity(String.class);
+		client.close();
+
+		start(epsInstanceId, processor);
+	}
+
+	public void start(String participantId, IProcessor processor) throws Exception {
 		this.participantId = participantId;
 		this.processor = processor;
 
-		processor.setManager(this);
-		processor.start();
-
+		processor.init(this, participantId);
 		start();
 
 		LOG.info("started participant: '{}'", participantId);
@@ -71,40 +90,82 @@ public abstract class Manager {
 
 	public abstract void start();
 
-	public abstract void clean();
+	@Override
+	public abstract void stop();
 
-	public abstract void removeInstanceListener(String instanceId) throws EpsException;
+	@Override
+	public void sendLifeCycleEvent(String serviceId, String groupId, Action action) throws JAXBException {
+		sendLifeCycle(new LifeCycleEvent(serviceId, groupId, action));
+	}
 
-	public void sendLifeCycle(Type targetLevel, LifeCycleEvent event) throws JAXBException {
+	@Override
+	public void sendLifeCycleEvent(String serviceId, String groupId, Action action, String parentId,
+			ServiceEntity entity)
+			throws JAXBException {
+		sendLifeCycle(new LifeCycleEventModifying(serviceId, groupId, action, parentId, entity));
+	}
+
+	@Override
+	public void sendLifeCycleEvent(String serviceId, String groupId, Action action, String parentId,
+			UnitInstance instance)
+			throws JAXBException {
+		sendLifeCycle(new LifeCycleEventModifying(serviceId, groupId, action, parentId, instance));
+	}
+
+	@Override
+	public void sendLifeCycle(LifeCycleEvent event) throws JAXBException {
 
 		event.setOrigin(getId());
 		event.setTime(System.currentTimeMillis());
 
 		String bindingKey = event.getServiceId() + "." + LifeCycleEvent.class.getSimpleName() + "."
 				+ event.getAction()
-				+ "." + targetLevel;
+				+ "." + event.getGroupId();
 
 		LOG.info(logId() + "EVENT-LC key={}", bindingKey);
 
 		amqp.convertAndSend(Constants.EXCHANGE_REQUESTS, bindingKey, Utils.asJsonString(event));
 	}
 
-	public void sendCustom(Type targetLevel, CustomEvent event) throws JAXBException {
+	@Override
+	public void sendCustomEvent(String serviceId, String groupId, String eventName, String epsId, String message,
+			String correlationId) throws JAXBException {
+
+		CustomEvent event = new CustomEvent(serviceId, groupId, eventName, epsId, message);
+		event.setCorrelationId(correlationId);
+
+		LOG.info("correlationId {}", correlationId);
+
+		sendCustomEvent(event);
+	}
+
+	@Override
+	public void sendCustomEvent(String serviceId, String groupId, String eventName, String epsId, String message)
+			throws JAXBException {
+
+		CustomEvent event = new CustomEvent(serviceId, groupId, eventName, epsId, message);
+
+		sendCustomEvent(event);
+	}
+
+	@Override
+	public void sendCustomEvent(CustomEvent event) throws JAXBException {
 
 		event.setOrigin(getId());
 		event.setTime(System.currentTimeMillis());
 
 		String bindingKey = event.getServiceId() + "." + event.getClass().getSimpleName() + "."
-				+ event.getCustomEvent() + "." + targetLevel;
+				+ event.getCustomEvent() + "." + event.getGroupId();
 
 		LOG.info(logId() + "EVENT-CUST key={}", bindingKey);
 
 		amqp.convertAndSend(Constants.EXCHANGE_REQUESTS, bindingKey, Utils.asJsonString(event));
 	}
 
-	public void sendException(String serviceId, Exception e) throws JAXBException {
+	@Override
+	public void sendExceptionEvent(String serviceId, String eventCauseId, Exception e) throws JAXBException {
 
-		ExceptionMessage msg = new ExceptionMessage(serviceId, getId(), System.currentTimeMillis(), e);
+		ExceptionMessage msg = new ExceptionMessage(serviceId, getId(), System.currentTimeMillis(), eventCauseId, e);
 
 		String bindingKey = serviceId + "." + getId();
 
@@ -112,7 +173,8 @@ public abstract class Manager {
 
 	}
 
-	protected String logId() {
+	@Override
+	public String logId() {
 		return "[" + participantId + "] ";
 	}
 

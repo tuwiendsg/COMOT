@@ -4,6 +4,7 @@
 	<artifactId>comot-manager-adapter</artifactId>
 	<packaging>jar</packaging>
 	<name>COMOT Manager EPS Adapter</name>
+	<description>Generic EPS adapter</description>
 	<parent>
 		<groupId>at.ac.tuwien.dsg.comot</groupId>
 		<artifactId>comot-manager</artifactId>
@@ -21,11 +22,16 @@
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
 		</dependency>
+		
 		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
-			<artifactId>comot-manager-eps</artifactId>
+			<artifactId>comot-manager-common</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>at.ac.tuwien.dsg.comot</groupId>
+			<artifactId>comot-model</artifactId>
+		</dependency>
+		
 		<dependency>
 			<groupId>at.ac.tuwien.dsg.comot</groupId>
 			<artifactId>comot-manager-common</artifactId>

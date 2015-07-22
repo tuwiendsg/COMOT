@@ -38,7 +38,7 @@ public class ExceptionMessageLifeCycle extends ExceptionMessage {
 
 	public ExceptionMessageLifeCycle(String serviceId, String origin, Long time, String type,
 			String message, String details, AbstractEvent event) {
-		super(serviceId, origin, time, type, message, details);
+		super(serviceId, origin, time, type, message, details, event.getEventId());
 		this.event = event;
 	}
 

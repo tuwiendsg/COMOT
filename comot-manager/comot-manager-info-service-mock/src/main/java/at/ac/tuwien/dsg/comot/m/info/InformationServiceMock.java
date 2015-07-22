@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import at.ac.tuwien.dsg.comot.m.common.Modifier;
 import at.ac.tuwien.dsg.comot.m.common.Navigator;
 import at.ac.tuwien.dsg.comot.m.common.Utils;
 import at.ac.tuwien.dsg.comot.m.common.exception.ComotIllegalArgumentException;
@@ -106,7 +105,7 @@ public class InformationServiceMock {
 	public String createService(CloudService service) throws ClassNotFoundException, IOException {
 
 		if (services.containsKey(service.getId())) {
-			throw new ComotIllegalArgumentException("A Template with the ID '" + service.getId() + "' alreadty exists.");
+			throw new ComotIllegalArgumentException("A Service with the ID '" + service.getId() + "' alreadty exists.");
 		}
 
 		service.setDateCreated(System.currentTimeMillis());
@@ -117,7 +116,7 @@ public class InformationServiceMock {
 
 	public String createServiceFromTemplate(String templateId) throws ClassNotFoundException, IOException {
 
-		LOG.info("createServiceFromTemplate {}", templateId);
+		LOG.debug("createServiceFromTemplate {}", templateId);
 
 		CloudService templateServ = templates.get(templateId).getDescription();
 		String serviceId = getInstanceId(templateId);
@@ -140,12 +139,20 @@ public class InformationServiceMock {
 	}
 
 	public void removeService(String serviceId) {
+		services.remove(serviceId);
+	}
 
-		if (!services.containsKey(serviceId)) {
-			throw new ComotIllegalArgumentException("There is no service '" + serviceId + "'");
+	public void updateService(String serviceId, CloudService service) {
+
+		if (services.containsKey(serviceId)) {
+			services.put(serviceId, service);
 		}
 
-		services.remove(serviceId);
+		for (OsuInstance instance : osuInstances.values()) {
+			if (instance.getService() != null && instance.getService().getId().equals(serviceId)) {
+				instance.setService(service);
+			}
+		}
 	}
 
 	public void reconfigureElasticity(String serviceId, CloudService elConfig) {
@@ -181,25 +188,20 @@ public class InformationServiceMock {
 
 	// OSU
 
-	public void addOsu(OfferedServiceUnit osu) {
+	public String addOsu(OfferedServiceUnit osu) {
+
+		if (osus.containsKey(osu.getId())) {
+			throw new ComotIllegalArgumentException("An EPS with the ID '" + osu.getId() + "' alreadty exists.");
+		}
 
 		if (osu.getServiceTemplate() != null) {
 			templates.put(osu.getServiceTemplate().getId(), osu.getServiceTemplate());
 		}
 
 		osus.put(osu.getId(), osu);
-	}
 
-	//
-	// public String createOsuInstance(String osuId) {
-	//
-	// OfferedServiceUnit osu = osus.get(osuId);
-	// String osuInstanceId = getOsuInstanceId(osuId);
-	// OsuInstance osuInstance = new OsuInstance(osuInstanceId, osu);
-	// osuInstances.put(osuInstanceId, osuInstance);
-	// LOG.info("createOsuInstance(osuId={}):{}", osuId, osuInstanceId);
-	// return osuInstanceId;
-	// }
+		return osu.getId();
+	}
 
 	public String createOsuInstance(String osuId) throws ClassNotFoundException, IOException {
 
@@ -209,12 +211,12 @@ public class InformationServiceMock {
 		// create osuInstance
 		OsuInstance osuInstance = new OsuInstance(osuInstanceId, osu);
 		osuInstances.put(osuInstanceId, osuInstance);
-		LOG.info("createOsuInstance(osuId={}):{}", osuId, osuInstanceId);
+		LOG.debug("createOsuInstance(osuId={}):{}", osuId, osuInstanceId);
 
 		if (osu.getServiceTemplate() != null) {
 			// create service
 			String templateId = osu.getServiceTemplate().getId();
-			LOG.info("templateId {}", templateId);
+			LOG.debug("templateId {}", templateId);
 			String serviceId = createServiceFromTemplate(templateId);
 
 			osuInstances.get(osuInstanceId).setService(services.get(serviceId));
@@ -255,7 +257,7 @@ public class InformationServiceMock {
 
 		boolean value = false;
 
-		LOG.info("isOsuAssignedToInstance {} {}", serviceId, osuInstanceId);
+		LOG.debug("isOsuAssignedToInstance {} {}", serviceId, osuInstanceId);
 
 		for (OsuInstance osuInstance : services.get(serviceId).getSupport()) {
 			if (osuInstance.getId().equals(osuInstanceId)) {
@@ -263,7 +265,7 @@ public class InformationServiceMock {
 			}
 		}
 
-		LOG.info("isOsuAssignedToInstance( instanceId={}, osuInstanceId={}): {}", serviceId, osuInstanceId, value);
+		LOG.debug("isOsuAssignedToInstance( instanceId={}, osuInstanceId={}): {}", serviceId, osuInstanceId, value);
 		return value;
 	}
 

@@ -69,7 +69,7 @@ public class GroupManager {
 		if (!group.canExecute(action)) {
 
 			throw new ComotLifecycleException("Action '" + action + "' is not allowed in state '"
-					+ group.getCurrentState() + "'. Group " + groupId + "\n" + group.notAllowedExecutionReason(action));
+					+ group.getCurrentState() + "'\n" + group.notAllowedExecutionReason(action));
 		}
 
 		group.executeAction(action, strategy);
