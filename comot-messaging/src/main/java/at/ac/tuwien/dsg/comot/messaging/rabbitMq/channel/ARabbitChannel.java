@@ -46,10 +46,4 @@ public abstract class ARabbitChannel {
 			throw new IllegalStateException(ex);
 		}
 	}
-
-	public void setDiscovery(ADiscovery discovery) {
-		this.discovery = discovery;
-	}
-	
-	
 }

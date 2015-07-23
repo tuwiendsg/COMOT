@@ -18,8 +18,6 @@ package at.ac.tuwien.dsg.comot.messaging.rabbitMq;
 import at.ac.tuwien.dsg.comot.messaging.rabbitMq.channel.SendingChannel;
 import at.ac.tuwien.dsg.comot.messaging.api.Message;
 import at.ac.tuwien.dsg.comot.messaging.api.Producer;
-import at.ac.tuwien.dsg.comot.messaging.rabbitMq.channel.ChannelFactory;
-import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,8 +31,8 @@ public class RabbitMqProducer implements Producer {
 
 	private SendingChannel channel;
 	
-	public RabbitMqProducer() {
-		this.channel = ChannelFactory.getSendingChannel();
+	public RabbitMqProducer(SendingChannel channel) {
+		this.channel = channel;
 	}
 
 	@Override

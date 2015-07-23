@@ -17,6 +17,7 @@ package at.ac.tuwien.dsg.comot.messaging.rabbitMq.channel;
 
 import at.ac.tuwien.dsg.comot.messaging.rabbitMq.RabbitMqConsumer;
 import at.ac.tuwien.dsg.comot.messaging.rabbitMq.RabbitMqMessage;
+import at.ac.tuwien.dsg.comot.messaging.rabbitMq.discovery.ADiscovery;
 import com.rabbitmq.client.ConsumerCancelledException;
 import com.rabbitmq.client.QueueingConsumer;
 import com.rabbitmq.client.ShutdownSignalException;
@@ -36,6 +37,10 @@ public class ReceivingChannel extends ARabbitChannel {
 
 	private String queueName;
 	QueueingConsumer consumer;
+	
+	public ReceivingChannel(ADiscovery discovery) {
+		this.discovery = discovery;
+	}
 	
 	@Override
 	public void init() {

@@ -19,13 +19,10 @@ import at.ac.tuwien.dsg.comot.messaging.rabbitMq.channel.ReceivingChannel;
 import at.ac.tuwien.dsg.comot.messaging.api.Consumer;
 import at.ac.tuwien.dsg.comot.messaging.api.Message;
 import at.ac.tuwien.dsg.comot.messaging.api.MessageReceivedListener;
-import at.ac.tuwien.dsg.comot.messaging.rabbitMq.channel.ChannelFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -36,10 +33,10 @@ public class RabbitMqConsumer implements Consumer, Runnable {
 	private ExecutorService threadPool;
 	private ReceivingChannel channel;
 
-	public RabbitMqConsumer() {
+	public RabbitMqConsumer(ReceivingChannel channel) {
 		this.messageListeners = new ArrayList<>();
 		this.threadPool = Executors.newFixedThreadPool(1);
-		this.channel = ChannelFactory.getReceivingChannel();
+		this.channel = channel;
 	}
 
 	@Override

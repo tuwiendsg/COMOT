@@ -15,9 +15,6 @@
  */
 package at.ac.tuwien.dsg.comot.messaging.api;
 
-import at.ac.tuwien.dsg.comot.messaging.ComotMessagingFactory;
-import java.io.IOException;
-
 /**
  * 
  * @author Svetoslav Videnov <s.videnov@dsg.tuwien.ac.at>

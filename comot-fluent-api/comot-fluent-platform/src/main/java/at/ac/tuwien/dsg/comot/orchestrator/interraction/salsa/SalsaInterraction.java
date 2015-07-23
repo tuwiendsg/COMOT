@@ -10,6 +10,7 @@ import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityS
 import at.ac.tuwien.dsg.cloud.salsa.common.cloudservice.model.enums.SalsaEntityType;
 import at.ac.tuwien.dsg.comot.api.ToscaDescriptionBuilderImpl;
 import at.ac.tuwien.dsg.comot.client.DefaultSalsaClient;
+import at.ac.tuwien.dsg.comot.client.SalsaClientException;
 import at.ac.tuwien.dsg.comot.client.SalsaResponse;
 import at.ac.tuwien.dsg.comot.common.logging.Markers;
 import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.DeploymentDescription;
@@ -121,6 +122,40 @@ public class SalsaInterraction {
             }
         } while (!allRunning);
     }
+	
+	public boolean destroy(String serviceId, String topologyId, String nodeId, String instanceId) {
+		
+		try {
+			SalsaResponse response = defaultSalsaClient.destroy(serviceId, topologyId, nodeId, instanceId);
+			
+			if(response.getMessage().equals(String.format("Undeployed instance: %s/%s/%s", serviceId, nodeId, instanceId))) {
+				return true;
+			}
+		}
+		catch(SalsaClientException ex) {
+			LOG.error(ex.getStackTrace().toString());
+		}
+		
+		return false;
+	}
+	
+	public void spawn(String serviceId, String topologyId, String nodeId, int instanceCount) {
+		try {
+			SalsaResponse response = defaultSalsaClient.spawn(serviceId, topologyId, nodeId, instanceCount);
+		}
+		catch(SalsaClientException ex) {
+			LOG.error(ex.getStackTrace().toString());
+		}
+	}
+	
+	public void undeploy(String serviceId) {
+		try {
+			SalsaResponse response = defaultSalsaClient.undeploy(serviceId);
+		}
+		catch(SalsaClientException ex) {
+			LOG.error(ex.getStackTrace().toString());
+		}
+	}
 
     public void deploy(at.ac.tuwien.dsg.comot.common.model.CloudService application) {
         ToscaDescriptionBuilderImpl tdbi = new ToscaDescriptionBuilderImpl();

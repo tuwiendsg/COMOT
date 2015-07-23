@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import at.ac.tuwien.dsg.comot.messaging.ComotMessagingFactory;
 import at.ac.tuwien.dsg.comot.messaging.api.Consumer;
 import at.ac.tuwien.dsg.comot.messaging.api.Message;
 import at.ac.tuwien.dsg.comot.messaging.api.MessageReceivedListener;
@@ -57,7 +56,7 @@ public class RabbitMqIT {
 	public void tearDownMethod() throws Exception {
 	}
 	
-	@Test
+	/*@Test
 	public void simpleProduceConsumeIT() throws Exception {
 		byte[] expected = "This is a test message!".getBytes();
 		String expectedTypes = "myMsg";
@@ -126,6 +125,6 @@ public class RabbitMqIT {
 		
 		Assert.assertEquals(consumer.getMessage(), msg);
 		Assert.assertEquals(consumer2.getMessage(), msg);
-	}
+	}*/
 	
 }

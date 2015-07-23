@@ -13,29 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package at.ac.tuwien.dsg.comot.messaging;
+package at.ac.tuwien.dsg.comot.messaging.rabbitMq.discovery;
 
-import at.ac.tuwien.dsg.comot.messaging.api.Consumer;
-import at.ac.tuwien.dsg.comot.messaging.api.Message;
-import at.ac.tuwien.dsg.comot.messaging.api.Producer;
-import at.ac.tuwien.dsg.comot.messaging.rabbitMq.RabbitMqConsumer;
-import at.ac.tuwien.dsg.comot.messaging.rabbitMq.RabbitMqMessage;
-import at.ac.tuwien.dsg.comot.messaging.rabbitMq.RabbitMqProducer;
+import at.ac.tuwien.dsg.comot.messaging.rabbitMq.orchestrator.RabbitMQServerCluster;
+import at.ac.tuwien.dsg.comot.messaging.util.Config;
+import at.ac.tuwien.dsg.csdg.inputProcessing.multiLevelModel.deploymentDescription.AssociatedVM;
+import java.util.List;
 
 /**
  *
  * @author Svetoslav Videnov <s.videnov@dsg.tuwien.ac.at>
  */
-public abstract class ComotMessagingFactory {
-	public static Message getRabbitMqMessage() {
-		return new RabbitMqMessage();
-	}
+public class SalsaDiscovery extends ADiscovery{
+	private RabbitMQServerCluster cluster;
 	
-	public static Consumer getRabbitMqConsumer() {
-		return new RabbitMqConsumer();
+	public SalsaDiscovery(RabbitMQServerCluster cluster) {
+		this.cluster = cluster;
 	}
-	
-	public static Producer getRabbitMqProducer() {
-		return new RabbitMqProducer();
+
+	@Override
+	protected String getHost() {
+		List<AssociatedVM> vms = this.cluster.getServerList();
+		
+		return vms == null ? null : vms.get(0).getIp();
 	}
 }
