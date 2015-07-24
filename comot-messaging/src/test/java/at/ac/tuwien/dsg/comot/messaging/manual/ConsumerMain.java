@@ -15,17 +15,35 @@
  */
 package at.ac.tuwien.dsg.comot.messaging.manual;
 
+import at.ac.tuwien.dsg.comot.messaging.ComotMessagingService;
+import at.ac.tuwien.dsg.comot.messaging.api.Consumer;
+import at.ac.tuwien.dsg.comot.messaging.api.Message;
+import at.ac.tuwien.dsg.comot.messaging.util.Config;
+
 /**
  *
  * @author Svetoslav Videnov <s.videnov@dsg.tuwien.ac.at>
  */
-public class Consumer {
+public class ConsumerMain {
 
 	/**
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
-		// TODO code application logic here
+		Config config = new Config();
+		config.setSalsaIp("128.130.172.215")
+				.setSalsaPort(8080)
+				.setServerCount(1);
+		ComotMessagingService instance = new ComotMessagingService(config);
+		
+		Consumer consumer = instance.getRabbitMqConsumer().withType(args[0]);
+		
+		while(true) {
+			Message msg = consumer.getMessage();
+			System.out.println(String.valueOf(msg.getMessage()));
+		}
 	}
+	
+	
 	
 }

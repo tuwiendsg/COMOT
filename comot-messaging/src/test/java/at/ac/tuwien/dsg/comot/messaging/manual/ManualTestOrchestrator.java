@@ -38,24 +38,27 @@ public class ManualTestOrchestrator {
 	public static void main(String[] args) {
 		String salsaRepo = "http://128.130.172.215/iCOMOTTutorial/files/comot-messaging";
 		
-		OperatingSystemUnit manualTestVM = OperatingSystemUnit.OperatingSystemUnit("ManualTestVM")
+		OperatingSystemUnit producerVM = OperatingSystemUnit.OperatingSystemUnit("producerVM")
                 .providedBy(OpenstackSmall()
-                        .withBaseImage("04a15006-b09e-461e-a992-efcb9f0f9c47")
+                        .withBaseImage("ed4fee32-bd73-482a-a725-98c24b273899")
+                );
+		
+		OperatingSystemUnit consumerVM = OperatingSystemUnit.OperatingSystemUnit("consumerVM")
+                .providedBy(OpenstackSmall()
+                        .withBaseImage("ed4fee32-bd73-482a-a725-98c24b273899")
                 );
 		
 		ServiceUnit producerUnit = SoftwareNode.SingleSoftwareUnit("ProducerUnit")
-				.deployedBy(ArtifactTemplate.SingleScriptArtifact("deployProducerArtifact", salsaRepo+"/deployManualTest.sh"))
-				.withMaxColocatedInstances(1);
+				.deployedBy(ArtifactTemplate.SingleScriptArtifact("deployProducerArtifact", salsaRepo+"/deployManualTest.sh"));
 		
 		ServiceUnit consumerUnit = SoftwareNode.SingleSoftwareUnit("ConsumerUnit")
-				.deployedBy(ArtifactTemplate.SingleScriptArtifact("deployConsumerArtifact", salsaRepo+"/deployManualTest.sh"))
-				.withMaxColocatedInstances(1);
+				.deployedBy(ArtifactTemplate.SingleScriptArtifact("deployConsumerArtifact", salsaRepo+"/deployManualTest.sh"));
 		
 		ServiceTopology producerTopology = ServiceTopology.ServiceTopology("ProducerTopology")
-				.withServiceUnits(producerUnit, manualTestVM);
+				.withServiceUnits(producerUnit, producerVM);
 		
 		ServiceTopology consumerTopology = ServiceTopology.ServiceTopology("ConsumerTopology")
-				.withServiceUnits(consumerUnit, manualTestVM);
+				.withServiceUnits(consumerUnit, consumerVM);
 		
 		CloudService service = CloudService.ServiceTemplate("ComotMessagingManualTest")
 				.consistsOfTopologies(producerTopology)
@@ -63,15 +66,17 @@ public class ManualTestOrchestrator {
 				.andRelationships(
 						EntityRelationship.HostedOnRelation("producerToVM")
 						.from(producerUnit)
-						.to(manualTestVM),
+						.to(producerVM),
 						EntityRelationship.HostedOnRelation("consumerToVM")
 						.from(consumerUnit)
-						.to(manualTestVM)
+						.to(consumerVM)
 				)
 				.withDefaultMetrics();
 		
 		COMOTOrchestrator orchestrator = new COMOTOrchestrator()
 				.withIP("128.130.172.215")
                 .withSalsaPort(8080);
+		
+		orchestrator.deploy(service);
 	}
 }

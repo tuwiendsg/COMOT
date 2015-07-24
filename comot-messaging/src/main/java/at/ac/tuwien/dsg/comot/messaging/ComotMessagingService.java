@@ -56,7 +56,7 @@ public class ComotMessagingService {
 		return new RabbitMqConsumer(new ReceivingChannel(new SalsaDiscovery(rabbitCluster)));
 	}
 	
-	public Producer getRabbitMqProducer(Config config) {
+	public Producer getRabbitMqProducer() {
 		return new RabbitMqProducer(new SendingChannel(new SalsaDiscovery(rabbitCluster)));
 	}
 

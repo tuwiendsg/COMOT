@@ -99,7 +99,7 @@ public class ComotMessagingServiceNGTest {
 		Config config = null;
 		ComotMessagingService instance = null;
 		Producer expResult = null;
-		Producer result = instance.getRabbitMqProducer(config);
+		Producer result = instance.getRabbitMqProducer();
 		assertEquals(result, expResult);
 		fail("The test case is a prototype.");
 	}	
