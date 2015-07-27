@@ -40,7 +40,7 @@ public class ConsumerMain {
 		
 		while(true) {
 			Message msg = consumer.getMessage();
-			System.out.println(String.valueOf(msg.getMessage()));
+			System.out.println(new String(msg.getMessage()));
 		}
 	}
 	
