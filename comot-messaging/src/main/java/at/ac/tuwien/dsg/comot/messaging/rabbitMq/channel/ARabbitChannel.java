@@ -32,13 +32,11 @@ public abstract class ARabbitChannel {
 	protected ConnectionFactory factory;
 	protected Connection connection;
 	protected Channel channel;
-
-	protected ADiscovery discovery;	
 	
-	public void init() {
+	protected ARabbitChannel(ADiscovery discovery) {
 		try {			
 			factory = new ConnectionFactory();
-			factory.setHost(this.discovery.discoverHost());
+			factory.setHost(discovery.discoverHost());
 			connection = factory.newConnection();
 			channel = connection.createChannel();
 			channel.exchangeDeclare(EXCHANGE_NAME, "topic");

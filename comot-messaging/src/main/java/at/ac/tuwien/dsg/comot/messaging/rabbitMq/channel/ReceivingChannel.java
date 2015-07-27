@@ -39,12 +39,7 @@ public class ReceivingChannel extends ARabbitChannel {
 	QueueingConsumer consumer;
 	
 	public ReceivingChannel(ADiscovery discovery) {
-		this.discovery = discovery;
-	}
-	
-	@Override
-	public void init() {
-		super.init();
+		super(discovery);
 		try {
 			this.queueName = channel.queueDeclare().getQueue();
 			this.consumer = new QueueingConsumer(channel);

@@ -32,7 +32,7 @@ public class SendingChannel extends ARabbitChannel {
 	private static Logger logger = LoggerFactory.getLogger(SendingChannel.class);
 	
 	public SendingChannel(ADiscovery discovery) {
-		this.discovery = discovery;
+		super(discovery);
 	}
 
 	public void sendMessage(String type, RabbitMqMessage msg) {
