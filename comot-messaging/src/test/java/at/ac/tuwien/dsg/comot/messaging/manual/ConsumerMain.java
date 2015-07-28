@@ -61,7 +61,10 @@ public class ConsumerMain {
 		while (!exit) {
 
 			try {
-				System.out.println("Please add the channel type you want to listen to with 'add type' or exit");
+				System.out.println("Please use one of the following commands:");
+				System.out.println("add 'type' - to add a new type to listen to");
+				System.out.println("servers # - to change the number of RabbitServers");
+				System.out.println("exit - to close the program");
 				String input = reader.readLine();
 
 				if (input.equals("exit")) {
@@ -78,7 +81,7 @@ public class ConsumerMain {
 					}
 					
 					if(splitedInput[0].equals("servers")) {
-						instance.setServerCount(Integer.getInteger(splitedInput[1]));
+						instance.setServerCount(Integer.parseInt(splitedInput[1]));
 					}
 				}
 			} catch (IOException ex) {
