@@ -29,6 +29,11 @@ import java.util.logging.Logger;
 /**
  *
  * @author Svetoslav Videnov <s.videnov@dsg.tuwien.ac.at>
+ *
+ * To execute this class enter on the test VM in the COMOT/comot-messaging
+ * directory the following command mvn exec:java
+ * -Dexec.mainClass="at.ac.tuwien.dsg.comot.messaging.manual.ProducerMain"
+ * -Dexec.classpathScope="test"
  */
 public class ProducerMain {
 
@@ -41,27 +46,38 @@ public class ProducerMain {
 				.setSalsaPort(8080)
 				.setServerCount(1);
 		ComotMessagingService instance = new ComotMessagingService(config);
-		
+
 		Producer producer = instance.getRabbitMqProducer();
-		
+
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-		
-		while(true) {
+		boolean exit = false;
+
+		while (!exit) {
 			try {
+				System.out.println("Enter message in the format type;message or exit");
 				String input = reader.readLine();
+
+				if (input.equals("exit")) {
+					exit = true;
+					break;
+				}
+
 				String[] splitedInput = input.split(";");
-				String type = splitedInput[0];
-				
-				Message msg = instance.getRabbitMqMessage();
-				msg.setMessage(input.getBytes());
-				msg.withType(type);
-				
-				producer.sendMessage(msg);
+
+				if (splitedInput.length == 2) {
+					String type = splitedInput[0];
+
+					Message msg = instance.getRabbitMqMessage();
+					msg.setMessage(splitedInput[1].getBytes());
+					msg.withType(type);
+
+					producer.sendMessage(msg);
+				}
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
-			
+
 		}
 	}
-	
+
 }

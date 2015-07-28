@@ -15,6 +15,8 @@
  */
 package at.ac.tuwien.dsg.comot.messaging.api;
 
+import java.util.List;
+
 /**
  * 
  * @author Svetoslav Videnov <s.videnov@dsg.tuwien.ac.at>
@@ -43,4 +45,6 @@ public interface Message {
 	 * @return - This object for function aggregation.
 	 */
 	Message withType(String type);
+	
+	List<String> getTypes();
 }

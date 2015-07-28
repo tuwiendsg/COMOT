@@ -18,7 +18,13 @@ package at.ac.tuwien.dsg.comot.messaging.manual;
 import at.ac.tuwien.dsg.comot.messaging.ComotMessagingService;
 import at.ac.tuwien.dsg.comot.messaging.api.Consumer;
 import at.ac.tuwien.dsg.comot.messaging.api.Message;
+import at.ac.tuwien.dsg.comot.messaging.api.MessageReceivedListener;
 import at.ac.tuwien.dsg.comot.messaging.util.Config;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -35,15 +41,50 @@ public class ConsumerMain {
 				.setSalsaPort(8080)
 				.setServerCount(1);
 		ComotMessagingService instance = new ComotMessagingService(config);
-		
-		Consumer consumer = instance.getRabbitMqConsumer().withType(args[0]);
-		
-		while(true) {
-			Message msg = consumer.getMessage();
-			System.out.println(new String(msg.getMessage()));
+
+		Consumer consumer = instance.getRabbitMqConsumer();
+		consumer.addMessageReceivedListener(new MessageReceivedListener() {
+
+			@Override
+			public void messageRecived(Message message) {
+				System.out.println(String.format("Recived message with types %s: %s", message.getTypes()
+						.stream()
+						.reduce((t1, t2) -> t1 + "," + t2)
+						.get(), new String(message.getMessage())));
+			}
+		});
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+		boolean exit = false;
+
+		while (!exit) {
+
+			try {
+				System.out.println("Please add the channel type you want to listen to with 'add type' or exit");
+				String input = reader.readLine();
+
+				if (input.equals("exit")) {
+					exit = true;
+					break;
+				}
+
+				String[] splitedInput = input.split(" ");
+
+				if (splitedInput.length == 2) {
+
+					if (splitedInput[0].equals("add")) {
+						consumer.withType(splitedInput[1]);
+					}
+					
+					if(splitedInput[0].equals("servers")) {
+						instance.setServerCount(Integer.getInteger(splitedInput[1]));
+					}
+				}
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
 		}
 	}
-	
-	
-	
+
 }
