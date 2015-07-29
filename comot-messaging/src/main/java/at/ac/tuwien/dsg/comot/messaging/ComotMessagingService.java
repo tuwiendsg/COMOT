@@ -58,13 +58,5 @@ public class ComotMessagingService {
 	
 	public Producer getRabbitMqProducer() {
 		return new RabbitMqProducer(new SendingChannel(new SalsaDiscovery(rabbitCluster)));
-	}
-
-	/**
-	 * @param args the command line arguments
-	 */
-	/*public static void main(String[] args) {
-		// TODO code application logic here
-	}*/
-	
+	}	
 }

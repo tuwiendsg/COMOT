@@ -34,6 +34,11 @@ public class ConsumerMain {
 
 	/**
 	 * @param args the command line arguments
+	 *
+	 * To execute this class enter on the test VM in the COMOT/comot-messaging
+	 * directory the following command mvn exec:java
+	 * -Dexec.mainClass="at.ac.tuwien.dsg.comot.messaging.manual.ConsumerMain"
+	 * -Dexec.classpathScope="test"
 	 */
 	public static void main(String[] args) {
 		Config config = new Config();
@@ -79,8 +84,8 @@ public class ConsumerMain {
 					if (splitedInput[0].equals("add")) {
 						consumer.withType(splitedInput[1]);
 					}
-					
-					if(splitedInput[0].equals("servers")) {
+
+					if (splitedInput[0].equals("servers")) {
 						instance.setServerCount(Integer.parseInt(splitedInput[1]));
 					}
 				}
