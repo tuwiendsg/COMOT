@@ -66,7 +66,7 @@ public class RabbitMqConsumer implements Consumer, Runnable {
 
 	private synchronized void fireMessageReceived(Message msg) {
 		this.messageListeners.stream().forEach(listener -> {
-			listener.messageRecived(msg);
+			listener.messageReceived(msg);
 		});
 	}
 

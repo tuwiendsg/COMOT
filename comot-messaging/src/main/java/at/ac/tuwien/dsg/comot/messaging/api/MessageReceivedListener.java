@@ -26,5 +26,5 @@ public interface MessageReceivedListener extends EventListener {
 	 * Gets fired when a message has been received by the consumer.
 	 * @param message - The received message.
 	 */
-	void messageRecived(Message message);
+	void messageReceived(Message message);
 }

@@ -51,8 +51,8 @@ public class ConsumerMain {
 		consumer.addMessageReceivedListener(new MessageReceivedListener() {
 
 			@Override
-			public void messageRecived(Message message) {
-				System.out.println(String.format("Recived message with types %s: %s", message.getTypes()
+			public void messageReceived(Message message) {
+				System.out.println(String.format("Received message with types %s: %s", message.getTypes()
 						.stream()
 						.reduce((t1, t2) -> t1 + "," + t2)
 						.get(), new String(message.getMessage())));
