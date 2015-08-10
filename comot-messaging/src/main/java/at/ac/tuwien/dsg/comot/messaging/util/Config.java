@@ -23,6 +23,7 @@ public class Config {
 	private String salsaIp;
 	private int salsaPort;
 	private int serverCount;
+	private String serviceName;
 
 	public String getSalsaIp() {
 		return salsaIp;
@@ -48,6 +49,15 @@ public class Config {
 
 	public Config setServerCount(int rabbitServerCount) {
 		this.serverCount = rabbitServerCount;
+		return this;
+	}
+
+	public String getServiceName() {
+		return serviceName;
+	}
+
+	public Config setServiceName(String serviceName) {
+		this.serviceName = serviceName;
 		return this;
 	}
 }

@@ -44,7 +44,8 @@ public class ConsumerMain {
 		Config config = new Config();
 		config.setSalsaIp("128.130.172.215")
 				.setSalsaPort(8080)
-				.setServerCount(1);
+				.setServerCount(1)
+				.setServiceName("ManualTestRabbitService");
 		ComotMessagingService instance = new ComotMessagingService(config);
 
 		Consumer consumer = instance.getRabbitMqConsumer();

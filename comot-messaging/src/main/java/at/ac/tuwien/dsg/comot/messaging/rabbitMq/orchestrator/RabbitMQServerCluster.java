@@ -87,7 +87,7 @@ public class RabbitMQServerCluster {
 		rabbitTopology = ServiceTopology.ServiceTopology("RabbitServerTopology")
 				.withServiceUnits(rabbitServerUnit, rabbitServerVM);
 		
-		service = CloudService.ServiceTemplate("RabbitServerService")
+		service = CloudService.ServiceTemplate(this.config.getServiceName())
 				.consistsOfTopologies(rabbitTopology)
 				.consistsOfTopologies(powerDnsTopology)
 				.andRelationships(
