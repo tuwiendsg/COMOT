@@ -15,16 +15,16 @@
  */
 package at.ac.tuwien.dsg.comot.messaging.manual;
 
-import at.ac.tuwien.dsg.comot.messaging.ComotMessagingService;
-import at.ac.tuwien.dsg.comot.messaging.api.Message;
-import at.ac.tuwien.dsg.comot.messaging.api.Producer;
-import at.ac.tuwien.dsg.comot.messaging.util.Config;
-import java.io.BufferedInputStream;
+import at.ac.tuwien.dsg.cloud.salsa.messaging.DSGQueueAdaptorLightweight.discovery.LightweightSalsaDiscovery;
+import at.ac.tuwien.dsg.cloud.utilities.messaging.api.Discovery;
+import at.ac.tuwien.dsg.cloud.utilities.messaging.api.Message;
+import at.ac.tuwien.dsg.cloud.utilities.messaging.api.Producer;
+import at.ac.tuwien.dsg.cloud.utilities.messaging.lightweight.ComotMessagingService;
+import at.ac.tuwien.dsg.cloud.utilities.messaging.lightweight.util.ServerConfig;
+import at.ac.tuwien.dsg.comot.messaging.rabbitMq.RabbitMQServerCluster;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -41,12 +41,13 @@ public class ProducerMain {
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
-		Config config = new Config();
+		ServerConfig config = new ServerConfig();
 		config.setSalsaIp("128.130.172.215")
 				.setSalsaPort(8080)
 				.setServerCount(1)
 				.setServiceName("ManualTestRabbitService");
-		ComotMessagingService instance = new ComotMessagingService(config);
+		Discovery discovery = new LightweightSalsaDiscovery(config);
+		ComotMessagingService instance = new ComotMessagingService(discovery, new RabbitMQServerCluster(config));
 
 		Producer producer = instance.getRabbitMqProducer();
 

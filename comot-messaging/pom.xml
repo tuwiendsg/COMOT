@@ -8,6 +8,7 @@
 	</parent>
 	<artifactId>comot-messaging</artifactId>
 	<packaging>jar</packaging>
+	<name>COMOT Messaging</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.rabbitmq</groupId>
@@ -47,6 +48,19 @@
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 			<version>1.9.5</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>at.ac.tuwien.dsg.cloud.salsa</groupId>
+			<artifactId>salsa-messaging</artifactId>
+			<version>2.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>at.ac.tuwien.dsg.cloud.utilities</groupId>
+			<artifactId>messaging-lightweight</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<type>jar</type>
 		</dependency>
 	</dependencies>
 	<properties>

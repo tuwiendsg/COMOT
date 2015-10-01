@@ -15,16 +15,17 @@
  */
 package at.ac.tuwien.dsg.comot.messaging.manual;
 
-import at.ac.tuwien.dsg.comot.messaging.ComotMessagingService;
-import at.ac.tuwien.dsg.comot.messaging.api.Consumer;
-import at.ac.tuwien.dsg.comot.messaging.api.Message;
-import at.ac.tuwien.dsg.comot.messaging.api.MessageReceivedListener;
-import at.ac.tuwien.dsg.comot.messaging.util.Config;
+import at.ac.tuwien.dsg.cloud.salsa.messaging.DSGQueueAdaptorLightweight.discovery.LightweightSalsaDiscovery;
+import at.ac.tuwien.dsg.cloud.utilities.messaging.api.Consumer;
+import at.ac.tuwien.dsg.cloud.utilities.messaging.api.Discovery;
+import at.ac.tuwien.dsg.cloud.utilities.messaging.api.Message;
+import at.ac.tuwien.dsg.cloud.utilities.messaging.api.MessageReceivedListener;
+import at.ac.tuwien.dsg.cloud.utilities.messaging.lightweight.ComotMessagingService;
+import at.ac.tuwien.dsg.cloud.utilities.messaging.lightweight.util.ServerConfig;
+import at.ac.tuwien.dsg.comot.messaging.rabbitMq.RabbitMQServerCluster;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -41,12 +42,13 @@ public class ConsumerMain {
 	 * -Dexec.classpathScope="test"
 	 */
 	public static void main(String[] args) {
-		Config config = new Config();
+		ServerConfig config = new ServerConfig();
 		config.setSalsaIp("128.130.172.215")
 				.setSalsaPort(8080)
 				.setServerCount(1)
 				.setServiceName("ManualTestRabbitService");
-		ComotMessagingService instance = new ComotMessagingService(config);
+		Discovery discovery = new LightweightSalsaDiscovery(config);
+		ComotMessagingService instance = new ComotMessagingService(discovery, new RabbitMQServerCluster(config));
 
 		Consumer consumer = instance.getRabbitMqConsumer();
 		consumer.addMessageReceivedListener(new MessageReceivedListener() {
@@ -87,7 +89,7 @@ public class ConsumerMain {
 					}
 
 					if (splitedInput[0].equals("servers")) {
-						instance.setServerCount(Integer.parseInt(splitedInput[1]));
+						instance.getServerCluster().changeServerCount(Integer.parseInt(splitedInput[1]));
 					}
 				}
 			} catch (IOException ex) {
