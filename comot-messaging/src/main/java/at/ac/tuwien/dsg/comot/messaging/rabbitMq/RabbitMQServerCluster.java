@@ -54,7 +54,7 @@ public class RabbitMQServerCluster implements ServerCluster {
 	
 	public RabbitMQServerCluster(ServerConfig config) {
 		this.config = config;
-		this.salsaRepo = String.format("http://%s/iCOMOTTutorial/files/comot-messaging", config.getSalsaIp());
+		this.salsaRepo = String.format("http://%s/iCOMOTTutorial/files/comot-messaging", config.getDiscoveryIp());
 		
 		powerDnsServerVM = OperatingSystemUnit("PowerDnsVM")
                 .providedBy(OpenstackSmall()
@@ -99,13 +99,13 @@ public class RabbitMQServerCluster implements ServerCluster {
 				.withDefaultMetrics();
 		
 		orchestrator = new COMOTOrchestrator()
-				.withIP(config.getSalsaIp())
-                .withSalsaPort(config.getSalsaPort());
+				.withIP(config.getDiscoveryIp())
+                .withSalsaPort(config.getDiscoveryPort());
 		
 		salsaInterraction = new SalsaInterraction();
 		DefaultSalsaClient client = new DefaultSalsaClient();
-		client.getConfiguration().setHost(config.getSalsaIp());
-		client.getConfiguration().setPort(config.getSalsaPort());
+		client.getConfiguration().setHost(config.getDiscoveryIp());
+		client.getConfiguration().setPort(config.getDiscoveryPort());
 		salsaInterraction.withDefaultSalsaClient(client);
 	}
 	

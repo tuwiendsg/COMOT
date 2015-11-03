@@ -43,8 +43,8 @@ public class ConsumerMain {
 	 */
 	public static void main(String[] args) {
 		ServerConfig config = new ServerConfig();
-		config.setSalsaIp("128.130.172.215")
-				.setSalsaPort(8080)
+		config.setDiscoveryIp("128.130.172.215")
+				.setDiscoveryPort(8080)
 				.setServerCount(1)
 				.setServiceName("ManualTestRabbitService");
 		Discovery discovery = new LightweightSalsaDiscovery(config);
