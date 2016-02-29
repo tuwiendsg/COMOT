@@ -49,8 +49,6 @@
                 <module>comot-model</module>
  
                 <module>comot-tosca</module>
-				
-				<module>comot-messaging</module>
             </modules>
         </profile>
     </profiles>
