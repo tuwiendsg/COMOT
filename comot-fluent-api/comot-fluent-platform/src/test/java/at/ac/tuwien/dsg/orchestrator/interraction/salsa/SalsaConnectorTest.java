@@ -37,7 +37,11 @@ public class SalsaConnectorTest {
     /**
      * Test of getServiceDeploymentInfo method, of class SalsaInterraction.
      */
-    @Test
+    //@Test
+	//todo: this test needs to be fixed
+	//by living it as an unit test the comot build will fail every time when there
+	//is no running SALSA instance which is breaking the concept of an unit test
+	//consider adding it as a manual test or under a different maven profile
     public void testGetServiceDeploymentInfo() {
         System.out.println("getServiceDeploymentInfo");
         String serviceId = "DaasService";
